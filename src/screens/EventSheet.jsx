@@ -38,7 +38,7 @@ export default function EventSheet({ id, onClose }) {
             <button
               onClick={() => toggleEventKudos(e.id)}
               className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold tap ${
-                k.liked ? 'bg-[#F0E1E3] text-[#9A5560]' : 'bg-ink-100 text-ink-500'
+                k.liked ? 'bg-[#EFE5E6] text-[#8C5560]' : 'bg-ink-100 text-ink-500'
               }`}
             >
               <Icon name="heart" className="h-4 w-4" filled={k.liked} />
@@ -79,7 +79,7 @@ export default function EventSheet({ id, onClose }) {
                   <button
                     onClick={() => contactMember(name)}
                     className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-bold tap ${
-                      contacted[name] ? 'bg-[#E4EDE7] text-[#3C5A48]' : 'bg-brand-500 text-white shadow-brand'
+                      contacted[name] ? 'bg-[#EAEEEB] text-[#48584E]' : 'bg-brand-500 text-white shadow-brand'
                     }`}
                   >
                     {contacted[name] ? 'Demandé ✓' : 'Connecter'}
@@ -96,7 +96,7 @@ export default function EventSheet({ id, onClose }) {
         <div className="glass flex shrink-0 items-center gap-2 border-t border-ink-100 px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             onClick={() => toggleJoin(e.id)}
-            className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${isJoined ? 'bg-[#3F7559]' : 'bg-ink-900 shadow-brand'}`}
+            className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${isJoined ? 'bg-[#4E6B59]' : 'bg-ink-900 shadow-brand'}`}
           >
             {isJoined ? 'Inscrit ✓' : 'Je participe'}
           </button>

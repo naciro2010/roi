@@ -68,7 +68,7 @@ export function ActivityCard({ activity, kudo, onKudo, onOpen, onOpenAthlete }) 
         <button
           onClick={onKudo}
           className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold tap ${
-            kudo?.liked ? 'bg-[#F0E1E3] text-[#9A5560]' : 'bg-ink-100 text-ink-500'
+            kudo?.liked ? 'bg-[#EFE5E6] text-[#8C5560]' : 'bg-ink-100 text-ink-500'
           }`}
         >
           <Icon name="heart" className="h-4 w-4" filled={kudo?.liked} />

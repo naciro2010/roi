@@ -104,11 +104,11 @@ export default function Profil() {
           {/* Ce que je propose */}
           <section className="rounded-3xl border border-ink-100 bg-white p-4 shadow-soft">
             <h2 className="flex items-center gap-2 text-base font-bold text-ink-900">
-              <Icon name="link" className="h-5 w-5 text-[#3F7559]" /> Ce que je propose
+              <Icon name="link" className="h-5 w-5 text-[#4E6B59]" /> Ce que je propose
             </h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {profile.offering.map((o) => (
-                <span key={o} className="rounded-full bg-[#E4EDE7] px-3 py-1.5 text-sm font-semibold text-[#3C5A48]">
+                <span key={o} className="rounded-full bg-[#EAEEEB] px-3 py-1.5 text-sm font-semibold text-[#48584E]">
                   {o}
                 </span>
               ))}

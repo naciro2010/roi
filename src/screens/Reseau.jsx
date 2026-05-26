@@ -86,7 +86,7 @@ export default function Reseau() {
                 <div className="mx-4 mt-3 space-y-1.5 rounded-2xl bg-ink-50 p-3">
                   {p.context.map((c) => (
                     <div key={c} className="flex items-center gap-2 text-[13px] text-ink-700">
-                      <Icon name="check" className="h-3.5 w-3.5 shrink-0 text-[#3F7559]" />
+                      <Icon name="check" className="h-3.5 w-3.5 shrink-0 text-[#4E6B59]" />
                       {c}
                     </div>
                   ))}
@@ -96,7 +96,7 @@ export default function Reseau() {
                   <button
                     onClick={() => sendSuggestion(p.id, p.name)}
                     className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${
-                      sent ? 'bg-[#3F7559]' : 'bg-brand-500 shadow-brand hover:bg-brand-600'
+                      sent ? 'bg-[#4E6B59]' : 'bg-brand-500 shadow-brand hover:bg-brand-600'
                     }`}
                   >
                     {sent ? 'Demande envoyée ✓' : p.primaryAction}
@@ -169,7 +169,7 @@ export default function Reseau() {
                 <button
                   onClick={() => contactMember(m.name)}
                   className={`mt-3 w-full rounded-2xl py-2.5 text-sm font-bold tap ${
-                    contacted[m.name] ? 'bg-[#3F7559] text-white' : 'border border-brand-300 text-brand-700 hover:bg-brand-light'
+                    contacted[m.name] ? 'bg-[#4E6B59] text-white' : 'border border-brand-300 text-brand-700 hover:bg-brand-light'
                   }`}
                 >
                   {contacted[m.name] ? 'Demande envoyée ✓' : 'Entrer en contact'}

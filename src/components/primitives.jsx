@@ -1,20 +1,21 @@
 import Icon from './Icon'
 
+// Tons d'accent volontairement désaturés (proches du neutre) pour un rendu sobre.
 export const PILL_TONES = {
   brand: 'bg-brand-50 text-brand-700',
-  emerald: 'bg-[#E4EDE7] text-[#3C5A48]',
-  indigo: 'bg-[#E3E1F0] text-[#46406E]',
-  amber: 'bg-[#EFE7D8] text-[#6B5734]',
-  rose: 'bg-[#F0E1E3] text-[#7A4650]',
+  emerald: 'bg-[#EAEEEB] text-[#48584E]',
+  indigo: 'bg-[#E9E8F0] text-[#4D4968]',
+  amber: 'bg-[#EFEBE1] text-[#5F553C]',
+  rose: 'bg-[#EEE6E7] text-[#6B5156]',
   ink: 'bg-ink-100 text-ink-600',
 }
 
 export const DOT_TONES = {
   brand: 'bg-brand-500',
-  emerald: 'bg-[#3F7559]',
-  indigo: 'bg-[#5B5191]',
-  amber: 'bg-[#9A7B3A]',
-  rose: 'bg-[#9A5560]',
+  emerald: 'bg-[#5A7062]',
+  indigo: 'bg-[#615C8A]',
+  amber: 'bg-[#8C784D]',
+  rose: 'bg-[#8C656B]',
   ink: 'bg-ink-400',
 }
 
@@ -77,7 +78,7 @@ export function Logo({ light = false }) {
       <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-brand">
         <Icon name="zap" className="h-4 w-4" filled />
       </span>
-      <span className={`text-[22px] font-extrabold tracking-tight ${light ? 'text-white' : 'text-ink-900'}`} style={{ fontFamily: 'Plus Jakarta Sans' }}>
+      <span className={`font-display text-[22px] font-extrabold tracking-tight ${light ? 'text-white' : 'text-ink-900'}`}>
         R<span className="text-brand-500">O</span>I
       </span>
     </div>
