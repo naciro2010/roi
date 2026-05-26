@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useApp } from '../AppContext'
 import Icon from './Icon'
 import { Avatar } from './Avatar'
 import { PILL_TONES } from './primitives'
@@ -7,14 +8,12 @@ import { POST_TYPES } from '../data/feed'
 import { personFor } from '../data/network'
 import { CURRENT_USER } from '../data/user'
 
-function subtitleFor(name) {
-  return name === CURRENT_USER.name ? CURRENT_USER.title : personFor(name).title
-}
-
 export default function PostCard({ post, activity, onLike, onAddComment, onShare, onOpenActivity, onOpenAuthor }) {
+  const { profile } = useApp()
   const [showComments, setShowComments] = useState(false)
   const [draft, setDraft] = useState('')
   const meta = POST_TYPES[post.type]
+  const subtitleFor = (name) => (name === CURRENT_USER.name ? profile.title : personFor(name).title)
 
   function submit() {
     const text = draft.trim()

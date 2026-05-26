@@ -23,6 +23,10 @@ import Profil from './screens/Profil'
 import MemberSheet from './screens/MemberSheet'
 import ActivitySheet from './screens/ActivitySheet'
 import EventSheet from './screens/EventSheet'
+import Onboarding from './screens/Onboarding'
+import EditProfileSheet from './screens/EditProfileSheet'
+import RoiInfoSheet from './screens/RoiInfoSheet'
+import GlobalSearch from './screens/GlobalSearch'
 
 export default function App() {
   const [tab, setTab] = useState('accueil')
@@ -64,10 +68,22 @@ export default function App() {
   const [newGroupName, setNewGroupName] = useState('')
   const [joinedGroups, setJoinedGroups] = useState({})
 
-  // Profil
-  const [needs, setNeeds] = useState(CURRENT_USER.needs)
-  const [editingNeeds, setEditingNeeds] = useState(false)
-  const [needsDraft, setNeedsDraft] = useState(CURRENT_USER.needs)
+  // Profil éditable
+  const [profile, setProfile] = useState({
+    title: CURRENT_USER.title,
+    bio: CURRENT_USER.bio,
+    offering: CURRENT_USER.offering,
+    interests: CURRENT_USER.interests,
+    needs: CURRENT_USER.needs,
+  })
+  const [editProfileOpen, setEditProfileOpen] = useState(false)
+
+  // Onboarding · explication ROI · recherche globale
+  const [onboarding, setOnboarding] = useState(() => {
+    try { return !localStorage.getItem('roi_onboarded') } catch { return true }
+  })
+  const [roiInfoOpen, setRoiInfoOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
 
   const unreadConv = CONVERSATIONS.filter((c) => c.unread && !convRead[c.id]).length
   const unreadGroups = groups.filter((g) => g.unread > 0 && !groupRead[g.id]).length
@@ -218,16 +234,13 @@ export default function App() {
     }
   }
 
-  function startEditNeeds() {
-    setNeedsDraft(needs)
-    setEditingNeeds(true)
+  function updateProfile(patch) {
+    setProfile((p) => ({ ...p, ...patch }))
   }
 
-  function saveNeeds() {
-    const cleaned = needsDraft.map((n) => n.trim()).filter(Boolean)
-    setNeeds(cleaned.length ? cleaned : ['—'])
-    setEditingNeeds(false)
-    showToast('Besoin mis à jour ✓')
+  function finishOnboarding() {
+    try { localStorage.setItem('roi_onboarded', '1') } catch { /* stockage indisponible */ }
+    setOnboarding(false)
   }
 
   const ctx = {
@@ -236,6 +249,9 @@ export default function App() {
     openActivity: setActivityId,
     openEvent: setEventId,
     openComposer: () => setComposerOpen(true),
+    openEditProfile: () => setEditProfileOpen(true),
+    openRoiInfo: () => setRoiInfoOpen(true),
+    openSearch: () => setSearchOpen(true),
     contacted, contactMember,
     sentSuggestions, sendSuggestion,
     connections, requests, acceptRequest, declineRequest,
@@ -247,8 +263,8 @@ export default function App() {
     groups, groupThreads, groupRead, creatingGroup, setCreatingGroup,
     newGroupName, setNewGroupName, createGroup, joinedGroups, joinGroup,
     messageMember,
-    needs, editingNeeds, needsDraft, setNeedsDraft, startEditNeeds, saveNeeds,
-    setEditingNeeds,
+    profile, updateProfile,
+    replayOnboarding: () => setOnboarding(true),
   }
 
   const inChat = tab === 'messages' && (openConv || openGroup)
@@ -315,6 +331,13 @@ export default function App() {
               <Logo />
               <div className="flex items-center gap-1">
                 <button
+                  onClick={() => setSearchOpen(true)}
+                  className="grid h-10 w-10 place-items-center rounded-full text-ink-600 tap hover:bg-ink-100"
+                  aria-label="Rechercher"
+                >
+                  <Icon name="search" className="h-[21px] w-[21px]" />
+                </button>
+                <button
                   onClick={() => setNotifOpen(true)}
                   className="relative grid h-10 w-10 place-items-center rounded-full text-ink-600 tap hover:bg-ink-100"
                   aria-label="Notifications"
@@ -338,11 +361,20 @@ export default function App() {
             </div>
           )}
 
+          {searchOpen && <GlobalSearch onClose={() => setSearchOpen(false)} />}
           {member && <MemberSheet name={member} onClose={() => setMember(null)} />}
           {activityId && <ActivitySheet id={activityId} onClose={() => setActivityId(null)} />}
           {eventId && <EventSheet id={eventId} onClose={() => setEventId(null)} />}
+          {editProfileOpen && <EditProfileSheet onClose={() => setEditProfileOpen(false)} />}
+          {roiInfoOpen && <RoiInfoSheet onClose={() => setRoiInfoOpen(false)} />}
           <PostComposer open={composerOpen} onClose={() => setComposerOpen(false)} onPublish={publishPost} />
           <NotifDrawer />
+          {onboarding && (
+            <Onboarding
+              onClose={finishOnboarding}
+              onEditProfile={() => { finishOnboarding(); goTo('profil'); setEditProfileOpen(true) }}
+            />
+          )}
 
           <BottomNav active={tab} onChange={goTo} unread={navUnread} />
         </div>

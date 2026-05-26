@@ -1,0 +1,73 @@
+import Icon from '../components/Icon'
+import { ProgressRing, ProgressBar, PILL_TONES } from '../components/primitives'
+import { CURRENT_USER } from '../data/user'
+
+const FACTORS = [
+  { icon: 'users', tone: 'indigo', label: 'Connexions actives', detail: 'Relations avec qui tu échanges vraiment', value: 78 },
+  { icon: 'calendar', tone: 'emerald', label: 'RDV & sorties', detail: 'Rencontres en vrai, en courant ou autour d’un café', value: 64 },
+  { icon: 'briefcase', tone: 'brand', label: 'Opportunités créées', detail: 'Intros, deals, missions nés de ton réseau', value: 52 },
+  { icon: 'activity', tone: 'amber', label: 'Régularité running', detail: 'Plus tu cours, plus tu croises du monde', value: 71 },
+]
+
+export default function RoiInfoSheet({ onClose }) {
+  const u = CURRENT_USER
+  return (
+    <div className="absolute inset-0 z-40">
+      <div className="absolute inset-0 animate-fadeIn bg-ink-950/50" onClick={onClose} />
+      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[92%] flex-col overflow-hidden rounded-t-[28px] bg-white shadow-float">
+        <div className="relative shrink-0 overflow-hidden bg-ink-950 px-5 pb-5 pt-6 text-white">
+          <div className="absolute inset-0 bg-hero-glow" />
+          <button onClick={onClose} className="glass-dark absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full text-white tap" aria-label="Fermer">
+            <Icon name="x" className="h-5 w-5" />
+          </button>
+          <div className="relative flex items-center gap-4">
+            <ProgressRing value={u.roi.score} size={76} stroke={8} color="#AEB8D6" track="rgba(255,255,255,0.14)">
+              <div className="text-xl font-extrabold leading-none">{u.roi.score}</div>
+            </ProgressRing>
+            <div>
+              <h2 className="text-lg font-extrabold">Ton score ROI réseau</h2>
+              <p className="mt-0.5 text-[13px] leading-snug text-white/65">
+                Une mesure de la valeur que ton réseau te rapporte — pas un compteur d’abonnés.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto no-scrollbar px-5 py-4">
+          <p className="text-xs font-bold uppercase tracking-wide text-ink-400">Ce qui fait monter ton score</p>
+          <div className="mt-3 space-y-3">
+            {FACTORS.map((f) => (
+              <div key={f.label} className="rounded-2xl border border-ink-100 bg-white p-3.5 shadow-soft">
+                <div className="flex items-center gap-3">
+                  <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${PILL_TONES[f.tone]}`}>
+                    <Icon name={f.icon} className="h-4 w-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-bold text-ink-900">{f.label}</div>
+                    <div className="text-[12px] leading-snug text-ink-400">{f.detail}</div>
+                  </div>
+                  <span className="text-sm font-extrabold text-ink-700">{f.value}</span>
+                </div>
+                <div className="mt-2.5">
+                  <ProgressBar value={f.value} total={100} className="bg-ink-100" barClassName="bg-brand-500" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 flex items-start gap-3 rounded-2xl border border-brand-200 bg-brand-light/50 p-3.5">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white text-brand-600 shadow-soft">
+              <Icon name="trendingUp" className="h-4 w-4" />
+            </span>
+            <div>
+              <p className="text-[13px] font-bold text-ink-900">+{u.roi.weekDelta} cette semaine</p>
+              <p className="text-[12px] leading-snug text-ink-600">
+                2 actions pour passer 80 : accepte une demande en attente et inscris-toi à une sortie.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
