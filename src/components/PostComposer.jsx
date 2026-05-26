@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useApp } from '../AppContext'
 import Icon from './Icon'
 import { Avatar } from './Avatar'
 import { PILL_TONES } from './primitives'
@@ -8,6 +9,7 @@ import { CURRENT_USER } from '../data/user'
 const ORDER = ['reflexion', 'rex', 'tip', 'milestone']
 
 export default function PostComposer({ open, onClose, onPublish }) {
+  const { profile } = useApp()
   const [type, setType] = useState('reflexion')
   const [text, setText] = useState('')
   if (!open) return null
@@ -41,7 +43,7 @@ export default function PostComposer({ open, onClose, onPublish }) {
             <Avatar name={CURRENT_USER.name} size="md" />
             <div>
               <div className="font-bold text-ink-900">{CURRENT_USER.name}</div>
-              <div className="text-[12px] text-ink-400">{CURRENT_USER.title}</div>
+              <div className="text-[12px] text-ink-400">{profile.title}</div>
             </div>
           </div>
 

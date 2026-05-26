@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
@@ -6,17 +7,42 @@ import PostCard from '../components/PostCard'
 import { CURRENT_USER } from '../data/user'
 import { activityById } from '../data/activities'
 
+function PostSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-3xl border border-ink-100 bg-white shadow-card">
+      <div className="flex items-center gap-3 p-4">
+        <div className="shimmer h-11 w-11 rounded-full bg-ink-100" />
+        <div className="flex-1 space-y-2">
+          <div className="shimmer h-3 w-1/3 rounded bg-ink-100" />
+          <div className="shimmer h-2.5 w-1/2 rounded bg-ink-100" />
+        </div>
+      </div>
+      <div className="space-y-2 px-4 pb-4">
+        <div className="shimmer h-2.5 w-full rounded bg-ink-100" />
+        <div className="shimmer h-2.5 w-5/6 rounded bg-ink-100" />
+        <div className="shimmer mt-2 h-32 w-full rounded-2xl bg-ink-100" />
+      </div>
+    </div>
+  )
+}
+
 export default function Accueil() {
-  const { goTo, openComposer, openMember, openActivity, posts, togglePostLike, addComment, showToast } = useApp()
+  const { goTo, openRoiInfo, openComposer, openMember, openActivity, posts, togglePostLike, addComment, showToast } = useApp()
   const u = CURRENT_USER
   const hour = new Date().getHours()
   const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir'
+
+  const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 650)
+    return () => clearTimeout(t)
+  }, [])
 
   return (
     <div className="animate-screenIn space-y-3 overflow-y-auto no-scrollbar px-4 pb-6 pt-3">
       {/* ROI compact */}
       <button
-        onClick={() => goTo('profil')}
+        onClick={openRoiInfo}
         className="relative flex w-full items-center gap-4 overflow-hidden rounded-3xl bg-ink-950 p-4 text-left text-white shadow-float tap"
       >
         <div className="absolute inset-0 bg-hero-glow" />
@@ -54,20 +80,28 @@ export default function Accueil() {
       </div>
 
       {/* Feed */}
-      {posts.map((p) => (
-        <PostCard
-          key={p.id}
-          post={p}
-          activity={activityById(p.activityId)}
-          onLike={() => togglePostLike(p.id)}
-          onAddComment={(text) => addComment(p.id, text)}
-          onShare={() => showToast('Partage bientôt disponible')}
-          onOpenActivity={() => openActivity(p.activityId)}
-          onOpenAuthor={(name) => openMember(name || p.author)}
-        />
-      ))}
-
-      <p className="pt-1 text-center text-xs text-ink-400">Tu es à jour ✓</p>
+      {loading ? (
+        <>
+          <PostSkeleton />
+          <PostSkeleton />
+        </>
+      ) : (
+        <>
+          {posts.map((p) => (
+            <PostCard
+              key={p.id}
+              post={p}
+              activity={activityById(p.activityId)}
+              onLike={() => togglePostLike(p.id)}
+              onAddComment={(text) => addComment(p.id, text)}
+              onShare={() => showToast('Partage bientôt disponible')}
+              onOpenActivity={() => openActivity(p.activityId)}
+              onOpenAuthor={(name) => openMember(name || p.author)}
+            />
+          ))}
+          <p className="pt-1 text-center text-xs text-ink-400">Tu es à jour ✓</p>
+        </>
+      )}
     </div>
   )
 }
