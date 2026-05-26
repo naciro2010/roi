@@ -1,14 +1,17 @@
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
+import ServiceLogo from '../components/ServiceLogo'
 import { SectionTitle, PILL_TONES } from '../components/primitives'
 import { CURRENT_USER } from '../data/user'
 import { ACTIVITIES } from '../data/activities'
+import { SERVICES } from '../data/integrations'
 
 export default function Profil() {
-  const { showToast, goTo, openActivity, openEditProfile, openRoiInfo, replayOnboarding, profile } = useApp()
+  const { showToast, goTo, openActivity, openEditProfile, openRoiInfo, replayOnboarding, openIntegrations, integrations, profile } = useApp()
   const u = CURRENT_USER
   const myActivities = ACTIVITIES.filter((a) => a.athlete === u.name)
+  const connectedCount = SERVICES.filter((s) => integrations[s.id]).length
 
   const stats = [
     { label: 'km ce mois', value: u.stats.km },
@@ -123,6 +126,40 @@ export default function Profil() {
                 <div className="text-[11px] text-ink-400">{s.label}</div>
               </div>
             ))}
+          </section>
+
+          {/* Connexions & appareils */}
+          <section className="rounded-3xl border border-ink-100 bg-white p-4 shadow-soft">
+            <div className="flex items-center justify-between">
+              <h2 className="flex items-center gap-2 text-base font-bold text-ink-900">
+                <Icon name="link" className="h-5 w-5 text-brand-600" /> Connexions & appareils
+              </h2>
+              <button onClick={openIntegrations} className="flex items-center gap-1 rounded-full bg-ink-100 px-3 py-1 text-xs font-bold text-ink-700 tap">
+                Gérer
+              </button>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2.5">
+              {SERVICES.map((s) => {
+                const on = !!integrations[s.id]
+                return (
+                  <button key={s.id} onClick={openIntegrations} className="relative tap" aria-label={s.name}>
+                    <span className={on ? '' : 'opacity-30 grayscale'}>
+                      <ServiceLogo service={s} />
+                    </span>
+                    {on && (
+                      <span className="absolute -bottom-0.5 -right-0.5 grid h-4 w-4 place-items-center rounded-full bg-[#4E6B59] text-white ring-2 ring-white">
+                        <Icon name="check" className="h-2.5 w-2.5" />
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+            <p className="mt-2.5 text-xs text-ink-400">
+              {connectedCount > 0
+                ? `${connectedCount} connecté${connectedCount > 1 ? 's' : ''} · Strava, LinkedIn, ta montre…`
+                : 'Connecte Strava, LinkedIn et ta montre pour tout synchroniser.'}
+            </p>
           </section>
 
           {/* Mes activités */}

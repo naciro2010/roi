@@ -4,13 +4,16 @@ import Icon from '../components/Icon'
 import { Avatar, AvatarStack } from '../components/Avatar'
 import { ProgressRing, SectionTitle } from '../components/primitives'
 import { ActivityCard } from '../components/ActivityCard'
+import ServiceLogo from '../components/ServiceLogo'
 import { ACTIVITIES } from '../data/activities'
 import { EVENTS, CHALLENGE, LEADERBOARD } from '../data/events'
+import { serviceById } from '../data/integrations'
 
 export default function Courir() {
   const {
     actKudos, toggleActKudos, openActivity, openMember, showToast,
     eventKudos, toggleEventKudos, joined, toggleJoin, openEvent,
+    integrations, openIntegrations,
   } = useApp()
   const [view, setView] = useState('activites')
   const pct = Math.round((CHALLENGE.current / CHALLENGE.total) * 100)
@@ -41,6 +44,24 @@ export default function Courir() {
 
       {view === 'activites' ? (
         <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar px-5 pb-6 pt-3">
+          {integrations.strava ? (
+            <div className="flex items-center gap-2 rounded-2xl bg-[#EAEEEB] px-3.5 py-2.5 text-[12px] font-semibold text-[#48584E]">
+              <Icon name="check" className="h-4 w-4 shrink-0" /> Tes courses sont synchronisées via Strava
+            </div>
+          ) : (
+            <button
+              onClick={openIntegrations}
+              className="flex w-full items-center gap-3 rounded-2xl border border-ink-100 bg-white p-3 text-left shadow-soft tap"
+            >
+              <ServiceLogo service={serviceById('strava')} />
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-bold text-ink-900">Connecter Strava</div>
+                <div className="truncate text-xs text-ink-400">Importe tes courses automatiquement</div>
+              </div>
+              <Icon name="chevronRight" className="h-5 w-5 shrink-0 text-ink-300" />
+            </button>
+          )}
+
           <button
             onClick={() => showToast('Enregistrement bientôt disponible 🏃')}
             className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-ink-300 px-3 py-3 text-left tap hover:bg-ink-50"

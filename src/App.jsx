@@ -27,6 +27,8 @@ import Onboarding from './screens/Onboarding'
 import EditProfileSheet from './screens/EditProfileSheet'
 import RoiInfoSheet from './screens/RoiInfoSheet'
 import GlobalSearch from './screens/GlobalSearch'
+import IntegrationsSheet from './screens/IntegrationsSheet'
+import { SERVICES } from './data/integrations'
 
 export default function App() {
   const [tab, setTab] = useState('accueil')
@@ -84,6 +86,8 @@ export default function App() {
   })
   const [roiInfoOpen, setRoiInfoOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [integrationsOpen, setIntegrationsOpen] = useState(false)
+  const [integrations, setIntegrations] = useState({})
 
   const unreadConv = CONVERSATIONS.filter((c) => c.unread && !convRead[c.id]).length
   const unreadGroups = groups.filter((g) => g.unread > 0 && !groupRead[g.id]).length
@@ -243,6 +247,15 @@ export default function App() {
     setOnboarding(false)
   }
 
+  function toggleIntegration(id) {
+    setIntegrations((prev) => {
+      const next = !prev[id]
+      const name = SERVICES.find((s) => s.id === id)?.name || ''
+      showToast(next ? `${name} connecté ✓` : `${name} déconnecté`)
+      return { ...prev, [id]: next }
+    })
+  }
+
   const ctx = {
     tab, goTo, showToast,
     openMember: setMember,
@@ -252,6 +265,8 @@ export default function App() {
     openEditProfile: () => setEditProfileOpen(true),
     openRoiInfo: () => setRoiInfoOpen(true),
     openSearch: () => setSearchOpen(true),
+    openIntegrations: () => setIntegrationsOpen(true),
+    integrations, toggleIntegration,
     contacted, contactMember,
     sentSuggestions, sendSuggestion,
     connections, requests, acceptRequest, declineRequest,
@@ -367,6 +382,7 @@ export default function App() {
           {eventId && <EventSheet id={eventId} onClose={() => setEventId(null)} />}
           {editProfileOpen && <EditProfileSheet onClose={() => setEditProfileOpen(false)} />}
           {roiInfoOpen && <RoiInfoSheet onClose={() => setRoiInfoOpen(false)} />}
+          {integrationsOpen && <IntegrationsSheet onClose={() => setIntegrationsOpen(false)} />}
           <PostComposer open={composerOpen} onClose={() => setComposerOpen(false)} onPublish={publishPost} />
           <NotifDrawer />
           {onboarding && (
