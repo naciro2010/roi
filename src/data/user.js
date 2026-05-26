@@ -1,0 +1,15 @@
+export const CURRENT_USER = {
+  name: 'Thomas Lefèvre',
+  title: 'Fondateur · SaaS B2B',
+  role: 'Fondateur',
+  company: 'Stealth · SaaS B2B',
+  location: 'Paris 11e',
+  community: 'Entrepreneurs Runners Paris',
+  joined: 'Membre depuis mars 2025',
+  bio: "Je construis un SaaS B2B (dashboard + onboarding). Je prépare une seed et je cours pour décompresser — souvent le long de la Seine.",
+  needs: ['Un dev React pour mon MVP', 'Des conseils pour scaler'],
+  offering: ['Retours produit', 'Mise en relation SaaS B2B'],
+  interests: ['Levée de fonds', 'Product', 'Trail', 'Café & co-working', 'Design'],
+  stats: { km: 42, sorties: 6, defis: 2 },
+  roi: { score: 78, connections: 34, meetings: 12, opportunities: 5, weekDelta: 6 },
+}
