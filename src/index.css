@@ -9,45 +9,73 @@ body,
 }
 
 body {
-  @apply bg-gray-200 text-gray-900;
+  @apply bg-ink-100 text-ink-900;
   font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* Clean look inside the phone frame */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+@layer base {
+  h1,
+  h2,
+  h3 {
+    font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
 }
 
-@keyframes toastIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 16px);
+@layer components {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
-}
-.toast {
-  animation: toastIn 0.22s ease-out;
+
+  /* Frosted-glass surface */
+  .glass {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: saturate(180%) blur(16px);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+  }
+  .glass-dark {
+    background: rgba(13, 16, 22, 0.55);
+    backdrop-filter: saturate(160%) blur(14px);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+  }
+
+  .tap {
+    transition: transform 0.12s ease;
+  }
+  .tap:active {
+    transform: scale(0.96);
+  }
+
+  /* Subtle skeleton shimmer */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.45),
+      transparent
+    );
+    animation: shimmer 1.6s infinite;
+  }
 }
 
-@keyframes screenIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.screen-in {
-  animation: screenIn 0.25s ease-out;
+/* Hide number spinners */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
