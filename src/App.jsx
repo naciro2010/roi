@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AppContext } from './AppContext'
+import { usePersistentState, clearPersistedState } from './lib/usePersistentState'
 
 import { CURRENT_USER } from './data/user'
 import { CONVERSATIONS, THREADS, GROUPS, GROUP_THREADS } from './data/messages'
@@ -27,6 +28,8 @@ import Onboarding from './screens/Onboarding'
 import EditProfileSheet from './screens/EditProfileSheet'
 import RoiInfoSheet from './screens/RoiInfoSheet'
 import GlobalSearch from './screens/GlobalSearch'
+import IntegrationsSheet from './screens/IntegrationsSheet'
+import { SERVICES } from './data/integrations'
 
 export default function App() {
   const [tab, setTab] = useState('accueil')
@@ -38,38 +41,38 @@ export default function App() {
   const [eventId, setEventId] = useState(null)
   const [composerOpen, setComposerOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
-  const [notifs, setNotifs] = useState(NOTIFICATIONS)
+  const [notifs, setNotifs] = usePersistentState('notifs', NOTIFICATIONS)
 
   // Réseau
-  const [sentSuggestions, setSentSuggestions] = useState({})
-  const [contacted, setContacted] = useState({})
-  const [connections, setConnections] = useState(CONNECTIONS)
-  const [requests, setRequests] = useState(REQUESTS)
+  const [sentSuggestions, setSentSuggestions] = usePersistentState('sentSuggestions', {})
+  const [contacted, setContacted] = usePersistentState('contacted', {})
+  const [connections, setConnections] = usePersistentState('connections', CONNECTIONS)
+  const [requests, setRequests] = usePersistentState('requests', REQUESTS)
 
   // Courir — événements & activités
-  const [eventKudos, setEventKudos] = useState(Object.fromEntries(EVENTS.map((a) => [a.id, { count: a.kudos, liked: false }])))
-  const [joined, setJoined] = useState({})
-  const [actKudos, setActKudos] = useState(Object.fromEntries(ACTIVITIES.map((a) => [a.id, { count: a.kudos, liked: false }])))
+  const [eventKudos, setEventKudos] = usePersistentState('eventKudos', Object.fromEntries(EVENTS.map((a) => [a.id, { count: a.kudos, liked: false }])))
+  const [joined, setJoined] = usePersistentState('joined', {})
+  const [actKudos, setActKudos] = usePersistentState('actKudos', Object.fromEntries(ACTIVITIES.map((a) => [a.id, { count: a.kudos, liked: false }])))
 
   // Feed
-  const [posts, setPosts] = useState(POSTS)
+  const [posts, setPosts] = usePersistentState('posts', POSTS)
 
   // Messages & groupes
   const [msgView, setMsgView] = useState('discussions')
   const [openConv, setOpenConv] = useState(null)
   const [openGroup, setOpenGroup] = useState(null)
-  const [threads, setThreads] = useState(THREADS)
+  const [threads, setThreads] = usePersistentState('threads', THREADS)
   const [draft, setDraft] = useState('')
-  const [convRead, setConvRead] = useState({})
-  const [groups, setGroups] = useState(GROUPS)
-  const [groupThreads, setGroupThreads] = useState(GROUP_THREADS)
-  const [groupRead, setGroupRead] = useState({})
+  const [convRead, setConvRead] = usePersistentState('convRead', {})
+  const [groups, setGroups] = usePersistentState('groups', GROUPS)
+  const [groupThreads, setGroupThreads] = usePersistentState('groupThreads', GROUP_THREADS)
+  const [groupRead, setGroupRead] = usePersistentState('groupRead', {})
   const [creatingGroup, setCreatingGroup] = useState(false)
   const [newGroupName, setNewGroupName] = useState('')
-  const [joinedGroups, setJoinedGroups] = useState({})
+  const [joinedGroups, setJoinedGroups] = usePersistentState('joinedGroups', {})
 
   // Profil éditable
-  const [profile, setProfile] = useState({
+  const [profile, setProfile] = usePersistentState('profile', {
     title: CURRENT_USER.title,
     bio: CURRENT_USER.bio,
     offering: CURRENT_USER.offering,
@@ -84,6 +87,8 @@ export default function App() {
   })
   const [roiInfoOpen, setRoiInfoOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [integrationsOpen, setIntegrationsOpen] = useState(false)
+  const [integrations, setIntegrations] = usePersistentState('integrations', {})
 
   const unreadConv = CONVERSATIONS.filter((c) => c.unread && !convRead[c.id]).length
   const unreadGroups = groups.filter((g) => g.unread > 0 && !groupRead[g.id]).length
@@ -243,6 +248,20 @@ export default function App() {
     setOnboarding(false)
   }
 
+  function resetDemo() {
+    clearPersistedState()
+    window.location.reload()
+  }
+
+  function toggleIntegration(id) {
+    setIntegrations((prev) => {
+      const next = !prev[id]
+      const name = SERVICES.find((s) => s.id === id)?.name || ''
+      showToast(next ? `${name} connecté ✓` : `${name} déconnecté`)
+      return { ...prev, [id]: next }
+    })
+  }
+
   const ctx = {
     tab, goTo, showToast,
     openMember: setMember,
@@ -252,6 +271,8 @@ export default function App() {
     openEditProfile: () => setEditProfileOpen(true),
     openRoiInfo: () => setRoiInfoOpen(true),
     openSearch: () => setSearchOpen(true),
+    openIntegrations: () => setIntegrationsOpen(true),
+    integrations, toggleIntegration,
     contacted, contactMember,
     sentSuggestions, sendSuggestion,
     connections, requests, acceptRequest, declineRequest,
@@ -265,6 +286,7 @@ export default function App() {
     messageMember,
     profile, updateProfile,
     replayOnboarding: () => setOnboarding(true),
+    resetDemo,
   }
 
   const inChat = tab === 'messages' && (openConv || openGroup)
@@ -367,6 +389,7 @@ export default function App() {
           {eventId && <EventSheet id={eventId} onClose={() => setEventId(null)} />}
           {editProfileOpen && <EditProfileSheet onClose={() => setEditProfileOpen(false)} />}
           {roiInfoOpen && <RoiInfoSheet onClose={() => setRoiInfoOpen(false)} />}
+          {integrationsOpen && <IntegrationsSheet onClose={() => setIntegrationsOpen(false)} />}
           <PostComposer open={composerOpen} onClose={() => setComposerOpen(false)} onPublish={publishPost} />
           <NotifDrawer />
           {onboarding && (

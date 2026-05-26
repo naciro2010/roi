@@ -21,7 +21,10 @@ des groupes pour échanger.
 - **Messages** — discussions 1:1 et **groupes** (création, découverte, chat de groupe).
 - **Profil** — besoins éditables, ce que je propose, stats running, mes activités,
   centres d'intérêt, communauté.
-- **Fiches** — fiche membre et fiche activité ouvertes en bottom-sheet.
+- **Connexions & appareils** — connexion (mock) à Strava, LinkedIn et aux montres
+  (Apple Santé, Garmin, COROS, Polar) pour importer courses et profil.
+- **Onboarding, recherche globale, explication du score ROI, profil éditable.**
+- **Fiches** — fiche membre, fiche activité et fiche événement en bottom-sheet.
 
 ## Architecture
 
