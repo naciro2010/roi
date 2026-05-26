@@ -8,7 +8,7 @@ import { ACTIVITIES } from '../data/activities'
 import { SERVICES } from '../data/integrations'
 
 export default function Profil() {
-  const { showToast, goTo, openActivity, openEditProfile, openRoiInfo, replayOnboarding, openIntegrations, integrations, profile } = useApp()
+  const { showToast, goTo, openActivity, openEditProfile, openRoiInfo, replayOnboarding, openIntegrations, integrations, profile, resetDemo } = useApp()
   const u = CURRENT_USER
   const myActivities = ACTIVITIES.filter((a) => a.athlete === u.name)
   const connectedCount = SERVICES.filter((s) => integrations[s.id]).length
@@ -28,6 +28,7 @@ export default function Profil() {
     { icon: 'sparkles', label: 'Revoir l’introduction', onClick: replayOnboarding },
     { icon: 'shield', label: 'Confidentialité', onClick: () => showToast('Bientôt disponible') },
     { icon: 'sliders', label: 'Préférences', onClick: () => showToast('Bientôt disponible') },
+    { icon: 'logout', label: 'Réinitialiser la démo', onClick: resetDemo },
   ]
 
   return (
