@@ -6,10 +6,16 @@ import { Badge, MatchRing } from '../components/primitives'
 import { SUGGESTIONS, MEMBERS, FILTERS, personFor } from '../data/network'
 
 export default function Reseau() {
-  const { openMember, sentSuggestions, sendSuggestion, contacted, contactMember } = useApp()
+  const {
+    openMember, sentSuggestions, sendSuggestion, contacted, contactMember,
+    connections, requests, acceptRequest, declineRequest,
+  } = useApp()
   const [netView, setNetView] = useState('suggestions')
   const [filter, setFilter] = useState('Tous')
   const [query, setQuery] = useState('')
+
+  const connectionNames = connections.map((c) => c.name)
+  const sentNames = Object.keys(contacted).filter((n) => contacted[n] && !connectionNames.includes(n))
 
   const list = MEMBERS.filter((m) => {
     const okFilter = filter === 'Tous' || m.category === filter
@@ -32,6 +38,7 @@ export default function Reseau() {
           {[
             { id: 'suggestions', label: 'Matchs' },
             { id: 'annuaire', label: 'Annuaire' },
+            { id: 'contacts', label: 'Contacts' },
           ].map((s) => (
             <button
               key={s.id}
@@ -46,7 +53,7 @@ export default function Reseau() {
         </div>
       </div>
 
-      {netView === 'suggestions' ? (
+      {netView === 'suggestions' && (
         <div className="flex-1 space-y-4 overflow-y-auto no-scrollbar px-5 pb-6 pt-4">
           <div className="flex items-start gap-3 rounded-2xl border border-brand-200 bg-brand-light/60 p-3.5">
             <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white text-brand-600 shadow-soft">
@@ -87,7 +94,7 @@ export default function Reseau() {
 
                 <div className="flex gap-2 p-4">
                   <button
-                    onClick={() => sendSuggestion(p.id)}
+                    onClick={() => sendSuggestion(p.id, p.name)}
                     className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${
                       sent ? 'bg-[#3F7559]' : 'bg-brand-500 shadow-brand hover:bg-brand-600'
                     }`}
@@ -107,7 +114,9 @@ export default function Reseau() {
 
           <p className="pt-1 text-center text-xs text-ink-400">De nouveaux matchs chaque lundi matin ☕</p>
         </div>
-      ) : (
+      )}
+
+      {netView === 'annuaire' && (
         <div className="flex flex-1 flex-col overflow-hidden">
           <div className="px-5 pt-3">
             <div className="flex items-center gap-2 rounded-2xl border border-ink-200 bg-white px-3.5 py-2.5 focus-within:ring-2 focus-within:ring-brand-200">
@@ -177,6 +186,71 @@ export default function Reseau() {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {netView === 'contacts' && (
+        <div className="flex-1 space-y-5 overflow-y-auto no-scrollbar px-5 pb-6 pt-4">
+          {requests.length > 0 && (
+            <section>
+              <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-ink-500">
+                Demandes reçues
+                <span className="grid h-4 min-w-4 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-bold text-white">{requests.length}</span>
+              </div>
+              <div className="space-y-2">
+                {requests.map((r) => (
+                  <article key={r.name} className="rounded-3xl border border-ink-100 bg-white p-3.5 shadow-soft">
+                    <div className="flex items-center gap-3">
+                      <Avatar name={r.name} size="md" onClick={() => openMember(r.name)} />
+                      <button onClick={() => openMember(r.name)} className="min-w-0 flex-1 text-left">
+                        <div className="truncate font-bold text-ink-900">{r.name}</div>
+                        <div className="truncate text-[12px] text-ink-500">{r.context}</div>
+                      </button>
+                    </div>
+                    <div className="mt-3 flex gap-2">
+                      <button onClick={() => acceptRequest(r.name)} className="flex-1 rounded-2xl bg-brand-500 py-2.5 text-sm font-bold text-white shadow-brand tap">Accepter</button>
+                      <button onClick={() => declineRequest(r.name)} className="rounded-2xl border border-ink-200 px-4 py-2.5 text-sm font-semibold text-ink-600 tap">Décliner</button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <section>
+            <div className="mb-2 text-xs font-bold uppercase tracking-wide text-ink-500">Connexions · {connections.length}</div>
+            <div className="overflow-hidden rounded-3xl border border-ink-100 bg-white shadow-soft">
+              {connections.map((c, i) => (
+                <button
+                  key={c.name}
+                  onClick={() => openMember(c.name)}
+                  className={`flex w-full items-center gap-3 px-3.5 py-3 text-left tap hover:bg-ink-50 ${i > 0 ? 'border-t border-ink-100' : ''}`}
+                >
+                  <Avatar name={c.name} size="md" />
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate font-bold text-ink-900">{c.name}</div>
+                    <div className="truncate text-[12px] text-ink-400">{c.context}</div>
+                  </div>
+                  <Icon name="chevronRight" className="h-4 w-4 text-ink-300" />
+                </button>
+              ))}
+            </div>
+          </section>
+
+          {sentNames.length > 0 && (
+            <section>
+              <div className="mb-2 text-xs font-bold uppercase tracking-wide text-ink-500">Demandes envoyées · {sentNames.length}</div>
+              <div className="space-y-2">
+                {sentNames.map((name) => (
+                  <div key={name} className="flex items-center gap-3 rounded-2xl border border-ink-100 bg-white p-2.5 shadow-soft">
+                    <Avatar name={name} size="sm" onClick={() => openMember(name)} />
+                    <button onClick={() => openMember(name)} className="min-w-0 flex-1 truncate text-left text-sm font-bold text-ink-900">{name}</button>
+                    <span className="shrink-0 rounded-full bg-ink-100 px-3 py-1 text-xs font-bold text-ink-500">En attente</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       )}
     </div>

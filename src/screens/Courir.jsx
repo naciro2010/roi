@@ -10,7 +10,7 @@ import { EVENTS, CHALLENGE, LEADERBOARD } from '../data/events'
 export default function Courir() {
   const {
     actKudos, toggleActKudos, openActivity, openMember, showToast,
-    eventKudos, toggleEventKudos, joined, toggleJoin,
+    eventKudos, toggleEventKudos, joined, toggleJoin, openEvent,
   } = useApp()
   const [view, setView] = useState('activites')
   const pct = Math.round((CHALLENGE.current / CHALLENGE.total) * 100)
@@ -117,7 +117,7 @@ export default function Courir() {
               const isJoined = joined[a.id]
               return (
                 <article key={a.id} className="overflow-hidden rounded-3xl border border-ink-100 bg-white shadow-soft">
-                  <div className="flex items-stretch">
+                  <button onClick={() => openEvent(a.id)} className="flex w-full items-stretch text-left tap">
                     <div className="flex w-16 shrink-0 flex-col items-center justify-center bg-ink-50 py-3 text-center">
                       <span className="text-[11px] font-bold uppercase text-brand-600">{a.day.slice(0, 3)}</span>
                       <span className="text-lg font-extrabold leading-none text-ink-900">{a.time.slice(0, 2)}</span>
@@ -137,7 +137,8 @@ export default function Courir() {
                         {a.tag && <span className="ml-1 font-bold text-brand-600">{a.tag}</span>}
                       </div>
                     </div>
-                  </div>
+                    <Icon name="chevronRight" className="mr-3 h-5 w-5 shrink-0 self-center text-ink-300" />
+                  </button>
 
                   <div className="flex items-center justify-between px-4 pb-3">
                     <AvatarStack names={a.attendees} total={a.participants} onMore={() => showToast(`${a.participants} inscrits`)} />

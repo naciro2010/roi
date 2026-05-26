@@ -22,7 +22,13 @@ export const EVENTS = [
     organizer: 'Sarah Khalil',
     participants: 14,
     kudos: 23,
-    attendees: ['Sarah Khalil', 'Claire Moreau', 'Marc Dubois'],
+    attendees: ['Sarah Khalil', 'Claire Moreau', 'Marc Dubois', 'Nadia Cherif', 'Léa Fontaine'],
+    description:
+      "Sortie longue tranquille le long de la Seine, en groupe. On part du pont de l'Alma vers l'est, allure conversation — parfait pour pitcher en courant. Café offert à l'arrivée ☕",
+    route: [
+      [48.8638, 2.3009], [48.8625, 2.3072], [48.8609, 2.3135], [48.8597, 2.3198],
+      [48.8588, 2.3262], [48.8575, 2.3325], [48.8566, 2.3389], [48.8552, 2.3451],
+    ],
   },
   {
     id: 'a2',
@@ -37,7 +43,13 @@ export const EVENTS = [
     participants: 21,
     kudos: 31,
     tag: '+ afterwork',
-    attendees: ['Claire Moreau', 'Inès Roy', 'Léa Fontaine'],
+    attendees: ['Claire Moreau', 'Inès Roy', 'Léa Fontaine', 'Karim Haddad', 'Sarah Khalil'],
+    description:
+      "Le rendez-vous networking de la semaine : 6 km easy le long du canal, puis afterwork au bord de l'eau. Chacun pitche sa boîte en 60 secondes pendant la course. Investisseurs présents.",
+    route: [
+      [48.8709, 2.3658], [48.8722, 2.3651], [48.8738, 2.3645], [48.8754, 2.3639],
+      [48.8770, 2.3633], [48.8786, 2.3628], [48.8802, 2.3622], [48.8818, 2.3617],
+    ],
   },
   {
     id: 'a3',
@@ -52,6 +64,13 @@ export const EVENTS = [
     participants: 9,
     kudos: 15,
     attendees: ['Yanis Benali', 'Hugo Bernard', 'Karim Haddad'],
+    description:
+      "Séance de fractionné pour les jambes affûtées : 8 x 400m autour du lac de Bercy avec récup active. Allure soutenue, ambiance club. Pour confirmés uniquement.",
+    route: [
+      [48.8352, 2.3792], [48.8341, 2.3818], [48.8338, 2.3851], [48.8349, 2.3879],
+      [48.8369, 2.3888], [48.8388, 2.3871], [48.8393, 2.3838], [48.8381, 2.3808],
+      [48.8362, 2.3796], [48.8345, 2.3814],
+    ],
   },
   {
     id: 'a4',
@@ -66,6 +85,13 @@ export const EVENTS = [
     participants: 7,
     kudos: 12,
     attendees: ['Marc Dubois', 'Nadia Cherif', 'Yanis Benali'],
+    description:
+      "Trail découverte au Bois de Vincennes : boucle du lac Daumesnil et montée du fort. Du dénivelé, des chemins, une vraie bouffée d'air loin du bitume. Rythme intermédiaire.",
+    route: [
+      [48.8422, 2.4352], [48.8398, 2.4388], [48.8375, 2.4421], [48.8351, 2.4456],
+      [48.8334, 2.4498], [48.8345, 2.4582], [48.8412, 2.4576], [48.8451, 2.4492],
+      [48.8435, 2.4398], [48.8422, 2.4356],
+    ],
   },
   {
     id: 'a5',
@@ -80,5 +106,11 @@ export const EVENTS = [
     participants: 5,
     kudos: 8,
     attendees: ['Sarah Khalil', 'Léa Fontaine', 'Nadia Cherif'],
+    description:
+      "Footing de récupération en douceur dans les Buttes-Chaumont. Petite boucle vallonnée pour relancer la semaine sans se cramer. Tous niveaux, on attend tout le monde.",
+    route: [
+      [48.8799, 2.3812], [48.8806, 2.3835], [48.8815, 2.3856], [48.8808, 2.3878],
+      [48.8794, 2.3885], [48.8782, 2.3869], [48.8779, 2.3845], [48.8788, 2.3823],
+    ],
   },
 ]
