@@ -7,6 +7,7 @@ import { NOTIFICATIONS } from './data/notifications'
 import { POSTS } from './data/feed'
 import { EVENTS } from './data/events'
 import { ACTIVITIES } from './data/activities'
+import { CONNECTIONS, REQUESTS } from './data/connections'
 
 import Icon from './components/Icon'
 import { Avatar } from './components/Avatar'
@@ -21,6 +22,7 @@ import Messages from './screens/Messages'
 import Profil from './screens/Profil'
 import MemberSheet from './screens/MemberSheet'
 import ActivitySheet from './screens/ActivitySheet'
+import EventSheet from './screens/EventSheet'
 
 export default function App() {
   const [tab, setTab] = useState('accueil')
@@ -29,6 +31,7 @@ export default function App() {
   // Overlays
   const [member, setMember] = useState(null)
   const [activityId, setActivityId] = useState(null)
+  const [eventId, setEventId] = useState(null)
   const [composerOpen, setComposerOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
   const [notifs, setNotifs] = useState(NOTIFICATIONS)
@@ -36,6 +39,8 @@ export default function App() {
   // Réseau
   const [sentSuggestions, setSentSuggestions] = useState({})
   const [contacted, setContacted] = useState({})
+  const [connections, setConnections] = useState(CONNECTIONS)
+  const [requests, setRequests] = useState(REQUESTS)
 
   // Courir — événements & activités
   const [eventKudos, setEventKudos] = useState(Object.fromEntries(EVENTS.map((a) => [a.id, { count: a.kudos, liked: false }])))
@@ -88,9 +93,21 @@ export default function App() {
     showToast('Demande envoyée ✓')
   }
 
-  function sendSuggestion(id) {
+  function sendSuggestion(id, name) {
     setSentSuggestions((s) => ({ ...s, [id]: true }))
+    if (name) setContacted((c) => ({ ...c, [name]: true }))
     showToast('Demande envoyée ✓')
+  }
+
+  function acceptRequest(name) {
+    setRequests((rs) => rs.filter((r) => r.name !== name))
+    setConnections((cs) => (cs.some((c) => c.name === name) ? cs : [{ name, context: 'Connexion acceptée' }, ...cs]))
+    showToast(`${name.split(' ')[0]} ajouté·e à ton réseau ✓`)
+  }
+
+  function declineRequest(name) {
+    setRequests((rs) => rs.filter((r) => r.name !== name))
+    showToast('Demande déclinée')
   }
 
   function toggleEventKudos(id) {
@@ -217,9 +234,11 @@ export default function App() {
     tab, goTo, showToast,
     openMember: setMember,
     openActivity: setActivityId,
+    openEvent: setEventId,
     openComposer: () => setComposerOpen(true),
     contacted, contactMember,
     sentSuggestions, sendSuggestion,
+    connections, requests, acceptRequest, declineRequest,
     eventKudos, toggleEventKudos, joined, toggleJoin,
     actKudos, toggleActKudos,
     posts, togglePostLike, addComment,
@@ -321,6 +340,7 @@ export default function App() {
 
           {member && <MemberSheet name={member} onClose={() => setMember(null)} />}
           {activityId && <ActivitySheet id={activityId} onClose={() => setActivityId(null)} />}
+          {eventId && <EventSheet id={eventId} onClose={() => setEventId(null)} />}
           <PostComposer open={composerOpen} onClose={() => setComposerOpen(false)} onPublish={publishPost} />
           <NotifDrawer />
 
