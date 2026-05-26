@@ -105,7 +105,7 @@ export default function GlobalSearch({ onClose }) {
         {activities.length > 0 && (
           <Group label="Activités">
             {activities.map((a) => (
-              <ResultRow key={a.id} icon="activity" tone="bg-[#E4EDE7] text-[#3C5A48]" title={a.title} subtitle={`${a.athlete} · ${a.distance.toFixed(1)} km`} onClick={() => go(() => openActivity(a.id))} />
+              <ResultRow key={a.id} icon="activity" tone="bg-[#EAEEEB] text-[#48584E]" title={a.title} subtitle={`${a.athlete} · ${a.distance.toFixed(1)} km`} onClick={() => go(() => openActivity(a.id))} />
             ))}
           </Group>
         )}
@@ -113,7 +113,7 @@ export default function GlobalSearch({ onClose }) {
         {events.length > 0 && (
           <Group label="Sorties">
             {events.map((e) => (
-              <ResultRow key={e.id} icon="calendar" tone="bg-[#E3E1F0] text-[#46406E]" title={e.title} subtitle={`${e.day} ${e.time} · ${e.place}`} onClick={() => go(() => openEvent(e.id))} />
+              <ResultRow key={e.id} icon="calendar" tone="bg-[#E9E8F0] text-[#4D4968]" title={e.title} subtitle={`${e.day} ${e.time} · ${e.place}`} onClick={() => go(() => openEvent(e.id))} />
             ))}
           </Group>
         )}

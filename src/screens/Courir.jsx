@@ -145,7 +145,7 @@ export default function Courir() {
                     <button
                       onClick={() => toggleEventKudos(a.id)}
                       className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold tap ${
-                        k.liked ? 'bg-[#F0E1E3] text-[#9A5560]' : 'bg-ink-100 text-ink-500'
+                        k.liked ? 'bg-[#EFE5E6] text-[#8C5560]' : 'bg-ink-100 text-ink-500'
                       }`}
                     >
                       <Icon name="heart" className="h-4 w-4" filled={k.liked} />
@@ -157,7 +157,7 @@ export default function Courir() {
                     <button
                       onClick={() => toggleJoin(a.id)}
                       className={`w-full rounded-2xl py-2.5 text-sm font-bold tap ${
-                        isJoined ? 'bg-[#3F7559] text-white' : 'bg-ink-900 text-white hover:bg-ink-800'
+                        isJoined ? 'bg-[#4E6B59] text-white' : 'bg-ink-900 text-white hover:bg-ink-800'
                       }`}
                     >
                       {isJoined ? 'Inscrit ✓' : 'Je participe'}

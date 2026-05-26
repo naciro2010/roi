@@ -49,7 +49,7 @@ export default function Messages() {
           <Avatar name={conv.name} size="sm" onClick={() => openMember(conv.name)} />
           <button onClick={() => openMember(conv.name)} className="min-w-0 text-left">
             <div className="truncate font-bold text-ink-900">{conv.name}</div>
-            <div className="truncate text-[11px] text-[#3F7559]">● En ligne</div>
+            <div className="truncate text-[11px] text-[#4E6B59]">● En ligne</div>
           </button>
         </div>
 
@@ -257,7 +257,7 @@ export default function Messages() {
                 <button
                   onClick={() => joinGroup(g)}
                   className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold tap ${
-                    joinedGroups[g.id] ? 'bg-[#E4EDE7] text-[#3C5A48]' : 'bg-ink-900 text-white'
+                    joinedGroups[g.id] ? 'bg-[#EAEEEB] text-[#48584E]' : 'bg-ink-900 text-white'
                   }`}
                 >
                   {joinedGroups[g.id] ? 'Rejoint ✓' : 'Rejoindre'}

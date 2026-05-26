@@ -52,12 +52,12 @@ export default function MemberSheet({ name, onClose }) {
 
           {p.offering?.length > 0 && (
             <div className="mt-4">
-              <div className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-[#3C5A48]">
+              <div className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-[#48584E]">
                 <Icon name="link" className="h-3.5 w-3.5" /> Propose
               </div>
               <div className="flex flex-wrap gap-2">
                 {p.offering.map((x) => (
-                  <span key={x} className="rounded-full bg-[#E4EDE7] px-3 py-1.5 text-sm font-semibold text-[#3C5A48]">{x}</span>
+                  <span key={x} className="rounded-full bg-[#EAEEEB] px-3 py-1.5 text-sm font-semibold text-[#48584E]">{x}</span>
                 ))}
               </div>
             </div>
@@ -84,7 +84,7 @@ export default function MemberSheet({ name, onClose }) {
         <div className="glass flex shrink-0 items-center gap-2 border-t border-ink-100 px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             onClick={() => contactMember(name)}
-            className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${isContacted ? 'bg-[#3F7559]' : 'bg-brand-500 shadow-brand'}`}
+            className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${isContacted ? 'bg-[#4E6B59]' : 'bg-brand-500 shadow-brand'}`}
           >
             {isContacted ? 'Demande envoyée ✓' : 'Entrer en contact'}
           </button>
