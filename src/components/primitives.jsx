@@ -1,22 +1,22 @@
 import Icon from './Icon'
 
-// Tons d'accent volontairement désaturés (proches du neutre) pour un rendu sobre.
+// Tons d'accent : tuiles sombres + texte lumineux pour un rendu premium sombre.
 export const PILL_TONES = {
-  brand: 'bg-brand-50 text-brand-700',
-  emerald: 'bg-success-light text-success-dark',
-  indigo: 'bg-[#E9E8F0] text-[#4D4968]',
-  amber: 'bg-[#EFEBE1] text-[#5F553C]',
-  rose: 'bg-[#EEE6E7] text-[#6B5156]',
-  ink: 'bg-ink-100 text-ink-600',
+  brand: 'bg-brand-50 text-brand-300',
+  emerald: 'bg-success-light text-success-300',
+  indigo: 'bg-[#1E2040] text-[#B9BCEA]',
+  amber: 'bg-[#2A2412] text-gold-300',
+  rose: 'bg-[#2A1A1F] text-[#E6A9B3]',
+  ink: 'bg-surface-2 text-fg-soft',
 }
 
 export const DOT_TONES = {
   brand: 'bg-brand-500',
-  emerald: 'bg-[#5A7062]',
-  indigo: 'bg-[#615C8A]',
-  amber: 'bg-[#8C784D]',
-  rose: 'bg-[#8C656B]',
-  ink: 'bg-ink-400',
+  emerald: 'bg-success-300',
+  indigo: 'bg-[#8E92E0]',
+  amber: 'bg-gold',
+  rose: 'bg-[#D38794]',
+  ink: 'bg-fg-faint',
 }
 
 export function Badge({ tone = 'brand', dot = true, children }) {
@@ -28,7 +28,7 @@ export function Badge({ tone = 'brand', dot = true, children }) {
   )
 }
 
-export function ProgressBar({ value, total, className = 'bg-white/30', barClassName = 'bg-white' }) {
+export function ProgressBar({ value, total, className = 'bg-white/15', barClassName = 'bg-brand-500' }) {
   const pct = Math.min(100, Math.round((value / total) * 100))
   return (
     <div className={`h-2 w-full overflow-hidden rounded-full ${className}`}>
@@ -66,8 +66,8 @@ export function ProgressRing({ value, size = 76, stroke = 8, track = 'rgba(255,2
 
 export function MatchRing({ value, size = 44 }) {
   return (
-    <ProgressRing value={value} size={size} stroke={4} track="rgba(79,96,160,0.14)" color="#4F60A0">
-      <div className="text-[11px] font-extrabold text-brand-700">{value}</div>
+    <ProgressRing value={value} size={size} stroke={4} track="rgba(130,141,236,0.16)" color="#828DEC">
+      <div className="text-[11px] font-extrabold text-brand-300">{value}</div>
     </ProgressRing>
   )
 }
@@ -78,20 +78,10 @@ export function Logo({ light = false }) {
       <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-brand">
         <Icon name="zap" className="h-4 w-4" filled />
       </span>
-      <span className={`font-display text-[22px] font-extrabold tracking-tight ${light ? 'text-white' : 'text-ink-900'}`}>
+      <span className={`font-display text-[22px] font-extrabold tracking-tight ${light ? 'text-white' : 'text-fg'}`}>
         R<span className="text-brand-500">O</span>I
       </span>
     </div>
-  )
-}
-
-// Petit badge « IA » réutilisable (met en valeur les fonctionnalités IA).
-export function AiPill({ className = '', label = 'IA' }) {
-  return (
-    <span className={`inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-brand-500 to-[#7E6FB0] px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-white ${className}`}>
-      <Icon name="sparkles" className="h-2.5 w-2.5" filled />
-      {label}
-    </span>
   )
 }
 
@@ -103,8 +93,8 @@ export function PlanBadge({ plan, className = '' }) {
     <span
       className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide ring-1 ${
         isBusiness
-          ? 'bg-gold-light text-gold-dark ring-gold/40'
-          : 'bg-brand-50 text-brand-700 ring-brand-200'
+          ? 'bg-gold/15 text-gold-300 ring-gold/30'
+          : 'bg-brand-50 text-brand-300 ring-brand-200'
       } ${className}`}
     >
       <Icon name="crown" className="h-2.5 w-2.5" filled />
@@ -116,7 +106,7 @@ export function PlanBadge({ plan, className = '' }) {
 // Puce « verrouillé » pour signaler une fonctionnalité premium.
 export function LockChip({ label = 'Pro', className = '' }) {
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full bg-ink-900/85 px-2 py-0.5 text-[10px] font-bold text-white ${className}`}>
+    <span className={`inline-flex items-center gap-1 rounded-full bg-surface-3/90 px-2 py-0.5 text-[10px] font-bold text-white ${className}`}>
       <Icon name="lock" className="h-2.5 w-2.5" />
       {label}
     </span>
@@ -126,7 +116,7 @@ export function LockChip({ label = 'Pro', className = '' }) {
 export function SectionTitle({ children, action, onAction }) {
   return (
     <div className="mb-2.5 flex items-end justify-between">
-      <h2 className="text-base font-bold text-ink-900">{children}</h2>
+      <h2 className="text-base font-bold text-fg">{children}</h2>
       {action && (
         <button onClick={onAction} className="flex items-center gap-0.5 text-xs font-semibold text-brand-600 tap">
           {action}

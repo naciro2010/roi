@@ -1,6 +1,6 @@
 /* Abonnements ROI (démo — aucun paiement réel).
-   Le plan gratuit débloque l'essentiel ; Pro et Business débloquent l'IA
-   illimitée, les matchs avancés, les invitations d'équipe, etc. */
+   Le plan gratuit débloque l'essentiel ; Pro et Business débloquent les matchs
+   illimités, l'agenda & RDV, les analytics ROI, les sièges d'équipe, etc. */
 
 export const PLANS = [
   {
@@ -12,9 +12,9 @@ export const PLANS = [
     accent: 'ink',
     cta: 'Ton plan actuel',
     features: [
-      '3 matchs intelligents / semaine',
-      '3 questions au Copilot IA / semaine',
+      '3 matchs / semaine',
       'Fil, sorties & messages',
+      'Suivi des kilomètres & défis',
       'Profil & connexions',
     ],
   },
@@ -29,11 +29,11 @@ export const PLANS = [
     badge: 'Le plus choisi',
     cta: 'Passer à Pro',
     features: [
-      'Matchs intelligents illimités',
-      'Copilot IA illimité',
-      'Rédaction de messages par l’IA',
+      'Matchs illimités',
       'Vois qui veut te rencontrer',
+      'Agenda & RDV illimités',
       'Filtres & recherche avancés',
+      'Analytics ROI réseau',
       'Boost de profil chaque mois',
       'Badge Pro sur ton profil',
     ],
@@ -61,17 +61,15 @@ export const PLANS = [
 /* Fonctionnalités gated → liste des plans qui les débloquent. */
 export const FEATURES = {
   unlimitedMatches: ['pro', 'business'],
-  copilotUnlimited: ['pro', 'business'],
-  aiCompose: ['pro', 'business'],
   whoWantsToMeet: ['pro', 'business'],
   advancedFilters: ['pro', 'business'],
   profileBoost: ['pro', 'business'],
+  agenda: ['pro', 'business'],
+  analytics: ['pro', 'business'],
   team: ['business'],
-  analytics: ['business'],
 }
 
 /* Limites du plan gratuit (démo). */
-export const FREE_AI_LIMIT = 3
 export const FREE_MATCH_LIMIT = 3
 
 export function planById(id) {

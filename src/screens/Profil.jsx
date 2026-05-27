@@ -12,7 +12,7 @@ export default function Profil() {
   const {
     showToast, goTo, openActivity, openEditProfile, openRoiInfo, replayOnboarding,
     openIntegrations, integrations, profile, resetDemo,
-    plan, planMeta, openPlans, openInvite, openCopilot, referralJoined,
+    plan, planMeta, openPlans, openInvite, referralJoined,
   } = useApp()
   const u = CURRENT_USER
   const myActivities = ACTIVITIES.filter((a) => a.athlete === u.name)
@@ -51,36 +51,36 @@ export default function Profil() {
 
   return (
     <div className="animate-screenIn overflow-y-auto no-scrollbar pb-6">
-      <div className="relative h-28 overflow-hidden bg-ink-950">
+      <div className="relative h-28 overflow-hidden surface-hero">
         <div className="absolute inset-0 bg-hero-glow" />
       </div>
 
       <div className="px-5">
         <div className="-mt-12 flex flex-col items-center text-center">
-          <div className="rounded-full p-1 ring-4 ring-white">
+          <div className="rounded-full p-1 ring-4 ring-canvas">
             <Avatar name={u.name} size="2xl" />
           </div>
           <div className="mt-3 flex items-center gap-2">
-            <h1 className="text-xl font-extrabold text-ink-900">{u.name}</h1>
+            <h1 className="text-xl font-extrabold text-fg">{u.name}</h1>
             <PlanBadge plan={plan} />
           </div>
-          <p className="text-sm text-ink-500">{profile.title}</p>
-          <div className="mt-1 flex items-center gap-1 text-xs text-ink-500">
+          <p className="text-sm text-fg-muted">{profile.title}</p>
+          <div className="mt-1 flex items-center gap-1 text-xs text-fg-muted">
             <Icon name="mapPin" className="h-3.5 w-3.5" /> {u.location}
-            <span className="text-ink-300">·</span>
+            <span className="text-fg-faint">·</span>
             {u.joined}
           </div>
           <div className="mt-3 flex items-center gap-2">
             <button
               onClick={openEditProfile}
-              className="flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-4 py-2 text-sm font-bold text-ink-700 shadow-soft tap"
+              className="flex items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 py-2 text-sm font-bold text-fg-soft shadow-soft tap"
             >
               <Icon name="pencil" className="h-4 w-4" /> Éditer le profil
             </button>
             <button
               onClick={shareProfile}
               aria-label="Partager mon profil"
-              className="flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-4 py-2 text-sm font-bold text-ink-700 shadow-soft tap"
+              className="flex items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 py-2 text-sm font-bold text-fg-soft shadow-soft tap"
             >
               <Icon name="share" className="h-4 w-4" /> Partager
             </button>
@@ -90,16 +90,16 @@ export default function Profil() {
         <div className="mt-4 space-y-4">
           {/* À propos */}
           {profile.bio && (
-            <section className="rounded-3xl border border-ink-100 bg-white p-4 shadow-soft">
-              <h2 className="text-base font-bold text-ink-900">À propos</h2>
-              <p className="mt-2 text-sm leading-relaxed text-ink-700">{profile.bio}</p>
+            <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
+              <h2 className="text-base font-bold text-fg">À propos</h2>
+              <p className="mt-2 text-sm leading-relaxed text-fg-soft">{profile.bio}</p>
             </section>
           )}
 
           {/* ROI */}
           <section>
             <SectionTitle action="Comment ça marche ?" onAction={openRoiInfo}>Mon ROI réseau</SectionTitle>
-            <button onClick={openRoiInfo} className="relative w-full overflow-hidden rounded-3xl bg-ink-950 p-4 text-left shadow-card tap">
+            <button onClick={openRoiInfo} className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-left shadow-card tap">
               <div className="absolute inset-0 bg-hero-glow" />
               <div className="relative flex items-center gap-4">
                 <ProgressRing value={u.roi.score} size={88} stroke={9}>
@@ -128,43 +128,28 @@ export default function Profil() {
             </button>
           </section>
 
-          {/* Copilot IA */}
-          <button
-            onClick={openCopilot}
-            className="relative flex w-full items-center gap-3 overflow-hidden rounded-3xl border border-ink-100 bg-white p-4 text-left shadow-soft tap"
-          >
-            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-[#7E6FB0] text-white">
-              <Icon name="sparkles" className="h-5 w-5" filled />
-            </span>
-            <div className="min-w-0 flex-1">
-              <div className="text-sm font-bold text-ink-900">Copilot IA</div>
-              <p className="text-[12px] leading-snug text-ink-500">Qui rencontrer, quoi dire, quoi poster — propulsé par l’IA.</p>
-            </div>
-            <Icon name="chevronRight" className="h-5 w-5 text-ink-300" />
-          </button>
-
           {/* Abonnement */}
           {isPaid ? (
-            <section className="relative overflow-hidden rounded-3xl border-2 border-gold/40 bg-white p-4 shadow-card">
+            <section className="relative overflow-hidden rounded-3xl border-2 border-gold/40 bg-surface p-4 shadow-card">
               <div className="absolute inset-0 bg-gold-sheen" />
               <div className="relative flex items-center gap-3">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gold-light text-gold-dark">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gold/15 text-gold-300 ring-1 ring-gold/25">
                   <Icon name="crown" className="h-6 w-6" filled />
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-ink-900">Abonnement {planMeta.name}</span>
+                    <span className="text-sm font-bold text-fg">Abonnement {planMeta.name}</span>
                     <PlanBadge plan={plan} />
                   </div>
-                  <p className="text-[12px] text-ink-500">Tu profites de toutes les fonctionnalités.</p>
+                  <p className="text-[12px] text-fg-muted">Tu profites de toutes les fonctionnalités.</p>
                 </div>
-                <button onClick={openPlans} className="shrink-0 rounded-full bg-ink-100 px-3 py-1.5 text-xs font-bold text-ink-700 tap">Gérer</button>
+                <button onClick={openPlans} className="shrink-0 rounded-full bg-surface-2 px-3 py-1.5 text-xs font-bold text-fg-soft tap">Gérer</button>
               </div>
             </section>
           ) : (
             <button
               onClick={openPlans}
-              className="relative w-full overflow-hidden rounded-3xl bg-ink-950 p-4 text-left text-white shadow-float tap"
+              className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-left text-white shadow-float tap"
             >
               <div className="absolute inset-0 bg-aurora" />
               <div className="relative">
@@ -174,9 +159,9 @@ export default function Profil() {
                   <span className="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-bold text-white/70">dès 9€/mois</span>
                 </div>
                 <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/65">
-                  Copilot IA illimité, matchs illimités, « qui veut me rencontrer » et intros prioritaires.
+                  Matchs illimités, « qui veut me rencontrer », agenda & RDV et intros prioritaires.
                 </p>
-                <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-bold text-ink-900">
+                <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-fg px-4 py-2 text-sm font-bold text-canvas">
                   Voir les offres <Icon name="arrowRight" className="h-4 w-4" />
                 </span>
               </div>
@@ -186,37 +171,37 @@ export default function Profil() {
           {/* Parrainage */}
           <button
             onClick={openInvite}
-            className="flex w-full items-center gap-3 rounded-3xl border border-ink-100 bg-white p-4 text-left shadow-soft tap"
+            className="flex w-full items-center gap-3 rounded-3xl border border-line bg-surface p-4 text-left shadow-soft tap"
           >
-            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#EFEBE1] text-[#5F553C]">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#2A2412] text-gold-300">
               <Icon name="gift" className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
-              <div className="text-sm font-bold text-ink-900">Invite & gagne 1 mois Pro</div>
+              <div className="text-sm font-bold text-fg">Invite & gagne 1 mois Pro</div>
               <div className="mt-1.5 flex items-center gap-2">
-                <ProgressBar value={referralJoined} total={REFERRAL.goal} className="bg-ink-100" barClassName="bg-gold" />
-                <span className="shrink-0 text-[11px] font-bold tabular-nums text-ink-500">{referralJoined}/{REFERRAL.goal}</span>
+                <ProgressBar value={referralJoined} total={REFERRAL.goal} className="bg-surface-2" barClassName="bg-gold" />
+                <span className="shrink-0 text-[11px] font-bold tabular-nums text-fg-muted">{referralJoined}/{REFERRAL.goal}</span>
               </div>
             </div>
-            <Icon name="chevronRight" className="h-5 w-5 text-ink-300" />
+            <Icon name="chevronRight" className="h-5 w-5 text-fg-faint" />
           </button>
 
           {/* Ce que je cherche */}
           <section className="rounded-3xl border-2 border-brand-200 bg-brand-light/50 p-4">
             <div className="flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-base font-bold text-ink-900">
+              <h2 className="flex items-center gap-2 text-base font-bold text-fg">
                 <Icon name="target" className="h-5 w-5 text-brand-600" /> Ce que je cherche
               </h2>
               <button
                 onClick={openEditProfile}
-                className="flex items-center gap-1 rounded-full bg-white px-3 py-1 text-xs font-bold text-brand-700 shadow-soft tap"
+                className="flex items-center gap-1 rounded-full bg-surface px-3 py-1 text-xs font-bold text-brand-700 shadow-soft tap"
               >
                 <Icon name="pencil" className="h-3.5 w-3.5" /> Modifier
               </button>
             </div>
             <ul className="mt-3 space-y-2">
               {profile.needs.map((n) => (
-                <li key={n} className="flex items-start gap-2.5 rounded-2xl bg-white px-3.5 py-2.5 text-sm font-semibold text-ink-800 shadow-soft">
+                <li key={n} className="flex items-start gap-2.5 rounded-2xl bg-surface px-3.5 py-2.5 text-sm font-semibold text-fg shadow-soft">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-500" />
                   {n}
                 </li>
@@ -225,8 +210,8 @@ export default function Profil() {
           </section>
 
           {/* Ce que je propose */}
-          <section className="rounded-3xl border border-ink-100 bg-white p-4 shadow-soft">
-            <h2 className="flex items-center gap-2 text-base font-bold text-ink-900">
+          <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
+            <h2 className="flex items-center gap-2 text-base font-bold text-fg">
               <Icon name="link" className="h-5 w-5 text-success" /> Ce que je propose
             </h2>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -241,20 +226,20 @@ export default function Profil() {
           {/* Stats running */}
           <section className="grid grid-cols-3 gap-2.5">
             {stats.map((s) => (
-              <div key={s.label} className="rounded-2xl border border-ink-100 bg-white p-3 text-center shadow-soft">
-                <div className="text-xl font-extrabold text-ink-900 tabular-nums">{s.value}</div>
-                <div className="text-[11px] text-ink-500">{s.label}</div>
+              <div key={s.label} className="rounded-2xl border border-line bg-surface p-3 text-center shadow-soft">
+                <div className="text-xl font-extrabold text-fg tabular-nums">{s.value}</div>
+                <div className="text-[11px] text-fg-muted">{s.label}</div>
               </div>
             ))}
           </section>
 
           {/* Connexions & appareils */}
-          <section className="rounded-3xl border border-ink-100 bg-white p-4 shadow-soft">
+          <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
             <div className="flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-base font-bold text-ink-900">
+              <h2 className="flex items-center gap-2 text-base font-bold text-fg">
                 <Icon name="link" className="h-5 w-5 text-brand-600" /> Connexions & appareils
               </h2>
-              <button onClick={openIntegrations} className="flex items-center gap-1 rounded-full bg-ink-100 px-3 py-1 text-xs font-bold text-ink-700 tap">
+              <button onClick={openIntegrations} className="flex items-center gap-1 rounded-full bg-surface-2 px-3 py-1 text-xs font-bold text-fg-soft tap">
                 Gérer
               </button>
             </div>
@@ -267,7 +252,7 @@ export default function Profil() {
                       <ServiceLogo service={s} />
                     </span>
                     {on && (
-                      <span className="absolute -bottom-0.5 -right-0.5 grid h-4 w-4 place-items-center rounded-full bg-success text-white ring-2 ring-white">
+                      <span className="absolute -bottom-0.5 -right-0.5 grid h-4 w-4 place-items-center rounded-full bg-success text-white ring-2 ring-canvas">
                         <Icon name="check" className="h-2.5 w-2.5" />
                       </span>
                     )}
@@ -275,7 +260,7 @@ export default function Profil() {
                 )
               })}
             </div>
-            <p className="mt-2.5 text-xs text-ink-400">
+            <p className="mt-2.5 text-xs text-fg-faint">
               {connectedCount > 0
                 ? `${connectedCount} connecté${connectedCount > 1 ? 's' : ''} · Strava, LinkedIn, ta montre…`
                 : 'Connecte Strava, LinkedIn et ta montre pour tout synchroniser.'}
@@ -286,21 +271,21 @@ export default function Profil() {
           {myActivities.length > 0 && (
             <section>
               <SectionTitle action="Tout voir" onAction={() => goTo('courir')}>Mes activités</SectionTitle>
-              <div className="overflow-hidden rounded-3xl border border-ink-100 bg-white shadow-soft">
+              <div className="overflow-hidden rounded-3xl border border-line bg-surface shadow-soft">
                 {myActivities.map((a, i) => (
                   <button
                     key={a.id}
                     onClick={() => openActivity(a.id)}
-                    className={`flex w-full items-center gap-3 px-3.5 py-3 text-left tap hover:bg-ink-50 ${i > 0 ? 'border-t border-ink-100' : ''}`}
+                    className={`flex w-full items-center gap-3 px-3.5 py-3 text-left tap hover:bg-white/[0.04] ${i > 0 ? 'border-t border-line' : ''}`}
                   >
                     <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600">
                       <Icon name="activity" className="h-4 w-4" />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-bold text-ink-900">{a.title}</div>
-                      <div className="text-[12px] text-ink-500 tabular-nums">{a.date} · {a.distance.toFixed(1)} km</div>
+                      <div className="truncate text-sm font-bold text-fg">{a.title}</div>
+                      <div className="text-[12px] text-fg-muted tabular-nums">{a.date} · {a.distance.toFixed(1)} km</div>
                     </div>
-                    <Icon name="chevronRight" className="h-4 w-4 text-ink-300" />
+                    <Icon name="chevronRight" className="h-4 w-4 text-fg-faint" />
                   </button>
                 ))}
               </div>
@@ -308,11 +293,11 @@ export default function Profil() {
           )}
 
           {/* Centres d'intérêt */}
-          <section className="rounded-3xl border border-ink-100 bg-white p-4 shadow-soft">
-            <h2 className="text-base font-bold text-ink-900">Centres d’intérêt</h2>
+          <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
+            <h2 className="text-base font-bold text-fg">Centres d’intérêt</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {profile.interests.map((i) => (
-                <span key={i} className="rounded-full bg-ink-100 px-3 py-1.5 text-sm font-semibold text-ink-600">
+                <span key={i} className="rounded-full bg-surface-2 px-3 py-1.5 text-sm font-semibold text-fg-soft">
                   {i}
                 </span>
               ))}
@@ -320,33 +305,33 @@ export default function Profil() {
           </section>
 
           {/* Communauté */}
-          <section className="flex items-center gap-3 rounded-3xl border border-ink-100 bg-white p-4 shadow-soft">
+          <section className="flex items-center gap-3 rounded-3xl border border-line bg-surface p-4 shadow-soft">
             <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-brand-light text-brand-600">
               <Icon name="users" className="h-6 w-6" />
             </div>
             <div>
-              <div className="text-xs text-ink-400">Membre de</div>
-              <div className="font-bold text-ink-900">{u.community}</div>
+              <div className="text-xs text-fg-faint">Membre de</div>
+              <div className="font-bold text-fg">{u.community}</div>
             </div>
           </section>
 
           {/* Réglages */}
-          <section className="overflow-hidden rounded-3xl border border-ink-100 bg-white shadow-soft">
+          <section className="overflow-hidden rounded-3xl border border-line bg-surface shadow-soft">
             {settings.map((s, i) => (
               <button
                 key={s.label}
                 onClick={s.onClick}
-                className={`flex w-full items-center gap-3 px-4 py-3.5 text-left tap hover:bg-ink-50 ${i > 0 ? 'border-t border-ink-100' : ''}`}
+                className={`flex w-full items-center gap-3 px-4 py-3.5 text-left tap hover:bg-white/[0.04] ${i > 0 ? 'border-t border-line' : ''}`}
               >
-                <Icon name={s.icon} className="h-5 w-5 text-ink-400" />
-                <span className="flex-1 text-sm font-semibold text-ink-800">{s.label}</span>
-                {s.hint && <span className="text-xs font-bold text-ink-400">{s.hint}</span>}
-                <Icon name="chevronRight" className="h-4 w-4 text-ink-300" />
+                <Icon name={s.icon} className="h-5 w-5 text-fg-faint" />
+                <span className="flex-1 text-sm font-semibold text-fg">{s.label}</span>
+                {s.hint && <span className="text-xs font-bold text-fg-faint">{s.hint}</span>}
+                <Icon name="chevronRight" className="h-4 w-4 text-fg-faint" />
               </button>
             ))}
           </section>
 
-          <button onClick={() => showToast('À bientôt 👋')} className="flex w-full items-center justify-center gap-2 py-2 text-sm font-bold text-ink-400 tap">
+          <button onClick={() => showToast('À bientôt 👋')} className="flex w-full items-center justify-center gap-2 py-2 text-sm font-bold text-fg-faint tap">
             <Icon name="logout" className="h-4 w-4" /> Se déconnecter
           </button>
         </div>

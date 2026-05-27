@@ -24,13 +24,13 @@ export default function PlansSheet({ onClose }) {
 
   return (
     <div className="absolute inset-0 z-40">
-      <div className="absolute inset-0 animate-fadeIn bg-ink-950/60" onClick={onClose} />
+      <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
       <div
         style={drag.style}
-        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-ink-50 shadow-float"
+        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-surface-soft shadow-float"
       >
         {/* En-tête premium sombre */}
-        <div className="relative shrink-0 overflow-hidden bg-ink-950 px-5 pb-5 pt-3 text-white">
+        <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-5 pt-3 text-white">
           <div className="absolute inset-0 bg-aurora" />
           <div {...drag.handleProps} className="relative mx-auto mb-3 h-1 w-10 rounded-full bg-white/30" aria-hidden="true" />
           <button
@@ -46,23 +46,23 @@ export default function PlansSheet({ onClose }) {
             </span>
             <h2 className="mt-3 text-2xl font-extrabold leading-tight">Débloque tout ton réseau</h2>
             <p className="mt-1 max-w-[300px] text-[13px] leading-relaxed text-white/65">
-              Plus de matchs, un Copilot IA illimité et des intros prioritaires. Annule quand tu veux.
+              Matchs illimités, agenda & RDV, intros prioritaires et analytics ROI. Annule quand tu veux.
             </p>
 
             {/* Bascule mensuel / annuel */}
             <div className="mt-4 inline-flex items-center gap-1 rounded-full bg-white/10 p-1">
               <button
                 onClick={() => setAnnual(false)}
-                className={`rounded-full px-3.5 py-1.5 text-[13px] font-bold tap ${!annual ? 'bg-white text-ink-900' : 'text-white/70'}`}
+                className={`rounded-full px-3.5 py-1.5 text-[13px] font-bold tap ${!annual ? 'bg-fg text-canvas' : 'text-white/70'}`}
               >
                 Mensuel
               </button>
               <button
                 onClick={() => setAnnual(true)}
-                className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-bold tap ${annual ? 'bg-white text-ink-900' : 'text-white/70'}`}
+                className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-bold tap ${annual ? 'bg-fg text-canvas' : 'text-white/70'}`}
               >
                 Annuel
-                <span className="rounded-full bg-gold/90 px-1.5 py-0.5 text-[10px] font-extrabold text-ink-950">−25%</span>
+                <span className="rounded-full bg-gold/90 px-1.5 py-0.5 text-[10px] font-extrabold text-canvas">−25%</span>
               </button>
             </div>
           </div>
@@ -79,10 +79,10 @@ export default function PlansSheet({ onClose }) {
                 key={p.id}
                 className={`relative overflow-hidden rounded-3xl p-4 ${
                   highlight
-                    ? 'bg-ink-950 text-white shadow-float'
+                    ? 'surface-hero text-white shadow-float'
                     : business
-                      ? 'border-2 border-gold/40 bg-white text-ink-900 shadow-card'
-                      : 'border border-ink-100 bg-white text-ink-900 shadow-soft'
+                      ? 'border-2 border-gold/40 bg-surface text-fg shadow-card'
+                      : 'border border-line bg-surface text-fg shadow-soft'
                 }`}
               >
                 {highlight && <div className="absolute inset-0 bg-aurora" />}
@@ -99,10 +99,10 @@ export default function PlansSheet({ onClose }) {
                         )}
                         {business && <Icon name="crown" className="h-4 w-4 text-gold" filled />}
                       </div>
-                      <p className={`mt-0.5 text-[13px] ${highlight ? 'text-white/60' : 'text-ink-500'}`}>{p.tagline}</p>
+                      <p className={`mt-0.5 text-[13px] ${highlight ? 'text-white/60' : 'text-fg-muted'}`}>{p.tagline}</p>
                     </div>
                     {current && (
-                      <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${highlight ? 'bg-white/15 text-white' : 'bg-ink-100 text-ink-600'}`}>
+                      <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${highlight ? 'bg-white/15 text-white' : 'bg-surface-2 text-fg-soft'}`}>
                         Actuel
                       </span>
                     )}
@@ -111,7 +111,7 @@ export default function PlansSheet({ onClose }) {
                   <div className="mt-3">
                     <PriceBlock plan={p} annual={annual} />
                     {annual && p.priceMonthly > 0 && (
-                      <p className={`mt-0.5 text-[11px] ${highlight ? 'text-white/45' : 'text-ink-400'}`}>
+                      <p className={`mt-0.5 text-[11px] ${highlight ? 'text-white/45' : 'text-fg-faint'}`}>
                         Facturé {p.priceAnnual * 12}€ / an{p.perSeat ? ' / siège' : ''}
                       </p>
                     )}
@@ -122,9 +122,9 @@ export default function PlansSheet({ onClose }) {
                       <li key={f} className="flex items-start gap-2 text-[13px]">
                         <Icon
                           name="check"
-                          className={`mt-0.5 h-4 w-4 shrink-0 ${highlight ? 'text-gold-300' : business ? 'text-gold-dark' : 'text-success'}`}
+                          className={`mt-0.5 h-4 w-4 shrink-0 ${highlight ? 'text-gold-300' : business ? 'text-gold-300' : 'text-success-300'}`}
                         />
-                        <span className={highlight ? 'text-white/85' : 'text-ink-700'}>{f}</span>
+                        <span className={highlight ? 'text-white/85' : 'text-fg-soft'}>{f}</span>
                       </li>
                     ))}
                   </ul>
@@ -136,9 +136,9 @@ export default function PlansSheet({ onClose }) {
                       current
                         ? highlight
                           ? 'bg-white/15 text-white'
-                          : 'bg-ink-100 text-ink-500'
+                          : 'bg-surface-2 text-fg-muted'
                         : highlight
-                          ? 'bg-white text-ink-900'
+                          ? 'bg-fg text-canvas'
                           : business
                             ? 'bg-gradient-to-r from-gold-dark to-gold text-white shadow-brand'
                             : 'bg-brand-500 text-white shadow-brand'
@@ -151,7 +151,7 @@ export default function PlansSheet({ onClose }) {
             )
           })}
 
-          <p className="flex items-center justify-center gap-1.5 px-4 pt-1 text-center text-[11px] text-ink-400">
+          <p className="flex items-center justify-center gap-1.5 px-4 pt-1 text-center text-[11px] text-fg-faint">
             <Icon name="shield" className="h-3.5 w-3.5" /> Paiement sécurisé · sans engagement · annulable à tout moment
           </p>
         </div>

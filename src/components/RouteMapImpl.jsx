@@ -25,7 +25,7 @@ export default function RouteMapImpl({ route, interactive = false, className = '
     })
     mapRef.current = map
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       attribution: '© OpenStreetMap · © CARTO',
       subdomains: 'abcd',
       maxZoom: 19,
@@ -33,14 +33,14 @@ export default function RouteMapImpl({ route, interactive = false, className = '
 
     const latlngs = route.map((p) => L.latLng(p[0], p[1]))
 
-    // Tracé : halo blanc puis ligne brand pour le contraste.
-    L.polyline(latlngs, { color: '#ffffff', weight: 7, opacity: 0.9, lineJoin: 'round' }).addTo(map)
-    L.polyline(latlngs, { color: '#4F60A0', weight: 4, opacity: 1, lineJoin: 'round' }).addTo(map)
+    // Tracé : halo sombre puis ligne accent lumineuse pour le contraste.
+    L.polyline(latlngs, { color: '#0A0D14', weight: 7, opacity: 0.55, lineJoin: 'round' }).addTo(map)
+    L.polyline(latlngs, { color: '#828DEC', weight: 4, opacity: 1, lineJoin: 'round' }).addTo(map)
 
     const start = latlngs[0]
     const end = latlngs[latlngs.length - 1]
-    L.circleMarker(start, { radius: 5, color: '#fff', weight: 2, fillColor: '#4E6B59', fillOpacity: 1 }).addTo(map)
-    L.circleMarker(end, { radius: 5, color: '#fff', weight: 2, fillColor: '#4F60A0', fillOpacity: 1 }).addTo(map)
+    L.circleMarker(start, { radius: 5, color: '#0A0D14', weight: 2, fillColor: '#86E0AB', fillOpacity: 1 }).addTo(map)
+    L.circleMarker(end, { radius: 5, color: '#0A0D14', weight: 2, fillColor: '#828DEC', fillOpacity: 1 }).addTo(map)
 
     map.fitBounds(L.latLngBounds(latlngs), { padding: [22, 22] })
 

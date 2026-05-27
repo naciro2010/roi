@@ -3,34 +3,31 @@ import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
 import { ProgressRing } from '../components/primitives'
-import { AiPill } from '../components/primitives'
 import PostCard from '../components/PostCard'
 import { CURRENT_USER } from '../data/user'
 import { activityById } from '../data/activities'
-import { COPILOT_INSIGHTS } from '../data/copilot'
 
 function PostSkeleton() {
   return (
-    <div className="overflow-hidden rounded-3xl border border-ink-100 bg-white shadow-card">
+    <div className="overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
       <div className="flex items-center gap-3 p-4">
-        <div className="shimmer h-11 w-11 rounded-full bg-ink-100" />
+        <div className="shimmer h-11 w-11 rounded-full bg-surface-2" />
         <div className="flex-1 space-y-2">
-          <div className="shimmer h-3 w-1/3 rounded bg-ink-100" />
-          <div className="shimmer h-2.5 w-1/2 rounded bg-ink-100" />
+          <div className="shimmer h-3 w-1/3 rounded bg-surface-2" />
+          <div className="shimmer h-2.5 w-1/2 rounded bg-surface-2" />
         </div>
       </div>
       <div className="space-y-2 px-4 pb-4">
-        <div className="shimmer h-2.5 w-full rounded bg-ink-100" />
-        <div className="shimmer h-2.5 w-5/6 rounded bg-ink-100" />
-        <div className="shimmer mt-2 h-32 w-full rounded-2xl bg-ink-100" />
+        <div className="shimmer h-2.5 w-full rounded bg-surface-2" />
+        <div className="shimmer h-2.5 w-5/6 rounded bg-surface-2" />
+        <div className="shimmer mt-2 h-32 w-full rounded-2xl bg-surface-2" />
       </div>
     </div>
   )
 }
 
 export default function Accueil() {
-  const { goTo, openRoiInfo, openComposer, openMember, openActivity, openCopilot, posts, togglePostLike, addComment, showToast } = useApp()
-  const insight = COPILOT_INSIGHTS[0]
+  const { goTo, openRoiInfo, openComposer, openMember, openActivity, posts, togglePostLike, addComment, showToast } = useApp()
   const u = CURRENT_USER
   const hour = new Date().getHours()
   const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir'
@@ -46,7 +43,7 @@ export default function Accueil() {
       {/* ROI compact */}
       <button
         onClick={openRoiInfo}
-        className="relative flex w-full items-center gap-4 overflow-hidden rounded-3xl bg-ink-950 p-4 text-left text-white shadow-float tap"
+        className="relative flex w-full items-center gap-4 overflow-hidden rounded-3xl surface-hero p-4 text-left text-white shadow-float tap"
       >
         <div className="absolute inset-0 bg-hero-glow" />
         <div className="relative">
@@ -57,7 +54,7 @@ export default function Accueil() {
         <div className="relative flex-1">
           <div className="flex items-center gap-1.5 text-sm font-bold">
             {greet}, {u.name.split(' ')[0]}
-            <span className="inline-flex items-center gap-0.5 rounded-full bg-white/10 px-1.5 py-0.5 text-[11px] font-bold text-[#AEC6B5]">
+            <span className="inline-flex items-center gap-0.5 rounded-full bg-success-light px-1.5 py-0.5 text-[11px] font-bold text-success-300">
               <Icon name="trendingUp" className="h-3 w-3" /> +{u.roi.weekDelta}
             </span>
           </div>
@@ -69,11 +66,11 @@ export default function Accueil() {
       </button>
 
       {/* Composer */}
-      <div className="flex items-center gap-3 rounded-3xl border border-ink-100 bg-white p-3 shadow-soft">
+      <div className="flex items-center gap-3 rounded-3xl border border-line bg-surface p-3 shadow-soft">
         <Avatar name={u.name} size="md" onClick={() => goTo('profil')} />
         <button
           onClick={openComposer}
-          className="flex-1 rounded-full bg-ink-100 px-4 py-2.5 text-left text-sm text-ink-400 tap"
+          className="flex-1 rounded-full bg-surface-2 px-4 py-2.5 text-left text-sm text-fg-faint tap"
         >
           Partage une réflexion, un REX, un tip…
         </button>
@@ -82,25 +79,27 @@ export default function Accueil() {
         </button>
       </div>
 
-      {/* Copilot IA — recommandation du jour */}
-      <button
-        onClick={openCopilot}
-        className="flex w-full items-start gap-3 rounded-3xl border border-ink-100 bg-white p-3.5 text-left shadow-soft tap"
-      >
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-[#7E6FB0] text-white">
-          <Icon name="sparkles" className="h-5 w-5" filled />
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[13px] font-bold text-ink-900">Copilot IA</span>
-            <AiPill />
-          </div>
-          <p className="mt-0.5 line-clamp-2 text-[12.5px] leading-snug text-ink-600">{insight.title} — {insight.text}</p>
-          <span className="mt-1.5 inline-flex items-center gap-1 text-[12px] font-bold text-brand-600">
-            Voir mes recommandations <Icon name="arrowRight" className="h-3.5 w-3.5" />
-          </span>
-        </div>
-      </button>
+      {/* Tempo de la semaine — business & running en un coup d'œil */}
+      <div className="grid grid-cols-3 gap-2.5">
+        {[
+          { icon: 'route', value: `${u.stats.km}`, unit: 'km', label: 'ce mois', tone: 'text-brand-300', onClick: () => goTo('courir') },
+          { icon: 'calendar', value: `${u.roi.meetings}`, unit: '', label: 'RDV pris', tone: 'text-success-300', onClick: openRoiInfo },
+          { icon: 'briefcase', value: `${u.roi.opportunities}`, unit: '', label: 'opportunités', tone: 'text-gold-300', onClick: openRoiInfo },
+        ].map((s) => (
+          <button
+            key={s.label}
+            onClick={s.onClick}
+            className="rounded-2xl border border-line bg-surface p-3 text-left shadow-soft tap"
+          >
+            <Icon name={s.icon} className={`h-4 w-4 ${s.tone}`} />
+            <div className="mt-2 flex items-baseline gap-0.5">
+              <span className="text-xl font-extrabold tabular-nums text-fg">{s.value}</span>
+              {s.unit && <span className="text-[11px] font-bold text-fg-faint">{s.unit}</span>}
+            </div>
+            <div className="text-[11px] text-fg-muted">{s.label}</div>
+          </button>
+        ))}
+      </div>
 
       {/* Feed */}
       {loading ? (
@@ -122,7 +121,7 @@ export default function Accueil() {
               onOpenAuthor={(name) => openMember(name || p.author)}
             />
           ))}
-          <p className="pt-1 text-center text-xs text-ink-400">Tu es à jour ✓</p>
+          <p className="pt-1 text-center text-xs text-fg-faint">Tu es à jour ✓</p>
         </>
       )}
     </div>

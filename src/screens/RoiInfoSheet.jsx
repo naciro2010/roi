@@ -13,9 +13,9 @@ export default function RoiInfoSheet({ onClose }) {
   const u = CURRENT_USER
   return (
     <div className="absolute inset-0 z-40">
-      <div className="absolute inset-0 animate-fadeIn bg-ink-950/50" onClick={onClose} />
-      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[92%] flex-col overflow-hidden rounded-t-[28px] bg-white shadow-float">
-        <div className="relative shrink-0 overflow-hidden bg-ink-950 px-5 pb-5 pt-6 text-white">
+      <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
+      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[92%] flex-col overflow-hidden rounded-t-[28px] bg-surface shadow-float">
+        <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-5 pt-6 text-white">
           <div className="absolute inset-0 bg-hero-glow" />
           <button onClick={onClose} className="glass-dark absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full text-white tap" aria-label="Fermer">
             <Icon name="x" className="h-5 w-5" />
@@ -34,34 +34,34 @@ export default function RoiInfoSheet({ onClose }) {
         </div>
 
         <div className="flex-1 overflow-y-auto no-scrollbar px-5 py-4">
-          <p className="text-xs font-bold uppercase tracking-wide text-ink-400">Ce qui fait monter ton score</p>
+          <p className="text-xs font-bold uppercase tracking-wide text-fg-faint">Ce qui fait monter ton score</p>
           <div className="mt-3 space-y-3">
             {FACTORS.map((f) => (
-              <div key={f.label} className="rounded-2xl border border-ink-100 bg-white p-3.5 shadow-soft">
+              <div key={f.label} className="rounded-2xl border border-line bg-surface p-3.5 shadow-soft">
                 <div className="flex items-center gap-3">
                   <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${PILL_TONES[f.tone]}`}>
                     <Icon name={f.icon} className="h-4 w-4" />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-bold text-ink-900">{f.label}</div>
-                    <div className="text-[12px] leading-snug text-ink-400">{f.detail}</div>
+                    <div className="text-sm font-bold text-fg">{f.label}</div>
+                    <div className="text-[12px] leading-snug text-fg-faint">{f.detail}</div>
                   </div>
-                  <span className="text-sm font-extrabold text-ink-700">{f.value}</span>
+                  <span className="text-sm font-extrabold text-fg-soft">{f.value}</span>
                 </div>
                 <div className="mt-2.5">
-                  <ProgressBar value={f.value} total={100} className="bg-ink-100" barClassName="bg-brand-500" />
+                  <ProgressBar value={f.value} total={100} className="bg-surface-2" barClassName="bg-brand-500" />
                 </div>
               </div>
             ))}
           </div>
 
           <div className="mt-4 flex items-start gap-3 rounded-2xl border border-brand-200 bg-brand-light/50 p-3.5">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white text-brand-600 shadow-soft">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-surface text-brand-600 shadow-soft">
               <Icon name="trendingUp" className="h-4 w-4" />
             </span>
             <div>
-              <p className="text-[13px] font-bold text-ink-900">+{u.roi.weekDelta} cette semaine</p>
-              <p className="text-[12px] leading-snug text-ink-600">
+              <p className="text-[13px] font-bold text-fg">+{u.roi.weekDelta} cette semaine</p>
+              <p className="text-[12px] leading-snug text-fg-soft">
                 2 actions pour passer 80 : accepte une demande en attente et inscris-toi à une sortie.
               </p>
             </div>
