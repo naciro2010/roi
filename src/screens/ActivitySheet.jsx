@@ -1,33 +1,54 @@
+import { useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
 import RouteMap from '../components/RouteMap'
 import { activityById } from '../data/activities'
+import { useSheetDrag } from '../lib/useSheetDrag'
+
+function fmtPace(p) {
+  const m = Math.floor(p)
+  const s = Math.round((p - m) * 60)
+  return `${m}:${String(s).padStart(2, '0')}`
+}
 
 function SplitChart({ splits }) {
+  const [sel, setSel] = useState(null)
   const min = Math.min(...splits)
   const max = Math.max(...splits)
   const span = max - min || 1
+  const avg = splits.reduce((t, s) => t + s, 0) / splits.length
+  const heightFor = (s) => 30 + ((max - s) / span) * 58 // allure rapide (basse) → barre haute
   return (
     <div>
-      <div className="flex items-end gap-1" style={{ height: 88 }}>
+      <div className="mb-1.5 flex items-center justify-between text-[11px]">
+        <span className="text-ink-500">Barre haute = plus rapide</span>
+        <span className="font-bold text-ink-800 tabular-nums">
+          {sel != null ? `Km ${sel + 1} · ${fmtPace(splits[sel])}/km` : `moy. ${fmtPace(avg)}/km`}
+        </span>
+      </div>
+      <div className="relative flex items-end gap-1" style={{ height: 88 }}>
+        <div
+          className="pointer-events-none absolute inset-x-0 z-10 border-t border-dashed border-ink-400"
+          style={{ bottom: `${heightFor(avg)}%` }}
+        />
         {splits.map((s, i) => {
-          // Allure plus rapide (valeur basse) → barre plus haute.
-          const h = 30 + ((max - s) / span) * 58
           const fastest = s === min
+          const active = sel === i
           return (
-            <div
+            <button
               key={i}
-              className={`flex-1 rounded-t-md ${fastest ? 'bg-brand-500' : 'bg-brand-200'}`}
-              style={{ height: `${h}%` }}
-              title={`Km ${i + 1} · ${s.toFixed(1)} /km`}
+              onClick={() => setSel(active ? null : i)}
+              aria-label={`Km ${i + 1} : ${fmtPace(s)} par km`}
+              className={`flex-1 rounded-t-md transition-colors ${active ? 'bg-brand-700' : fastest ? 'bg-brand-500' : 'bg-brand-200'}`}
+              style={{ height: `${heightFor(s)}%` }}
             />
           )
         })}
       </div>
       <div className="mt-1 flex gap-1">
         {splits.map((s, i) => (
-          <span key={i} className="flex-1 text-center text-[9px] text-ink-400">
+          <span key={i} className="flex-1 text-center text-[9px] text-ink-400 tabular-nums">
             {i === 0 || (i + 1) % 5 === 0 ? i + 1 : ''}
           </span>
         ))}
@@ -39,14 +60,15 @@ function SplitChart({ splits }) {
 function StatBlock({ value, label }) {
   return (
     <div className="rounded-2xl bg-ink-50 p-3 text-center">
-      <div className="text-lg font-extrabold text-ink-900">{value}</div>
-      <div className="text-[11px] text-ink-400">{label}</div>
+      <div className="text-lg font-extrabold text-ink-900 tabular-nums">{value}</div>
+      <div className="text-[11px] text-ink-500">{label}</div>
     </div>
   )
 }
 
 export default function ActivitySheet({ id, onClose }) {
   const { actKudos, toggleActKudos, openMember, contacted, contactMember } = useApp()
+  const drag = useSheetDrag(onClose)
   const a = activityById(id)
   if (!a) return null
   const k = actKudos[a.id]
@@ -54,10 +76,13 @@ export default function ActivitySheet({ id, onClose }) {
   return (
     <div className="absolute inset-0 z-40">
       <div className="absolute inset-0 animate-fadeIn bg-ink-950/50" onClick={onClose} />
-      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-white shadow-float">
+      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-white shadow-float">
         {/* Carte interactive */}
         <div className="relative h-56 shrink-0 bg-ink-100">
           <RouteMap route={a.route} interactive className="h-full w-full" />
+          <div {...drag.handleProps} className="absolute left-1/2 top-0 z-[500] flex h-9 w-24 -translate-x-1/2 items-center justify-center" aria-hidden="true">
+            <div className="mt-2.5 h-1.5 w-12 rounded-full bg-white/70 shadow-soft" />
+          </div>
           <button onClick={onClose} className="glass-dark absolute right-3 top-3 z-[500] grid h-9 w-9 place-items-center rounded-full text-white tap" aria-label="Fermer">
             <Icon name="x" className="h-5 w-5" />
           </button>
@@ -71,12 +96,12 @@ export default function ActivitySheet({ id, onClose }) {
             <Avatar name={a.athlete} size="md" onClick={() => openMember(a.athlete)} />
             <div className="min-w-0 flex-1">
               <button onClick={() => openMember(a.athlete)} className="truncate font-bold text-ink-900">{a.athlete}</button>
-              <div className="truncate text-[12px] text-ink-400">{a.date}</div>
+              <div className="truncate text-[12px] text-ink-500">{a.date}</div>
             </div>
             <button
               onClick={() => toggleActKudos(a.id)}
               className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold tap ${
-                k?.liked ? 'bg-[#EFE5E6] text-[#8C5560]' : 'bg-ink-100 text-ink-500'
+                k?.liked ? 'bg-like-light text-like' : 'bg-ink-100 text-ink-500'
               }`}
             >
               <Icon name="heart" className="h-4 w-4" filled={k?.liked} />
@@ -115,7 +140,7 @@ export default function ActivitySheet({ id, onClose }) {
                     <button
                       onClick={() => contactMember(name)}
                       className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-bold tap ${
-                        contacted[name] ? 'bg-[#EAEEEB] text-[#48584E]' : 'bg-brand-500 text-white shadow-brand'
+                        contacted[name] ? 'bg-success-light text-success-dark' : 'bg-brand-500 text-white shadow-brand'
                       }`}
                     >
                       {contacted[name] ? 'Demandé ✓' : 'Connecter'}

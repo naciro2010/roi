@@ -8,6 +8,7 @@ import ServiceLogo from '../components/ServiceLogo'
 import { ACTIVITIES } from '../data/activities'
 import { EVENTS, CHALLENGE, LEADERBOARD } from '../data/events'
 import { serviceById } from '../data/integrations'
+import { formatEventDate } from '../lib/dates'
 
 export default function Courir() {
   const {
@@ -45,7 +46,7 @@ export default function Courir() {
       {view === 'activites' ? (
         <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar px-5 pb-6 pt-3">
           {integrations.strava ? (
-            <div className="flex items-center gap-2 rounded-2xl bg-[#EAEEEB] px-3.5 py-2.5 text-[12px] font-semibold text-[#48584E]">
+            <div className="flex items-center gap-2 rounded-2xl bg-success-light px-3.5 py-2.5 text-[12px] font-semibold text-success-dark">
               <Icon name="check" className="h-4 w-4 shrink-0" /> Tes courses sont synchronisées via Strava
             </div>
           ) : (
@@ -136,6 +137,7 @@ export default function Courir() {
             {EVENTS.map((a) => {
               const k = eventKudos[a.id]
               const isJoined = joined[a.id]
+              const d = formatEventDate(a.date)
               return (
                 <article key={a.id} className="overflow-hidden rounded-3xl border border-ink-100 bg-white shadow-soft">
                   <button onClick={() => openEvent(a.id)} className="flex w-full items-stretch text-left tap">
@@ -145,7 +147,10 @@ export default function Courir() {
                       <span className="text-[11px] text-ink-400">{a.time.slice(2)}</span>
                     </div>
                     <div className="min-w-0 flex-1 p-4">
-                      <h3 className="font-bold leading-tight text-ink-900">{a.title}</h3>
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="font-bold leading-tight text-ink-900">{a.title}</h3>
+                        <span className="mt-0.5 shrink-0 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-bold text-brand-700">{d.relative}</span>
+                      </div>
                       <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[12px] text-ink-500">
                         <span className="inline-flex items-center gap-1"><Icon name="route" className="h-3.5 w-3.5" /> {a.distance}</span>
                         <span className="text-ink-300">·</span>
@@ -153,7 +158,7 @@ export default function Courir() {
                         <span className="text-ink-300">·</span>
                         <span>{a.level}</span>
                       </div>
-                      <div className="mt-0.5 flex items-center gap-1 text-[12px] text-ink-400">
+                      <div className="mt-0.5 flex items-center gap-1 text-[12px] text-ink-500">
                         <Icon name="mapPin" className="h-3.5 w-3.5" /> {a.place}
                         {a.tag && <span className="ml-1 font-bold text-brand-600">{a.tag}</span>}
                       </div>
@@ -166,7 +171,7 @@ export default function Courir() {
                     <button
                       onClick={() => toggleEventKudos(a.id)}
                       className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold tap ${
-                        k.liked ? 'bg-[#EFE5E6] text-[#8C5560]' : 'bg-ink-100 text-ink-500'
+                        k.liked ? 'bg-like-light text-like' : 'bg-ink-100 text-ink-500'
                       }`}
                     >
                       <Icon name="heart" className="h-4 w-4" filled={k.liked} />
@@ -178,7 +183,7 @@ export default function Courir() {
                     <button
                       onClick={() => toggleJoin(a.id)}
                       className={`w-full rounded-2xl py-2.5 text-sm font-bold tap ${
-                        isJoined ? 'bg-[#4E6B59] text-white' : 'bg-ink-900 text-white hover:bg-ink-800'
+                        isJoined ? 'bg-success text-white' : 'bg-brand-500 text-white shadow-brand hover:bg-brand-600'
                       }`}
                     >
                       {isJoined ? 'Inscrit ✓' : 'Je participe'}

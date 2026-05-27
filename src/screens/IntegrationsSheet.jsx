@@ -35,7 +35,7 @@ export default function IntegrationsSheet({ onClose }) {
                         <div className="flex items-center gap-1.5">
                           <span className="truncate font-bold text-ink-900">{s.name}</span>
                           {connected && (
-                            <span className="inline-flex items-center gap-0.5 rounded-full bg-[#EAEEEB] px-1.5 py-0.5 text-[10px] font-bold text-[#48584E]">
+                            <span className="inline-flex items-center gap-0.5 rounded-full bg-success-light px-1.5 py-0.5 text-[10px] font-bold text-success-dark">
                               <Icon name="check" className="h-2.5 w-2.5" /> Connecté
                             </span>
                           )}

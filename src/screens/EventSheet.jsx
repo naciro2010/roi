@@ -3,27 +3,34 @@ import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
 import RouteMap from '../components/RouteMap'
 import { EVENTS } from '../data/events'
+import { formatEventDate } from '../lib/dates'
+import { useSheetDrag } from '../lib/useSheetDrag'
 
 export default function EventSheet({ id, onClose }) {
   const { joined, toggleJoin, eventKudos, toggleEventKudos, openMember, contacted, contactMember, showToast } = useApp()
+  const drag = useSheetDrag(onClose)
   const e = EVENTS.find((x) => x.id === id)
   if (!e) return null
   const k = eventKudos[e.id]
   const isJoined = joined[e.id]
   const others = e.attendees.filter((n) => n !== e.organizer)
+  const d = formatEventDate(e.date)
 
   return (
     <div className="absolute inset-0 z-40">
       <div className="absolute inset-0 animate-fadeIn bg-ink-950/50" onClick={onClose} />
-      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-white shadow-float">
+      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-white shadow-float">
         {/* Carte du parcours */}
         <div className="relative h-48 shrink-0 bg-ink-100">
           {e.route ? <RouteMap route={e.route} className="h-full w-full" /> : <div className="absolute inset-0 bg-hero-glow bg-ink-950" />}
+          <div {...drag.handleProps} className="absolute left-1/2 top-0 z-[500] flex h-9 w-24 -translate-x-1/2 items-center justify-center" aria-hidden="true">
+            <div className="mt-2.5 h-1.5 w-12 rounded-full bg-white/70 shadow-soft" />
+          </div>
           <button onClick={onClose} className="glass-dark absolute right-3 top-3 z-[500] grid h-9 w-9 place-items-center rounded-full text-white tap" aria-label="Fermer">
             <Icon name="x" className="h-5 w-5" />
           </button>
           <span className="pointer-events-none absolute left-4 top-3 z-[500] rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-bold text-ink-700 shadow-soft backdrop-blur">
-            {e.day} · {e.time}
+            {d.relative} · {e.time}
             {e.tag && <span className="ml-1 text-brand-600">{e.tag}</span>}
           </span>
         </div>
@@ -38,7 +45,7 @@ export default function EventSheet({ id, onClose }) {
             <button
               onClick={() => toggleEventKudos(e.id)}
               className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold tap ${
-                k.liked ? 'bg-[#EFE5E6] text-[#8C5560]' : 'bg-ink-100 text-ink-500'
+                k.liked ? 'bg-like-light text-like' : 'bg-ink-100 text-ink-500'
               }`}
             >
               <Icon name="heart" className="h-4 w-4" filled={k.liked} />
@@ -47,6 +54,13 @@ export default function EventSheet({ id, onClose }) {
           </div>
 
           <h2 className="mt-3 text-lg font-extrabold text-ink-900">{e.title}</h2>
+
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-[13px]">
+            <span className="inline-flex items-center gap-1.5 font-semibold text-ink-800">
+              <Icon name="calendar" className="h-4 w-4 text-brand-600" /> {d.full} · {e.time}
+            </span>
+            <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-bold text-brand-700">{d.relative}</span>
+          </div>
 
           <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[13px] text-ink-600">
             <span className="inline-flex items-center gap-1"><Icon name="route" className="h-4 w-4 text-ink-400" /> {e.distance}</span>
@@ -79,7 +93,7 @@ export default function EventSheet({ id, onClose }) {
                   <button
                     onClick={() => contactMember(name)}
                     className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-bold tap ${
-                      contacted[name] ? 'bg-[#EAEEEB] text-[#48584E]' : 'bg-brand-500 text-white shadow-brand'
+                      contacted[name] ? 'bg-success-light text-success-dark' : 'bg-brand-500 text-white shadow-brand'
                     }`}
                   >
                     {contacted[name] ? 'Demandé ✓' : 'Connecter'}
@@ -87,7 +101,7 @@ export default function EventSheet({ id, onClose }) {
                 </div>
               ))}
               {e.participants > others.length && (
-                <p className="pt-1 text-center text-xs text-ink-400">+ {e.participants - others.length} autres inscrits</p>
+                <p className="pt-1 text-center text-xs text-ink-500">+ {e.participants - others.length} autres inscrits</p>
               )}
             </div>
           </div>
@@ -96,12 +110,12 @@ export default function EventSheet({ id, onClose }) {
         <div className="glass flex shrink-0 items-center gap-2 border-t border-ink-100 px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             onClick={() => toggleJoin(e.id)}
-            className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${isJoined ? 'bg-[#4E6B59]' : 'bg-ink-900 shadow-brand'}`}
+            className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${isJoined ? 'bg-success' : 'bg-brand-500 shadow-brand'}`}
           >
             {isJoined ? 'Inscrit ✓' : 'Je participe'}
           </button>
           <button
-            onClick={() => showToast('Ajouté à ton agenda ✓')}
+            onClick={() => showToast(`Ajouté à ton agenda · ${d.full}`)}
             className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-ink-200 text-ink-700 tap"
             aria-label="Ajouter au calendrier"
           >

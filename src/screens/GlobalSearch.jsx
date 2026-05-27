@@ -105,7 +105,7 @@ export default function GlobalSearch({ onClose }) {
         {activities.length > 0 && (
           <Group label="Activités">
             {activities.map((a) => (
-              <ResultRow key={a.id} icon="activity" tone="bg-[#EAEEEB] text-[#48584E]" title={a.title} subtitle={`${a.athlete} · ${a.distance.toFixed(1)} km`} onClick={() => go(() => openActivity(a.id))} />
+              <ResultRow key={a.id} icon="activity" tone="bg-success-light text-success-dark" title={a.title} subtitle={`${a.athlete} · ${a.distance.toFixed(1)} km`} onClick={() => go(() => openActivity(a.id))} />
             ))}
           </Group>
         )}

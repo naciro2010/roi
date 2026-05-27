@@ -25,6 +25,17 @@ body {
     letter-spacing: -0.021em;
     font-feature-settings: 'cv11', 'ss01';
   }
+
+  /* Visible focus ring for keyboard users only (no ring on tap/click). */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  [role='button']:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid #4f60a0;
+    outline-offset: 2px;
+  }
 }
 
 @layer components {
