@@ -2,13 +2,15 @@ import { useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar, AvatarStack } from '../components/Avatar'
-import { ProgressRing, SectionTitle } from '../components/primitives'
+import { ProgressRing, SectionTitle, ProgressBar } from '../components/primitives'
 import { ActivityCard } from '../components/ActivityCard'
 import ServiceLogo from '../components/ServiceLogo'
 import { ACTIVITIES } from '../data/activities'
 import { EVENTS, CHALLENGE, LEADERBOARD } from '../data/events'
 import { serviceById } from '../data/integrations'
 import { formatEventDate } from '../lib/dates'
+import { CURRENT_USER } from '../data/user'
+import { SEASON, TIERS, seasonProgress } from '../data/levels'
 
 export default function Courir() {
   const {
@@ -18,6 +20,8 @@ export default function Courir() {
   } = useApp()
   const [view, setView] = useState('activites')
   const pct = Math.round((CHALLENGE.current / CHALLENGE.total) * 100)
+  const km = CURRENT_USER.stats.km
+  const season = seasonProgress(km)
 
   return (
     <div className="animate-screenIn flex h-full flex-col">
@@ -128,6 +132,59 @@ export default function Courir() {
                   </div>
                 ))}
               </div>
+            </div>
+          </section>
+
+          {/* Saison — cours, débloque */}
+          <section className="rounded-[28px] border border-line bg-surface p-5 shadow-soft">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="grid h-9 w-9 place-items-center rounded-xl bg-gold/15 text-gold-300 ring-1 ring-gold/25">
+                  <Icon name="trophy" className="h-4 w-4" />
+                </span>
+                <div>
+                  <div className="text-sm font-bold text-fg">{SEASON.label}</div>
+                  <div className="text-[11px] text-fg-muted">Cours, débloque · fin dans {SEASON.endsIn}</div>
+                </div>
+              </div>
+              <span className="rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-extrabold text-brand-300">Niveau {season.level}</span>
+            </div>
+
+            <div className="mt-3 flex items-center gap-3">
+              <ProgressBar value={season.pct} total={100} className="bg-surface-2" barClassName="bg-gradient-to-r from-brand-500 to-gold" />
+              <span className="shrink-0 text-[12px] font-bold tabular-nums text-fg">{km} km</span>
+            </div>
+            <p className="mt-1.5 text-[12px] text-fg-muted">
+              {season.next
+                ? <>Plus que <span className="font-bold text-fg">{season.remaining} km</span> pour « {season.next.title} ».</>
+                : 'Tous les paliers débloqués 🎉'}
+            </p>
+
+            <div className="mt-4 space-y-2">
+              {TIERS.map((t) => {
+                const unlocked = km >= t.km
+                const isNext = season.next?.km === t.km
+                return (
+                  <div
+                    key={t.km}
+                    className={`flex items-center gap-3 rounded-2xl p-2.5 ${
+                      isNext ? 'bg-brand-light/50 ring-1 ring-brand-200' : unlocked ? 'bg-surface-soft' : ''
+                    }`}
+                  >
+                    <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${unlocked ? 'bg-success-light text-success-300' : 'bg-surface-2 text-fg-faint'}`}>
+                      <Icon name={unlocked ? 'checkCircle' : 'lock'} className="h-4 w-4" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className={`text-sm font-bold ${unlocked ? 'text-fg' : 'text-fg-soft'}`}>{t.title}</span>
+                        <span className="text-[11px] font-bold tabular-nums text-fg-faint">{t.km} km</span>
+                      </div>
+                      <div className="truncate text-[12px] text-fg-muted">{t.reward}</div>
+                    </div>
+                    {isNext && <span className="shrink-0 rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-white">À venir</span>}
+                  </div>
+                )
+              })}
             </div>
           </section>
 

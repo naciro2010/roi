@@ -7,6 +7,7 @@ import { CONVERSATIONS, THREADS, GROUPS, GROUP_THREADS } from './data/messages'
 import { NOTIFICATIONS } from './data/notifications'
 import { POSTS } from './data/feed'
 import { EVENTS } from './data/events'
+import { MEETINGS } from './data/meetings'
 import { ACTIVITIES } from './data/activities'
 import { CONNECTIONS, REQUESTS } from './data/connections'
 
@@ -29,6 +30,7 @@ import EditProfileSheet from './screens/EditProfileSheet'
 import RoiInfoSheet from './screens/RoiInfoSheet'
 import GlobalSearch from './screens/GlobalSearch'
 import IntegrationsSheet from './screens/IntegrationsSheet'
+import AgendaSheet from './screens/AgendaSheet'
 import PlansSheet from './screens/PlansSheet'
 import InviteSheet from './screens/InviteSheet'
 import { SERVICES } from './data/integrations'
@@ -100,6 +102,11 @@ export default function App() {
   const [invites, setInvites] = usePersistentState('invites', INITIAL_INVITES)
   const [teammates, setTeammates] = usePersistentState('teammates', INITIAL_TEAMMATES)
   const [inviteOpen, setInviteOpen] = useState(false)
+
+  // Agenda & RDV business
+  const [agendaOpen, setAgendaOpen] = useState(false)
+  const [meetingStatus, setMeetingStatus] = usePersistentState('meetingStatus', {})
+  const meetings = MEETINGS.map((m) => ({ ...m, status: meetingStatus[m.id] || m.status }))
 
   const planMeta = planById(plan)
   const referralJoined = invites.filter((i) => i.status === 'joined').length
@@ -313,6 +320,11 @@ export default function App() {
     showToast('Coéquipier invité ✓')
   }
 
+  function confirmMeeting(id) {
+    setMeetingStatus((s) => ({ ...s, [id]: 'confirmed' }))
+    showToast('RDV confirmé ✓')
+  }
+
   const ctx = {
     tab, goTo, showToast,
     openMember: setMember,
@@ -332,6 +344,9 @@ export default function App() {
     invites, sendInvite, referralJoined,
     teammates, inviteTeammate,
     openInvite: () => setInviteOpen(true),
+    // Agenda & RDV
+    meetings, confirmMeeting,
+    openAgenda: () => setAgendaOpen(true),
     contacted, contactMember,
     sentSuggestions, sendSuggestion,
     connections, requests, acceptRequest, declineRequest,
@@ -352,7 +367,7 @@ export default function App() {
   const showHeader = !inChat && tab !== 'profil'
   const anyOverlay =
     member || activityId || eventId || composerOpen || notifOpen || editProfileOpen ||
-    roiInfoOpen || integrationsOpen || searchOpen || plansOpen || inviteOpen || onboarding
+    roiInfoOpen || integrationsOpen || searchOpen || plansOpen || inviteOpen || agendaOpen || onboarding
 
   function renderScreen() {
     switch (tab) {
@@ -448,6 +463,7 @@ export default function App() {
           {searchOpen && <GlobalSearch onClose={() => setSearchOpen(false)} />}
           {plansOpen && <PlansSheet onClose={() => setPlansOpen(false)} />}
           {inviteOpen && <InviteSheet onClose={() => setInviteOpen(false)} />}
+          {agendaOpen && <AgendaSheet onClose={() => setAgendaOpen(false)} />}
           {member && <MemberSheet name={member} onClose={() => setMember(null)} />}
           {activityId && <ActivitySheet id={activityId} onClose={() => setActivityId(null)} />}
           {eventId && <EventSheet id={eventId} onClose={() => setEventId(null)} />}

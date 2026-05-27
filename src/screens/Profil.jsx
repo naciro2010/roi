@@ -7,14 +7,20 @@ import { CURRENT_USER } from '../data/user'
 import { ACTIVITIES } from '../data/activities'
 import { SERVICES } from '../data/integrations'
 import { REFERRAL } from '../data/invites'
+import { MEETING_TYPES } from '../data/meetings'
+import { seasonProgress } from '../data/levels'
+import { formatEventDate } from '../lib/dates'
 
 export default function Profil() {
   const {
     showToast, goTo, openActivity, openEditProfile, openRoiInfo, replayOnboarding,
     openIntegrations, integrations, profile, resetDemo,
     plan, planMeta, openPlans, openInvite, referralJoined,
+    meetings, openAgenda,
   } = useApp()
   const u = CURRENT_USER
+  const nextMeeting = [...meetings].sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`))[0]
+  const season = seasonProgress(u.stats.km)
   const myActivities = ACTIVITIES.filter((a) => a.athlete === u.name)
   const connectedCount = SERVICES.filter((s) => integrations[s.id]).length
   const isPaid = plan !== 'free'
@@ -126,6 +132,45 @@ export default function Profil() {
                 ))}
               </div>
             </button>
+          </section>
+
+          {/* Agenda & RDV */}
+          <button
+            onClick={openAgenda}
+            className="flex w-full items-center gap-3 rounded-3xl border border-line bg-surface p-4 text-left shadow-soft tap"
+          >
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-success-light text-success-300">
+              <Icon name="calendar" className="h-5 w-5" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-bold text-fg">Agenda & RDV</div>
+              <p className="truncate text-[12px] text-fg-muted">
+                {meetings.length} à venir
+                {nextMeeting && ` · ${MEETING_TYPES[nextMeeting.type].label} avec ${nextMeeting.with.split(' ')[0]} ${formatEventDate(nextMeeting.date).relative}`}
+              </p>
+            </div>
+            <Icon name="chevronRight" className="h-5 w-5 text-fg-faint" />
+          </button>
+
+          {/* Saison — kilomètres → récompenses */}
+          <section className="overflow-hidden rounded-3xl border border-line bg-surface p-4 shadow-soft">
+            <div className="flex items-center justify-between">
+              <h2 className="flex items-center gap-2 text-base font-bold text-fg">
+                <Icon name="trophy" className="h-5 w-5 text-gold-300" /> Saison · niveau {season.level}
+              </h2>
+              <button onClick={() => goTo('courir')} className="flex items-center gap-0.5 text-xs font-semibold text-brand-600 tap">
+                Détails <Icon name="chevronRight" className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <div className="mt-3 flex items-center gap-3">
+              <ProgressBar value={season.pct} total={100} className="bg-surface-2" barClassName="bg-gradient-to-r from-brand-500 to-gold" />
+              <span className="shrink-0 text-[11px] font-bold tabular-nums text-fg-muted">{u.stats.km} km</span>
+            </div>
+            <p className="mt-2 text-[12px] text-fg-muted">
+              {season.next
+                ? <>Plus que <span className="font-bold text-fg">{season.remaining} km</span> pour débloquer « {season.next.title} » — {season.next.reward.toLowerCase()}.</>
+                : 'Tous les paliers de la saison sont débloqués 🎉'}
+            </p>
           </section>
 
           {/* Abonnement */}

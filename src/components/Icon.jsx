@@ -44,6 +44,8 @@ const ICON_PATHS = {
   checkCircle: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM8 12l3 3 5-6',
   refresh: 'M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6',
   rocket: 'M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2M9 11a4 4 0 0 1 1-2.5C13 5 19 4 19 4s-1 6-4.5 9A4 4 0 0 1 12 14M9 11l-4 1M13 15l-1 4M9 11l4 4M15 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z',
+  coffee: 'M4 8h12v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8zM16 9h2a2 2 0 0 1 0 5h-1M7 2v2M11 2v2',
+  video: 'M3 7a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM16 10l5-3v10l-5-3',
 }
 
 export default function Icon({ name, className = 'w-5 h-5', filled = false }) {

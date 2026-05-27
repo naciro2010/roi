@@ -27,7 +27,7 @@ function PostSkeleton() {
 }
 
 export default function Accueil() {
-  const { goTo, openRoiInfo, openComposer, openMember, openActivity, posts, togglePostLike, addComment, showToast } = useApp()
+  const { goTo, openRoiInfo, openComposer, openMember, openActivity, openAgenda, meetings, posts, togglePostLike, addComment, showToast } = useApp()
   const u = CURRENT_USER
   const hour = new Date().getHours()
   const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir'
@@ -83,7 +83,7 @@ export default function Accueil() {
       <div className="grid grid-cols-3 gap-2.5">
         {[
           { icon: 'route', value: `${u.stats.km}`, unit: 'km', label: 'ce mois', tone: 'text-brand-300', onClick: () => goTo('courir') },
-          { icon: 'calendar', value: `${u.roi.meetings}`, unit: '', label: 'RDV pris', tone: 'text-success-300', onClick: openRoiInfo },
+          { icon: 'calendar', value: `${meetings.length}`, unit: '', label: 'RDV à venir', tone: 'text-success-300', onClick: openAgenda },
           { icon: 'briefcase', value: `${u.roi.opportunities}`, unit: '', label: 'opportunités', tone: 'text-gold-300', onClick: openRoiInfo },
         ].map((s) => (
           <button
