@@ -3,9 +3,11 @@ import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
 import { ProgressRing } from '../components/primitives'
+import { AiPill } from '../components/primitives'
 import PostCard from '../components/PostCard'
 import { CURRENT_USER } from '../data/user'
 import { activityById } from '../data/activities'
+import { COPILOT_INSIGHTS } from '../data/copilot'
 
 function PostSkeleton() {
   return (
@@ -27,7 +29,8 @@ function PostSkeleton() {
 }
 
 export default function Accueil() {
-  const { goTo, openRoiInfo, openComposer, openMember, openActivity, posts, togglePostLike, addComment, showToast } = useApp()
+  const { goTo, openRoiInfo, openComposer, openMember, openActivity, openCopilot, posts, togglePostLike, addComment, showToast } = useApp()
+  const insight = COPILOT_INSIGHTS[0]
   const u = CURRENT_USER
   const hour = new Date().getHours()
   const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir'
@@ -78,6 +81,26 @@ export default function Accueil() {
           <Icon name="pencil" className="h-4 w-4" />
         </button>
       </div>
+
+      {/* Copilot IA — recommandation du jour */}
+      <button
+        onClick={openCopilot}
+        className="flex w-full items-start gap-3 rounded-3xl border border-ink-100 bg-white p-3.5 text-left shadow-soft tap"
+      >
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-[#7E6FB0] text-white">
+          <Icon name="sparkles" className="h-5 w-5" filled />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[13px] font-bold text-ink-900">Copilot IA</span>
+            <AiPill />
+          </div>
+          <p className="mt-0.5 line-clamp-2 text-[12.5px] leading-snug text-ink-600">{insight.title} — {insight.text}</p>
+          <span className="mt-1.5 inline-flex items-center gap-1 text-[12px] font-bold text-brand-600">
+            Voir mes recommandations <Icon name="arrowRight" className="h-3.5 w-3.5" />
+          </span>
+        </div>
+      </button>
 
       {/* Feed */}
       {loading ? (

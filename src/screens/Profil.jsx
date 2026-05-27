@@ -2,16 +2,22 @@ import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
 import ServiceLogo from '../components/ServiceLogo'
-import { SectionTitle, ProgressRing } from '../components/primitives'
+import { SectionTitle, ProgressRing, PlanBadge, ProgressBar } from '../components/primitives'
 import { CURRENT_USER } from '../data/user'
 import { ACTIVITIES } from '../data/activities'
 import { SERVICES } from '../data/integrations'
+import { REFERRAL } from '../data/invites'
 
 export default function Profil() {
-  const { showToast, goTo, openActivity, openEditProfile, openRoiInfo, replayOnboarding, openIntegrations, integrations, profile, resetDemo } = useApp()
+  const {
+    showToast, goTo, openActivity, openEditProfile, openRoiInfo, replayOnboarding,
+    openIntegrations, integrations, profile, resetDemo,
+    plan, planMeta, openPlans, openInvite, openCopilot, referralJoined,
+  } = useApp()
   const u = CURRENT_USER
   const myActivities = ACTIVITIES.filter((a) => a.athlete === u.name)
   const connectedCount = SERVICES.filter((s) => integrations[s.id]).length
+  const isPaid = plan !== 'free'
 
   const stats = [
     { label: 'km ce mois', value: u.stats.km },
@@ -24,6 +30,8 @@ export default function Profil() {
     { label: 'Opportunités', value: u.roi.opportunities, delta: u.roi.opportunitiesDelta },
   ]
   const settings = [
+    { icon: 'crown', label: 'Mon abonnement', onClick: openPlans, hint: planMeta.name },
+    { icon: 'userPlus', label: 'Inviter des amis', onClick: openInvite },
     { icon: 'bookmark', label: 'Mes favoris', onClick: () => showToast('Bientôt disponible') },
     { icon: 'sparkles', label: 'Revoir l’introduction', onClick: replayOnboarding },
     { icon: 'shield', label: 'Confidentialité', onClick: () => showToast('Bientôt disponible') },
@@ -52,7 +60,10 @@ export default function Profil() {
           <div className="rounded-full p-1 ring-4 ring-white">
             <Avatar name={u.name} size="2xl" />
           </div>
-          <h1 className="mt-3 text-xl font-extrabold text-ink-900">{u.name}</h1>
+          <div className="mt-3 flex items-center gap-2">
+            <h1 className="text-xl font-extrabold text-ink-900">{u.name}</h1>
+            <PlanBadge plan={plan} />
+          </div>
           <p className="text-sm text-ink-500">{profile.title}</p>
           <div className="mt-1 flex items-center gap-1 text-xs text-ink-500">
             <Icon name="mapPin" className="h-3.5 w-3.5" /> {u.location}
@@ -116,6 +127,79 @@ export default function Profil() {
               </div>
             </button>
           </section>
+
+          {/* Copilot IA */}
+          <button
+            onClick={openCopilot}
+            className="relative flex w-full items-center gap-3 overflow-hidden rounded-3xl border border-ink-100 bg-white p-4 text-left shadow-soft tap"
+          >
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-[#7E6FB0] text-white">
+              <Icon name="sparkles" className="h-5 w-5" filled />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-bold text-ink-900">Copilot IA</div>
+              <p className="text-[12px] leading-snug text-ink-500">Qui rencontrer, quoi dire, quoi poster — propulsé par l’IA.</p>
+            </div>
+            <Icon name="chevronRight" className="h-5 w-5 text-ink-300" />
+          </button>
+
+          {/* Abonnement */}
+          {isPaid ? (
+            <section className="relative overflow-hidden rounded-3xl border-2 border-gold/40 bg-white p-4 shadow-card">
+              <div className="absolute inset-0 bg-gold-sheen" />
+              <div className="relative flex items-center gap-3">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gold-light text-gold-dark">
+                  <Icon name="crown" className="h-6 w-6" filled />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-ink-900">Abonnement {planMeta.name}</span>
+                    <PlanBadge plan={plan} />
+                  </div>
+                  <p className="text-[12px] text-ink-500">Tu profites de toutes les fonctionnalités.</p>
+                </div>
+                <button onClick={openPlans} className="shrink-0 rounded-full bg-ink-100 px-3 py-1.5 text-xs font-bold text-ink-700 tap">Gérer</button>
+              </div>
+            </section>
+          ) : (
+            <button
+              onClick={openPlans}
+              className="relative w-full overflow-hidden rounded-3xl bg-ink-950 p-4 text-left text-white shadow-float tap"
+            >
+              <div className="absolute inset-0 bg-aurora" />
+              <div className="relative">
+                <div className="flex items-center gap-2">
+                  <Icon name="crown" className="h-5 w-5 text-gold-300" filled />
+                  <span className="text-base font-extrabold">Passe à Pro</span>
+                  <span className="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-bold text-white/70">dès 9€/mois</span>
+                </div>
+                <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/65">
+                  Copilot IA illimité, matchs illimités, « qui veut me rencontrer » et intros prioritaires.
+                </p>
+                <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-bold text-ink-900">
+                  Voir les offres <Icon name="arrowRight" className="h-4 w-4" />
+                </span>
+              </div>
+            </button>
+          )}
+
+          {/* Parrainage */}
+          <button
+            onClick={openInvite}
+            className="flex w-full items-center gap-3 rounded-3xl border border-ink-100 bg-white p-4 text-left shadow-soft tap"
+          >
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#EFEBE1] text-[#5F553C]">
+              <Icon name="gift" className="h-5 w-5" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-bold text-ink-900">Invite & gagne 1 mois Pro</div>
+              <div className="mt-1.5 flex items-center gap-2">
+                <ProgressBar value={referralJoined} total={REFERRAL.goal} className="bg-ink-100" barClassName="bg-gold" />
+                <span className="shrink-0 text-[11px] font-bold tabular-nums text-ink-500">{referralJoined}/{REFERRAL.goal}</span>
+              </div>
+            </div>
+            <Icon name="chevronRight" className="h-5 w-5 text-ink-300" />
+          </button>
 
           {/* Ce que je cherche */}
           <section className="rounded-3xl border-2 border-brand-200 bg-brand-light/50 p-4">
@@ -256,6 +340,7 @@ export default function Profil() {
               >
                 <Icon name={s.icon} className="h-5 w-5 text-ink-400" />
                 <span className="flex-1 text-sm font-semibold text-ink-800">{s.label}</span>
+                {s.hint && <span className="text-xs font-bold text-ink-400">{s.hint}</span>}
                 <Icon name="chevronRight" className="h-4 w-4 text-ink-300" />
               </button>
             ))}

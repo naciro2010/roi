@@ -85,6 +85,44 @@ export function Logo({ light = false }) {
   )
 }
 
+// Petit badge « IA » réutilisable (met en valeur les fonctionnalités IA).
+export function AiPill({ className = '', label = 'IA' }) {
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-brand-500 to-[#7E6FB0] px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-white ${className}`}>
+      <Icon name="sparkles" className="h-2.5 w-2.5" filled />
+      {label}
+    </span>
+  )
+}
+
+// Badge d'abonnement affiché près du nom (rien pour le plan gratuit).
+export function PlanBadge({ plan, className = '' }) {
+  if (!plan || plan === 'free') return null
+  const isBusiness = plan === 'business'
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide ring-1 ${
+        isBusiness
+          ? 'bg-gold-light text-gold-dark ring-gold/40'
+          : 'bg-brand-50 text-brand-700 ring-brand-200'
+      } ${className}`}
+    >
+      <Icon name="crown" className="h-2.5 w-2.5" filled />
+      {isBusiness ? 'Business' : 'Pro'}
+    </span>
+  )
+}
+
+// Puce « verrouillé » pour signaler une fonctionnalité premium.
+export function LockChip({ label = 'Pro', className = '' }) {
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-full bg-ink-900/85 px-2 py-0.5 text-[10px] font-bold text-white ${className}`}>
+      <Icon name="lock" className="h-2.5 w-2.5" />
+      {label}
+    </span>
+  )
+}
+
 export function SectionTitle({ children, action, onAction }) {
   return (
     <div className="mb-2.5 flex items-end justify-between">

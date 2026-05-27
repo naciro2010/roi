@@ -29,7 +29,13 @@ import EditProfileSheet from './screens/EditProfileSheet'
 import RoiInfoSheet from './screens/RoiInfoSheet'
 import GlobalSearch from './screens/GlobalSearch'
 import IntegrationsSheet from './screens/IntegrationsSheet'
+import CopilotSheet from './screens/CopilotSheet'
+import PlansSheet from './screens/PlansSheet'
+import InviteSheet from './screens/InviteSheet'
 import { SERVICES } from './data/integrations'
+import { planById, hasFeature, FREE_AI_LIMIT } from './data/plans'
+import { COPILOT_GREETING, copilotReply } from './data/copilot'
+import { INITIAL_INVITES, INITIAL_TEAMMATES } from './data/invites'
 
 export default function App() {
   const [tab, setTab] = useState('accueil')
@@ -89,6 +95,23 @@ export default function App() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [integrationsOpen, setIntegrationsOpen] = useState(false)
   const [integrations, setIntegrations] = usePersistentState('integrations', {})
+
+  // Abonnement · invitations · Copilot IA
+  const [plan, setPlan] = usePersistentState('plan', 'free')
+  const [plansOpen, setPlansOpen] = useState(false)
+  const [invites, setInvites] = usePersistentState('invites', INITIAL_INVITES)
+  const [teammates, setTeammates] = usePersistentState('teammates', INITIAL_TEAMMATES)
+  const [inviteOpen, setInviteOpen] = useState(false)
+  const [copilotOpen, setCopilotOpen] = useState(false)
+  const [copilotThread, setCopilotThread] = usePersistentState('copilotThread', [
+    { id: 'c-greet', from: 'ai', text: COPILOT_GREETING },
+  ])
+  const [copilotTyping, setCopilotTyping] = useState(false)
+  const [aiUses, setAiUses] = usePersistentState('aiUses', 0)
+
+  const planMeta = planById(plan)
+  const aiUnlimited = hasFeature(plan, 'copilotUnlimited')
+  const referralJoined = invites.filter((i) => i.status === 'joined').length
 
   const unreadConv = CONVERSATIONS.filter((c) => c.unread && !convRead[c.id]).length
   const unreadGroups = groups.filter((g) => g.unread > 0 && !groupRead[g.id]).length
@@ -262,6 +285,60 @@ export default function App() {
     })
   }
 
+  function upgradePlan(id) {
+    if (id === plan) return
+    setPlan(id)
+    setPlansOpen(false)
+    const meta = planById(id)
+    showToast(id === 'free' ? 'Plan Découverte activé' : `Bienvenue dans ${meta.name} ✨`)
+  }
+
+  function nameFromEmail(email) {
+    const handle = email.split('@')[0].replace(/[._-]+/g, ' ')
+    return handle.replace(/\b\w/g, (c) => c.toUpperCase())
+  }
+
+  function sendInvite(email) {
+    if (invites.some((i) => i.email === email)) {
+      showToast('Déjà invité·e')
+      return
+    }
+    setInvites((prev) => [
+      { id: `inv-${Date.now()}`, name: nameFromEmail(email), email, status: 'pending', context: 'Invitation envoyée', date: 'à l’instant' },
+      ...prev,
+    ])
+    showToast('Invitation envoyée ✓')
+  }
+
+  function inviteTeammate(email) {
+    if (teammates.some((t) => t.email === email)) {
+      showToast('Déjà dans l’équipe')
+      return
+    }
+    setTeammates((prev) => [
+      ...prev,
+      { id: `t-${Date.now()}`, name: nameFromEmail(email), email, role: 'Invité·e', status: 'pending' },
+    ])
+    showToast('Coéquipier invité ✓')
+  }
+
+  function sendCopilot({ text, intent }) {
+    if (!aiUnlimited && aiUses >= FREE_AI_LIMIT) {
+      showToast('Limite IA atteinte — passe à Pro')
+      return false
+    }
+    const stamp = Date.now()
+    setCopilotThread((prev) => [...prev, { id: `c-${stamp}-u`, from: 'me', text }])
+    setAiUses((n) => n + 1)
+    setCopilotTyping(true)
+    window.clearTimeout(sendCopilot._t)
+    sendCopilot._t = window.setTimeout(() => {
+      setCopilotThread((prev) => [...prev, { id: `c-${stamp}-a`, from: 'ai', text: copilotReply({ intent, text }) }])
+      setCopilotTyping(false)
+    }, 950)
+    return true
+  }
+
   const ctx = {
     tab, goTo, showToast,
     openMember: setMember,
@@ -273,6 +350,17 @@ export default function App() {
     openSearch: () => setSearchOpen(true),
     openIntegrations: () => setIntegrationsOpen(true),
     integrations, toggleIntegration,
+    // Abonnement
+    plan, planMeta, upgradePlan,
+    hasFeature: (key) => hasFeature(plan, key),
+    openPlans: () => setPlansOpen(true),
+    // Invitations
+    invites, sendInvite, referralJoined,
+    teammates, inviteTeammate,
+    openInvite: () => setInviteOpen(true),
+    // Copilot IA
+    copilotThread, copilotTyping, sendCopilot, aiUnlimited, aiUses,
+    openCopilot: () => setCopilotOpen(true),
     contacted, contactMember,
     sentSuggestions, sendSuggestion,
     connections, requests, acceptRequest, declineRequest,
@@ -291,6 +379,10 @@ export default function App() {
 
   const inChat = tab === 'messages' && (openConv || openGroup)
   const showHeader = !inChat && tab !== 'profil'
+  const anyOverlay =
+    member || activityId || eventId || composerOpen || notifOpen || editProfileOpen ||
+    roiInfoOpen || integrationsOpen || searchOpen || plansOpen || inviteOpen || copilotOpen || onboarding
+  const showFab = !inChat && !anyOverlay
 
   function renderScreen() {
     switch (tab) {
@@ -383,7 +475,21 @@ export default function App() {
             </div>
           )}
 
+          {showFab && (
+            <button
+              onClick={() => setCopilotOpen(true)}
+              aria-label="Ouvrir le Copilot IA"
+              className="animate-glowPulse absolute bottom-[88px] right-4 z-30 flex items-center gap-2 rounded-full bg-gradient-to-br from-brand-500 to-[#7E6FB0] px-4 py-3 text-white shadow-brand tap"
+            >
+              <Icon name="sparkles" className="h-5 w-5" filled />
+              <span className="text-sm font-extrabold tracking-tight">Copilot IA</span>
+            </button>
+          )}
+
           {searchOpen && <GlobalSearch onClose={() => setSearchOpen(false)} />}
+          {copilotOpen && <CopilotSheet onClose={() => setCopilotOpen(false)} />}
+          {plansOpen && <PlansSheet onClose={() => setPlansOpen(false)} />}
+          {inviteOpen && <InviteSheet onClose={() => setInviteOpen(false)} />}
           {member && <MemberSheet name={member} onClose={() => setMember(null)} />}
           {activityId && <ActivitySheet id={activityId} onClose={() => setActivityId(null)} />}
           {eventId && <EventSheet id={eventId} onClose={() => setEventId(null)} />}

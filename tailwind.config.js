@@ -38,6 +38,8 @@ export default {
         success: { 300: '#86C29A', DEFAULT: '#4E6B59', light: '#EAEEEB', dark: '#48584E' },
         // Rose désaturé = « j'aime » (kudos likés).
         like: { DEFAULT: '#8C5560', light: '#EFE5E6' },
+        // Or champagne sobre = accent « premium / abonnement ».
+        gold: { 300: '#E7D49B', DEFAULT: '#C8A24A', dark: '#9A7B2E', light: '#F5EFDD' },
       },
       fontFamily: {
         display: ['"Inter Tight"', 'Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
@@ -55,6 +57,12 @@ export default {
           'radial-gradient(50% 50% at 18% 8%, rgba(79,96,160,0.10) 0%, rgba(79,96,160,0) 60%), radial-gradient(45% 45% at 88% 92%, rgba(14,17,22,0.05) 0%, rgba(14,17,22,0) 60%)',
         'hero-glow':
           'radial-gradient(115% 80% at 82% -12%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 52%), radial-gradient(85% 75% at 0% 112%, rgba(110,127,187,0.22) 0%, rgba(110,127,187,0) 58%)',
+        // Halo « IA / premium » : nappes indigo + violet douces sur surface sombre.
+        aurora:
+          'radial-gradient(70% 60% at 12% 4%, rgba(110,127,187,0.50) 0%, rgba(110,127,187,0) 60%), radial-gradient(60% 70% at 92% 8%, rgba(150,128,190,0.38) 0%, rgba(150,128,190,0) 58%), radial-gradient(80% 80% at 80% 110%, rgba(90,150,150,0.26) 0%, rgba(90,150,150,0) 60%)',
+        // Filet doré discret pour les surfaces « premium ».
+        'gold-sheen':
+          'linear-gradient(135deg, rgba(231,212,155,0.18) 0%, rgba(231,212,155,0) 42%), radial-gradient(60% 80% at 90% 0%, rgba(200,162,74,0.20) 0%, rgba(200,162,74,0) 60%)',
       },
       keyframes: {
         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
@@ -79,6 +87,14 @@ export default {
           '100%': { opacity: '1', transform: 'scale(1)' },
         },
         shimmer: { '100%': { transform: 'translateX(100%)' } },
+        bubbleIn: {
+          '0%': { opacity: '0', transform: 'translateY(8px) scale(0.98)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+        glowPulse: {
+          '0%, 100%': { boxShadow: '0 8px 24px -8px rgba(79,96,160,0.55), 0 0 0 0 rgba(79,96,160,0.32)' },
+          '50%': { boxShadow: '0 10px 28px -8px rgba(79,96,160,0.65), 0 0 0 8px rgba(79,96,160,0)' },
+        },
       },
       animation: {
         fadeIn: 'fadeIn 0.25s ease-out both',
@@ -87,6 +103,8 @@ export default {
         sheetIn: 'sheetIn 0.34s cubic-bezier(0.22,1,0.36,1) both',
         drawerIn: 'drawerIn 0.3s cubic-bezier(0.22,1,0.36,1) both',
         popIn: 'popIn 0.22s cubic-bezier(0.22,1,0.36,1) both',
+        bubbleIn: 'bubbleIn 0.3s cubic-bezier(0.22,1,0.36,1) both',
+        glowPulse: 'glowPulse 2.8s ease-in-out infinite',
       },
     },
   },

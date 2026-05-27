@@ -8,10 +8,19 @@ import { CURRENT_USER } from '../data/user'
 
 const ORDER = ['reflexion', 'rex', 'tip', 'milestone']
 
+const AI_HOOKS = {
+  reflexion: 'Réflexion du jour 💭',
+  rex: 'Petit REX de terrain 👇',
+  tip: 'Un tip rapide pour les fondateurs 👇',
+  milestone: 'Étape franchie 🎉',
+}
+
 export default function PostComposer({ open, onClose, onPublish }) {
-  const { profile } = useApp()
+  const { profile, hasFeature, openPlans, showToast } = useApp()
   const [type, setType] = useState('reflexion')
   const [text, setText] = useState('')
+  const [enhancing, setEnhancing] = useState(false)
+  const aiCompose = hasFeature('aiCompose')
   if (!open) return null
 
   function publish() {
@@ -20,6 +29,22 @@ export default function PostComposer({ open, onClose, onPublish }) {
     onPublish({ type, text: body })
     setText('')
     setType('reflexion')
+  }
+
+  function enhance() {
+    if (!aiCompose) {
+      onClose()
+      openPlans()
+      return
+    }
+    const base = text.trim()
+    if (!base || enhancing) return
+    setEnhancing(true)
+    window.setTimeout(() => {
+      setText(`${AI_HOOKS[type]}\n\n${base}\n\nEt toi, comment tu gères ça ? 👇`)
+      setEnhancing(false)
+      showToast('Texte retravaillé par l’IA ✓')
+    }, 850)
   }
 
   return (
@@ -74,6 +99,20 @@ export default function PostComposer({ open, onClose, onPublish }) {
             placeholder="Partage une réflexion, un REX de rencontre, un tip…"
             className="mt-4 w-full resize-none rounded-2xl border border-ink-200 bg-white px-4 py-3 text-[14px] leading-relaxed text-ink-900 outline-none focus:ring-2 focus:ring-brand-200 placeholder:text-ink-400"
           />
+
+          <button
+            onClick={enhance}
+            disabled={enhancing || (aiCompose && !text.trim())}
+            className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-brand-500 to-[#7E6FB0] px-3.5 py-2 text-[13px] font-bold text-white shadow-brand tap disabled:opacity-40"
+          >
+            <Icon name={enhancing ? 'refresh' : 'wand'} className={`h-4 w-4 ${enhancing ? 'animate-spin' : ''}`} />
+            {enhancing ? 'L’IA rédige…' : 'Améliorer avec l’IA'}
+            {!aiCompose && (
+              <span className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-white/20 px-1.5 py-0.5 text-[10px] font-extrabold">
+                <Icon name="lock" className="h-2.5 w-2.5" /> Pro
+              </span>
+            )}
+          </button>
         </div>
       </div>
     </div>
