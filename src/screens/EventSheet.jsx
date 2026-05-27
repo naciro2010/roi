@@ -96,7 +96,7 @@ export default function EventSheet({ id, onClose }) {
         <div className="glass flex shrink-0 items-center gap-2 border-t border-ink-100 px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             onClick={() => toggleJoin(e.id)}
-            className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${isJoined ? 'bg-[#4E6B59]' : 'bg-ink-900 shadow-brand'}`}
+            className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${isJoined ? 'bg-[#4E6B59]' : 'bg-brand-500 shadow-brand'}`}
           >
             {isJoined ? 'Inscrit ✓' : 'Je participe'}
           </button>

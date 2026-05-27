@@ -2,7 +2,7 @@ import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
 import ServiceLogo from '../components/ServiceLogo'
-import { SectionTitle, PILL_TONES } from '../components/primitives'
+import { SectionTitle, ProgressRing } from '../components/primitives'
 import { CURRENT_USER } from '../data/user'
 import { ACTIVITIES } from '../data/activities'
 import { SERVICES } from '../data/integrations'
@@ -19,9 +19,9 @@ export default function Profil() {
     { label: 'défis', value: u.stats.defis },
   ]
   const roiCards = [
-    { label: 'Connexions', value: u.roi.connections, icon: 'users', tone: 'indigo' },
-    { label: 'RDV pris', value: u.roi.meetings, icon: 'calendar', tone: 'emerald' },
-    { label: 'Opportunités', value: u.roi.opportunities, icon: 'briefcase', tone: 'brand' },
+    { label: 'Connexions', value: u.roi.connections, delta: u.roi.connectionsDelta },
+    { label: 'RDV pris', value: u.roi.meetings, delta: u.roi.meetingsDelta },
+    { label: 'Opportunités', value: u.roi.opportunities, delta: u.roi.opportunitiesDelta },
   ]
   const settings = [
     { icon: 'bookmark', label: 'Mes favoris', onClick: () => showToast('Bientôt disponible') },
@@ -69,17 +69,33 @@ export default function Profil() {
           {/* ROI */}
           <section>
             <SectionTitle action="Comment ça marche ?" onAction={openRoiInfo}>Mon ROI réseau</SectionTitle>
-            <div className="grid grid-cols-3 gap-2.5">
-              {roiCards.map((s) => (
-                <button key={s.label} onClick={openRoiInfo} className="rounded-2xl border border-ink-100 bg-white p-3 text-left shadow-soft tap">
-                  <span className={`grid h-8 w-8 place-items-center rounded-xl ${PILL_TONES[s.tone]}`}>
-                    <Icon name={s.icon} className="h-4 w-4" />
+            <button onClick={openRoiInfo} className="relative w-full overflow-hidden rounded-3xl bg-ink-950 p-4 text-left shadow-card tap">
+              <div className="absolute inset-0 bg-hero-glow" />
+              <div className="relative flex items-center gap-4">
+                <ProgressRing value={u.roi.score} size={88} stroke={9}>
+                  <div className="text-2xl font-extrabold leading-none text-white tabular-nums">{u.roi.score}</div>
+                  <div className="mt-0.5 text-[10px] font-semibold text-white/45">/ 100</div>
+                </ProgressRing>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-bold text-white">Score ROI</div>
+                  <p className="mt-0.5 text-[12px] leading-snug text-white/55">La valeur que ton réseau te rapporte ce mois-ci.</p>
+                  <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[12px] font-bold text-[#86C29A]">
+                    <Icon name="trendingUp" className="h-3.5 w-3.5" /> +{u.roi.weekDelta} cette semaine
                   </span>
-                  <div className="mt-2 text-xl font-extrabold text-ink-900">{s.value}</div>
-                  <div className="text-[11px] text-ink-400">{s.label}</div>
-                </button>
-              ))}
-            </div>
+                </div>
+              </div>
+              <div className="relative mt-4 grid grid-cols-3 gap-2.5">
+                {roiCards.map((s) => (
+                  <div key={s.label} className="rounded-2xl bg-white/10 p-2.5">
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-lg font-extrabold text-white tabular-nums">{s.value}</span>
+                      {s.delta != null && <span className="text-[11px] font-bold text-[#86C29A] tabular-nums">+{s.delta}</span>}
+                    </div>
+                    <div className="text-[11px] text-white/55">{s.label}</div>
+                  </div>
+                ))}
+              </div>
+            </button>
           </section>
 
           {/* Ce que je cherche */}

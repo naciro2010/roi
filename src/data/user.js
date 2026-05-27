@@ -11,5 +11,14 @@ export const CURRENT_USER = {
   offering: ['Retours produit', 'Mise en relation SaaS B2B'],
   interests: ['Levée de fonds', 'Product', 'Trail', 'Café & co-working', 'Design'],
   stats: { km: 42, sorties: 6, defis: 2 },
-  roi: { score: 78, connections: 34, meetings: 12, opportunities: 5, weekDelta: 6 },
+  roi: {
+    score: 78,
+    weekDelta: 6,
+    connections: 34,
+    meetings: 12,
+    opportunities: 5,
+    connectionsDelta: 4,
+    meetingsDelta: 2,
+    opportunitiesDelta: 1,
+  },
 }

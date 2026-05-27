@@ -111,6 +111,10 @@ export const OPPORTUNITIES = [
   { id: 'o3', icon: 'trendingUp', tone: 'brand', who: 'Karim Haddad', detail: 'a demandé ton deck (seed).', time: 'Il y a 5 j' },
 ]
 
+export function matchFor(name) {
+  return SUGGESTIONS.find((s) => s.name === name) || null
+}
+
 export function personFor(name) {
   return (
     PEOPLE[name] || {
