@@ -2,14 +2,19 @@ import { useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
-import { Badge, MatchRing } from '../components/primitives'
+import { Badge, MatchRing, AiPill } from '../components/primitives'
 import { SUGGESTIONS, MEMBERS, FILTERS, personFor } from '../data/network'
+import { FREE_MATCH_LIMIT } from '../data/plans'
 
 export default function Reseau() {
   const {
     openMember, sentSuggestions, sendSuggestion, contacted, contactMember,
     connections, requests, acceptRequest, declineRequest,
+    hasFeature, openPlans, openCopilot,
   } = useApp()
+  const unlimitedMatches = hasFeature('unlimitedMatches')
+  const canSeeWhoWants = hasFeature('whoWantsToMeet')
+  const visibleSuggestions = unlimitedMatches ? SUGGESTIONS : SUGGESTIONS.slice(0, FREE_MATCH_LIMIT)
   const [netView, setNetView] = useState('suggestions')
   const [filter, setFilter] = useState('Tous')
   const [query, setQuery] = useState('')
@@ -55,17 +60,24 @@ export default function Reseau() {
 
       {netView === 'suggestions' && (
         <div className="flex-1 space-y-4 overflow-y-auto no-scrollbar px-5 pb-6 pt-4">
-          <div className="flex items-start gap-3 rounded-2xl border border-brand-200 bg-brand-light/60 p-3.5">
+          <button
+            onClick={openCopilot}
+            className="flex w-full items-start gap-3 rounded-2xl border border-brand-200 bg-brand-light/60 p-3.5 text-left tap"
+          >
             <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white text-brand-600 shadow-soft">
               <Icon name="sparkles" className="h-4 w-4" filled />
             </span>
-            <div>
-              <p className="text-[13px] font-bold text-ink-900">3 personnes à rencontrer cette semaine</p>
-              <p className="text-[12px] text-ink-500">Basé sur tes besoins, tes sorties et tes connexions.</p>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5">
+                <p className="text-[13px] font-bold text-ink-900">{SUGGESTIONS.length} personnes à rencontrer</p>
+                <AiPill />
+              </div>
+              <p className="text-[12px] text-ink-500">Sélection par l’IA selon tes besoins, sorties & connexions.</p>
             </div>
-          </div>
+            <Icon name="arrowRight" className="mt-1 h-4 w-4 shrink-0 text-brand-500" />
+          </button>
 
-          {SUGGESTIONS.map((p) => {
+          {visibleSuggestions.map((p) => {
             const sent = sentSuggestions[p.id]
             return (
               <article key={p.id} className="overflow-hidden rounded-3xl border border-ink-100 bg-white shadow-card">
@@ -111,6 +123,25 @@ export default function Reseau() {
               </article>
             )
           })}
+
+          {!unlimitedMatches && (
+            <button
+              onClick={openPlans}
+              className="relative w-full overflow-hidden rounded-3xl bg-ink-950 p-4 text-left text-white shadow-float tap"
+            >
+              <div className="absolute inset-0 bg-aurora" />
+              <div className="relative flex items-center gap-3">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/10 text-gold-300">
+                  <Icon name="lock" className="h-5 w-5" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-extrabold">5 autres profils te correspondent</div>
+                  <p className="text-[12px] text-white/60">Débloque les matchs illimités avec Pro.</p>
+                </div>
+                <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-ink-900">Pro</span>
+              </div>
+            </button>
+          )}
 
           <p className="pt-1 text-center text-xs text-ink-400">De nouveaux matchs chaque lundi matin ☕</p>
         </div>
@@ -191,6 +222,55 @@ export default function Reseau() {
 
       {netView === 'contacts' && (
         <div className="flex-1 space-y-5 overflow-y-auto no-scrollbar px-5 pb-6 pt-4">
+          {/* Qui veut me rencontrer (premium) */}
+          {canSeeWhoWants ? (
+            <section className="rounded-3xl border border-brand-200 bg-brand-light/50 p-3.5">
+              <div className="flex items-center gap-1.5">
+                <Icon name="sparkles" className="h-4 w-4 text-brand-600" filled />
+                <p className="text-[13px] font-bold text-ink-900">2 personnes veulent te rencontrer</p>
+              </div>
+              <div className="mt-3 space-y-2">
+                {['Inès Roy', 'Hugo Bernard'].map((name) => (
+                  <button
+                    key={name}
+                    onClick={() => openMember(name)}
+                    className="flex w-full items-center gap-3 rounded-2xl bg-white p-2.5 text-left shadow-soft tap"
+                  >
+                    <Avatar name={name} size="sm" />
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm font-bold text-ink-900">{name}</div>
+                      <div className="truncate text-[12px] text-ink-500">{personFor(name).title}</div>
+                    </div>
+                    <Icon name="chevronRight" className="h-4 w-4 text-ink-300" />
+                  </button>
+                ))}
+              </div>
+            </section>
+          ) : (
+            <button
+              onClick={openPlans}
+              className="relative w-full overflow-hidden rounded-3xl bg-ink-950 p-4 text-left text-white shadow-float tap"
+            >
+              <div className="absolute inset-0 bg-aurora" />
+              <div className="relative flex items-center gap-3">
+                <div className="flex -space-x-2.5">
+                  {['Inès Roy', 'Hugo Bernard'].map((name) => (
+                    <span key={name} className="grid h-9 w-9 place-items-center rounded-full bg-white/15 text-white ring-2 ring-ink-950 blur-[3px]">
+                      <Icon name="user" className="h-4 w-4" />
+                    </span>
+                  ))}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-extrabold">2 personnes veulent te rencontrer</div>
+                  <p className="text-[12px] text-white/60">Débloque-les avec Pro.</p>
+                </div>
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/10 text-gold-300">
+                  <Icon name="lock" className="h-4 w-4" />
+                </span>
+              </div>
+            </button>
+          )}
+
           {requests.length > 0 && (
             <section>
               <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-ink-500">

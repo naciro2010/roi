@@ -1,0 +1,21 @@
+{
+  "name": "ROI · Le réseau qui rapporte",
+  "short_name": "ROI",
+  "description": "Networking entre entrepreneurs qui courent : matchs propulsés par l'IA, Copilot networking, sorties et opportunités.",
+  "lang": "fr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1B2130",
+  "theme_color": "#1B2130",
+  "categories": ["business", "social", "productivity", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

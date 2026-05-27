@@ -8,6 +8,20 @@ des groupes pour échanger.
 
 ## Fonctionnalités
 
+- **Copilot IA** — assistant de networking accessible partout via le bouton
+  flottant : insights proactifs (qui rencontrer, qui relancer), rédaction
+  d'intros, résumé de la semaine réseau, et chat avec prompts suggérés. Mis en
+  avant aussi sur le Fil et le Réseau (badges « IA »). Rédaction de posts assistée
+  par l'IA dans le composer.
+- **Abonnement** — 3 plans (Découverte gratuit · Pro · Business), bascule
+  mensuel/annuel, et déblocage progressif des fonctionnalités premium (matchs
+  illimités, Copilot illimité, « qui veut me rencontrer », filtres avancés,
+  sièges d'équipe…). Les surfaces verrouillées invitent à passer à l'offre
+  supérieure.
+- **Invitations & parrainage** — invite des contacts externes par e-mail ou lien
+  partageable, suivi du statut, récompense de parrainage (3 invité·es → 1 mois
+  Pro), et gestion des sièges d'équipe pour le plan Business. L'onboarding détecte
+  une invitation (`?invite=Prénom`) et accueille la personne par son parrain.
 - **Fil** — feed social façon LinkedIn : posts (réflexion, REX de rencontre, tip,
   étape, partage d'activité), like / commentaire / partage, composer de post, et
   carte ROI compacte (score réseau).
@@ -41,6 +55,8 @@ src/
 ## Stack
 
 React 18 · Vite · Tailwind CSS · Leaflet (cartes). Données fictives, aucune dépendance back-end.
+PWA installable (manifest + icône, `display: standalone`) pour un rendu d'app
+mobile plein écran ; mobile-first et responsive (cadre « téléphone » sur desktop).
 
 > Les cartes chargent leurs tuiles depuis OpenStreetMap/CARTO : un accès réseau
 > sortant est nécessaire à l'affichage du fond de carte (le tracé GPS, lui,
