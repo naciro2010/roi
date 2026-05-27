@@ -5,11 +5,11 @@ import RouteMap from './RouteMap'
 function Stat({ icon, value, label }) {
   return (
     <div className="flex-1">
-      <div className="flex items-center gap-1 text-ink-400">
+      <div className="flex items-center gap-1 text-fg-faint">
         <Icon name={icon} className="h-3.5 w-3.5" />
         <span className="text-[10px] font-semibold uppercase tracking-wide">{label}</span>
       </div>
-      <div className="mt-0.5 text-[15px] font-extrabold text-ink-900">{value}</div>
+      <div className="mt-0.5 text-[15px] font-extrabold text-fg">{value}</div>
     </div>
   )
 }
@@ -17,20 +17,20 @@ function Stat({ icon, value, label }) {
 /* Aperçu compact (carte + stats) — réutilisé dans le feed et la fiche. */
 export function ActivityPreview({ activity, onOpen, mapClass = 'h-40' }) {
   return (
-    <button onClick={onOpen} className="block w-full overflow-hidden rounded-2xl border border-ink-100 bg-white text-left tap">
-      <div className={`relative ${mapClass} bg-ink-100`}>
+    <button onClick={onOpen} className="block w-full overflow-hidden rounded-2xl border border-line bg-surface text-left tap">
+      <div className={`relative ${mapClass} bg-surface-2`}>
         <RouteMap route={activity.route} className="h-full w-full" />
-        <span className="pointer-events-none absolute left-2.5 top-2.5 rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-bold text-ink-700 shadow-soft backdrop-blur">
+        <span className="pointer-events-none absolute left-2.5 top-2.5 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-bold text-white shadow-soft ring-1 ring-white/10 backdrop-blur">
           {activity.type}
         </span>
       </div>
       <div className="flex items-stretch gap-2 px-3.5 py-3">
         <Stat icon="route" value={`${activity.distance.toFixed(1)} km`} label="Distance" />
-        <span className="w-px self-stretch bg-ink-100" />
+        <span className="w-px self-stretch bg-surface-2" />
         <Stat icon="clock" value={activity.duration} label="Temps" />
-        <span className="w-px self-stretch bg-ink-100" />
+        <span className="w-px self-stretch bg-surface-2" />
         <Stat icon="activity" value={`${activity.pace} /km`} label="Allure" />
-        <span className="w-px self-stretch bg-ink-100" />
+        <span className="w-px self-stretch bg-surface-2" />
         <Stat icon="mountain" value={`${activity.elevation} m`} label="D+" />
       </div>
     </button>
@@ -40,16 +40,16 @@ export function ActivityPreview({ activity, onOpen, mapClass = 'h-40' }) {
 /* Carte autonome pour l'onglet Courir › Activités. */
 export function ActivityCard({ activity, kudo, onKudo, onOpen, onOpenAthlete }) {
   return (
-    <article className="overflow-hidden rounded-3xl border border-ink-100 bg-white shadow-soft">
+    <article className="overflow-hidden rounded-3xl border border-line bg-surface shadow-soft">
       <div className="flex items-center gap-3 p-3.5 pb-2.5">
         <Avatar name={activity.athlete} size="md" onClick={onOpenAthlete} />
         <div className="min-w-0 flex-1">
-          <div className="truncate font-bold text-ink-900">{activity.athlete}</div>
-          <div className="truncate text-[12px] text-ink-400">{activity.date}</div>
+          <div className="truncate font-bold text-fg">{activity.athlete}</div>
+          <div className="truncate text-[12px] text-fg-faint">{activity.date}</div>
         </div>
       </div>
 
-      <h3 className="px-3.5 pb-2 font-bold leading-tight text-ink-900">{activity.title}</h3>
+      <h3 className="px-3.5 pb-2 font-bold leading-tight text-fg">{activity.title}</h3>
 
       <div className="px-3.5">
         <ActivityPreview activity={activity} onOpen={onOpen} />
@@ -68,7 +68,7 @@ export function ActivityCard({ activity, kudo, onKudo, onOpen, onOpenAthlete }) 
         <button
           onClick={onKudo}
           className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold tap ${
-            kudo?.liked ? 'bg-like-light text-like' : 'bg-ink-100 text-ink-500'
+            kudo?.liked ? 'bg-like-light text-like' : 'bg-surface-2 text-fg-muted'
           }`}
         >
           <Icon name="heart" className="h-4 w-4" filled={kudo?.liked} />

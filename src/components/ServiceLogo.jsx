@@ -23,7 +23,7 @@ function Glyph({ id }) {
   }
   if (id === 'coros') return <span className="text-[15px] font-extrabold text-white">C</span>
   if (id === 'polar') {
-    return <span className="grid h-5 w-5 place-items-center rounded-full border-[3px] border-white" />
+    return <span className="grid h-5 w-5 place-items-center rounded-full border-[3px] border-canvas" />
   }
   return <span className="text-[15px] font-extrabold text-white">{id[0]?.toUpperCase()}</span>
 }

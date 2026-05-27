@@ -1,13 +1,13 @@
-// Teintes d'avatar sobres et désaturées (aucune couleur flashy).
+// Teintes d'avatar sombres et désaturées : tuile profonde + initiales lumineuses.
 export const AVATAR_TINTS = [
-  'bg-slate-200 text-slate-700',
-  'bg-stone-200 text-stone-700',
-  'bg-zinc-200 text-zinc-700',
-  'bg-[#DDE3F1] text-[#3C455B]',
-  'bg-[#DCE6DD] text-[#3F5A45]',
-  'bg-[#E7DDD4] text-[#6B5544]',
-  'bg-[#E2DBE6] text-[#574A60]',
-  'bg-[#D9E2E6] text-[#3F5560]',
+  'bg-[#2A3350] text-[#AEB8DA]',
+  'bg-[#2E2A3D] text-[#C2B6D6]',
+  'bg-[#23323A] text-[#A8C5CF]',
+  'bg-[#2C3243] text-[#B4BCCE]',
+  'bg-[#1F3328] text-[#9FD0B0]',
+  'bg-[#322A22] text-[#D8C2A6]',
+  'bg-[#312530] text-[#D6AEC2]',
+  'bg-[#28303F] text-[#B7C0D2]',
 ]
 
 export const AVATAR_SIZES = {

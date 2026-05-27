@@ -24,13 +24,13 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
   }
 
   return (
-    <article className="overflow-hidden rounded-3xl border border-ink-100 bg-white shadow-card">
+    <article className="overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
       {/* En-tête auteur */}
       <div className="flex items-center gap-3 p-4 pb-3">
         <Avatar name={post.author} size="md" onClick={onOpenAuthor} />
         <button onClick={onOpenAuthor} className="min-w-0 flex-1 text-left">
-          <div className="truncate font-bold text-ink-900">{post.author}</div>
-          <div className="truncate text-[12px] text-ink-400">{subtitleFor(post.author)} · {post.time}</div>
+          <div className="truncate font-bold text-fg">{post.author}</div>
+          <div className="truncate text-[12px] text-fg-faint">{subtitleFor(post.author)} · {post.time}</div>
         </button>
         <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${PILL_TONES[meta.tone]}`}>
           <Icon name={meta.icon} className="h-3 w-3" filled={meta.icon === 'sparkles'} />
@@ -39,7 +39,7 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
       </div>
 
       {/* Texte */}
-      <p className="whitespace-pre-line px-4 text-[14px] leading-relaxed text-ink-800">{post.text}</p>
+      <p className="whitespace-pre-line px-4 text-[14px] leading-relaxed text-fg">{post.text}</p>
 
       {/* Activité liée */}
       {activity && (
@@ -49,7 +49,7 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
       )}
 
       {/* Compteurs */}
-      <div className="flex items-center justify-between px-4 pt-3 text-[12px] text-ink-400">
+      <div className="flex items-center justify-between px-4 pt-3 text-[12px] text-fg-faint">
         <span className="inline-flex items-center gap-1">
           <span className="grid h-4 w-4 place-items-center rounded-full bg-brand-500 text-white">
             <Icon name="heart" className="h-2.5 w-2.5" filled />
@@ -64,24 +64,24 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
       </div>
 
       {/* Actions */}
-      <div className="mt-1 flex items-center justify-around border-t border-ink-100 px-2 py-1">
+      <div className="mt-1 flex items-center justify-around border-t border-line px-2 py-1">
         <button
           onClick={onLike}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold tap ${
-            post.liked ? 'text-like' : 'text-ink-500'
+            post.liked ? 'text-like' : 'text-fg-muted'
           }`}
         >
           <Icon name="heart" className="h-[18px] w-[18px]" filled={post.liked} /> J'aime
         </button>
         <button
           onClick={() => setShowComments((s) => !s)}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold text-ink-500 tap"
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold text-fg-muted tap"
         >
           <Icon name="comment" className="h-[18px] w-[18px]" /> Commenter
         </button>
         <button
           onClick={onShare}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold text-ink-500 tap"
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold text-fg-muted tap"
         >
           <Icon name="share" className="h-[18px] w-[18px]" /> Partager
         </button>
@@ -89,14 +89,14 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
 
       {/* Commentaires */}
       {showComments && (
-        <div className="border-t border-ink-100 bg-ink-50/60 px-4 py-3">
+        <div className="border-t border-line bg-surface-2/60 px-4 py-3">
           <div className="space-y-2.5">
             {post.comments.map((c, i) => (
               <div key={i} className="flex items-start gap-2.5">
                 <Avatar name={c.author} size="xs" onClick={() => onOpenAuthor?.(c.author)} />
-                <div className="min-w-0 flex-1 rounded-2xl rounded-tl-md bg-white px-3 py-2 shadow-soft">
-                  <div className="text-[12px] font-bold text-ink-900">{c.author}</div>
-                  <div className="text-[13px] leading-snug text-ink-700">{c.text}</div>
+                <div className="min-w-0 flex-1 rounded-2xl rounded-tl-md bg-surface px-3 py-2 shadow-soft">
+                  <div className="text-[12px] font-bold text-fg">{c.author}</div>
+                  <div className="text-[13px] leading-snug text-fg-soft">{c.text}</div>
                 </div>
               </div>
             ))}
@@ -108,7 +108,7 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && submit()}
               placeholder="Ajoute un commentaire…"
-              className="flex-1 rounded-full border border-ink-200 bg-white px-3.5 py-2 text-[13px] outline-none focus:ring-2 focus:ring-brand-200"
+              className="flex-1 rounded-full border border-line-strong bg-surface px-3.5 py-2 text-[13px] outline-none focus:ring-2 focus:ring-brand-200"
             />
             <button onClick={submit} disabled={!draft.trim()} className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-500 text-white tap disabled:opacity-40">
               <Icon name="send" className="h-4 w-4" />

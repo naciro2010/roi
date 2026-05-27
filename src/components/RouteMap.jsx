@@ -5,7 +5,7 @@ const RouteMapImpl = lazy(() => import('./RouteMapImpl'))
 
 export default function RouteMap({ className = '', ...props }) {
   return (
-    <Suspense fallback={<div className={`${className} animate-pulse bg-ink-100`} aria-label="Chargement de la carte…" />}>
+    <Suspense fallback={<div className={`${className} animate-pulse bg-surface-2`} aria-label="Chargement de la carte…" />}>
       <RouteMapImpl className={className} {...props} />
     </Suspense>
   )

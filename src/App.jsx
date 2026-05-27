@@ -7,6 +7,7 @@ import { CONVERSATIONS, THREADS, GROUPS, GROUP_THREADS } from './data/messages'
 import { NOTIFICATIONS } from './data/notifications'
 import { POSTS } from './data/feed'
 import { EVENTS } from './data/events'
+import { MEETINGS } from './data/meetings'
 import { ACTIVITIES } from './data/activities'
 import { CONNECTIONS, REQUESTS } from './data/connections'
 
@@ -29,12 +30,11 @@ import EditProfileSheet from './screens/EditProfileSheet'
 import RoiInfoSheet from './screens/RoiInfoSheet'
 import GlobalSearch from './screens/GlobalSearch'
 import IntegrationsSheet from './screens/IntegrationsSheet'
-import CopilotSheet from './screens/CopilotSheet'
+import AgendaSheet from './screens/AgendaSheet'
 import PlansSheet from './screens/PlansSheet'
 import InviteSheet from './screens/InviteSheet'
 import { SERVICES } from './data/integrations'
-import { planById, hasFeature, FREE_AI_LIMIT } from './data/plans'
-import { COPILOT_GREETING, copilotReply } from './data/copilot'
+import { planById, hasFeature } from './data/plans'
 import { INITIAL_INVITES, INITIAL_TEAMMATES } from './data/invites'
 
 export default function App() {
@@ -96,21 +96,20 @@ export default function App() {
   const [integrationsOpen, setIntegrationsOpen] = useState(false)
   const [integrations, setIntegrations] = usePersistentState('integrations', {})
 
-  // Abonnement · invitations · Copilot IA
+  // Abonnement · invitations
   const [plan, setPlan] = usePersistentState('plan', 'free')
   const [plansOpen, setPlansOpen] = useState(false)
   const [invites, setInvites] = usePersistentState('invites', INITIAL_INVITES)
   const [teammates, setTeammates] = usePersistentState('teammates', INITIAL_TEAMMATES)
   const [inviteOpen, setInviteOpen] = useState(false)
-  const [copilotOpen, setCopilotOpen] = useState(false)
-  const [copilotThread, setCopilotThread] = usePersistentState('copilotThread', [
-    { id: 'c-greet', from: 'ai', text: COPILOT_GREETING },
-  ])
-  const [copilotTyping, setCopilotTyping] = useState(false)
-  const [aiUses, setAiUses] = usePersistentState('aiUses', 0)
+
+  // Agenda & RDV business
+  const [agendaOpen, setAgendaOpen] = useState(false)
+  const [meetingStatus, setMeetingStatus] = usePersistentState('meetingStatus', {})
+  const [customMeetings, setCustomMeetings] = usePersistentState('customMeetings', [])
+  const meetings = [...customMeetings, ...MEETINGS].map((m) => ({ ...m, status: meetingStatus[m.id] || m.status }))
 
   const planMeta = planById(plan)
-  const aiUnlimited = hasFeature(plan, 'copilotUnlimited')
   const referralJoined = invites.filter((i) => i.status === 'joined').length
 
   const unreadConv = CONVERSATIONS.filter((c) => c.unread && !convRead[c.id]).length
@@ -322,21 +321,20 @@ export default function App() {
     showToast('Coéquipier invité ✓')
   }
 
-  function sendCopilot({ text, intent }) {
-    if (!aiUnlimited && aiUses >= FREE_AI_LIMIT) {
-      showToast('Limite IA atteinte — passe à Pro')
-      return false
-    }
-    const stamp = Date.now()
-    setCopilotThread((prev) => [...prev, { id: `c-${stamp}-u`, from: 'me', text }])
-    setAiUses((n) => n + 1)
-    setCopilotTyping(true)
-    window.clearTimeout(sendCopilot._t)
-    sendCopilot._t = window.setTimeout(() => {
-      setCopilotThread((prev) => [...prev, { id: `c-${stamp}-a`, from: 'ai', text: copilotReply({ intent, text }) }])
-      setCopilotTyping(false)
-    }, 950)
-    return true
+  function confirmMeeting(id) {
+    setMeetingStatus((s) => ({ ...s, [id]: 'confirmed' }))
+    showToast('RDV confirmé ✓')
+  }
+
+  function proposeMeeting({ with: who, type = 'cafe' }) {
+    const d = new Date()
+    d.setDate(d.getDate() + 3)
+    const date = d.toISOString().slice(0, 10)
+    setCustomMeetings((prev) => [
+      { id: `rdv-${Date.now()}`, with: who, type, date, time: '09:00', place: 'À définir ensemble', note: 'Proposé depuis sa fiche', status: 'pending' },
+      ...prev,
+    ])
+    showToast('Proposition de RDV envoyée ✓')
   }
 
   const ctx = {
@@ -358,9 +356,9 @@ export default function App() {
     invites, sendInvite, referralJoined,
     teammates, inviteTeammate,
     openInvite: () => setInviteOpen(true),
-    // Copilot IA
-    copilotThread, copilotTyping, sendCopilot, aiUnlimited, aiUses,
-    openCopilot: () => setCopilotOpen(true),
+    // Agenda & RDV
+    meetings, confirmMeeting, proposeMeeting,
+    openAgenda: () => setAgendaOpen(true),
     contacted, contactMember,
     sentSuggestions, sendSuggestion,
     connections, requests, acceptRequest, declineRequest,
@@ -381,8 +379,7 @@ export default function App() {
   const showHeader = !inChat && tab !== 'profil'
   const anyOverlay =
     member || activityId || eventId || composerOpen || notifOpen || editProfileOpen ||
-    roiInfoOpen || integrationsOpen || searchOpen || plansOpen || inviteOpen || copilotOpen || onboarding
-  const showFab = !inChat && !anyOverlay
+    roiInfoOpen || integrationsOpen || searchOpen || plansOpen || inviteOpen || agendaOpen || onboarding
 
   function renderScreen() {
     switch (tab) {
@@ -399,31 +396,31 @@ export default function App() {
     if (!notifOpen) return null
     return (
       <div className="absolute inset-0 z-40">
-        <div className="absolute inset-0 animate-fadeIn bg-ink-950/50" onClick={() => setNotifOpen(false)} />
-        <div className="animate-drawerIn absolute inset-y-0 right-0 flex w-[86%] max-w-[340px] flex-col bg-white shadow-float">
-          <div className="flex shrink-0 items-center justify-between border-b border-ink-100 px-4 py-4">
-            <h2 className="text-lg font-extrabold text-ink-900">Notifications</h2>
-            <button onClick={() => setNotifOpen(false)} className="grid h-9 w-9 place-items-center rounded-full bg-ink-100 text-ink-500 tap" aria-label="Fermer">
+        <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={() => setNotifOpen(false)} />
+        <div className="animate-drawerIn absolute inset-y-0 right-0 flex w-[86%] max-w-[340px] flex-col bg-surface shadow-float">
+          <div className="flex shrink-0 items-center justify-between border-b border-line px-4 py-4">
+            <h2 className="text-lg font-extrabold text-fg">Notifications</h2>
+            <button onClick={() => setNotifOpen(false)} className="grid h-9 w-9 place-items-center rounded-full bg-surface-2 text-fg-muted tap" aria-label="Fermer">
               <Icon name="x" className="h-5 w-5" />
             </button>
           </div>
           {unreadNotif > 0 && (
             <button
               onClick={() => setNotifs((ns) => ns.map((n) => ({ ...n, unread: false })))}
-              className="shrink-0 border-b border-ink-100 px-4 py-2.5 text-left text-xs font-bold text-brand-600 tap"
+              className="shrink-0 border-b border-line px-4 py-2.5 text-left text-xs font-bold text-brand-600 tap"
             >
               Tout marquer comme lu
             </button>
           )}
           <div className="flex-1 overflow-y-auto no-scrollbar">
             {notifs.map((n) => (
-              <div key={n.id} className={`flex gap-3 border-b border-ink-50 px-4 py-3.5 ${n.unread ? 'bg-brand-light/30' : ''}`}>
+              <div key={n.id} className={`flex gap-3 border-b border-line px-4 py-3.5 ${n.unread ? 'bg-brand-light/30' : ''}`}>
                 <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${PILL_TONES[n.tone]}`}>
                   <Icon name={n.icon} className="h-4 w-4" filled={n.icon === 'heart' || n.icon === 'sparkles'} />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[13px] leading-snug text-ink-800">{n.text}</p>
-                  <p className="mt-0.5 text-[11px] text-ink-400">{n.time}</p>
+                  <p className="text-[13px] leading-snug text-fg">{n.text}</p>
+                  <p className="mt-0.5 text-[11px] text-fg-faint">{n.time}</p>
                 </div>
                 {n.unread && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-500" />}
               </div>
@@ -436,28 +433,28 @@ export default function App() {
 
   return (
     <AppContext.Provider value={ctx}>
-      <div className="flex min-h-[100dvh] w-full items-center justify-center bg-ink-100 bg-mesh sm:py-8">
-        <div className="relative flex h-[100dvh] w-full max-w-[420px] flex-col overflow-hidden bg-ink-50 shadow-ring sm:h-[860px] sm:max-h-[94vh] sm:rounded-[2.75rem] sm:ring-[10px] sm:ring-ink-950">
-          <div className="pointer-events-none absolute left-1/2 top-2 z-30 hidden h-7 w-28 -translate-x-1/2 rounded-full bg-ink-950 sm:block" />
+      <div className="flex min-h-[100dvh] w-full items-center justify-center bg-[#05070c] bg-mesh sm:py-8">
+        <div className="relative flex h-[100dvh] w-full max-w-[420px] flex-col overflow-hidden bg-canvas shadow-ring sm:h-[860px] sm:max-h-[94vh] sm:rounded-[2.75rem] sm:ring-1 sm:ring-line-strong">
+          <div className="pointer-events-none absolute left-1/2 top-2 z-30 hidden h-7 w-28 -translate-x-1/2 rounded-full bg-black sm:block" />
 
           {showHeader && (
-            <header className="glass z-20 flex shrink-0 items-center justify-between border-b border-ink-100 px-5 pb-3 pt-4 sm:pt-7">
+            <header className="glass z-20 flex shrink-0 items-center justify-between border-b border-line px-5 pb-3 pt-4 sm:pt-7">
               <Logo />
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setSearchOpen(true)}
-                  className="grid h-10 w-10 place-items-center rounded-full text-ink-600 tap hover:bg-ink-100"
+                  className="grid h-10 w-10 place-items-center rounded-full text-fg-soft tap hover:bg-white/[0.05]"
                   aria-label="Rechercher"
                 >
                   <Icon name="search" className="h-[21px] w-[21px]" />
                 </button>
                 <button
                   onClick={() => setNotifOpen(true)}
-                  className="relative grid h-10 w-10 place-items-center rounded-full text-ink-600 tap hover:bg-ink-100"
+                  className="relative grid h-10 w-10 place-items-center rounded-full text-fg-soft tap hover:bg-white/[0.05]"
                   aria-label="Notifications"
                 >
                   <Icon name="bell" className="h-[22px] w-[22px]" />
-                  {unreadNotif > 0 && <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-brand-500 ring-2 ring-white" />}
+                  {unreadNotif > 0 && <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-brand-500 ring-2 ring-canvas" />}
                 </button>
                 <Avatar name={CURRENT_USER.name} size="sm" onClick={() => goTo('profil')} />
               </div>
@@ -475,21 +472,10 @@ export default function App() {
             </div>
           )}
 
-          {showFab && (
-            <button
-              onClick={() => setCopilotOpen(true)}
-              aria-label="Ouvrir le Copilot IA"
-              className="animate-glowPulse absolute bottom-[88px] right-4 z-30 flex items-center gap-2 rounded-full bg-gradient-to-br from-brand-500 to-[#7E6FB0] px-4 py-3 text-white shadow-brand tap"
-            >
-              <Icon name="sparkles" className="h-5 w-5" filled />
-              <span className="text-sm font-extrabold tracking-tight">Copilot IA</span>
-            </button>
-          )}
-
           {searchOpen && <GlobalSearch onClose={() => setSearchOpen(false)} />}
-          {copilotOpen && <CopilotSheet onClose={() => setCopilotOpen(false)} />}
           {plansOpen && <PlansSheet onClose={() => setPlansOpen(false)} />}
           {inviteOpen && <InviteSheet onClose={() => setInviteOpen(false)} />}
+          {agendaOpen && <AgendaSheet onClose={() => setAgendaOpen(false)} />}
           {member && <MemberSheet name={member} onClose={() => setMember(null)} />}
           {activityId && <ActivitySheet id={activityId} onClose={() => setActivityId(null)} />}
           {eventId && <EventSheet id={eventId} onClose={() => setEventId(null)} />}

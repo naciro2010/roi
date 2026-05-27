@@ -5,7 +5,7 @@ import Icon from '../components/Icon'
 function ChipListEditor({ label, values, onChange, placeholder }) {
   return (
     <div>
-      <div className="mb-2 text-xs font-bold uppercase tracking-wide text-ink-500">{label}</div>
+      <div className="mb-2 text-xs font-bold uppercase tracking-wide text-fg-muted">{label}</div>
       <div className="space-y-2">
         {values.map((v, i) => (
           <div key={i} className="flex items-center gap-2">
@@ -13,11 +13,11 @@ function ChipListEditor({ label, values, onChange, placeholder }) {
               value={v}
               onChange={(e) => onChange(values.map((x, j) => (j === i ? e.target.value : x)))}
               placeholder={placeholder}
-              className="flex-1 rounded-xl border border-ink-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-200"
+              className="flex-1 rounded-xl border border-line-strong bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-200"
             />
             <button
               onClick={() => onChange(values.filter((_, j) => j !== i))}
-              className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink-50 text-ink-400 tap"
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-surface-soft text-fg-faint tap"
               aria-label="Supprimer"
             >
               <Icon name="x" className="h-4 w-4" />
@@ -59,11 +59,11 @@ export default function EditProfileSheet({ onClose }) {
 
   return (
     <div className="absolute inset-0 z-40">
-      <div className="absolute inset-0 animate-fadeIn bg-ink-950/50" onClick={onClose} />
-      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-white shadow-float">
-        <div className="flex shrink-0 items-center justify-between border-b border-ink-100 px-5 py-3.5">
-          <button onClick={onClose} className="text-sm font-semibold text-ink-500 tap">Annuler</button>
-          <h2 className="text-base font-bold text-ink-900">Éditer le profil</h2>
+      <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
+      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-surface shadow-float">
+        <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-3.5">
+          <button onClick={onClose} className="text-sm font-semibold text-fg-muted tap">Annuler</button>
+          <h2 className="text-base font-bold text-fg">Éditer le profil</h2>
           <button onClick={save} className="rounded-full bg-brand-500 px-4 py-1.5 text-sm font-bold text-white shadow-brand tap">
             Enregistrer
           </button>
@@ -71,23 +71,23 @@ export default function EditProfileSheet({ onClose }) {
 
         <div className="flex-1 space-y-5 overflow-y-auto no-scrollbar px-5 py-4">
           <div>
-            <div className="mb-2 text-xs font-bold uppercase tracking-wide text-ink-500">Titre</div>
+            <div className="mb-2 text-xs font-bold uppercase tracking-wide text-fg-muted">Titre</div>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ex. Fondateur · SaaS B2B"
-              className="w-full rounded-xl border border-ink-200 bg-white px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-200"
+              className="w-full rounded-xl border border-line-strong bg-surface px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-200"
             />
           </div>
 
           <div>
-            <div className="mb-2 text-xs font-bold uppercase tracking-wide text-ink-500">Bio</div>
+            <div className="mb-2 text-xs font-bold uppercase tracking-wide text-fg-muted">Bio</div>
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               rows={4}
               placeholder="Présente-toi en quelques lignes…"
-              className="w-full resize-none rounded-xl border border-ink-200 bg-white px-3 py-2.5 text-sm leading-relaxed outline-none focus:ring-2 focus:ring-brand-200"
+              className="w-full resize-none rounded-xl border border-line-strong bg-surface px-3 py-2.5 text-sm leading-relaxed outline-none focus:ring-2 focus:ring-brand-200"
             />
           </div>
 
