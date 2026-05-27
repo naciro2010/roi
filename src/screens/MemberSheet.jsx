@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar, AvatarStack } from '../components/Avatar'
@@ -5,11 +6,15 @@ import { MatchRing, Badge } from '../components/primitives'
 import { personFor, matchFor, MEMBERS } from '../data/network'
 import { ACTIVITIES } from '../data/activities'
 import { CURRENT_USER } from '../data/user'
+import { MEETING_TYPES } from '../data/meetings'
 import { useSheetDrag } from '../lib/useSheetDrag'
 
+const RDV_TYPES = ['cafe', 'run', 'visio']
+
 export default function MemberSheet({ name, onClose }) {
-  const { contacted, contactMember, messageMember, openActivity } = useApp()
+  const { contacted, contactMember, messageMember, openActivity, proposeMeeting } = useApp()
   const drag = useSheetDrag(onClose)
+  const [proposing, setProposing] = useState(false)
   const p = personFor(name)
   const isContacted = contacted[name]
   const match = matchFor(name)
@@ -145,12 +150,40 @@ export default function MemberSheet({ name, onClose }) {
           )}
         </div>
 
+        {proposing && (
+          <div className="shrink-0 border-t border-line bg-surface px-5 pt-3">
+            <p className="text-xs font-bold uppercase tracking-wide text-fg-muted">Proposer un RDV — choisis le format</p>
+            <div className="mt-2.5 flex gap-2">
+              {RDV_TYPES.map((t) => {
+                const meta = MEETING_TYPES[t]
+                return (
+                  <button
+                    key={t}
+                    onClick={() => { proposeMeeting({ with: name, type: t }); setProposing(false) }}
+                    className="flex flex-1 flex-col items-center gap-1.5 rounded-2xl border border-line bg-surface-soft py-3 text-fg-soft tap"
+                  >
+                    <Icon name={meta.icon} className="h-5 w-5 text-brand-300" />
+                    <span className="text-[12px] font-bold">{meta.label}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
         <div className="glass flex shrink-0 items-center gap-2 border-t border-line px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             onClick={() => contactMember(name)}
             className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${isContacted ? 'bg-success' : 'bg-brand-500 shadow-brand'}`}
           >
             {isContacted ? 'Demande envoyée ✓' : 'Entrer en contact'}
+          </button>
+          <button
+            onClick={() => setProposing((v) => !v)}
+            className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl border tap ${proposing ? 'border-brand-500 text-brand-300' : 'border-line-strong text-fg-soft'}`}
+            aria-label="Proposer un RDV"
+          >
+            <Icon name="calendar" className="h-5 w-5" />
           </button>
           <button
             onClick={() => messageMember(name)}

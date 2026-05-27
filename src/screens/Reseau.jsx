@@ -5,19 +5,33 @@ import { Avatar } from '../components/Avatar'
 import { Badge, MatchRing } from '../components/primitives'
 import { SUGGESTIONS, MEMBERS, FILTERS, personFor } from '../data/network'
 import { FREE_MATCH_LIMIT } from '../data/plans'
+import { CURRENT_USER } from '../data/user'
+import { bonusMatches, categoryTier, isCategoryLocked } from '../data/levels'
 
 export default function Reseau() {
   const {
     openMember, sentSuggestions, sendSuggestion, contacted, contactMember,
     connections, requests, acceptRequest, declineRequest,
-    hasFeature, openPlans,
+    hasFeature, openPlans, showToast,
   } = useApp()
+  const km = CURRENT_USER.stats.km
+  const matchLimit = FREE_MATCH_LIMIT + bonusMatches(km)
   const unlimitedMatches = hasFeature('unlimitedMatches')
   const canSeeWhoWants = hasFeature('whoWantsToMeet')
-  const visibleSuggestions = unlimitedMatches ? SUGGESTIONS : SUGGESTIONS.slice(0, FREE_MATCH_LIMIT)
+  const visibleSuggestions = unlimitedMatches ? SUGGESTIONS : SUGGESTIONS.slice(0, matchLimit)
+  const hiddenMatches = SUGGESTIONS.length - visibleSuggestions.length
   const [netView, setNetView] = useState('suggestions')
   const [filter, setFilter] = useState('Tous')
   const [query, setQuery] = useState('')
+
+  function pickFilter(f) {
+    if (isCategoryLocked(km, f)) {
+      const tier = categoryTier(f)
+      showToast(`Cours ${tier.km - km} km de plus pour débloquer « ${f} »`)
+      return
+    }
+    setFilter(f)
+  }
 
   const connectionNames = connections.map((c) => c.name)
   const sentNames = Object.keys(contacted).filter((n) => contacted[n] && !connectionNames.includes(n))
@@ -117,7 +131,13 @@ export default function Reseau() {
             )
           })}
 
-          {!unlimitedMatches && (
+          {bonusMatches(km) > 0 && (
+            <p className="flex items-center justify-center gap-1.5 text-center text-[12px] font-semibold text-success-300">
+              <Icon name="trophy" className="h-3.5 w-3.5" /> +{bonusMatches(km)} matchs débloqués par tes kilomètres
+            </p>
+          )}
+
+          {!unlimitedMatches && hiddenMatches > 0 && (
             <button
               onClick={openPlans}
               className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-left text-white shadow-float tap"
@@ -128,7 +148,7 @@ export default function Reseau() {
                   <Icon name="lock" className="h-5 w-5" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-extrabold">5 autres profils te correspondent</div>
+                  <div className="text-sm font-extrabold">{hiddenMatches} autre{hiddenMatches > 1 ? 's' : ''} profil{hiddenMatches > 1 ? 's' : ''} te correspond{hiddenMatches > 1 ? 'ent' : ''}</div>
                   <p className="text-[12px] text-white/60">Débloque les matchs illimités avec Pro.</p>
                 </div>
                 <span className="shrink-0 rounded-full bg-fg px-3 py-1.5 text-xs font-bold text-canvas">Pro</span>
@@ -160,17 +180,21 @@ export default function Reseau() {
           </div>
 
           <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar px-5 pb-1">
-            {FILTERS.map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-semibold transition tap ${
-                  filter === f ? 'bg-brand-500 text-white shadow-brand' : 'bg-surface-2 text-fg-soft'
-                }`}
-              >
-                {f}
-              </button>
-            ))}
+            {FILTERS.map((f) => {
+              const locked = isCategoryLocked(km, f)
+              return (
+                <button
+                  key={f}
+                  onClick={() => pickFilter(f)}
+                  className={`flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-sm font-semibold transition tap ${
+                    filter === f ? 'bg-brand-500 text-white shadow-brand' : locked ? 'bg-surface-2 text-fg-faint' : 'bg-surface-2 text-fg-soft'
+                  }`}
+                >
+                  {locked && <Icon name="lock" className="h-3 w-3" />}
+                  {f}
+                </button>
+              )
+            })}
           </div>
 
           <div className="mt-2 flex-1 space-y-3 overflow-y-auto no-scrollbar px-5 pb-6 pt-2">

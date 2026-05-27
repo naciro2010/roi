@@ -106,7 +106,8 @@ export default function App() {
   // Agenda & RDV business
   const [agendaOpen, setAgendaOpen] = useState(false)
   const [meetingStatus, setMeetingStatus] = usePersistentState('meetingStatus', {})
-  const meetings = MEETINGS.map((m) => ({ ...m, status: meetingStatus[m.id] || m.status }))
+  const [customMeetings, setCustomMeetings] = usePersistentState('customMeetings', [])
+  const meetings = [...customMeetings, ...MEETINGS].map((m) => ({ ...m, status: meetingStatus[m.id] || m.status }))
 
   const planMeta = planById(plan)
   const referralJoined = invites.filter((i) => i.status === 'joined').length
@@ -325,6 +326,17 @@ export default function App() {
     showToast('RDV confirmé ✓')
   }
 
+  function proposeMeeting({ with: who, type = 'cafe' }) {
+    const d = new Date()
+    d.setDate(d.getDate() + 3)
+    const date = d.toISOString().slice(0, 10)
+    setCustomMeetings((prev) => [
+      { id: `rdv-${Date.now()}`, with: who, type, date, time: '09:00', place: 'À définir ensemble', note: 'Proposé depuis sa fiche', status: 'pending' },
+      ...prev,
+    ])
+    showToast('Proposition de RDV envoyée ✓')
+  }
+
   const ctx = {
     tab, goTo, showToast,
     openMember: setMember,
@@ -345,7 +357,7 @@ export default function App() {
     teammates, inviteTeammate,
     openInvite: () => setInviteOpen(true),
     // Agenda & RDV
-    meetings, confirmMeeting,
+    meetings, confirmMeeting, proposeMeeting,
     openAgenda: () => setAgendaOpen(true),
     contacted, contactMember,
     sentSuggestions, sendSuggestion,

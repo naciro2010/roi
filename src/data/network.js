@@ -32,6 +32,39 @@ export const SUGGESTIONS = [
       "Elle a scalé une marque retail de 0 à 200 boutiques et propose du mentorat. Elle sera à la sortie + afterwork de jeudi : le moment idéal pour parler scaling.",
     primaryAction: 'La voir jeudi',
   },
+  {
+    id: 4,
+    name: 'Karim Haddad',
+    match: 83,
+    needBadge: 'Investit',
+    runBadge: 'Court le fractionné',
+    context: ['Investit en pré-seed / seed', 'Tickets 20–50k', 'Croisé au Run & Pitch'],
+    reason:
+      "Business angel ex-CFO, il investit en pré-seed/seed sur des fondateurs obsédés par leur problème — exactement ton profil de levée.",
+    primaryAction: 'Demander une intro',
+  },
+  {
+    id: 5,
+    name: 'Inès Roy',
+    match: 80,
+    needBadge: 'Investit',
+    runBadge: 'Sera au Run & Pitch',
+    context: ['VC early-stage · B2B & climat', 'Présente jeudi', 'Partante pour un run'],
+    reason:
+      "VC early-stage sur le B2B : elle regarde des dossiers comme le tien et adore échanger en courant.",
+    primaryAction: 'La voir jeudi',
+  },
+  {
+    id: 6,
+    name: 'Nadia Cherif',
+    match: 76,
+    needBadge: 'Mentor go-to-market',
+    runBadge: 'Trail le week-end',
+    context: ['Serial entrepreneuse · 1 revente', 'Mentor go-to-market', 'Croisée au défi 10 km'],
+    reason:
+      "3 boîtes lancées, 1 revente : elle accompagne sur le go-to-market et adore connecter les bonnes personnes.",
+    primaryAction: 'Proposer une sortie',
+  },
 ]
 
 export const FILTERS = ['Tous', 'Cherche un associé', 'Recrute', 'Investit', 'Mentor']
