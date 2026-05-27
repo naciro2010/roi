@@ -34,6 +34,10 @@ export default {
           900: '#1B2130',
           950: '#222A3B',
         },
+        // Vert sobre = état « validé / fait » (demande envoyée, inscrit…).
+        success: { 300: '#86C29A', DEFAULT: '#4E6B59', light: '#EAEEEB', dark: '#48584E' },
+        // Rose désaturé = « j'aime » (kudos likés).
+        like: { DEFAULT: '#8C5560', light: '#EFE5E6' },
       },
       fontFamily: {
         display: ['"Inter Tight"', 'Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],

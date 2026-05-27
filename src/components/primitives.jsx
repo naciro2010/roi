@@ -3,7 +3,7 @@ import Icon from './Icon'
 // Tons d'accent volontairement désaturés (proches du neutre) pour un rendu sobre.
 export const PILL_TONES = {
   brand: 'bg-brand-50 text-brand-700',
-  emerald: 'bg-[#EAEEEB] text-[#48584E]',
+  emerald: 'bg-success-light text-success-dark',
   indigo: 'bg-[#E9E8F0] text-[#4D4968]',
   amber: 'bg-[#EFEBE1] text-[#5F553C]',
   rose: 'bg-[#EEE6E7] text-[#6B5156]',

@@ -31,6 +31,16 @@ export default function Profil() {
     { icon: 'logout', label: 'Réinitialiser la démo', onClick: resetDemo },
   ]
 
+  function shareProfile() {
+    const url = typeof window !== 'undefined' ? window.location.href : ''
+    if (navigator.share) {
+      navigator.share({ title: `${u.name} · ROI`, text: `${u.name} — ${profile.title}`, url }).catch(() => {})
+    } else {
+      try { navigator.clipboard?.writeText(url) } catch { /* presse-papier indisponible */ }
+      showToast('Lien du profil copié ✓')
+    }
+  }
+
   return (
     <div className="animate-screenIn overflow-y-auto no-scrollbar pb-6">
       <div className="relative h-28 overflow-hidden bg-ink-950">
@@ -44,17 +54,26 @@ export default function Profil() {
           </div>
           <h1 className="mt-3 text-xl font-extrabold text-ink-900">{u.name}</h1>
           <p className="text-sm text-ink-500">{profile.title}</p>
-          <div className="mt-1 flex items-center gap-1 text-xs text-ink-400">
+          <div className="mt-1 flex items-center gap-1 text-xs text-ink-500">
             <Icon name="mapPin" className="h-3.5 w-3.5" /> {u.location}
             <span className="text-ink-300">·</span>
             {u.joined}
           </div>
-          <button
-            onClick={openEditProfile}
-            className="mt-3 flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-4 py-2 text-sm font-bold text-ink-700 shadow-soft tap"
-          >
-            <Icon name="pencil" className="h-4 w-4" /> Éditer le profil
-          </button>
+          <div className="mt-3 flex items-center gap-2">
+            <button
+              onClick={openEditProfile}
+              className="flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-4 py-2 text-sm font-bold text-ink-700 shadow-soft tap"
+            >
+              <Icon name="pencil" className="h-4 w-4" /> Éditer le profil
+            </button>
+            <button
+              onClick={shareProfile}
+              aria-label="Partager mon profil"
+              className="flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-4 py-2 text-sm font-bold text-ink-700 shadow-soft tap"
+            >
+              <Icon name="share" className="h-4 w-4" /> Partager
+            </button>
+          </div>
         </div>
 
         <div className="mt-4 space-y-4">
@@ -79,7 +98,7 @@ export default function Profil() {
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-bold text-white">Score ROI</div>
                   <p className="mt-0.5 text-[12px] leading-snug text-white/55">La valeur que ton réseau te rapporte ce mois-ci.</p>
-                  <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[12px] font-bold text-[#86C29A]">
+                  <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[12px] font-bold text-success-300">
                     <Icon name="trendingUp" className="h-3.5 w-3.5" /> +{u.roi.weekDelta} cette semaine
                   </span>
                 </div>
@@ -89,7 +108,7 @@ export default function Profil() {
                   <div key={s.label} className="rounded-2xl bg-white/10 p-2.5">
                     <div className="flex items-baseline gap-1">
                       <span className="text-lg font-extrabold text-white tabular-nums">{s.value}</span>
-                      {s.delta != null && <span className="text-[11px] font-bold text-[#86C29A] tabular-nums">+{s.delta}</span>}
+                      {s.delta != null && <span className="text-[11px] font-bold text-success-300 tabular-nums">+{s.delta}</span>}
                     </div>
                     <div className="text-[11px] text-white/55">{s.label}</div>
                   </div>
@@ -124,11 +143,11 @@ export default function Profil() {
           {/* Ce que je propose */}
           <section className="rounded-3xl border border-ink-100 bg-white p-4 shadow-soft">
             <h2 className="flex items-center gap-2 text-base font-bold text-ink-900">
-              <Icon name="link" className="h-5 w-5 text-[#4E6B59]" /> Ce que je propose
+              <Icon name="link" className="h-5 w-5 text-success" /> Ce que je propose
             </h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {profile.offering.map((o) => (
-                <span key={o} className="rounded-full bg-[#EAEEEB] px-3 py-1.5 text-sm font-semibold text-[#48584E]">
+                <span key={o} className="rounded-full bg-success-light px-3 py-1.5 text-sm font-semibold text-success-dark">
                   {o}
                 </span>
               ))}
@@ -139,8 +158,8 @@ export default function Profil() {
           <section className="grid grid-cols-3 gap-2.5">
             {stats.map((s) => (
               <div key={s.label} className="rounded-2xl border border-ink-100 bg-white p-3 text-center shadow-soft">
-                <div className="text-xl font-extrabold text-ink-900">{s.value}</div>
-                <div className="text-[11px] text-ink-400">{s.label}</div>
+                <div className="text-xl font-extrabold text-ink-900 tabular-nums">{s.value}</div>
+                <div className="text-[11px] text-ink-500">{s.label}</div>
               </div>
             ))}
           </section>
@@ -164,7 +183,7 @@ export default function Profil() {
                       <ServiceLogo service={s} />
                     </span>
                     {on && (
-                      <span className="absolute -bottom-0.5 -right-0.5 grid h-4 w-4 place-items-center rounded-full bg-[#4E6B59] text-white ring-2 ring-white">
+                      <span className="absolute -bottom-0.5 -right-0.5 grid h-4 w-4 place-items-center rounded-full bg-success text-white ring-2 ring-white">
                         <Icon name="check" className="h-2.5 w-2.5" />
                       </span>
                     )}
@@ -195,7 +214,7 @@ export default function Profil() {
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-sm font-bold text-ink-900">{a.title}</div>
-                      <div className="text-[12px] text-ink-400">{a.date} · {a.distance.toFixed(1)} km</div>
+                      <div className="text-[12px] text-ink-500 tabular-nums">{a.date} · {a.distance.toFixed(1)} km</div>
                     </div>
                     <Icon name="chevronRight" className="h-4 w-4 text-ink-300" />
                   </button>

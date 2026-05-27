@@ -68,7 +68,7 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
         <button
           onClick={onLike}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold tap ${
-            post.liked ? 'text-[#8C5560]' : 'text-ink-500'
+            post.liked ? 'text-like' : 'text-ink-500'
           }`}
         >
           <Icon name="heart" className="h-[18px] w-[18px]" filled={post.liked} /> J'aime

@@ -5,9 +5,11 @@ import { MatchRing, Badge } from '../components/primitives'
 import { personFor, matchFor, MEMBERS } from '../data/network'
 import { ACTIVITIES } from '../data/activities'
 import { CURRENT_USER } from '../data/user'
+import { useSheetDrag } from '../lib/useSheetDrag'
 
 export default function MemberSheet({ name, onClose }) {
   const { contacted, contactMember, messageMember, openActivity } = useApp()
+  const drag = useSheetDrag(onClose)
   const p = personFor(name)
   const isContacted = contacted[name]
   const match = matchFor(name)
@@ -21,13 +23,15 @@ export default function MemberSheet({ name, onClose }) {
   return (
     <div className="absolute inset-0 z-40">
       <div className="absolute inset-0 animate-fadeIn bg-ink-950/50" onClick={onClose} />
-      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[90%] flex-col overflow-hidden rounded-t-[28px] bg-white shadow-float">
+      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[90%] flex-col overflow-hidden rounded-t-[28px] bg-white shadow-float">
         <div className="relative h-24 shrink-0 overflow-hidden bg-ink-950">
           <div className="absolute inset-0 bg-hero-glow" />
-          <button onClick={onClose} className="glass-dark absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full text-white tap" aria-label="Fermer">
+          <button onClick={onClose} className="glass-dark absolute right-3 top-3 z-10 grid h-9 w-9 place-items-center rounded-full text-white tap" aria-label="Fermer">
             <Icon name="x" className="h-5 w-5" />
           </button>
-          <div className="absolute left-1/2 top-3 h-1 w-10 -translate-x-1/2 rounded-full bg-white/30" />
+          <div {...drag.handleProps} className="absolute left-1/2 top-0 z-10 flex h-9 w-24 -translate-x-1/2 items-center justify-center" aria-hidden="true">
+            <div className="mt-3 h-1 w-10 rounded-full bg-white/40" />
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto no-scrollbar px-5 pb-4">
@@ -48,7 +52,7 @@ export default function MemberSheet({ name, onClose }) {
 
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
             {category && <Badge tone="brand" dot={false}>{category}</Badge>}
-            <span className="flex items-center gap-1 text-xs text-ink-400">
+            <span className="flex items-center gap-1 text-xs text-ink-500">
               <Icon name="mapPin" className="h-3.5 w-3.5" /> {p.location}
             </span>
           </div>
@@ -86,12 +90,12 @@ export default function MemberSheet({ name, onClose }) {
 
           {p.offering?.length > 0 && (
             <div className="mt-4">
-              <div className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-[#48584E]">
+              <div className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-success-dark">
                 <Icon name="link" className="h-3.5 w-3.5" /> Propose
               </div>
               <div className="flex flex-wrap gap-2">
                 {p.offering.map((x) => (
-                  <span key={x} className="rounded-full bg-[#EAEEEB] px-3 py-1.5 text-sm font-semibold text-[#48584E]">{x}</span>
+                  <span key={x} className="rounded-full bg-success-light px-3 py-1.5 text-sm font-semibold text-success-dark">{x}</span>
                 ))}
               </div>
             </div>
@@ -114,7 +118,7 @@ export default function MemberSheet({ name, onClose }) {
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-sm font-bold text-ink-900">{a.title}</div>
-                      <div className="text-[12px] text-ink-400">{a.date} · {a.distance.toFixed(1)} km</div>
+                      <div className="text-[12px] text-ink-500 tabular-nums">{a.date} · {a.distance.toFixed(1)} km</div>
                     </div>
                     <Icon name="chevronRight" className="h-4 w-4 text-ink-300" />
                   </button>
@@ -144,7 +148,7 @@ export default function MemberSheet({ name, onClose }) {
         <div className="glass flex shrink-0 items-center gap-2 border-t border-ink-100 px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             onClick={() => contactMember(name)}
-            className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${isContacted ? 'bg-[#4E6B59]' : 'bg-brand-500 shadow-brand'}`}
+            className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${isContacted ? 'bg-success' : 'bg-brand-500 shadow-brand'}`}
           >
             {isContacted ? 'Demande envoyée ✓' : 'Entrer en contact'}
           </button>
