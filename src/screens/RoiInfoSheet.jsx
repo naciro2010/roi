@@ -22,10 +22,10 @@ export default function RoiInfoSheet({ onClose }) {
           </button>
           <div className="relative flex items-center gap-4">
             <ProgressRing value={u.roi.score} size={76} stroke={8} color="#FFFFFF" track="rgba(255,255,255,0.14)">
-              <div className="text-xl font-extrabold leading-none">{u.roi.score}</div>
+              <div className="text-xl font-semibold leading-none">{u.roi.score}</div>
             </ProgressRing>
             <div>
-              <h2 className="text-lg font-extrabold">Ton score ROI réseau</h2>
+              <h2 className="text-lg font-semibold">Ton score ROI réseau</h2>
               <p className="mt-0.5 text-[13px] leading-snug text-white/65">
                 Une mesure de la valeur que ton réseau te rapporte — pas un compteur d’abonnés.
               </p>
@@ -38,10 +38,10 @@ export default function RoiInfoSheet({ onClose }) {
           <div className="mb-4 rounded-2xl border border-line bg-surface p-4 shadow-soft">
             <div className="flex items-end justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-fg-faint">Évolution · 8 sem.</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-fg-faint">Évolution · 8 sem.</p>
                 <div className="mt-1 flex items-baseline gap-1.5">
-                  <span className="text-2xl font-extrabold tabular-nums text-fg">{u.roi.score}</span>
-                  <span className="inline-flex items-center gap-0.5 text-[12px] font-bold text-success-dark">
+                  <span className="text-2xl font-semibold tabular-nums text-fg">{u.roi.score}</span>
+                  <span className="inline-flex items-center gap-0.5 text-[12px] font-semibold text-success-dark">
                     <Icon name="trendingUp" className="h-3.5 w-3.5" /> +{u.roi.trend[u.roi.trend.length - 1] - u.roi.trend[0]}
                   </span>
                 </div>
@@ -50,7 +50,7 @@ export default function RoiInfoSheet({ onClose }) {
             </div>
           </div>
 
-          <p className="text-xs font-bold uppercase tracking-wide text-fg-faint">Ce qui fait monter ton score</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-fg-faint">Ce qui fait monter ton score</p>
           <div className="mt-3 space-y-3">
             {FACTORS.map((f) => (
               <div key={f.label} className="rounded-2xl border border-line bg-surface p-3.5 shadow-soft">
@@ -59,10 +59,10 @@ export default function RoiInfoSheet({ onClose }) {
                     <Icon name={f.icon} className="h-4 w-4" />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-bold text-fg">{f.label}</div>
+                    <div className="text-sm font-semibold text-fg">{f.label}</div>
                     <div className="text-[12px] leading-snug text-fg-faint">{f.detail}</div>
                   </div>
-                  <span className="text-sm font-extrabold text-fg-soft">{f.value}</span>
+                  <span className="text-sm font-semibold text-fg-soft">{f.value}</span>
                 </div>
                 <div className="mt-2.5">
                   <ProgressBar value={f.value} total={100} className="bg-surface-2" barClassName="bg-brand-500" />
@@ -76,7 +76,7 @@ export default function RoiInfoSheet({ onClose }) {
               <Icon name="trendingUp" className="h-4 w-4" />
             </span>
             <div>
-              <p className="text-[13px] font-bold text-fg">+{u.roi.weekDelta} cette semaine</p>
+              <p className="text-[13px] font-semibold text-fg">+{u.roi.weekDelta} cette semaine</p>
               <p className="text-[12px] leading-snug text-fg-soft">
                 2 actions pour passer 80 : accepte une demande en attente et inscris-toi à une sortie.
               </p>

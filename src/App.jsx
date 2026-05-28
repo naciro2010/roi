@@ -461,7 +461,7 @@ export default function App() {
         <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={() => setNotifOpen(false)} />
         <div className="animate-drawerIn absolute inset-y-0 right-0 flex w-[86%] max-w-[340px] flex-col bg-surface shadow-float">
           <div className="flex shrink-0 items-center justify-between border-b border-line px-4 py-4">
-            <h2 className="text-lg font-extrabold text-fg">Notifications</h2>
+            <h2 className="text-lg font-semibold text-fg">Notifications</h2>
             <button onClick={() => setNotifOpen(false)} className="grid h-9 w-9 place-items-center rounded-full bg-surface-2 text-fg-muted tap" aria-label="Fermer">
               <Icon name="x" className="h-5 w-5" />
             </button>
@@ -469,7 +469,7 @@ export default function App() {
           {unreadNotif > 0 && (
             <button
               onClick={() => setNotifs((ns) => ns.map((n) => ({ ...n, unread: false })))}
-              className="shrink-0 border-b border-line px-4 py-2.5 text-left text-xs font-bold text-brand-600 tap"
+              className="shrink-0 border-b border-line px-4 py-2.5 text-left text-xs font-semibold text-brand-600 tap"
             >
               Tout marquer comme lu
             </button>
@@ -528,7 +528,7 @@ export default function App() {
           {toast && (
             <div
               key={toast.key}
-              className="animate-toastIn glass-dark pointer-events-none absolute bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full px-4 py-2.5 text-sm font-bold text-white shadow-float"
+              className="animate-toastIn glass-dark pointer-events-none absolute bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-float"
             >
               {toast.msg}
             </div>

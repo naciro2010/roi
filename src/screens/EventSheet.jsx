@@ -29,7 +29,7 @@ export default function EventSheet({ id, onClose }) {
           <button onClick={onClose} className="glass-dark absolute right-3 top-3 z-[500] grid h-9 w-9 place-items-center rounded-full text-white tap" aria-label="Fermer">
             <Icon name="x" className="h-5 w-5" />
           </button>
-          <span className="pointer-events-none absolute left-4 top-3 z-[500] rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-bold text-fg-soft shadow-soft backdrop-blur">
+          <span className="pointer-events-none absolute left-4 top-3 z-[500] rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-semibold text-fg-soft shadow-soft backdrop-blur">
             {d.relative} · {e.time}
             {e.tag && <span className="ml-1 text-brand-600">{e.tag}</span>}
           </span>
@@ -40,11 +40,11 @@ export default function EventSheet({ id, onClose }) {
             <Avatar name={e.organizer} size="md" onClick={() => openMember(e.organizer)} />
             <div className="min-w-0 flex-1">
               <div className="text-[12px] text-fg-faint">Organisé par</div>
-              <button onClick={() => openMember(e.organizer)} className="truncate font-bold text-fg">{e.organizer}</button>
+              <button onClick={() => openMember(e.organizer)} className="truncate font-semibold text-fg">{e.organizer}</button>
             </div>
             <button
               onClick={() => toggleEventKudos(e.id)}
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold tap ${
+              className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold tap ${
                 k.liked ? 'bg-like-light text-like' : 'bg-surface-2 text-fg-muted'
               }`}
             >
@@ -53,13 +53,13 @@ export default function EventSheet({ id, onClose }) {
             </button>
           </div>
 
-          <h2 className="mt-3 text-lg font-extrabold text-fg">{e.title}</h2>
+          <h2 className="mt-3 text-lg font-semibold text-fg">{e.title}</h2>
 
           <div className="mt-2 flex flex-wrap items-center gap-2 text-[13px]">
             <span className="inline-flex items-center gap-1.5 font-semibold text-fg">
               <Icon name="calendar" className="h-4 w-4 text-brand-600" /> {d.full} · {e.time}
             </span>
-            <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-bold text-brand-700">{d.relative}</span>
+            <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-semibold text-brand-700">{d.relative}</span>
           </div>
 
           <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[13px] text-fg-soft">
@@ -76,23 +76,23 @@ export default function EventSheet({ id, onClose }) {
           >
             <Icon name="mapPin" className="h-5 w-5 shrink-0 text-brand-600" />
             <span className="flex-1 text-sm font-semibold text-fg">{e.place}</span>
-            <span className="text-xs font-bold text-brand-600">Itinéraire</span>
+            <span className="text-xs font-semibold text-brand-600">Itinéraire</span>
           </button>
 
           {e.description && <p className="mt-4 text-[14px] leading-relaxed text-fg-soft">{e.description}</p>}
 
           <div className="mt-5">
-            <div className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-fg-muted">
+            <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-fg-muted">
               <Icon name="users" className="h-3.5 w-3.5" /> Participants · {e.participants}
             </div>
             <div className="space-y-2">
               {others.map((name) => (
                 <div key={name} className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-2.5 shadow-soft">
                   <Avatar name={name} size="sm" onClick={() => openMember(name)} />
-                  <button onClick={() => openMember(name)} className="min-w-0 flex-1 truncate text-left text-sm font-bold text-fg">{name}</button>
+                  <button onClick={() => openMember(name)} className="min-w-0 flex-1 truncate text-left text-sm font-semibold text-fg">{name}</button>
                   <button
                     onClick={() => contactMember(name)}
-                    className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-bold tap ${
+                    className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold tap ${
                       contacted[name] ? 'bg-success-light text-success-dark' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand'
                     }`}
                   >
@@ -110,7 +110,7 @@ export default function EventSheet({ id, onClose }) {
         <div className="glass flex shrink-0 items-center gap-2 border-t border-line px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             onClick={() => toggleJoin(e.id)}
-            className={`flex-1 rounded-full py-3 text-sm font-bold text-white tap ${isJoined ? 'bg-success' : 'bg-gradient-to-b from-brand-500 to-brand-600 shadow-brand'}`}
+            className={`flex-1 rounded-full py-3 text-sm font-semibold text-white tap ${isJoined ? 'bg-success' : 'bg-gradient-to-b from-brand-500 to-brand-600 shadow-brand'}`}
           >
             {isJoined ? 'Inscrit ✓' : 'Je participe'}
           </button>

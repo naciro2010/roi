@@ -29,10 +29,10 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
       <div className="flex items-center gap-3 p-4 pb-3">
         <Avatar name={post.author} size="md" onClick={onOpenAuthor} />
         <button onClick={onOpenAuthor} className="min-w-0 flex-1 text-left">
-          <div className="truncate font-bold text-fg">{post.author}</div>
+          <div className="truncate font-semibold text-fg">{post.author}</div>
           <div className="truncate text-[12px] text-fg-faint">{subtitleFor(post.author)} · {post.time}</div>
         </button>
-        <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${PILL_TONES[meta.tone]}`}>
+        <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${PILL_TONES[meta.tone]}`}>
           <Icon name={meta.icon} className="h-3 w-3" filled={meta.icon === 'sparkles'} />
           {meta.label}
         </span>
@@ -95,7 +95,7 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
               <div key={i} className="flex items-start gap-2.5">
                 <Avatar name={c.author} size="xs" onClick={() => onOpenAuthor?.(c.author)} />
                 <div className="min-w-0 flex-1 rounded-2xl rounded-tl-md bg-surface px-3 py-2 shadow-soft">
-                  <div className="text-[12px] font-bold text-fg">{c.author}</div>
+                  <div className="text-[12px] font-semibold text-fg">{c.author}</div>
                   <div className="text-[13px] leading-snug text-fg-soft">{c.text}</div>
                 </div>
               </div>

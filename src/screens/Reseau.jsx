@@ -61,7 +61,7 @@ export default function Reseau() {
   return (
     <div className="animate-screenIn flex h-full flex-col">
       <div className="px-5 pb-1 pt-4">
-        <h1 className="text-2xl font-extrabold text-fg">Réseau</h1>
+        <h1 className="text-2xl font-semibold text-fg">Réseau</h1>
         <p className="mt-0.5 text-sm text-fg-muted">Les bonnes personnes, au bon moment.</p>
 
         <div className="mt-4 flex gap-1 rounded-2xl bg-surface-2 p-1">
@@ -73,7 +73,7 @@ export default function Reseau() {
             <button
               key={s.id}
               onClick={() => setNetView(s.id)}
-              className={`flex-1 rounded-xl py-2 text-sm font-bold transition tap ${
+              className={`flex-1 rounded-xl py-2 text-sm font-semibold transition tap ${
                 netView === s.id ? 'bg-surface-3 text-fg shadow-card' : 'text-fg-muted'
               }`}
             >
@@ -94,9 +94,9 @@ export default function Reseau() {
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">Pour toi · Match IA</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/55">Pour toi · Match IA</p>
                 </div>
-                <p className="mt-0.5 text-[14px] font-extrabold leading-snug">{insights.headline}</p>
+                <p className="mt-0.5 text-[14px] font-semibold leading-snug">{insights.headline}</p>
                 <p className="mt-0.5 text-[12px] leading-snug text-white/65">{insights.detail}</p>
                 {insights.topTopics?.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
@@ -118,7 +118,7 @@ export default function Reseau() {
                 <div className="flex items-center gap-3 p-4 pb-3">
                   <Avatar name={m.name} size="lg" onClick={() => openMember(m.name)} />
                   <div className="min-w-0 flex-1">
-                    <div className="truncate font-bold text-fg">{m.name}</div>
+                    <div className="truncate font-semibold text-fg">{m.name}</div>
                     <div className="truncate text-sm text-fg-muted">{personFor(m.name).title}</div>
                   </div>
                   <MatchRing value={m.score} size={48} />
@@ -141,7 +141,7 @@ export default function Reseau() {
                 <div className="flex gap-2 p-4">
                   <button
                     onClick={() => sendSuggestion(m.name, m.name)}
-                    className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${
+                    className={`flex-1 rounded-2xl py-3 text-sm font-semibold text-white tap ${
                       sent ? 'bg-success' : 'bg-gradient-to-b from-brand-500 to-brand-600 shadow-brand hover:to-brand-700'
                     }`}
                   >
@@ -175,10 +175,10 @@ export default function Reseau() {
                   <Icon name="lock" className="h-5 w-5" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-extrabold">{hiddenMatches} autre{hiddenMatches > 1 ? 's' : ''} profil{hiddenMatches > 1 ? 's' : ''} te correspond{hiddenMatches > 1 ? 'ent' : ''}</div>
+                  <div className="text-sm font-semibold">{hiddenMatches} autre{hiddenMatches > 1 ? 's' : ''} profil{hiddenMatches > 1 ? 's' : ''} te correspond{hiddenMatches > 1 ? 'ent' : ''}</div>
                   <p className="text-[12px] text-white/60">Débloque les matchs illimités avec Pro.</p>
                 </div>
-                <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-fg">Pro</span>
+                <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-fg">Pro</span>
               </div>
             </button>
           )}
@@ -231,7 +231,7 @@ export default function Reseau() {
                 <button onClick={() => openMember(m.name)} className="flex w-full items-center gap-3 text-left tap">
                   <Avatar name={m.name} size="md" />
                   <div className="min-w-0 flex-1">
-                    <div className="truncate font-bold text-fg">{m.name}</div>
+                    <div className="truncate font-semibold text-fg">{m.name}</div>
                     <div className="truncate text-sm text-fg-muted">{personFor(m.name).title}</div>
                   </div>
                   <Icon name="chevronRight" className="h-5 w-5 text-fg-faint" />
@@ -243,7 +243,7 @@ export default function Reseau() {
                 </div>
                 <button
                   onClick={() => contactMember(m.name)}
-                  className={`mt-3 w-full rounded-full py-3 text-sm font-bold tap ${
+                  className={`mt-3 w-full rounded-full py-3 text-sm font-semibold tap ${
                     contacted[m.name] ? 'bg-success text-white' : 'border border-brand-300 text-brand-700 hover:bg-brand-light'
                   }`}
                 >
@@ -271,7 +271,7 @@ export default function Reseau() {
             <section className="rounded-3xl border border-brand-200 bg-brand-light/50 p-3.5">
               <div className="flex items-center gap-1.5">
                 <Icon name="sparkles" className="h-4 w-4 text-brand-600" filled />
-                <p className="text-[13px] font-bold text-fg">2 personnes veulent te rencontrer</p>
+                <p className="text-[13px] font-semibold text-fg">2 personnes veulent te rencontrer</p>
               </div>
               <div className="mt-3 space-y-2">
                 {['Inès Roy', 'Hugo Bernard'].map((name) => (
@@ -282,7 +282,7 @@ export default function Reseau() {
                   >
                     <Avatar name={name} size="sm" />
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-bold text-fg">{name}</div>
+                      <div className="truncate text-sm font-semibold text-fg">{name}</div>
                       <div className="truncate text-[12px] text-fg-muted">{personFor(name).title}</div>
                     </div>
                     <Icon name="chevronRight" className="h-4 w-4 text-fg-faint" />
@@ -305,7 +305,7 @@ export default function Reseau() {
                   ))}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-extrabold">2 personnes veulent te rencontrer</div>
+                  <div className="text-sm font-semibold">2 personnes veulent te rencontrer</div>
                   <p className="text-[12px] text-white/60">Débloque-les avec Pro.</p>
                 </div>
                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/10 text-gold-300">
@@ -317,9 +317,9 @@ export default function Reseau() {
 
           {requests.length > 0 && (
             <section>
-              <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-fg-muted">
+              <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">
                 Demandes reçues
-                <span className="grid h-4 min-w-4 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-bold text-white">{requests.length}</span>
+                <span className="grid h-4 min-w-4 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-semibold text-white">{requests.length}</span>
               </div>
               <div className="space-y-2">
                 {requests.map((r) => (
@@ -327,12 +327,12 @@ export default function Reseau() {
                     <div className="flex items-center gap-3">
                       <Avatar name={r.name} size="md" onClick={() => openMember(r.name)} />
                       <button onClick={() => openMember(r.name)} className="min-w-0 flex-1 text-left">
-                        <div className="truncate font-bold text-fg">{r.name}</div>
+                        <div className="truncate font-semibold text-fg">{r.name}</div>
                         <div className="truncate text-[12px] text-fg-muted">{r.context}</div>
                       </button>
                     </div>
                     <div className="mt-3 flex gap-2">
-                      <button onClick={() => acceptRequest(r.name)} className="flex-1 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 py-2.5 text-sm font-bold text-white shadow-brand tap">Accepter</button>
+                      <button onClick={() => acceptRequest(r.name)} className="flex-1 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 py-2.5 text-sm font-semibold text-white shadow-brand tap">Accepter</button>
                       <button onClick={() => declineRequest(r.name)} className="rounded-2xl border border-line-strong px-4 py-2.5 text-sm font-semibold text-fg-soft tap">Décliner</button>
                     </div>
                   </article>
@@ -342,7 +342,7 @@ export default function Reseau() {
           )}
 
           <section>
-            <div className="mb-2 text-xs font-bold uppercase tracking-wide text-fg-muted">Connexions · {connections.length}</div>
+            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">Connexions · {connections.length}</div>
             <div className="overflow-hidden rounded-3xl border border-line bg-surface shadow-soft">
               {connections.map((c, i) => (
                 <button
@@ -352,7 +352,7 @@ export default function Reseau() {
                 >
                   <Avatar name={c.name} size="md" />
                   <div className="min-w-0 flex-1">
-                    <div className="truncate font-bold text-fg">{c.name}</div>
+                    <div className="truncate font-semibold text-fg">{c.name}</div>
                     <div className="truncate text-[12px] text-fg-faint">{c.context}</div>
                   </div>
                   <Icon name="chevronRight" className="h-4 w-4 text-fg-faint" />
@@ -363,13 +363,13 @@ export default function Reseau() {
 
           {sentNames.length > 0 && (
             <section>
-              <div className="mb-2 text-xs font-bold uppercase tracking-wide text-fg-muted">Demandes envoyées · {sentNames.length}</div>
+              <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">Demandes envoyées · {sentNames.length}</div>
               <div className="space-y-2">
                 {sentNames.map((name) => (
                   <div key={name} className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-2.5 shadow-soft">
                     <Avatar name={name} size="sm" onClick={() => openMember(name)} />
-                    <button onClick={() => openMember(name)} className="min-w-0 flex-1 truncate text-left text-sm font-bold text-fg">{name}</button>
-                    <span className="shrink-0 rounded-full bg-surface-2 px-3 py-1 text-xs font-bold text-fg-muted">En attente</span>
+                    <button onClick={() => openMember(name)} className="min-w-0 flex-1 truncate text-left text-sm font-semibold text-fg">{name}</button>
+                    <span className="shrink-0 rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-fg-muted">En attente</span>
                   </div>
                 ))}
               </div>

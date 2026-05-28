@@ -49,7 +49,7 @@ export default function MemberSheet({ name, onClose }) {
               <Avatar name={name} size="xl" />
             </div>
             <div className="min-w-0 flex-1 pb-1">
-              <h2 className="truncate text-lg font-extrabold text-fg">{name}</h2>
+              <h2 className="truncate text-lg font-semibold text-fg">{name}</h2>
               <p className="truncate text-sm text-fg-muted">{p.title}</p>
             </div>
             {match && (
@@ -71,7 +71,7 @@ export default function MemberSheet({ name, onClose }) {
           {match && match.reasons.length > 0 && (
             <div className="mt-4 rounded-2xl border border-brand-200 bg-brand-light/50 p-3.5">
               <div className="mb-2 flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-brand-700">
+                <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-brand-700">
                   <Icon name="sparkles" className="h-3.5 w-3.5" filled /> Pourquoi vous matchez
                 </div>
                 {arche && <Badge tone={arche.tone} dot={false}>{arche.short}</Badge>}
@@ -89,13 +89,13 @@ export default function MemberSheet({ name, onClose }) {
 
           {/* Brise-glace IA — message d'intro prêt à l'emploi */}
           <div className="mt-3 rounded-2xl border border-line bg-surface-soft p-3.5">
-            <div className="mb-1.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-fg-muted">
+            <div className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-fg-muted">
               <Icon name="wand" className="h-3.5 w-3.5 text-brand-600" /> Brise-glace suggéré
             </div>
             <p className="text-[13px] italic leading-relaxed text-fg-soft">« {ice} »</p>
             <button
               onClick={() => startIcebreaker(name)}
-              className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-xl border border-brand-300 py-2 text-[13px] font-bold text-brand-700 tap hover:bg-brand-light"
+              className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-xl border border-brand-300 py-2 text-[13px] font-semibold text-brand-700 tap hover:bg-brand-light"
             >
               <Icon name="send" className="h-3.5 w-3.5" /> Utiliser ce message
             </button>
@@ -103,7 +103,7 @@ export default function MemberSheet({ name, onClose }) {
 
           {p.looking?.length > 0 && (
             <div className="mt-4">
-              <div className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-brand-700">
+              <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-brand-700">
                 <Icon name="target" className="h-3.5 w-3.5" /> Recherche
               </div>
               <div className="flex flex-wrap gap-2">
@@ -116,7 +116,7 @@ export default function MemberSheet({ name, onClose }) {
 
           {p.offering?.length > 0 && (
             <div className="mt-4">
-              <div className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-success-dark">
+              <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-success-dark">
                 <Icon name="link" className="h-3.5 w-3.5" /> Propose
               </div>
               <div className="flex flex-wrap gap-2">
@@ -129,7 +129,7 @@ export default function MemberSheet({ name, onClose }) {
 
           {sharedRuns.length > 0 && (
             <div className="mt-4">
-              <div className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-fg-muted">
+              <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-fg-muted">
                 <Icon name="activity" className="h-3.5 w-3.5" /> Sorties en commun
               </div>
               <div className="space-y-2">
@@ -143,7 +143,7 @@ export default function MemberSheet({ name, onClose }) {
                       <Icon name="activity" className="h-4 w-4" />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-bold text-fg">{a.title}</div>
+                      <div className="truncate text-sm font-semibold text-fg">{a.title}</div>
                       <div className="text-[12px] text-fg-muted tabular-nums">{a.date} · {a.distance.toFixed(1)} km</div>
                     </div>
                     <Icon name="chevronRight" className="h-4 w-4 text-fg-faint" />
@@ -157,7 +157,7 @@ export default function MemberSheet({ name, onClose }) {
             <div className="mt-4 flex items-center gap-3 rounded-2xl bg-surface-soft p-3">
               <AvatarStack names={p.mutuals.slice(0, 3)} total={p.mutuals.length} onMore={() => {}} />
               <span className="text-[13px] text-fg-soft">
-                <span className="font-bold text-fg">{p.mutuals.length} connexions</span> en commun
+                <span className="font-semibold text-fg">{p.mutuals.length} connexions</span> en commun
               </span>
             </div>
           )}
@@ -173,7 +173,7 @@ export default function MemberSheet({ name, onClose }) {
 
         {proposing && (
           <div className="shrink-0 border-t border-line bg-surface px-5 pt-3">
-            <p className="text-xs font-bold uppercase tracking-wide text-fg-muted">Proposer un RDV — choisis le format</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-fg-muted">Proposer un RDV — choisis le format</p>
             <div className="mt-2.5 flex gap-2">
               {RDV_TYPES.map((t) => {
                 const meta = MEETING_TYPES[t]
@@ -184,7 +184,7 @@ export default function MemberSheet({ name, onClose }) {
                     className="flex flex-1 flex-col items-center gap-1.5 rounded-2xl border border-line bg-surface-soft py-3 text-fg-soft tap"
                   >
                     <Icon name={meta.icon} className="h-5 w-5 text-brand-600" />
-                    <span className="text-[12px] font-bold">{meta.label}</span>
+                    <span className="text-[12px] font-semibold">{meta.label}</span>
                   </button>
                 )
               })}
@@ -195,7 +195,7 @@ export default function MemberSheet({ name, onClose }) {
         <div className="glass flex shrink-0 items-center gap-2 border-t border-line px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             onClick={() => contactMember(name)}
-            className={`flex-1 rounded-full py-3 text-sm font-bold text-white tap ${isContacted ? 'bg-success' : 'bg-gradient-to-b from-brand-500 to-brand-600 shadow-brand'}`}
+            className={`flex-1 rounded-full py-3 text-sm font-semibold text-white tap ${isContacted ? 'bg-success' : 'bg-gradient-to-b from-brand-500 to-brand-600 shadow-brand'}`}
           >
             {isContacted ? 'Demande envoyée ✓' : 'Entrer en contact'}
           </button>

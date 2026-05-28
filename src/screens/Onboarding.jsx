@@ -49,10 +49,10 @@ export default function Onboarding({ onClose, onEditProfile }) {
             <div className="rounded-full p-1 ring-2 ring-white/15">
               <Avatar name={inviter} size="xl" />
             </div>
-            <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[12px] font-bold text-gold-300 ring-1 ring-white/15">
+            <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[12px] font-semibold text-gold-300 ring-1 ring-white/15">
               <Icon name="userPlus" className="h-3.5 w-3.5" /> Invitation
             </span>
-            <h1 className="mt-3 text-[26px] font-extrabold leading-tight">{inviter} t’a invité·e sur ROI</h1>
+            <h1 className="mt-3 text-[26px] font-semibold leading-tight">{inviter} t’a invité·e sur ROI</h1>
             <p className="mt-3 max-w-[300px] text-[15px] leading-relaxed text-white/65">
               Rejoins la communauté des entrepreneurs qui courent et networkent. Quelques écrans pour découvrir comment ça marche.
             </p>
@@ -63,10 +63,10 @@ export default function Onboarding({ onClose, onEditProfile }) {
               <Icon name={s.icon} className="h-9 w-9" filled={s.icon === 'sparkles' || s.icon === 'crown'} />
             </span>
             <div className="mt-7 flex items-center gap-2">
-              <h1 className="text-[26px] font-extrabold leading-tight">{s.title}</h1>
+              <h1 className="text-[26px] font-semibold leading-tight">{s.title}</h1>
             </div>
             {s.premium && (
-              <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-gold/15 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-gold-300 ring-1 ring-gold/25">
+              <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-gold/15 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-gold-300 ring-1 ring-gold/25">
                 <Icon name="crown" className="h-3 w-3" filled /> Premium
               </span>
             )}
@@ -84,7 +84,7 @@ export default function Onboarding({ onClose, onEditProfile }) {
       <div className="relative space-y-2 px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         <button
           onClick={() => (last ? onEditProfile() : setStep((x) => x + 1))}
-          className="w-full rounded-full bg-white py-3.5 text-sm font-bold text-fg shadow-soft tap"
+          className="w-full rounded-full bg-white py-3.5 text-sm font-semibold text-fg shadow-soft tap"
         >
           {last ? 'Compléter mon profil' : 'Continuer'}
         </button>

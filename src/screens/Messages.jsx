@@ -48,7 +48,7 @@ export default function Messages() {
           </button>
           <Avatar name={conv.name} size="sm" onClick={() => openMember(conv.name)} />
           <button onClick={() => openMember(conv.name)} className="min-w-0 text-left">
-            <div className="truncate font-bold text-fg">{conv.name}</div>
+            <div className="truncate font-semibold text-fg">{conv.name}</div>
             <div className="truncate text-[11px] text-success">● En ligne</div>
           </button>
         </div>
@@ -86,7 +86,7 @@ export default function Messages() {
             <Icon name="users" className="h-4 w-4" />
           </div>
           <div className="min-w-0">
-            <div className="truncate font-bold text-fg">{grp.name}</div>
+            <div className="truncate font-semibold text-fg">{grp.name}</div>
             <div className="truncate text-[11px] text-fg-faint">{grp.members} membres</div>
           </div>
         </div>
@@ -104,7 +104,7 @@ export default function Messages() {
                   </div>
                 )}
                 <div className="max-w-[76%]">
-                  {showName && <div className="mb-0.5 ml-1 text-[11px] font-bold text-fg-muted">{m.from.split(' ')[0]}</div>}
+                  {showName && <div className="mb-0.5 ml-1 text-[11px] font-semibold text-fg-muted">{m.from.split(' ')[0]}</div>}
                   <div
                     className={`rounded-2xl px-3.5 py-2 text-sm leading-relaxed shadow-soft ${
                       mine ? 'rounded-br-md bg-gradient-to-b from-brand-500 to-brand-600 text-white' : 'rounded-bl-md border border-line bg-surface text-fg'
@@ -127,7 +127,7 @@ export default function Messages() {
   return (
     <div className="animate-screenIn flex h-full flex-col">
       <div className="px-5 pb-1 pt-4">
-        <h1 className="text-2xl font-extrabold text-fg">Messages</h1>
+        <h1 className="text-2xl font-semibold text-fg">Messages</h1>
         <div className="mt-4 flex gap-1 rounded-2xl bg-surface-2 p-1">
           {[
             { id: 'discussions', label: 'Discussions', n: unreadConv },
@@ -136,13 +136,13 @@ export default function Messages() {
             <button
               key={s.id}
               onClick={() => setMsgView(s.id)}
-              className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 text-sm font-bold transition tap ${
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 text-sm font-semibold transition tap ${
                 msgView === s.id ? 'bg-surface-3 text-fg shadow-card' : 'text-fg-muted'
               }`}
             >
               {s.label}
               {s.n > 0 && (
-                <span className="grid h-4 min-w-4 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-bold text-white">{s.n}</span>
+                <span className="grid h-4 min-w-4 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-semibold text-white">{s.n}</span>
               )}
             </button>
           ))}
@@ -163,8 +163,8 @@ export default function Messages() {
                 <Avatar name={c.name} size="md" />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="truncate font-bold text-fg">{c.name}</span>
-                    <span className={`shrink-0 text-xs ${unread ? 'font-bold text-brand-600' : 'text-fg-faint'}`}>{c.time}</span>
+                    <span className="truncate font-semibold text-fg">{c.name}</span>
+                    <span className={`shrink-0 text-xs ${unread ? 'font-semibold text-brand-600' : 'text-fg-faint'}`}>{c.time}</span>
                   </div>
                   <div className="mt-0.5 flex items-center justify-between gap-2">
                     <span className={`truncate text-sm ${unread ? 'font-semibold text-fg-soft' : 'text-fg-faint'}`}>
@@ -191,7 +191,7 @@ export default function Messages() {
                 className="w-full rounded-xl border border-line-strong bg-surface px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-200"
               />
               <div className="mt-2 flex gap-2">
-                <button onClick={createGroup} className="flex-1 rounded-xl bg-brand-500 py-2 text-sm font-bold text-white tap">Créer</button>
+                <button onClick={createGroup} className="flex-1 rounded-xl bg-brand-500 py-2 text-sm font-semibold text-white tap">Créer</button>
                 <button onClick={() => { setCreatingGroup(false); setNewGroupName('') }} className="rounded-xl border border-line-strong bg-surface px-4 py-2 text-sm font-semibold text-fg-soft tap">Annuler</button>
               </div>
             </div>
@@ -201,13 +201,13 @@ export default function Messages() {
                 <Icon name="plus" className="h-5 w-5" />
               </span>
               <div>
-                <div className="text-sm font-bold text-fg">Créer un groupe</div>
+                <div className="text-sm font-semibold text-fg">Créer un groupe</div>
                 <div className="text-xs text-fg-faint">Rassemble ta team ou ton club</div>
               </div>
             </button>
           )}
 
-          <p className="mb-1 text-xs font-bold uppercase tracking-wide text-fg-faint">Mes groupes</p>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-fg-faint">Mes groupes</p>
           <div className="space-y-1">
             {groups.map((g) => {
               const thread = groupThreads[g.id] || []
@@ -224,15 +224,15 @@ export default function Messages() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="truncate font-bold text-fg">{g.name}</span>
-                      <span className={`shrink-0 text-xs ${unread ? 'font-bold text-brand-600' : 'text-fg-faint'}`}>{g.time}</span>
+                      <span className="truncate font-semibold text-fg">{g.name}</span>
+                      <span className={`shrink-0 text-xs ${unread ? 'font-semibold text-brand-600' : 'text-fg-faint'}`}>{g.time}</span>
                     </div>
                     <div className="mt-0.5 flex items-center justify-between gap-2">
                       <span className={`truncate text-sm ${unread ? 'font-semibold text-fg-soft' : 'text-fg-faint'}`}>
                         {last ? `${last.from === 'me' ? 'Toi' : last.from.split(' ')[0]} : ${last.text}` : g.topic}
                       </span>
                       {unread ? (
-                        <span className="grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-bold text-white">{g.unread}</span>
+                        <span className="grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-semibold text-white">{g.unread}</span>
                       ) : (
                         <span className="shrink-0 text-[11px] text-fg-faint">{g.members} membres</span>
                       )}
@@ -243,7 +243,7 @@ export default function Messages() {
             })}
           </div>
 
-          <p className="mb-2 mt-5 text-xs font-bold uppercase tracking-wide text-fg-faint">À découvrir</p>
+          <p className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wide text-fg-faint">À découvrir</p>
           <div className="space-y-2">
             {GROUP_SUGGESTIONS.map((g) => (
               <div key={g.id} className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3 shadow-soft">
@@ -251,12 +251,12 @@ export default function Messages() {
                   <Icon name="users" className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-bold text-fg">{g.name}</div>
+                  <div className="truncate font-semibold text-fg">{g.name}</div>
                   <div className="truncate text-xs text-fg-faint">{g.topic} · {g.members} membres</div>
                 </div>
                 <button
                   onClick={() => joinGroup(g)}
-                  className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold tap ${
+                  className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold tap ${
                     joinedGroups[g.id] ? 'bg-success-light text-success-dark' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand'
                   }`}
                 >

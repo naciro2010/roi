@@ -68,7 +68,7 @@ export default function Profil() {
             <Avatar name={u.name} size="2xl" />
           </div>
           <div className="mt-3 flex items-center gap-2">
-            <h1 className="text-xl font-extrabold text-fg">{u.name}</h1>
+            <h1 className="text-xl font-semibold text-fg">{u.name}</h1>
             <PlanBadge plan={plan} />
           </div>
           <p className="text-sm text-fg-muted">{profile.title}</p>
@@ -80,14 +80,14 @@ export default function Profil() {
           <div className="mt-3 flex items-center gap-2">
             <button
               onClick={openEditProfile}
-              className="flex items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 py-2 text-sm font-bold text-fg-soft shadow-soft tap"
+              className="flex items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 py-2 text-sm font-semibold text-fg-soft shadow-soft tap"
             >
               <Icon name="pencil" className="h-4 w-4" /> Éditer le profil
             </button>
             <button
               onClick={shareProfile}
               aria-label="Partager mon profil"
-              className="flex items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 py-2 text-sm font-bold text-fg-soft shadow-soft tap"
+              className="flex items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 py-2 text-sm font-semibold text-fg-soft shadow-soft tap"
             >
               <Icon name="share" className="h-4 w-4" /> Partager
             </button>
@@ -98,7 +98,7 @@ export default function Profil() {
           {/* À propos */}
           {profile.bio && (
             <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
-              <h2 className="text-base font-bold text-fg">À propos</h2>
+              <h2 className="text-base font-semibold text-fg">À propos</h2>
               <p className="mt-2 text-sm leading-relaxed text-fg-soft">{profile.bio}</p>
             </section>
           )}
@@ -110,16 +110,16 @@ export default function Profil() {
               <div className="absolute inset-0 bg-hero-glow" />
               <div className="relative flex items-center gap-4">
                 <ProgressRing value={u.roi.score} size={88} stroke={9} color="#FFFFFF" track="rgba(255,255,255,0.14)">
-                  <div className="text-2xl font-extrabold leading-none text-white tabular-nums">{u.roi.score}</div>
+                  <div className="text-2xl font-semibold leading-none text-white tabular-nums">{u.roi.score}</div>
                   <div className="mt-0.5 text-[10px] font-semibold text-white/45">/ 100</div>
                 </ProgressRing>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
-                    <div className="text-sm font-bold text-white">Score ROI</div>
+                    <div className="text-sm font-semibold text-white">Score ROI</div>
                     <Sparkline data={u.roi.trend} width={84} height={30} />
                   </div>
                   <p className="mt-0.5 text-[12px] leading-snug text-white/55">La valeur que ton réseau te rapporte ce mois-ci.</p>
-                  <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[12px] font-bold text-success-300">
+                  <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[12px] font-semibold text-success-300">
                     <Icon name="trendingUp" className="h-3.5 w-3.5" /> +{u.roi.weekDelta} cette semaine
                   </span>
                 </div>
@@ -128,8 +128,8 @@ export default function Profil() {
                 {roiCards.map((s) => (
                   <div key={s.label} className="rounded-2xl bg-white/10 p-2.5">
                     <div className="flex items-baseline gap-1">
-                      <span className="text-lg font-extrabold text-white tabular-nums">{s.value}</span>
-                      {s.delta != null && <span className="text-[11px] font-bold text-success-300 tabular-nums">+{s.delta}</span>}
+                      <span className="text-lg font-semibold text-white tabular-nums">{s.value}</span>
+                      {s.delta != null && <span className="text-[11px] font-semibold text-success-300 tabular-nums">+{s.delta}</span>}
                     </div>
                     <div className="text-[11px] text-white/55">{s.label}</div>
                   </div>
@@ -180,7 +180,7 @@ export default function Profil() {
               <Icon name="calendar" className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
-              <div className="text-sm font-bold text-fg">Agenda & RDV</div>
+              <div className="text-sm font-semibold text-fg">Agenda & RDV</div>
               <p className="truncate text-[12px] text-fg-muted">
                 {meetings.length} à venir
                 {nextMeeting && ` · ${MEETING_TYPES[nextMeeting.type].label} avec ${nextMeeting.with.split(' ')[0]} ${formatEventDate(nextMeeting.date).relative}`}
@@ -192,7 +192,7 @@ export default function Profil() {
           {/* Saison — kilomètres → récompenses */}
           <section className="overflow-hidden rounded-3xl border border-line bg-surface p-4 shadow-soft">
             <div className="flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-base font-bold text-fg">
+              <h2 className="flex items-center gap-2 text-base font-semibold text-fg">
                 <Icon name="trophy" className="h-5 w-5 text-gold-dark" /> Saison · niveau {season.level}
               </h2>
               <button onClick={() => goTo('courir')} className="flex items-center gap-0.5 text-xs font-semibold text-brand-600 tap">
@@ -201,11 +201,11 @@ export default function Profil() {
             </div>
             <div className="mt-3 flex items-center gap-3">
               <ProgressBar value={season.pct} total={100} className="bg-surface-2" barClassName="bg-gradient-to-r from-brand-500 to-gold" />
-              <span className="shrink-0 text-[11px] font-bold tabular-nums text-fg-muted">{u.stats.km} km</span>
+              <span className="shrink-0 text-[11px] font-semibold tabular-nums text-fg-muted">{u.stats.km} km</span>
             </div>
             <p className="mt-2 text-[12px] text-fg-muted">
               {season.next
-                ? <>Plus que <span className="font-bold text-fg">{season.remaining} km</span> pour débloquer « {season.next.title} » — {season.next.reward.toLowerCase()}.</>
+                ? <>Plus que <span className="font-semibold text-fg">{season.remaining} km</span> pour débloquer « {season.next.title} » — {season.next.reward.toLowerCase()}.</>
                 : 'Tous les paliers de la saison sont débloqués 🎉'}
             </p>
           </section>
@@ -220,12 +220,12 @@ export default function Profil() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-fg">Abonnement {planMeta.name}</span>
+                    <span className="text-sm font-semibold text-fg">Abonnement {planMeta.name}</span>
                     <PlanBadge plan={plan} />
                   </div>
                   <p className="text-[12px] text-fg-muted">Tu profites de toutes les fonctionnalités.</p>
                 </div>
-                <button onClick={openPlans} className="shrink-0 rounded-full bg-surface-2 px-3 py-1.5 text-xs font-bold text-fg-soft tap">Gérer</button>
+                <button onClick={openPlans} className="shrink-0 rounded-full bg-surface-2 px-3 py-1.5 text-xs font-semibold text-fg-soft tap">Gérer</button>
               </div>
             </section>
           ) : (
@@ -237,13 +237,13 @@ export default function Profil() {
               <div className="relative">
                 <div className="flex items-center gap-2">
                   <Icon name="crown" className="h-5 w-5 text-gold-300" filled />
-                  <span className="text-base font-extrabold">Passe à Pro</span>
-                  <span className="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-bold text-white/70">dès 9€/mois</span>
+                  <span className="text-base font-semibold">Passe à Pro</span>
+                  <span className="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-white/70">dès 9€/mois</span>
                 </div>
                 <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/65">
                   Matchs illimités, « qui veut me rencontrer », agenda & RDV et intros prioritaires.
                 </p>
-                <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-bold text-fg">
+                <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-fg">
                   Voir les offres <Icon name="arrowRight" className="h-4 w-4" />
                 </span>
               </div>
@@ -259,10 +259,10 @@ export default function Profil() {
               <Icon name="gift" className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
-              <div className="text-sm font-bold text-fg">Invite & gagne 1 mois Pro</div>
+              <div className="text-sm font-semibold text-fg">Invite & gagne 1 mois Pro</div>
               <div className="mt-1.5 flex items-center gap-2">
                 <ProgressBar value={referralJoined} total={REFERRAL.goal} className="bg-surface-2" barClassName="bg-gold" />
-                <span className="shrink-0 text-[11px] font-bold tabular-nums text-fg-muted">{referralJoined}/{REFERRAL.goal}</span>
+                <span className="shrink-0 text-[11px] font-semibold tabular-nums text-fg-muted">{referralJoined}/{REFERRAL.goal}</span>
               </div>
             </div>
             <Icon name="chevronRight" className="h-5 w-5 text-fg-faint" />
@@ -271,12 +271,12 @@ export default function Profil() {
           {/* Ce que je cherche */}
           <section className="rounded-3xl border-2 border-brand-200 bg-brand-light/50 p-4">
             <div className="flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-base font-bold text-fg">
+              <h2 className="flex items-center gap-2 text-base font-semibold text-fg">
                 <Icon name="target" className="h-5 w-5 text-brand-600" /> Ce que je cherche
               </h2>
               <button
                 onClick={openEditProfile}
-                className="flex items-center gap-1 rounded-full bg-surface px-3 py-1 text-xs font-bold text-brand-700 shadow-soft tap"
+                className="flex items-center gap-1 rounded-full bg-surface px-3 py-1 text-xs font-semibold text-brand-700 shadow-soft tap"
               >
                 <Icon name="pencil" className="h-3.5 w-3.5" /> Modifier
               </button>
@@ -293,7 +293,7 @@ export default function Profil() {
 
           {/* Ce que je propose */}
           <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
-            <h2 className="flex items-center gap-2 text-base font-bold text-fg">
+            <h2 className="flex items-center gap-2 text-base font-semibold text-fg">
               <Icon name="link" className="h-5 w-5 text-success" /> Ce que je propose
             </h2>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -309,7 +309,7 @@ export default function Profil() {
           <section className="grid grid-cols-3 gap-2.5">
             {stats.map((s) => (
               <div key={s.label} className="rounded-2xl border border-line bg-surface p-3 text-center shadow-soft">
-                <div className="text-xl font-extrabold text-fg tabular-nums">{s.value}</div>
+                <div className="text-xl font-semibold text-fg tabular-nums">{s.value}</div>
                 <div className="text-[11px] text-fg-muted">{s.label}</div>
               </div>
             ))}
@@ -318,10 +318,10 @@ export default function Profil() {
           {/* Connexions & appareils */}
           <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
             <div className="flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-base font-bold text-fg">
+              <h2 className="flex items-center gap-2 text-base font-semibold text-fg">
                 <Icon name="link" className="h-5 w-5 text-brand-600" /> Connexions & appareils
               </h2>
-              <button onClick={openIntegrations} className="flex items-center gap-1 rounded-full bg-surface-2 px-3 py-1 text-xs font-bold text-fg-soft tap">
+              <button onClick={openIntegrations} className="flex items-center gap-1 rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-fg-soft tap">
                 Gérer
               </button>
             </div>
@@ -364,7 +364,7 @@ export default function Profil() {
                       <Icon name="activity" className="h-4 w-4" />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-bold text-fg">{a.title}</div>
+                      <div className="truncate text-sm font-semibold text-fg">{a.title}</div>
                       <div className="text-[12px] text-fg-muted tabular-nums">{a.date} · {a.distance.toFixed(1)} km</div>
                     </div>
                     <Icon name="chevronRight" className="h-4 w-4 text-fg-faint" />
@@ -376,7 +376,7 @@ export default function Profil() {
 
           {/* Centres d'intérêt */}
           <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
-            <h2 className="text-base font-bold text-fg">Centres d’intérêt</h2>
+            <h2 className="text-base font-semibold text-fg">Centres d’intérêt</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {profile.interests.map((i) => (
                 <span key={i} className="rounded-full bg-surface-2 px-3 py-1.5 text-sm font-semibold text-fg-soft">
@@ -393,7 +393,7 @@ export default function Profil() {
             </div>
             <div>
               <div className="text-xs text-fg-faint">Membre de</div>
-              <div className="font-bold text-fg">{u.community}</div>
+              <div className="font-semibold text-fg">{u.community}</div>
             </div>
           </section>
 
@@ -407,13 +407,13 @@ export default function Profil() {
               >
                 <Icon name={s.icon} className="h-5 w-5 text-fg-faint" />
                 <span className="flex-1 text-sm font-semibold text-fg">{s.label}</span>
-                {s.hint && <span className="text-xs font-bold text-fg-faint">{s.hint}</span>}
+                {s.hint && <span className="text-xs font-semibold text-fg-faint">{s.hint}</span>}
                 <Icon name="chevronRight" className="h-4 w-4 text-fg-faint" />
               </button>
             ))}
           </section>
 
-          <button onClick={() => showToast('À bientôt 👋')} className="flex w-full items-center justify-center gap-2 py-2 text-sm font-bold text-fg-faint tap">
+          <button onClick={() => showToast('À bientôt 👋')} className="flex w-full items-center justify-center gap-2 py-2 text-sm font-semibold text-fg-faint tap">
             <Icon name="logout" className="h-4 w-4" /> Se déconnecter
           </button>
         </div>

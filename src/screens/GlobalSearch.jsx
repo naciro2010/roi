@@ -21,7 +21,7 @@ function ResultRow({ icon, tone = 'bg-surface-2 text-fg-muted', avatar, title, s
         </span>
       )}
       <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-bold text-fg">{title}</div>
+        <div className="truncate text-sm font-semibold text-fg">{title}</div>
         <div className="truncate text-[12px] text-fg-faint">{subtitle}</div>
       </div>
       <Icon name="chevronRight" className="h-4 w-4 shrink-0 text-fg-faint" />
@@ -32,7 +32,7 @@ function ResultRow({ icon, tone = 'bg-surface-2 text-fg-muted', avatar, title, s
 function Group({ label, children }) {
   return (
     <section>
-      <p className="mb-1 px-2 text-xs font-bold uppercase tracking-wide text-fg-faint">{label}</p>
+      <p className="mb-1 px-2 text-xs font-semibold uppercase tracking-wide text-fg-faint">{label}</p>
       <div>{children}</div>
     </section>
   )
