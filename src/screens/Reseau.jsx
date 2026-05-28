@@ -75,7 +75,7 @@ export default function Reseau() {
       {netView === 'suggestions' && (
         <div className="flex-1 space-y-4 overflow-y-auto no-scrollbar px-5 pb-6 pt-4">
           <div className="flex w-full items-start gap-3 rounded-2xl border border-brand-200 bg-brand-light/60 p-3.5">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-surface-3 text-brand-300 ring-1 ring-brand-500/25">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-surface text-brand-600 shadow-soft ring-1 ring-brand-500/15">
               <Icon name="sparkles" className="h-4 w-4" filled />
             </span>
             <div className="min-w-0 flex-1">
@@ -132,7 +132,7 @@ export default function Reseau() {
           })}
 
           {bonusMatches(km) > 0 && (
-            <p className="flex items-center justify-center gap-1.5 text-center text-[12px] font-semibold text-success-300">
+            <p className="flex items-center justify-center gap-1.5 text-center text-[12px] font-semibold text-success-dark">
               <Icon name="trophy" className="h-3.5 w-3.5" /> +{bonusMatches(km)} matchs débloqués par tes kilomètres
             </p>
           )}
@@ -151,7 +151,7 @@ export default function Reseau() {
                   <div className="text-sm font-extrabold">{hiddenMatches} autre{hiddenMatches > 1 ? 's' : ''} profil{hiddenMatches > 1 ? 's' : ''} te correspond{hiddenMatches > 1 ? 'ent' : ''}</div>
                   <p className="text-[12px] text-white/60">Débloque les matchs illimités avec Pro.</p>
                 </div>
-                <span className="shrink-0 rounded-full bg-fg px-3 py-1.5 text-xs font-bold text-canvas">Pro</span>
+                <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-fg">Pro</span>
               </div>
             </button>
           )}
@@ -321,7 +321,7 @@ export default function Reseau() {
                 <button
                   key={c.name}
                   onClick={() => openMember(c.name)}
-                  className={`flex w-full items-center gap-3 px-3.5 py-3 text-left tap hover:bg-white/[0.04] ${i > 0 ? 'border-t border-line' : ''}`}
+                  className={`flex w-full items-center gap-3 px-3.5 py-3 text-left tap hover:bg-black/[0.04] ${i > 0 ? 'border-t border-line' : ''}`}
                 >
                   <Avatar name={c.name} size="md" />
                   <div className="min-w-0 flex-1">

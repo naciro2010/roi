@@ -174,7 +174,7 @@ export default function InviteSheet({ onClose }) {
                 <section className="relative overflow-hidden rounded-3xl border-2 border-gold/40 bg-surface p-5 text-center shadow-card">
                   <div className="absolute inset-0 bg-gold-sheen" />
                   <div className="relative">
-                    <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-gold/15 text-gold-300 ring-1 ring-gold/25">
+                    <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-gold/15 text-gold-dark ring-1 ring-gold/25">
                       <Icon name="users" className="h-7 w-7" />
                     </span>
                     <h3 className="mt-3 text-lg font-extrabold text-fg">Invite ton équipe</h3>

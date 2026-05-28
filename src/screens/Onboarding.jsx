@@ -76,7 +76,7 @@ export default function Onboarding({ onClose, onEditProfile }) {
 
         <div className="mt-8 flex gap-1.5">
           {STEPS.map((_, i) => (
-            <span key={i} className={`h-1.5 rounded-full transition-all ${i === step ? 'w-6 bg-fg' : 'w-1.5 bg-white/30'}`} />
+            <span key={i} className={`h-1.5 rounded-full transition-all ${i === step ? 'w-6 bg-white' : 'w-1.5 bg-white/30'}`} />
           ))}
         </div>
       </div>
@@ -84,7 +84,7 @@ export default function Onboarding({ onClose, onEditProfile }) {
       <div className="relative space-y-2 px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         <button
           onClick={() => (last ? onEditProfile() : setStep((x) => x + 1))}
-          className="w-full rounded-2xl bg-fg py-3.5 text-sm font-bold text-canvas tap"
+          className="w-full rounded-2xl bg-white py-3.5 text-sm font-bold text-fg shadow-soft tap"
         >
           {last ? 'Compléter mon profil' : 'Continuer'}
         </button>

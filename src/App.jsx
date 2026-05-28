@@ -433,9 +433,9 @@ export default function App() {
 
   return (
     <AppContext.Provider value={ctx}>
-      <div className="flex min-h-[100dvh] w-full items-center justify-center bg-[#05070c] bg-mesh sm:py-8">
-        <div className="relative flex h-[100dvh] w-full max-w-[420px] flex-col overflow-hidden bg-canvas shadow-ring sm:h-[860px] sm:max-h-[94vh] sm:rounded-[2.75rem] sm:ring-1 sm:ring-line-strong">
-          <div className="pointer-events-none absolute left-1/2 top-2 z-30 hidden h-7 w-28 -translate-x-1/2 rounded-full bg-black sm:block" />
+      <div className="flex min-h-[100dvh] w-full items-center justify-center bg-canvas bg-mesh sm:py-8">
+        <div className="relative flex h-[100dvh] w-full max-w-[420px] flex-col overflow-hidden bg-canvas shadow-ring sm:h-[860px] sm:max-h-[94vh] sm:rounded-[2.75rem] sm:ring-[10px] sm:ring-ink-950/90">
+          <div className="pointer-events-none absolute left-1/2 top-2 z-30 hidden h-7 w-28 -translate-x-1/2 rounded-full bg-ink-950 sm:block" />
 
           {showHeader && (
             <header className="glass z-20 flex shrink-0 items-center justify-between border-b border-line px-5 pb-3 pt-4 sm:pt-7">
@@ -443,14 +443,14 @@ export default function App() {
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setSearchOpen(true)}
-                  className="grid h-10 w-10 place-items-center rounded-full text-fg-soft tap hover:bg-white/[0.05]"
+                  className="grid h-10 w-10 place-items-center rounded-full text-fg-soft tap hover:bg-black/[0.05]"
                   aria-label="Rechercher"
                 >
                   <Icon name="search" className="h-[21px] w-[21px]" />
                 </button>
                 <button
                   onClick={() => setNotifOpen(true)}
-                  className="relative grid h-10 w-10 place-items-center rounded-full text-fg-soft tap hover:bg-white/[0.05]"
+                  className="relative grid h-10 w-10 place-items-center rounded-full text-fg-soft tap hover:bg-black/[0.05]"
                   aria-label="Notifications"
                 >
                   <Icon name="bell" className="h-[22px] w-[22px]" />

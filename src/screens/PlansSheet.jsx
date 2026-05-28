@@ -53,16 +53,16 @@ export default function PlansSheet({ onClose }) {
             <div className="mt-4 inline-flex items-center gap-1 rounded-full bg-white/10 p-1">
               <button
                 onClick={() => setAnnual(false)}
-                className={`rounded-full px-3.5 py-1.5 text-[13px] font-bold tap ${!annual ? 'bg-fg text-canvas' : 'text-white/70'}`}
+                className={`rounded-full px-3.5 py-1.5 text-[13px] font-bold tap ${!annual ? 'bg-white text-fg' : 'text-white/70'}`}
               >
                 Mensuel
               </button>
               <button
                 onClick={() => setAnnual(true)}
-                className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-bold tap ${annual ? 'bg-fg text-canvas' : 'text-white/70'}`}
+                className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-bold tap ${annual ? 'bg-white text-fg' : 'text-white/70'}`}
               >
                 Annuel
-                <span className="rounded-full bg-gold/90 px-1.5 py-0.5 text-[10px] font-extrabold text-canvas">−25%</span>
+                <span className="rounded-full bg-gold/90 px-1.5 py-0.5 text-[10px] font-extrabold text-fg">−25%</span>
               </button>
             </div>
           </div>
@@ -122,7 +122,7 @@ export default function PlansSheet({ onClose }) {
                       <li key={f} className="flex items-start gap-2 text-[13px]">
                         <Icon
                           name="check"
-                          className={`mt-0.5 h-4 w-4 shrink-0 ${highlight ? 'text-gold-300' : business ? 'text-gold-300' : 'text-success-300'}`}
+                          className={`mt-0.5 h-4 w-4 shrink-0 ${highlight ? 'text-gold-300' : business ? 'text-gold-dark' : 'text-success'}`}
                         />
                         <span className={highlight ? 'text-white/85' : 'text-fg-soft'}>{f}</span>
                       </li>
@@ -138,7 +138,7 @@ export default function PlansSheet({ onClose }) {
                           ? 'bg-white/15 text-white'
                           : 'bg-surface-2 text-fg-muted'
                         : highlight
-                          ? 'bg-fg text-canvas'
+                          ? 'bg-white text-fg'
                           : business
                             ? 'bg-gradient-to-r from-gold-dark to-gold text-white shadow-brand'
                             : 'bg-brand-500 text-white shadow-brand'

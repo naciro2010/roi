@@ -1,21 +1,21 @@
 import Icon from './Icon'
 
-// Tons d'accent : tuiles sombres + texte lumineux pour un rendu premium sombre.
+// Tons d'accent : tuiles claires + texte profond pour un rendu premium clair.
 export const PILL_TONES = {
-  brand: 'bg-brand-50 text-brand-300',
-  emerald: 'bg-success-light text-success-300',
-  indigo: 'bg-[#1E2040] text-[#B9BCEA]',
-  amber: 'bg-[#2A2412] text-gold-300',
-  rose: 'bg-[#2A1A1F] text-[#E6A9B3]',
+  brand: 'bg-brand-50 text-brand-700',
+  emerald: 'bg-success-light text-success-dark',
+  indigo: 'bg-[#EAE7F5] text-[#403881]',
+  amber: 'bg-gold-light text-gold-dark',
+  rose: 'bg-like-light text-[#8B3C49]',
   ink: 'bg-surface-2 text-fg-soft',
 }
 
 export const DOT_TONES = {
   brand: 'bg-brand-500',
-  emerald: 'bg-success-300',
-  indigo: 'bg-[#8E92E0]',
+  emerald: 'bg-success',
+  indigo: 'bg-[#5E63B8]',
   amber: 'bg-gold',
-  rose: 'bg-[#D38794]',
+  rose: 'bg-like',
   ink: 'bg-fg-faint',
 }
 
@@ -66,8 +66,8 @@ export function ProgressRing({ value, size = 76, stroke = 8, track = 'rgba(255,2
 
 export function MatchRing({ value, size = 44 }) {
   return (
-    <ProgressRing value={value} size={size} stroke={4} track="rgba(130,141,236,0.16)" color="#828DEC">
-      <div className="text-[11px] font-extrabold text-brand-300">{value}</div>
+    <ProgressRing value={value} size={size} stroke={4} track="rgba(79,91,200,0.14)" color="#4F5BC8">
+      <div className="text-[11px] font-extrabold text-brand-700">{value}</div>
     </ProgressRing>
   )
 }
@@ -93,8 +93,8 @@ export function PlanBadge({ plan, className = '' }) {
     <span
       className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide ring-1 ${
         isBusiness
-          ? 'bg-gold/15 text-gold-300 ring-gold/30'
-          : 'bg-brand-50 text-brand-300 ring-brand-200'
+          ? 'bg-gold/15 text-gold-dark ring-gold/30'
+          : 'bg-brand-50 text-brand-700 ring-brand-200'
       } ${className}`}
     >
       <Icon name="crown" className="h-2.5 w-2.5" filled />

@@ -54,7 +54,7 @@ export default function Accueil() {
         <div className="relative flex-1">
           <div className="flex items-center gap-1.5 text-sm font-bold">
             {greet}, {u.name.split(' ')[0]}
-            <span className="inline-flex items-center gap-0.5 rounded-full bg-success-light px-1.5 py-0.5 text-[11px] font-bold text-success-300">
+            <span className="inline-flex items-center gap-0.5 rounded-full bg-white/15 px-1.5 py-0.5 text-[11px] font-bold text-success-300 ring-1 ring-white/15">
               <Icon name="trendingUp" className="h-3 w-3" /> +{u.roi.weekDelta}
             </span>
           </div>
@@ -82,9 +82,9 @@ export default function Accueil() {
       {/* Tempo de la semaine — business & running en un coup d'œil */}
       <div className="grid grid-cols-3 gap-2.5">
         {[
-          { icon: 'route', value: `${u.stats.km}`, unit: 'km', label: 'ce mois', tone: 'text-brand-300', onClick: () => goTo('courir') },
-          { icon: 'calendar', value: `${meetings.length}`, unit: '', label: 'RDV à venir', tone: 'text-success-300', onClick: openAgenda },
-          { icon: 'briefcase', value: `${u.roi.opportunities}`, unit: '', label: 'opportunités', tone: 'text-gold-300', onClick: openRoiInfo },
+          { icon: 'route', value: `${u.stats.km}`, unit: 'km', label: 'ce mois', tone: 'text-brand-500', onClick: () => goTo('courir') },
+          { icon: 'calendar', value: `${meetings.length}`, unit: '', label: 'RDV à venir', tone: 'text-success', onClick: openAgenda },
+          { icon: 'briefcase', value: `${u.roi.opportunities}`, unit: '', label: 'opportunités', tone: 'text-gold-dark', onClick: openRoiInfo },
         ].map((s) => (
           <button
             key={s.label}

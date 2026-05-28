@@ -20,7 +20,7 @@ export function ActivityPreview({ activity, onOpen, mapClass = 'h-40' }) {
     <button onClick={onOpen} className="block w-full overflow-hidden rounded-2xl border border-line bg-surface text-left tap">
       <div className={`relative ${mapClass} bg-surface-2`}>
         <RouteMap route={activity.route} className="h-full w-full" />
-        <span className="pointer-events-none absolute left-2.5 top-2.5 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-bold text-white shadow-soft ring-1 ring-white/10 backdrop-blur">
+        <span className="pointer-events-none absolute left-2.5 top-2.5 rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-bold text-fg-soft shadow-soft backdrop-blur">
           {activity.type}
         </span>
       </div>

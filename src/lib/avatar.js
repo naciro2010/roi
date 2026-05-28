@@ -1,13 +1,13 @@
-// Teintes d'avatar sombres et désaturées : tuile profonde + initiales lumineuses.
+// Teintes d'avatar claires et désaturées : tuile pastel + initiales profondes.
 export const AVATAR_TINTS = [
-  'bg-[#2A3350] text-[#AEB8DA]',
-  'bg-[#2E2A3D] text-[#C2B6D6]',
-  'bg-[#23323A] text-[#A8C5CF]',
-  'bg-[#2C3243] text-[#B4BCCE]',
-  'bg-[#1F3328] text-[#9FD0B0]',
-  'bg-[#322A22] text-[#D8C2A6]',
-  'bg-[#312530] text-[#D6AEC2]',
-  'bg-[#28303F] text-[#B7C0D2]',
+  'bg-[#DDE3F1] text-[#3C455B]',
+  'bg-[#E2DBE6] text-[#574A60]',
+  'bg-[#D9E2E6] text-[#3F5560]',
+  'bg-[#DCE6DD] text-[#3F5A45]',
+  'bg-[#E7DDD4] text-[#6B5544]',
+  'bg-[#EFE5E6] text-[#7A4B53]',
+  'bg-[#E5E1EE] text-[#473E66]',
+  'bg-[#E0E6EC] text-[#3F4756]',
 ]
 
 export const AVATAR_SIZES = {

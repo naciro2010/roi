@@ -82,7 +82,7 @@ export default function Messages() {
           <button onClick={closeChat} className="rounded-full p-1.5 text-fg-muted tap" aria-label="Retour">
             <Icon name="arrowLeft" className="h-6 w-6" />
           </button>
-          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-surface-3 text-white">
+          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-fg text-canvas">
             <Icon name="users" className="h-4 w-4" />
           </div>
           <div className="min-w-0">
@@ -158,7 +158,7 @@ export default function Messages() {
               <button
                 key={c.id}
                 onClick={() => openChat(c.id)}
-                className="flex w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left tap hover:bg-white/[0.04]"
+                className="flex w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left tap hover:bg-black/[0.04]"
               >
                 <Avatar name={c.name} size="md" />
                 <div className="min-w-0 flex-1">
@@ -196,7 +196,7 @@ export default function Messages() {
               </div>
             </div>
           ) : (
-            <button onClick={() => setCreatingGroup(true)} className="mb-3 flex w-full items-center gap-3 rounded-2xl border border-dashed border-line-strong px-3 py-3 text-left tap hover:bg-white/[0.04]">
+            <button onClick={() => setCreatingGroup(true)} className="mb-3 flex w-full items-center gap-3 rounded-2xl border border-dashed border-line-strong px-3 py-3 text-left tap hover:bg-black/[0.04]">
               <span className="grid h-10 w-10 place-items-center rounded-full bg-brand-50 text-brand-600">
                 <Icon name="plus" className="h-5 w-5" />
               </span>
@@ -217,9 +217,9 @@ export default function Messages() {
                 <button
                   key={g.id}
                   onClick={() => openGroupChat(g.id)}
-                  className="flex w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left tap hover:bg-white/[0.04]"
+                  className="flex w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left tap hover:bg-black/[0.04]"
                 >
-                  <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-surface-3 text-white">
+                  <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-fg text-canvas">
                     <Icon name="users" className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -257,7 +257,7 @@ export default function Messages() {
                 <button
                   onClick={() => joinGroup(g)}
                   className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold tap ${
-                    joinedGroups[g.id] ? 'bg-success-light text-success-300' : 'bg-brand-500 text-white shadow-brand'
+                    joinedGroups[g.id] ? 'bg-success-light text-success-dark' : 'bg-brand-500 text-white shadow-brand'
                   }`}
                 >
                   {joinedGroups[g.id] ? 'Rejoint ✓' : 'Rejoindre'}

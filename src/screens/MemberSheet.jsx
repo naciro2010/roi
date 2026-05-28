@@ -116,7 +116,7 @@ export default function MemberSheet({ name, onClose }) {
                   <button
                     key={a.id}
                     onClick={() => openActivity(a.id)}
-                    className="flex w-full items-center gap-3 rounded-2xl border border-line bg-surface p-2.5 text-left shadow-soft tap hover:bg-white/[0.04]"
+                    className="flex w-full items-center gap-3 rounded-2xl border border-line bg-surface p-2.5 text-left shadow-soft tap hover:bg-black/[0.04]"
                   >
                     <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600">
                       <Icon name="activity" className="h-4 w-4" />
@@ -162,7 +162,7 @@ export default function MemberSheet({ name, onClose }) {
                     onClick={() => { proposeMeeting({ with: name, type: t }); setProposing(false) }}
                     className="flex flex-1 flex-col items-center gap-1.5 rounded-2xl border border-line bg-surface-soft py-3 text-fg-soft tap"
                   >
-                    <Icon name={meta.icon} className="h-5 w-5 text-brand-300" />
+                    <Icon name={meta.icon} className="h-5 w-5 text-brand-600" />
                     <span className="text-[12px] font-bold">{meta.label}</span>
                   </button>
                 )
@@ -180,7 +180,7 @@ export default function MemberSheet({ name, onClose }) {
           </button>
           <button
             onClick={() => setProposing((v) => !v)}
-            className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl border tap ${proposing ? 'border-brand-500 text-brand-300' : 'border-line-strong text-fg-soft'}`}
+            className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl border tap ${proposing ? 'border-brand-500 text-brand-600' : 'border-line-strong text-fg-soft'}`}
             aria-label="Proposer un RDV"
           >
             <Icon name="calendar" className="h-5 w-5" />

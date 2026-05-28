@@ -139,7 +139,7 @@ export default function Profil() {
             onClick={openAgenda}
             className="flex w-full items-center gap-3 rounded-3xl border border-line bg-surface p-4 text-left shadow-soft tap"
           >
-            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-success-light text-success-300">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-success-light text-success-dark">
               <Icon name="calendar" className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
@@ -156,7 +156,7 @@ export default function Profil() {
           <section className="overflow-hidden rounded-3xl border border-line bg-surface p-4 shadow-soft">
             <div className="flex items-center justify-between">
               <h2 className="flex items-center gap-2 text-base font-bold text-fg">
-                <Icon name="trophy" className="h-5 w-5 text-gold-300" /> Saison · niveau {season.level}
+                <Icon name="trophy" className="h-5 w-5 text-gold-dark" /> Saison · niveau {season.level}
               </h2>
               <button onClick={() => goTo('courir')} className="flex items-center gap-0.5 text-xs font-semibold text-brand-600 tap">
                 Détails <Icon name="chevronRight" className="h-3.5 w-3.5" />
@@ -178,7 +178,7 @@ export default function Profil() {
             <section className="relative overflow-hidden rounded-3xl border-2 border-gold/40 bg-surface p-4 shadow-card">
               <div className="absolute inset-0 bg-gold-sheen" />
               <div className="relative flex items-center gap-3">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gold/15 text-gold-300 ring-1 ring-gold/25">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gold/15 text-gold-dark ring-1 ring-gold/25">
                   <Icon name="crown" className="h-6 w-6" filled />
                 </span>
                 <div className="min-w-0 flex-1">
@@ -206,7 +206,7 @@ export default function Profil() {
                 <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/65">
                   Matchs illimités, « qui veut me rencontrer », agenda & RDV et intros prioritaires.
                 </p>
-                <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-fg px-4 py-2 text-sm font-bold text-canvas">
+                <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-bold text-fg">
                   Voir les offres <Icon name="arrowRight" className="h-4 w-4" />
                 </span>
               </div>
@@ -218,7 +218,7 @@ export default function Profil() {
             onClick={openInvite}
             className="flex w-full items-center gap-3 rounded-3xl border border-line bg-surface p-4 text-left shadow-soft tap"
           >
-            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#2A2412] text-gold-300">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gold-light text-gold-dark">
               <Icon name="gift" className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
@@ -321,7 +321,7 @@ export default function Profil() {
                   <button
                     key={a.id}
                     onClick={() => openActivity(a.id)}
-                    className={`flex w-full items-center gap-3 px-3.5 py-3 text-left tap hover:bg-white/[0.04] ${i > 0 ? 'border-t border-line' : ''}`}
+                    className={`flex w-full items-center gap-3 px-3.5 py-3 text-left tap hover:bg-black/[0.04] ${i > 0 ? 'border-t border-line' : ''}`}
                   >
                     <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600">
                       <Icon name="activity" className="h-4 w-4" />
@@ -366,7 +366,7 @@ export default function Profil() {
               <button
                 key={s.label}
                 onClick={s.onClick}
-                className={`flex w-full items-center gap-3 px-4 py-3.5 text-left tap hover:bg-white/[0.04] ${i > 0 ? 'border-t border-line' : ''}`}
+                className={`flex w-full items-center gap-3 px-4 py-3.5 text-left tap hover:bg-black/[0.04] ${i > 0 ? 'border-t border-line' : ''}`}
               >
                 <Icon name={s.icon} className="h-5 w-5 text-fg-faint" />
                 <span className="flex-1 text-sm font-semibold text-fg">{s.label}</span>
