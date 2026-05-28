@@ -5,47 +5,49 @@ export default {
     extend: {
       colors: {
         // ----------------------------------------------------------------
-        // Thème clair façon Revolut : fond net et froid, surfaces empilées,
-        // accent bleu électrique / indigo vibrant (jamais d'à-plat sombre).
-        // Surfaces empilées : canvas < surface-soft < surface (cartes) < 2/3.
+        // Thème clair façon Apple : neutre, sobre, haut de gamme.
+        // Gris clair signature, texte quasi-noir, accent graphite/noir
+        // (aucune couleur flashy). Surfaces empilées :
+        // canvas < surface-soft < surface (cartes) < 2/3.
         // Tokens sémantiques → l'app peut basculer thème sans changer le code.
         // ----------------------------------------------------------------
-        canvas: '#F4F6FD', // fond de l'app (off-white froid, légèrement bleuté)
+        canvas: '#F5F5F7', // fond de l'app (gris clair Apple)
         surface: {
           DEFAULT: '#FFFFFF', // cartes
-          soft: '#EEF1FB', // tuiles internes / hover / fonds discrets
-          2: '#E4E9F6', // inputs, pistes, pills
+          soft: '#EFEFF2', // tuiles internes / hover / fonds discrets
+          2: '#E8E8ED', // inputs, pistes, pills
           3: '#FFFFFF', // segment actif (pill blanche sur piste claire)
         },
-        // Filets (hairlines) translucides froids pour un rendu net.
+        // Filets (hairlines) neutres translucides pour un rendu net et discret.
         line: {
-          DEFAULT: 'rgba(17,24,52,0.08)',
-          strong: 'rgba(17,24,52,0.14)',
+          DEFAULT: 'rgba(0,0,0,0.08)',
+          strong: 'rgba(0,0,0,0.14)',
         },
-        // Texte : du plus contrasté au plus discret (navy froid).
+        // Texte : du plus contrasté au plus discret (neutres Apple).
         fg: {
-          DEFAULT: '#0B1020', // primaire, navy presque noir
-          soft: '#2A3147', // secondaire
-          muted: '#5C6479', // tertiaire
-          faint: '#8B93AB', // quaternaire (icônes / placeholders)
+          DEFAULT: '#1D1D1F', // primaire, quasi-noir
+          soft: '#3A3A3C', // secondaire
+          muted: '#6E6E73', // tertiaire
+          faint: '#A1A1A6', // quaternaire (icônes / placeholders)
         },
 
-        // Accent principal : bleu électrique / indigo (signature Revolut clair).
-        // L'or champagne reste réservé au « premium / Metal ».
+        // Accent principal : graphite/noir. Monochrome sobre et premium —
+        // boutons noirs élégants, jamais de couleur vive. L'or reste réservé
+        // au « premium / Metal », en touche très discrète.
         brand: {
-          50: '#ECF0FF',
-          100: '#DCE3FF',
-          200: '#BBC8FF',
-          300: '#93A6FF',
-          400: '#6680FF',
-          500: '#3B5BFF',
-          600: '#2742F0',
-          700: '#1D33C7',
-          800: '#172796',
-          900: '#111D6B',
-          DEFAULT: '#3B5BFF',
-          dark: '#1D33C7',
-          light: '#ECF0FF',
+          50: '#F2F2F4',
+          100: '#E4E4E7',
+          200: '#C9C9CF',
+          300: '#9A9AA2',
+          400: '#5C5C63',
+          500: '#1D1D1F',
+          600: '#161617',
+          700: '#0F0F10',
+          800: '#0A0A0B',
+          900: '#000000',
+          DEFAULT: '#1D1D1F',
+          dark: '#000000',
+          light: '#F2F2F4',
         },
         // Conserve `ink` pour rares usages explicitement « papier sombre ».
         ink: {
@@ -69,29 +71,30 @@ export default {
         gold: { 300: '#E0C66D', DEFAULT: '#B8902F', dark: '#7A5E1F', light: '#FBF3DD' },
       },
       fontFamily: {
-        display: ['"Inter Tight"', 'Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
-        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        // Police système Apple (San Francisco) en priorité, Inter en repli.
+        display: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', '"Inter Tight"', 'Inter', '"Segoe UI"', 'sans-serif'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"SF Pro Display"', 'Inter', '"Segoe UI"', 'Roboto', 'sans-serif'],
       },
       boxShadow: {
-        soft: '0 1px 2px rgba(17,24,52,0.04), 0 4px 14px rgba(17,24,52,0.06)',
-        card: '0 1px 2px rgba(17,24,52,0.05), 0 12px 28px -14px rgba(17,24,52,0.16)',
-        float: '0 22px 50px -22px rgba(17,24,52,0.26)',
-        brand: '0 12px 30px -10px rgba(59,91,255,0.45)',
-        ring: '0 40px 90px -30px rgba(17,24,52,0.32)',
+        soft: '0 1px 2px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.05)',
+        card: '0 1px 2px rgba(0,0,0,0.04), 0 12px 28px -14px rgba(0,0,0,0.14)',
+        float: '0 22px 50px -22px rgba(0,0,0,0.24)',
+        brand: '0 12px 28px -12px rgba(0,0,0,0.40)',
+        ring: '0 40px 90px -30px rgba(0,0,0,0.28)',
       },
       backgroundImage: {
-        // Halo discret derrière le « téléphone » (desktop) : ambient bleu/violet.
+        // Halo neutre très discret derrière le « téléphone » (desktop).
         mesh:
-          'radial-gradient(60% 50% at 12% 0%, rgba(59,91,255,0.12) 0%, rgba(59,91,255,0) 60%), radial-gradient(55% 55% at 92% 100%, rgba(138,85,255,0.10) 0%, rgba(138,85,255,0) 60%)',
-        // Lueur sur les cartes « héros » bleu/violet : top highlight + vignette douce.
+          'radial-gradient(60% 50% at 12% 0%, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 60%), radial-gradient(55% 55% at 92% 100%, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0) 60%)',
+        // Lueur sur les cartes « héros » graphite : top highlight + vignette douce.
         'hero-glow':
-          'radial-gradient(120% 90% at 82% -12%, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0) 55%), radial-gradient(90% 80% at 0% 112%, rgba(8,12,40,0.20) 0%, rgba(8,12,40,0) 60%)',
-        // Aurora : highlight blanc + pop cyan électrique (carte façon Revolut).
+          'radial-gradient(120% 90% at 82% -12%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 55%), radial-gradient(90% 80% at 0% 112%, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0) 60%)',
+        // Aurora : highlights blancs subtils sur graphite (rendu sobre, sans couleur).
         aurora:
-          'radial-gradient(70% 60% at 12% 2%, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0) 60%), radial-gradient(60% 70% at 92% 6%, rgba(0,224,255,0.26) 0%, rgba(0,224,255,0) 58%), radial-gradient(80% 80% at 78% 112%, rgba(168,120,255,0.22) 0%, rgba(168,120,255,0) 60%)',
-        // Filet doré discret pour les surfaces « premium / Metal ».
+          'radial-gradient(70% 60% at 12% 2%, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 60%), radial-gradient(60% 70% at 92% 6%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 58%), radial-gradient(80% 80% at 78% 112%, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 60%)',
+        // Filet doré très discret pour les surfaces « premium / Metal ».
         'gold-sheen':
-          'linear-gradient(135deg, rgba(184,144,47,0.12) 0%, rgba(184,144,47,0) 42%), radial-gradient(60% 80% at 90% 0%, rgba(224,198,109,0.22) 0%, rgba(224,198,109,0) 60%)',
+          'linear-gradient(135deg, rgba(184,144,47,0.10) 0%, rgba(184,144,47,0) 42%), radial-gradient(60% 80% at 90% 0%, rgba(224,198,109,0.18) 0%, rgba(224,198,109,0) 60%)',
       },
       keyframes: {
         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },

@@ -90,13 +90,13 @@ export function CompatBars({ parts, className = '' }) {
 
 export function MatchRing({ value, size = 44 }) {
   return (
-    <ProgressRing value={value} size={size} stroke={4} track="rgba(59,91,255,0.14)" color="#3B5BFF">
+    <ProgressRing value={value} size={size} stroke={4} track="rgba(0,0,0,0.10)" color="#1D1D1F">
       <div className="text-[11px] font-extrabold text-fg">{value}</div>
     </ProgressRing>
   )
 }
 
-// Mini-courbe de tendance (façon « solde » Revolut). Ligne + aire dégradée.
+// Mini-courbe de tendance sobre. Ligne + aire dégradée.
 export function Sparkline({ data, width = 92, height = 34, stroke = '#FFFFFF', strokeWidth = 2.25, className = '' }) {
   if (!data || data.length < 2) return null
   const max = Math.max(...data)
