@@ -35,6 +35,20 @@ des groupes pour échanger.
   Running / Affinité) et le bandeau « Pour toi » montre ce que l'algorithme
   apprend de toi. Annuaire des membres avec recherche et filtres. **Brise-glace
   IA** : message d'intro pré-rédigé à partir de vos points communs.
+- **RunMatch · binôme de course** — la sortie matchée à 2 (Happn × pitch). À partir
+  du profil de course d'un membre (créneau, allure, zone, distance), ROI propose une
+  **sortie concrète** : un jour, une heure, un lieu, une distance et une **allure cible**
+  (la moyenne des deux allures, pour tenir la conversation). Le classement privilégie la
+  **compatibilité running** puis l'intérêt business — la sortie devient le rendez-vous.
+  « Proposer ce run » crée un RDV daté dans l'agenda **et** alimente le Pipeline ROI.
+  Accessible depuis l'accueil et l'onglet *Courir*.
+- **Pipeline ROI** — le CRM léger branché sur les kilomètres. Chaque relation suit un
+  cycle visible (*Rencontré → En discussion → Intro / pitch → Deal en cours → Conclu*)
+  dans un **kanban** horizontal. On voit le **retour sur les km investis** (qui on a
+  rencontré en courant, les km partagés par relation, la valeur en jeu en k€). Contacter
+  un membre ou proposer un run **fait entrer la relation dans le pipeline** ; un bouton
+  « Faire avancer » la pousse d'étape en étape. La carte d'accueil affiche la valeur en
+  jeu et le nombre de relations actives.
 - **Courir** — façon Strava :
   - *Activités* : sorties réalisées avec **tracé GPS sur carte** (Leaflet + OpenStreetMap/CARTO),
     distance / temps / allure / dénivelé, splits par km, kudos, et lien réseau

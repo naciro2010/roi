@@ -226,6 +226,56 @@ export function rankMatches(names, signals = EMPTY_SIGNALS, ctx = {}) {
     .sort((a, b) => b.score - a.score)
 }
 
+/* ───────────────────────────────────────── RunMatch (binôme de course)
+
+   Même matière première que le « Pour toi », mais ré-pondérée autour de la
+   compatibilité running : on veut d'abord quelqu'un avec qui courir (même
+   allure, même créneau, même zone), et accessoirement un intérêt business.
+   La sortie devient le rendez-vous — d'où le poids fort sur `run`. */
+const RUN_W = { run: 0.48, need: 0.27, behavior: 0.15, vibe: 0.1 }
+
+function buildRunReasons(them, parts, name, sharedRuns) {
+  const out = []
+  if (sharedRuns) out.push({ icon: 'activity', text: `Déjà ${sharedRuns} sortie${sharedRuns > 1 ? 's' : ''} courue${sharedRuns > 1 ? 's' : ''} ensemble` })
+  const win = RUN_WINDOWS[them.run?.window]
+  const zone = RUN_ZONES[them.run?.zone]
+  if (win && zone) out.push({ icon: 'route', text: `Vous courez ${win} ${zone}` })
+  const gap = Math.abs((ME.run?.pace || 6) - (them.run?.pace || 6))
+  if (gap <= 0.4) out.push({ icon: 'activity', text: 'Allures très proches — vous tiendrez la conversation' })
+  if ((them.provides || []).includes('capital') && ME.seeks.includes('capital'))
+    out.push({ icon: 'trendingUp', text: `Et ${name.split(' ')[0]} investit sur ta thèse` })
+  else if ((them.provides || []).includes('talent') && ME.seeks.includes('talent'))
+    out.push({ icon: 'cpu', text: 'Et c’est un profil tech pour ton MVP' })
+  else if ((them.provides || []).includes('mentor'))
+    out.push({ icon: 'compass', text: 'Et peut te conseiller sur ton scaling' })
+  else if (parts.need >= 0.4)
+    out.push({ icon: 'target', text: 'Et forte complémentarité business' })
+  return out.slice(0, 3)
+}
+
+export function scoreRunMatch(name, signals = EMPTY_SIGNALS, opts = {}) {
+  const them = profileFor(name)
+  const vec = opts.vec || interestVector(signals)
+  const sharedRuns = opts.sharedRuns || 0
+  const parts = {
+    need: needFit(ME, them),
+    run: runFit(ME, them, sharedRuns),
+    vibe: vibeFit(ME, them),
+    behavior: behaviorFit(them, vec, name),
+  }
+  const raw = RUN_W.run * parts.run + RUN_W.need * parts.need + RUN_W.behavior * parts.behavior + RUN_W.vibe * parts.vibe
+  const score = Math.round(clamp(56 + raw * 42, 0, 98))
+  return { name, score, parts, archetype: them.archetype, run: them.run, reasons: buildRunReasons(them, parts, name, sharedRuns) }
+}
+
+/* Classement des binômes de course : compatibilité running d'abord. */
+export function rankRunMatches(names, signals = EMPTY_SIGNALS, ctx = {}) {
+  const vec = interestVector(signals)
+  return names
+    .map((name) => scoreRunMatch(name, signals, { vec, sharedRuns: ctx.sharedRuns?.[name] || 0 }))
+    .sort((a, b) => b.parts.run - a.parts.run || b.score - a.score)
+}
+
 const ACTION_VERB = { view: 'consultés', like: 'likés', contact: 'contactés', msg: 'messagés' }
 
 /* Synthèse comportementale affichée dans le bandeau « Pour toi ». */
