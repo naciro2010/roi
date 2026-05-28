@@ -5,12 +5,12 @@ import { Logo } from '../components/primitives'
 
 const STEPS = [
   {
-    icon: 'home', tone: 'text-brand-300',
+    icon: 'home', tone: 'text-white',
     title: 'Le réseau qui rapporte',
     text: "Poste tes sorties, tes réflexions et tes REX de rencontre. Le fil où les entrepreneurs-runners s'entraident.",
   },
   {
-    icon: 'sparkles', tone: 'text-brand-300',
+    icon: 'sparkles', tone: 'text-white',
     title: 'Des matchs qui comptent',
     text: 'On croise tes besoins, tes sorties et tes connexions pour te présenter les bonnes personnes, au bon moment.',
   },
@@ -49,7 +49,7 @@ export default function Onboarding({ onClose, onEditProfile }) {
             <div className="rounded-full p-1 ring-2 ring-white/15">
               <Avatar name={inviter} size="xl" />
             </div>
-            <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[12px] font-bold text-brand-300">
+            <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[12px] font-bold text-gold-300 ring-1 ring-white/15">
               <Icon name="userPlus" className="h-3.5 w-3.5" /> Invitation
             </span>
             <h1 className="mt-3 text-[26px] font-extrabold leading-tight">{inviter} t’a invité·e sur ROI</h1>

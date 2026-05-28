@@ -66,8 +66,8 @@ export function ProgressRing({ value, size = 76, stroke = 8, track = 'rgba(255,2
 
 export function MatchRing({ value, size = 44 }) {
   return (
-    <ProgressRing value={value} size={size} stroke={4} track="rgba(79,91,200,0.14)" color="#4F5BC8">
-      <div className="text-[11px] font-extrabold text-brand-700">{value}</div>
+    <ProgressRing value={value} size={size} stroke={4} track="rgba(20,24,33,0.10)" color="#1F242F">
+      <div className="text-[11px] font-extrabold text-fg">{value}</div>
     </ProgressRing>
   )
 }
@@ -79,7 +79,7 @@ export function Logo({ light = false }) {
         <Icon name="zap" className="h-4 w-4" filled />
       </span>
       <span className={`font-display text-[22px] font-extrabold tracking-tight ${light ? 'text-white' : 'text-fg'}`}>
-        R<span className="text-brand-500">O</span>I
+        R<span className="text-gold-dark">O</span>I
       </span>
     </div>
   )

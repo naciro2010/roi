@@ -21,7 +21,7 @@ export default function RoiInfoSheet({ onClose }) {
             <Icon name="x" className="h-5 w-5" />
           </button>
           <div className="relative flex items-center gap-4">
-            <ProgressRing value={u.roi.score} size={76} stroke={8} color="#AEB8D6" track="rgba(255,255,255,0.14)">
+            <ProgressRing value={u.roi.score} size={76} stroke={8} color="#E0C66D" track="rgba(255,255,255,0.14)">
               <div className="text-xl font-extrabold leading-none">{u.roi.score}</div>
             </ProgressRing>
             <div>
