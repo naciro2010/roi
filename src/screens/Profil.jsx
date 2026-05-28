@@ -2,7 +2,7 @@ import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
 import ServiceLogo from '../components/ServiceLogo'
-import { SectionTitle, ProgressRing, PlanBadge, ProgressBar } from '../components/primitives'
+import { SectionTitle, ProgressRing, PlanBadge, ProgressBar, Sparkline } from '../components/primitives'
 import { CURRENT_USER } from '../data/user'
 import { ACTIVITIES } from '../data/activities'
 import { SERVICES } from '../data/integrations'
@@ -109,12 +109,15 @@ export default function Profil() {
             <button onClick={openRoiInfo} className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-left shadow-card tap">
               <div className="absolute inset-0 bg-hero-glow" />
               <div className="relative flex items-center gap-4">
-                <ProgressRing value={u.roi.score} size={88} stroke={9} color="#E0C66D" track="rgba(255,255,255,0.14)">
+                <ProgressRing value={u.roi.score} size={88} stroke={9} color="#FFFFFF" track="rgba(255,255,255,0.14)">
                   <div className="text-2xl font-extrabold leading-none text-white tabular-nums">{u.roi.score}</div>
                   <div className="mt-0.5 text-[10px] font-semibold text-white/45">/ 100</div>
                 </ProgressRing>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-bold text-white">Score ROI</div>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="text-sm font-bold text-white">Score ROI</div>
+                    <Sparkline data={u.roi.trend} width={84} height={30} />
+                  </div>
                   <p className="mt-0.5 text-[12px] leading-snug text-white/55">La valeur que ton réseau te rapporte ce mois-ci.</p>
                   <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[12px] font-bold text-success-300">
                     <Icon name="trendingUp" className="h-3.5 w-3.5" /> +{u.roi.weekDelta} cette semaine

@@ -84,7 +84,7 @@ export default function AgendaSheet({ onClose }) {
                   ) : (
                     <button
                       onClick={() => confirmMeeting(m.id)}
-                      className="flex-1 rounded-2xl bg-brand-500 py-2.5 text-sm font-bold text-white shadow-brand tap"
+                      className="flex-1 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 py-2.5 text-sm font-bold text-white shadow-brand tap"
                     >
                       Confirmer le RDV
                     </button>

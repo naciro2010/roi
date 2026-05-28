@@ -113,7 +113,7 @@ export default function GlobalSearch({ onClose }) {
         {events.length > 0 && (
           <Group label="Sorties">
             {events.map((e) => (
-              <ResultRow key={e.id} icon="calendar" tone="bg-[#1E2040] text-[#B9BCEA]" title={e.title} subtitle={`${e.day} ${e.time} · ${e.place}`} onClick={() => go(() => openEvent(e.id))} />
+              <ResultRow key={e.id} icon="calendar" tone="bg-brand-50 text-brand-700" title={e.title} subtitle={`${e.day} ${e.time} · ${e.place}`} onClick={() => go(() => openEvent(e.id))} />
             ))}
           </Group>
         )}

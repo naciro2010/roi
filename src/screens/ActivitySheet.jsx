@@ -140,7 +140,7 @@ export default function ActivitySheet({ id, onClose }) {
                     <button
                       onClick={() => contactMember(name)}
                       className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-bold tap ${
-                        contacted[name] ? 'bg-success-light text-success-dark' : 'bg-brand-500 text-white shadow-brand'
+                        contacted[name] ? 'bg-success-light text-success-dark' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand'
                       }`}
                     >
                       {contacted[name] ? 'Demandé ✓' : 'Connecter'}

@@ -64,7 +64,7 @@ export default function EditProfileSheet({ onClose }) {
         <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-3.5">
           <button onClick={onClose} className="text-sm font-semibold text-fg-muted tap">Annuler</button>
           <h2 className="text-base font-bold text-fg">Éditer le profil</h2>
-          <button onClick={save} className="rounded-full bg-brand-500 px-4 py-1.5 text-sm font-bold text-white shadow-brand tap">
+          <button onClick={save} className="rounded-full bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-1.5 text-sm font-bold text-white shadow-brand tap">
             Enregistrer
           </button>
         </div>

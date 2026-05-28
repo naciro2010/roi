@@ -84,7 +84,7 @@ export default function Onboarding({ onClose, onEditProfile }) {
       <div className="relative space-y-2 px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         <button
           onClick={() => (last ? onEditProfile() : setStep((x) => x + 1))}
-          className="w-full rounded-2xl bg-white py-3.5 text-sm font-bold text-fg shadow-soft tap"
+          className="w-full rounded-full bg-white py-3.5 text-sm font-bold text-fg shadow-soft tap"
         >
           {last ? 'Compléter mon profil' : 'Continuer'}
         </button>

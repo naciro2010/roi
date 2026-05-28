@@ -195,7 +195,7 @@ export default function MemberSheet({ name, onClose }) {
         <div className="glass flex shrink-0 items-center gap-2 border-t border-line px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             onClick={() => contactMember(name)}
-            className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${isContacted ? 'bg-success' : 'bg-brand-500 shadow-brand'}`}
+            className={`flex-1 rounded-full py-3 text-sm font-bold text-white tap ${isContacted ? 'bg-success' : 'bg-gradient-to-b from-brand-500 to-brand-600 shadow-brand'}`}
           >
             {isContacted ? 'Demande envoyée ✓' : 'Entrer en contact'}
           </button>

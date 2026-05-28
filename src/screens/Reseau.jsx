@@ -142,7 +142,7 @@ export default function Reseau() {
                   <button
                     onClick={() => sendSuggestion(m.name, m.name)}
                     className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${
-                      sent ? 'bg-success' : 'bg-brand-500 shadow-brand hover:bg-brand-600'
+                      sent ? 'bg-success' : 'bg-gradient-to-b from-brand-500 to-brand-600 shadow-brand hover:to-brand-700'
                     }`}
                   >
                     {sent ? 'Demande envoyée ✓' : action}
@@ -214,7 +214,7 @@ export default function Reseau() {
                   key={f}
                   onClick={() => pickFilter(f)}
                   className={`flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-sm font-semibold transition tap ${
-                    filter === f ? 'bg-brand-500 text-white shadow-brand' : locked ? 'bg-surface-2 text-fg-faint' : 'bg-surface-2 text-fg-soft'
+                    filter === f ? 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand' : locked ? 'bg-surface-2 text-fg-faint' : 'bg-surface-2 text-fg-soft'
                   }`}
                 >
                   {locked && <Icon name="lock" className="h-3 w-3" />}
@@ -243,7 +243,7 @@ export default function Reseau() {
                 </div>
                 <button
                   onClick={() => contactMember(m.name)}
-                  className={`mt-3 w-full rounded-2xl py-2.5 text-sm font-bold tap ${
+                  className={`mt-3 w-full rounded-full py-3 text-sm font-bold tap ${
                     contacted[m.name] ? 'bg-success text-white' : 'border border-brand-300 text-brand-700 hover:bg-brand-light'
                   }`}
                 >
@@ -332,7 +332,7 @@ export default function Reseau() {
                       </button>
                     </div>
                     <div className="mt-3 flex gap-2">
-                      <button onClick={() => acceptRequest(r.name)} className="flex-1 rounded-2xl bg-brand-500 py-2.5 text-sm font-bold text-white shadow-brand tap">Accepter</button>
+                      <button onClick={() => acceptRequest(r.name)} className="flex-1 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 py-2.5 text-sm font-bold text-white shadow-brand tap">Accepter</button>
                       <button onClick={() => declineRequest(r.name)} className="rounded-2xl border border-line-strong px-4 py-2.5 text-sm font-semibold text-fg-soft tap">Décliner</button>
                     </div>
                   </article>

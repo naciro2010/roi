@@ -15,7 +15,7 @@ function ChatComposer({ placeholder, draft, setDraft, onSend }) {
       />
       <button
         onClick={onSend}
-        className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-500 text-white shadow-brand tap disabled:opacity-40"
+        className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand tap disabled:opacity-40"
         disabled={!draft.trim()}
         aria-label="Envoyer"
       >
@@ -58,7 +58,7 @@ export default function Messages() {
             <div key={i} className={`flex ${m.from === 'me' ? 'justify-end' : 'justify-start'}`}>
               <div
                 className={`max-w-[78%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed shadow-soft ${
-                  m.from === 'me' ? 'rounded-br-md bg-brand-500 text-white' : 'rounded-bl-md border border-line bg-surface text-fg'
+                  m.from === 'me' ? 'rounded-br-md bg-gradient-to-b from-brand-500 to-brand-600 text-white' : 'rounded-bl-md border border-line bg-surface text-fg'
                 }`}
               >
                 {m.text}
@@ -107,7 +107,7 @@ export default function Messages() {
                   {showName && <div className="mb-0.5 ml-1 text-[11px] font-bold text-fg-muted">{m.from.split(' ')[0]}</div>}
                   <div
                     className={`rounded-2xl px-3.5 py-2 text-sm leading-relaxed shadow-soft ${
-                      mine ? 'rounded-br-md bg-brand-500 text-white' : 'rounded-bl-md border border-line bg-surface text-fg'
+                      mine ? 'rounded-br-md bg-gradient-to-b from-brand-500 to-brand-600 text-white' : 'rounded-bl-md border border-line bg-surface text-fg'
                     }`}
                   >
                     {m.text}
@@ -257,7 +257,7 @@ export default function Messages() {
                 <button
                   onClick={() => joinGroup(g)}
                   className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold tap ${
-                    joinedGroups[g.id] ? 'bg-success-light text-success-dark' : 'bg-brand-500 text-white shadow-brand'
+                    joinedGroups[g.id] ? 'bg-success-light text-success-dark' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand'
                   }`}
                 >
                   {joinedGroups[g.id] ? 'Rejoint ✓' : 'Rejoindre'}

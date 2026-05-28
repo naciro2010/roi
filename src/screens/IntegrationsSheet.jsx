@@ -47,7 +47,7 @@ export default function IntegrationsSheet({ onClose }) {
                       <button
                         onClick={() => toggleIntegration(s.id)}
                         className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold tap ${
-                          connected ? 'border border-line-strong text-fg-soft' : 'bg-brand-500 text-white shadow-brand'
+                          connected ? 'border border-line-strong text-fg-soft' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand'
                         }`}
                       >
                         {connected ? 'Déconnecter' : 'Connecter'}

@@ -20,5 +20,7 @@ export const CURRENT_USER = {
     connectionsDelta: 4,
     meetingsDelta: 2,
     opportunitiesDelta: 1,
+    // Évolution du score sur les dernières semaines (pour la sparkline du hero).
+    trend: [58, 61, 60, 66, 69, 72, 74, 78],
   },
 }

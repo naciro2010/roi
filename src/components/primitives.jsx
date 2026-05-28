@@ -90,9 +90,35 @@ export function CompatBars({ parts, className = '' }) {
 
 export function MatchRing({ value, size = 44 }) {
   return (
-    <ProgressRing value={value} size={size} stroke={4} track="rgba(20,24,33,0.10)" color="#1F242F">
+    <ProgressRing value={value} size={size} stroke={4} track="rgba(59,91,255,0.14)" color="#3B5BFF">
       <div className="text-[11px] font-extrabold text-fg">{value}</div>
     </ProgressRing>
+  )
+}
+
+// Mini-courbe de tendance (façon « solde » Revolut). Ligne + aire dégradée.
+export function Sparkline({ data, width = 92, height = 34, stroke = '#FFFFFF', strokeWidth = 2.25, className = '' }) {
+  if (!data || data.length < 2) return null
+  const max = Math.max(...data)
+  const min = Math.min(...data)
+  const range = max - min || 1
+  const step = width / (data.length - 1)
+  const y = (v) => height - 3 - ((v - min) / range) * (height - 6)
+  const pts = data.map((v, i) => [i * step, y(v)])
+  const line = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ')
+  const area = `${line} L${width} ${height} L0 ${height} Z`
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className={className} fill="none" aria-hidden>
+      <defs>
+        <linearGradient id="sparkfill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={stroke} stopOpacity="0.28" />
+          <stop offset="100%" stopColor={stroke} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d={area} fill="url(#sparkfill)" />
+      <path d={line} stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={pts[pts.length - 1][0]} cy={pts[pts.length - 1][1]} r="2.6" fill={stroke} />
+    </svg>
   )
 }
 
