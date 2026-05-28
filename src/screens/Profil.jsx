@@ -16,8 +16,9 @@ export default function Profil() {
     showToast, goTo, openActivity, openEditProfile, openRoiInfo, replayOnboarding,
     openIntegrations, integrations, profile, resetDemo,
     plan, planMeta, openPlans, openInvite, referralJoined,
-    meetings, openAgenda,
+    meetings, openAgenda, insights, rankedMatches, openMember,
   } = useApp()
+  const topMatch = rankedMatches?.[0]
   const u = CURRENT_USER
   const nextMeeting = [...meetings].sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`))[0]
   const season = seasonProgress(u.stats.km)
@@ -132,6 +133,39 @@ export default function Profil() {
                 ))}
               </div>
             </button>
+          </section>
+
+          {/* ADN réseau — ce que le moteur « Pour toi » a appris de ton activité */}
+          <section>
+            <SectionTitle action="Voir mes matchs" onAction={() => goTo('reseau')}>Mon ADN réseau</SectionTitle>
+            <div className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
+              <div className="flex items-center gap-2.5">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600">
+                  <Icon name={insights?.learning ? insights.icon : 'wand'} className="h-4 w-4" filled />
+                </span>
+                <p className="min-w-0 flex-1 text-[13px] font-bold leading-snug text-fg">{insights?.headline}</p>
+              </div>
+              {insights?.topTopics?.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {insights.topTopics.map((t) => (
+                    <span key={t} className="rounded-full bg-surface-2 px-2.5 py-1 text-[12px] font-semibold text-fg-soft">#{t}</span>
+                  ))}
+                </div>
+              )}
+              {topMatch && (
+                <button
+                  onClick={() => openMember(topMatch.name)}
+                  className="mt-3 flex w-full items-center gap-3 rounded-2xl bg-surface-soft p-2.5 text-left tap hover:bg-black/[0.04]"
+                >
+                  <Avatar name={topMatch.name} size="sm" />
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-[13px] font-bold text-fg">Top match · {topMatch.name}</div>
+                    <div className="truncate text-[12px] text-fg-muted">{topMatch.reasons?.[0]?.text}</div>
+                  </div>
+                  <span className="shrink-0 text-sm font-extrabold tabular-nums text-brand-600">{topMatch.score}</span>
+                </button>
+              )}
+            </div>
           </section>
 
           {/* Agenda & RDV */}

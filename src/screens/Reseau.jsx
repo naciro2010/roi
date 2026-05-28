@@ -2,24 +2,34 @@ import { useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
-import { Badge, MatchRing } from '../components/primitives'
-import { SUGGESTIONS, MEMBERS, FILTERS, personFor } from '../data/network'
+import { Badge, MatchRing, CompatBars } from '../components/primitives'
+import { MEMBERS, FILTERS, personFor } from '../data/network'
 import { FREE_MATCH_LIMIT } from '../data/plans'
 import { CURRENT_USER } from '../data/user'
 import { bonusMatches, categoryTier, isCategoryLocked } from '../data/levels'
+import { ARCHETYPES } from '../data/profiling'
+
+const ACTION_BY_ARCHE = {
+  investor: 'Demander une intro',
+  developer: 'Proposer une mission',
+  mentor: 'Demander un conseil',
+  founder: 'Proposer une sortie',
+  operator: 'Entrer en contact',
+}
 
 export default function Reseau() {
   const {
     openMember, sentSuggestions, sendSuggestion, contacted, contactMember,
     connections, requests, acceptRequest, declineRequest,
     hasFeature, openPlans, showToast,
+    rankedMatches, insights, track,
   } = useApp()
   const km = CURRENT_USER.stats.km
   const matchLimit = FREE_MATCH_LIMIT + bonusMatches(km)
   const unlimitedMatches = hasFeature('unlimitedMatches')
   const canSeeWhoWants = hasFeature('whoWantsToMeet')
-  const visibleSuggestions = unlimitedMatches ? SUGGESTIONS : SUGGESTIONS.slice(0, matchLimit)
-  const hiddenMatches = SUGGESTIONS.length - visibleSuggestions.length
+  const visibleSuggestions = unlimitedMatches ? rankedMatches : rankedMatches.slice(0, matchLimit)
+  const hiddenMatches = rankedMatches.length - visibleSuggestions.length
   const [netView, setNetView] = useState('suggestions')
   const [filter, setFilter] = useState('Tous')
   const [query, setQuery] = useState('')
@@ -30,6 +40,7 @@ export default function Reseau() {
       showToast(`Cours ${tier.km - km} km de plus pour débloquer « ${f} »`)
       return
     }
+    if (f !== 'Tous') track({ type: 'filter', category: f })
     setFilter(f)
   }
 
@@ -74,54 +85,70 @@ export default function Reseau() {
 
       {netView === 'suggestions' && (
         <div className="flex-1 space-y-4 overflow-y-auto no-scrollbar px-5 pb-6 pt-4">
-          <div className="flex w-full items-start gap-3 rounded-2xl border border-brand-200 bg-brand-light/60 p-3.5">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-surface text-brand-600 shadow-soft ring-1 ring-brand-500/15">
-              <Icon name="sparkles" className="h-4 w-4" filled />
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-bold text-fg">{SUGGESTIONS.length} personnes à rencontrer</p>
-              <p className="text-[12px] text-fg-muted">Sélection selon tes besoins, tes sorties et tes connexions.</p>
+          {/* Bandeau « Pour toi » — ce que l'algorithme apprend de ton activité */}
+          <div className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-white shadow-float">
+            <div className="absolute inset-0 bg-aurora" />
+            <div className="relative flex items-start gap-3">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/12 text-gold-300 ring-1 ring-white/15">
+                <Icon name={insights.learning ? insights.icon : 'wand'} className="h-5 w-5" filled />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">Pour toi · Match IA</p>
+                </div>
+                <p className="mt-0.5 text-[14px] font-extrabold leading-snug">{insights.headline}</p>
+                <p className="mt-0.5 text-[12px] leading-snug text-white/65">{insights.detail}</p>
+                {insights.topTopics?.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {insights.topTopics.map((t) => (
+                      <span key={t} className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-white/85">#{t}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {visibleSuggestions.map((p) => {
-            const sent = sentSuggestions[p.id]
+          {visibleSuggestions.map((m) => {
+            const sent = sentSuggestions[m.name]
+            const arche = ARCHETYPES[m.archetype]
+            const action = ACTION_BY_ARCHE[m.archetype] || 'Entrer en contact'
             return (
-              <article key={p.id} className="overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
+              <article key={m.name} className="overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
                 <div className="flex items-center gap-3 p-4 pb-3">
-                  <Avatar name={p.name} size="lg" onClick={() => openMember(p.name)} />
+                  <Avatar name={m.name} size="lg" onClick={() => openMember(m.name)} />
                   <div className="min-w-0 flex-1">
-                    <div className="truncate font-bold text-fg">{p.name}</div>
-                    <div className="truncate text-sm text-fg-muted">{personFor(p.name).title}</div>
+                    <div className="truncate font-bold text-fg">{m.name}</div>
+                    <div className="truncate text-sm text-fg-muted">{personFor(m.name).title}</div>
                   </div>
-                  <MatchRing value={p.match} size={48} />
+                  <MatchRing value={m.score} size={48} />
                 </div>
 
-                <div className="flex flex-wrap gap-2 px-4">
-                  <Badge tone="brand">{p.needBadge}</Badge>
-                  <Badge tone="emerald">{p.runBadge}</Badge>
+                <div className="px-4">
+                  <Badge tone={arche.tone}>{arche.short}</Badge>
                 </div>
 
                 <div className="mx-4 mt-3 space-y-1.5 rounded-2xl bg-surface-soft p-3">
-                  {p.context.map((c) => (
-                    <div key={c} className="flex items-center gap-2 text-[13px] text-fg-soft">
-                      <Icon name="check" className="h-3.5 w-3.5 shrink-0 text-success" />
-                      {c}
+                  {m.reasons.map((r) => (
+                    <div key={r.text} className="flex items-center gap-2 text-[13px] text-fg-soft">
+                      <Icon name={r.icon} className="h-3.5 w-3.5 shrink-0 text-brand-600" />
+                      {r.text}
                     </div>
                   ))}
+                  <CompatBars parts={m.parts} className="pt-1.5" />
                 </div>
 
                 <div className="flex gap-2 p-4">
                   <button
-                    onClick={() => sendSuggestion(p.id, p.name)}
+                    onClick={() => sendSuggestion(m.name, m.name)}
                     className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${
                       sent ? 'bg-success' : 'bg-brand-500 shadow-brand hover:bg-brand-600'
                     }`}
                   >
-                    {sent ? 'Demande envoyée ✓' : p.primaryAction}
+                    {sent ? 'Demande envoyée ✓' : action}
                   </button>
                   <button
-                    onClick={() => openMember(p.name)}
+                    onClick={() => openMember(m.name)}
                     className="rounded-2xl border border-line-strong px-4 py-3 text-sm font-semibold text-fg-soft tap"
                   >
                     Profil

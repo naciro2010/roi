@@ -1,6 +1,11 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AppContext } from './AppContext'
 import { usePersistentState, clearPersistedState } from './lib/usePersistentState'
+import {
+  recordSignal, rankMatches, behaviorInsights, scoreMatch, icebreaker, EMPTY_SIGNALS,
+} from './lib/matching'
+import { PROFILES } from './data/profiling'
+import { PEOPLE } from './data/network'
 
 import { CURRENT_USER } from './data/user'
 import { CONVERSATIONS, THREADS, GROUPS, GROUP_THREADS } from './data/messages'
@@ -37,6 +42,25 @@ import { SERVICES } from './data/integrations'
 import { planById, hasFeature } from './data/plans'
 import { INITIAL_INVITES, INITIAL_TEAMMATES } from './data/invites'
 
+/* ── Contexte de matching (constant) : sorties & connexions en commun ───── */
+const MATCH_NAMES = Object.keys(PROFILES)
+const SHARED_RUNS = (() => {
+  const m = {}
+  ACTIVITIES.forEach((a) => {
+    if (a.athlete === CURRENT_USER.name) a.metContacts.forEach((n) => { m[n] = (m[n] || 0) + 1 })
+    else if (a.metContacts.includes(CURRENT_USER.name)) m[a.athlete] = (m[a.athlete] || 0) + 1
+  })
+  return m
+})()
+const MUTUALS = Object.fromEntries(MATCH_NAMES.map((n) => [n, (PEOPLE[n]?.mutuals || []).length]))
+const MATCH_CTX = { sharedRuns: SHARED_RUNS, mutuals: MUTUALS }
+/* Comportement initial : Thomas a déjà liké le post de Yanis (dev) et croisé
+   Sarah en sortie — le « Pour toi » démarre donc déjà légèrement orienté. */
+const INITIAL_SIGNALS = ['Yanis Benali', 'Sarah Khalil'].reduce(
+  (s, name) => recordSignal(s, { type: 'view', name }),
+  recordSignal(EMPTY_SIGNALS, { type: 'like', name: 'Yanis Benali' }),
+)
+
 export default function App() {
   const [tab, setTab] = useState('accueil')
   const [toast, setToast] = useState(null)
@@ -54,6 +78,15 @@ export default function App() {
   const [contacted, setContacted] = usePersistentState('contacted', {})
   const [connections, setConnections] = usePersistentState('connections', CONNECTIONS)
   const [requests, setRequests] = usePersistentState('requests', REQUESTS)
+
+  // Matching comportemental « Pour toi » — signaux + classement dérivé
+  const [signals, setSignals] = usePersistentState('signals', INITIAL_SIGNALS)
+  const rankedMatches = useMemo(() => rankMatches(MATCH_NAMES, signals, MATCH_CTX), [signals])
+  const insights = useMemo(() => behaviorInsights(signals), [signals])
+  function track(ev) { setSignals((s) => recordSignal(s, ev)) }
+  function matchDetail(name) {
+    return scoreMatch(name, signals, { sharedRuns: SHARED_RUNS[name] || 0, mutuals: MUTUALS[name] || 0 })
+  }
 
   // Courir — événements & activités
   const [eventKudos, setEventKudos] = usePersistentState('eventKudos', Object.fromEntries(EVENTS.map((a) => [a.id, { count: a.kudos, liked: false }])))
@@ -131,14 +164,20 @@ export default function App() {
     setOpenGroup(null)
   }
 
+  function openMember(name) {
+    if (name && name !== CURRENT_USER.name) track({ type: 'view', name })
+    setMember(name)
+  }
+
   function contactMember(name) {
     setContacted((c) => ({ ...c, [name]: true }))
+    track({ type: 'contact', name })
     showToast('Demande envoyée ✓')
   }
 
   function sendSuggestion(id, name) {
     setSentSuggestions((s) => ({ ...s, [id]: true }))
-    if (name) setContacted((c) => ({ ...c, [name]: true }))
+    if (name) { setContacted((c) => ({ ...c, [name]: true })); track({ type: 'contact', name }) }
     showToast('Demande envoyée ✓')
   }
 
@@ -176,6 +215,8 @@ export default function App() {
   }
 
   function togglePostLike(id) {
+    const post = posts.find((p) => p.id === id)
+    if (post && !post.liked && post.author !== CURRENT_USER.name) track({ type: 'like', name: post.author })
     setPosts((prev) =>
       prev.map((p) => (p.id === id ? { ...p, liked: !p.liked, likes: p.likes + (p.liked ? -1 : 1) } : p)),
     )
@@ -222,8 +263,26 @@ export default function App() {
       setGroupThreads((prev) => ({ ...prev, [openGroup]: [...prev[openGroup], { from: 'me', text }] }))
     } else if (openConv) {
       setThreads((prev) => ({ ...prev, [openConv]: [...prev[openConv], { from: 'me', text }] }))
+      const c = CONVERSATIONS.find((x) => x.id === openConv)
+      if (c?.name) track({ type: 'msg', name: c.name })
     } else return
     setDraft('')
+  }
+
+  // Brise-glace IA : pré-remplit un message pertinent et ouvre la conversation.
+  function startIcebreaker(name) {
+    const text = icebreaker(name, SHARED_RUNS[name] || 0)
+    setMember(null)
+    const conv = CONVERSATIONS.find((c) => c.name === name)
+    if (conv) {
+      goTo('messages')
+      openChat(conv.id)
+      setDraft(text)
+      showToast('Brise-glace prêt — plus qu’à envoyer')
+    } else {
+      navigator?.clipboard?.writeText?.(text)
+      showToast('Brise-glace copié ✓')
+    }
   }
 
   function createGroup() {
@@ -339,8 +398,11 @@ export default function App() {
 
   const ctx = {
     tab, goTo, showToast,
-    openMember: setMember,
+    openMember,
     openActivity: setActivityId,
+    // Matching comportemental « Pour toi »
+    rankedMatches, insights, matchDetail, track, startIcebreaker,
+    sharedRunsFor: (name) => SHARED_RUNS[name] || 0,
     openEvent: setEventId,
     openComposer: () => setComposerOpen(true),
     openEditProfile: () => setEditProfileOpen(true),

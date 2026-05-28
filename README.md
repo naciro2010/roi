@@ -25,8 +25,16 @@ des groupes pour échanger.
 - **Fil** — feed social façon LinkedIn : posts (réflexion, REX de rencontre, tip,
   étape, partage d'activité), like / commentaire / partage, composer de post, et
   carte ROI compacte (score réseau).
-- **Réseau** — matchs intelligents (score + contexte partagé) et annuaire des
-  membres avec recherche et filtres.
+- **Réseau · Match IA « Pour toi »** — moteur de matching **comportemental**
+  (façon algorithme TikTok/Instagram, mais pour le business). Le score n'est plus
+  figé : il combine la complémentarité besoins ↔ offres, la compatibilité running
+  (créneau, allure, zone, sorties communes), les sujets et le réseau, **avec ton
+  comportement dans l'app** — qui tu regardes, likes, contactes, filtres. Plus tu
+  explores un type de profil (investisseurs, tech, mentors…), plus il remonte.
+  Chaque match est **expliqué** (pourquoi vous matchez + décomposition Besoin /
+  Running / Affinité) et le bandeau « Pour toi » montre ce que l'algorithme
+  apprend de toi. Annuaire des membres avec recherche et filtres. **Brise-glace
+  IA** : message d'intro pré-rédigé à partir de vos points communs.
 - **Courir** — façon Strava :
   - *Activités* : sorties réalisées avec **tracé GPS sur carte** (Leaflet + OpenStreetMap/CARTO),
     distance / temps / allure / dénivelé, splits par km, kudos, et lien réseau
@@ -46,7 +54,8 @@ des groupes pour échanger.
 src/
   App.jsx            orchestrateur : état partagé + contexte + layout + overlays
   AppContext.js      contexte applicatif (useApp)
-  data/              données fictives (user, network, events, messages, feed, activities, notifications)
+  data/              données fictives (user, network, profiling, events, messages, feed, activities, notifications)
+  lib/matching.js    moteur de matching comportemental « Pour toi » (scoring, signaux, insights, brise-glace)
   lib/               helpers (avatars)
   components/        UI réutilisable (Icon, Avatar, primitives, BottomNav, RouteMap, PostCard, ActivityCard…)
   screens/           écrans (Accueil/Fil, Reseau, Courir, Messages, Profil) + overlays (MemberSheet, ActivitySheet)

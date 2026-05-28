@@ -64,6 +64,30 @@ export function ProgressRing({ value, size = 76, stroke = 8, track = 'rgba(255,2
   )
 }
 
+// Décomposition de compatibilité (Besoin · Running · Affinité) — 3 mini-jauges.
+const COMPAT_BARS = [
+  { key: 'need', label: 'Besoin', bar: 'bg-brand-500' },
+  { key: 'run', label: 'Running', bar: 'bg-success' },
+  { key: 'behavior', label: 'Affinité', bar: 'bg-gold' },
+]
+export function CompatBars({ parts, className = '' }) {
+  return (
+    <div className={`flex gap-2.5 ${className}`}>
+      {COMPAT_BARS.map(({ key, label, bar }) => (
+        <div key={key} className="min-w-0 flex-1">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-wide text-fg-faint">{label}</span>
+            <span className="text-[10px] font-bold tabular-nums text-fg-muted">{Math.round((parts[key] || 0) * 100)}</span>
+          </div>
+          <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
+            <div className={`h-full rounded-full ${bar} transition-all duration-700`} style={{ width: `${Math.round((parts[key] || 0) * 100)}%` }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function MatchRing({ value, size = 44 }) {
   return (
     <ProgressRing value={value} size={size} stroke={4} track="rgba(20,24,33,0.10)" color="#1F242F">
