@@ -2,10 +2,10 @@ import { useMemo, useState } from 'react'
 import { AppContext } from './AppContext'
 import { usePersistentState, clearPersistedState } from './lib/usePersistentState'
 import {
-  recordSignal, rankMatches, behaviorInsights, scoreMatch, icebreaker, EMPTY_SIGNALS,
+  recordSignal, rankMatches, rankRunMatches, behaviorInsights, scoreMatch, icebreaker, EMPTY_SIGNALS,
 } from './lib/matching'
 import { PROFILES } from './data/profiling'
-import { PEOPLE } from './data/network'
+import { PEOPLE, MEMBERS } from './data/network'
 
 import { CURRENT_USER } from './data/user'
 import { CONVERSATIONS, THREADS, GROUPS, GROUP_THREADS } from './data/messages'
@@ -38,6 +38,10 @@ import IntegrationsSheet from './screens/IntegrationsSheet'
 import AgendaSheet from './screens/AgendaSheet'
 import PlansSheet from './screens/PlansSheet'
 import InviteSheet from './screens/InviteSheet'
+import PipelineSheet from './screens/PipelineSheet'
+import RunMatchSheet from './screens/RunMatchSheet'
+import { INITIAL_PIPELINE, shiftStage, stageMeta } from './data/pipeline'
+import { suggestRun } from './lib/runmatch'
 import { SERVICES } from './data/integrations'
 import { planById, hasFeature } from './data/plans'
 import { INITIAL_INVITES, INITIAL_TEAMMATES } from './data/invites'
@@ -87,6 +91,8 @@ export default function App() {
   function matchDetail(name) {
     return scoreMatch(name, signals, { sharedRuns: SHARED_RUNS[name] || 0, mutuals: MUTUALS[name] || 0 })
   }
+  // RunMatch — binômes de course classés par compatibilité running.
+  const runMatches = useMemo(() => rankRunMatches(MATCH_NAMES, signals, MATCH_CTX), [signals])
 
   // Courir — événements & activités
   const [eventKudos, setEventKudos] = usePersistentState('eventKudos', Object.fromEntries(EVENTS.map((a) => [a.id, { count: a.kudos, liked: false }])))
@@ -142,6 +148,12 @@ export default function App() {
   const [customMeetings, setCustomMeetings] = usePersistentState('customMeetings', [])
   const meetings = [...customMeetings, ...MEETINGS].map((m) => ({ ...m, status: meetingStatus[m.id] || m.status }))
 
+  // Pipeline ROI (CRM léger) & RunMatch (binôme de course)
+  const [pipeline, setPipeline] = usePersistentState('pipeline', INITIAL_PIPELINE)
+  const [pipelineOpen, setPipelineOpen] = useState(false)
+  const [runMatchOpen, setRunMatchOpen] = useState(false)
+  const [proposedRuns, setProposedRuns] = usePersistentState('proposedRuns', {})
+
   const planMeta = planById(plan)
   const referralJoined = invites.filter((i) => i.status === 'joined').length
 
@@ -169,16 +181,51 @@ export default function App() {
     setMember(name)
   }
 
+  // Ajoute une relation au Pipeline ROI si elle n'y est pas déjà (sans rétrograder
+  // une relation existante). `kind`/`via` sont dérivés du membre par défaut.
+  function addToPipeline(name, patch = {}) {
+    setPipeline((prev) => {
+      if (prev.some((d) => d.name === name)) return prev
+      const m = MEMBERS.find((x) => x.name === name)
+      return [
+        {
+          id: `d-${Date.now()}`, name, stage: 'talking', value: 0,
+          kind: m?.need || 'Nouvelle relation', next: 'Définir la prochaine étape',
+          nextDate: null, via: 'Ajouté au pipeline', ...patch,
+        },
+        ...prev,
+      ]
+    })
+  }
+
+  function advanceDeal(id, dir = 1) {
+    let label = ''
+    setPipeline((prev) =>
+      prev.map((d) => {
+        if (d.id !== id) return d
+        const stage = shiftStage(d.stage, dir)
+        label = stageMeta(stage).label
+        return { ...d, stage }
+      }),
+    )
+    if (dir > 0) showToast(`Relation avancée → ${label}`)
+  }
+
   function contactMember(name) {
     setContacted((c) => ({ ...c, [name]: true }))
     track({ type: 'contact', name })
-    showToast('Demande envoyée ✓')
+    addToPipeline(name, { via: 'Demande de contact envoyée' })
+    showToast('Demande envoyée ✓ · ajoutée au pipeline')
   }
 
   function sendSuggestion(id, name) {
     setSentSuggestions((s) => ({ ...s, [id]: true }))
-    if (name) { setContacted((c) => ({ ...c, [name]: true })); track({ type: 'contact', name }) }
-    showToast('Demande envoyée ✓')
+    if (name) {
+      setContacted((c) => ({ ...c, [name]: true }))
+      track({ type: 'contact', name })
+      addToPipeline(name, { via: 'Match contacté' })
+    }
+    showToast('Demande envoyée ✓ · ajoutée au pipeline')
   }
 
   function acceptRequest(name) {
@@ -385,15 +432,32 @@ export default function App() {
     showToast('RDV confirmé ✓')
   }
 
-  function proposeMeeting({ with: who, type = 'cafe' }) {
+  function proposeMeeting({ with: who, type = 'cafe', date, time, place, note }) {
     const d = new Date()
     d.setDate(d.getDate() + 3)
-    const date = d.toISOString().slice(0, 10)
+    const fallbackDate = d.toISOString().slice(0, 10)
     setCustomMeetings((prev) => [
-      { id: `rdv-${Date.now()}`, with: who, type, date, time: '09:00', place: 'À définir ensemble', note: 'Proposé depuis sa fiche', status: 'pending' },
+      {
+        id: `rdv-${Date.now()}`, with: who, type,
+        date: date || fallbackDate, time: time || '09:00',
+        place: place || 'À définir ensemble', note: note || 'Proposé depuis sa fiche',
+        status: 'pending',
+      },
       ...prev,
     ])
-    showToast('Proposition de RDV envoyée ✓')
+    addToPipeline(who)
+    if (type !== 'run') showToast('Proposition de RDV envoyée ✓')
+  }
+
+  // RunMatch : proposer une sortie matchée → crée un RDV « run » daté, alimente
+  // le pipeline, et marque le binôme comme proposé.
+  function proposeRun(name) {
+    if (proposedRuns[name]) return
+    const plan = suggestRun(name)
+    proposeMeeting({ with: name, type: 'run', date: plan.date, time: plan.time, place: plan.place, note: plan.note })
+    track({ type: 'contact', name })
+    setProposedRuns((p) => ({ ...p, [name]: true }))
+    showToast('Run proposé ✓ · agenda & pipeline mis à jour')
   }
 
   const ctx = {
@@ -421,6 +485,11 @@ export default function App() {
     // Agenda & RDV
     meetings, confirmMeeting, proposeMeeting,
     openAgenda: () => setAgendaOpen(true),
+    // Pipeline ROI & RunMatch
+    pipeline, addToPipeline, advanceDeal,
+    openPipeline: () => setPipelineOpen(true),
+    runMatches, proposeRun, proposedRuns,
+    openRunMatch: () => setRunMatchOpen(true),
     contacted, contactMember,
     sentSuggestions, sendSuggestion,
     connections, requests, acceptRequest, declineRequest,
@@ -441,7 +510,8 @@ export default function App() {
   const showHeader = !inChat && tab !== 'profil'
   const anyOverlay =
     member || activityId || eventId || composerOpen || notifOpen || editProfileOpen ||
-    roiInfoOpen || integrationsOpen || searchOpen || plansOpen || inviteOpen || agendaOpen || onboarding
+    roiInfoOpen || integrationsOpen || searchOpen || plansOpen || inviteOpen || agendaOpen ||
+    pipelineOpen || runMatchOpen || onboarding
 
   function renderScreen() {
     switch (tab) {
@@ -538,6 +608,8 @@ export default function App() {
           {plansOpen && <PlansSheet onClose={() => setPlansOpen(false)} />}
           {inviteOpen && <InviteSheet onClose={() => setInviteOpen(false)} />}
           {agendaOpen && <AgendaSheet onClose={() => setAgendaOpen(false)} />}
+          {pipelineOpen && <PipelineSheet onClose={() => setPipelineOpen(false)} />}
+          {runMatchOpen && <RunMatchSheet onClose={() => setRunMatchOpen(false)} />}
           {member && <MemberSheet name={member} onClose={() => setMember(null)} />}
           {activityId && <ActivitySheet id={activityId} onClose={() => setActivityId(null)} />}
           {eventId && <EventSheet id={eventId} onClose={() => setEventId(null)} />}

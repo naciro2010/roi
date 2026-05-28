@@ -6,6 +6,7 @@ import { Sparkline } from '../components/primitives'
 import PostCard from '../components/PostCard'
 import { CURRENT_USER } from '../data/user'
 import { activityById } from '../data/activities'
+import { pipelineStats } from '../data/pipeline'
 
 function PostSkeleton() {
   return (
@@ -27,8 +28,10 @@ function PostSkeleton() {
 }
 
 export default function Accueil() {
-  const { goTo, openRoiInfo, openComposer, openMember, openActivity, openAgenda, openInvite, meetings, posts, togglePostLike, addComment, showToast } = useApp()
+  const { goTo, openRoiInfo, openComposer, openMember, openActivity, openAgenda, openInvite, openPipeline, openRunMatch, runMatches, pipeline, meetings, posts, togglePostLike, addComment, showToast } = useApp()
   const u = CURRENT_USER
+  const pstats = pipelineStats(pipeline)
+  const topRun = runMatches?.[0]
   const hour = new Date().getHours()
   const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir'
 
@@ -68,7 +71,7 @@ export default function Accueil() {
             {[
               { value: u.roi.connections, label: 'Connexions' },
               { value: meetings.length, label: 'RDV' },
-              { value: u.roi.opportunities, label: 'Opportunités' },
+              { value: pstats.active, label: 'Pipeline' },
             ].map((s) => (
               <div key={s.label}>
                 <div className="text-lg font-extrabold tabular-nums leading-none">{s.value}</div>
@@ -94,6 +97,36 @@ export default function Accueil() {
             <span className="text-[11px] font-semibold text-fg-soft">{a.label}</span>
           </button>
         ))}
+      </div>
+
+      {/* Pipeline ROI & RunMatch — la boucle business × sport */}
+      <div className="grid grid-cols-2 gap-3">
+        <button onClick={openPipeline} className="rounded-3xl border border-line bg-surface p-3.5 text-left shadow-soft tap">
+          <div className="flex items-center justify-between">
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-gold-light text-gold-dark">
+              <Icon name="briefcase" className="h-[18px] w-[18px]" />
+            </span>
+            <Icon name="chevronRight" className="h-4 w-4 text-fg-faint" />
+          </div>
+          <div className="mt-2.5 text-xl font-extrabold tabular-nums leading-none text-fg">{pstats.value} k€</div>
+          <div className="mt-1 text-[12px] font-semibold text-fg-soft">Pipeline ROI</div>
+          <div className="text-[11px] text-fg-faint">{pstats.active} relation{pstats.active > 1 ? 's' : ''} active{pstats.active > 1 ? 's' : ''}</div>
+        </button>
+
+        <button onClick={openRunMatch} className="relative overflow-hidden rounded-3xl surface-hero p-3.5 text-left text-white shadow-float tap">
+          <div className="absolute inset-0 bg-aurora" />
+          <div className="relative">
+            <div className="flex items-center justify-between">
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-white/15 text-white ring-1 ring-white/15">
+                <Icon name="activity" className="h-[18px] w-[18px]" />
+              </span>
+              <Icon name="chevronRight" className="h-4 w-4 text-white/60" />
+            </div>
+            <div className="mt-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">RunMatch</div>
+            <div className="text-base font-extrabold leading-tight">{topRun ? `Cours avec ${topRun.name.split(' ')[0]}` : 'Ton binôme de run'}</div>
+            <div className="text-[11px] text-white/65">Propose un run cette semaine</div>
+          </div>
+        </button>
       </div>
 
       {/* Composer */}

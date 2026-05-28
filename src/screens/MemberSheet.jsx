@@ -5,6 +5,7 @@ import { Avatar, AvatarStack } from '../components/Avatar'
 import { MatchRing, Badge, CompatBars } from '../components/primitives'
 import { personFor, MEMBERS } from '../data/network'
 import { ARCHETYPES } from '../data/profiling'
+import { stageMeta } from '../data/pipeline'
 import { ACTIVITIES } from '../data/activities'
 import { CURRENT_USER } from '../data/user'
 import { MEETING_TYPES } from '../data/meetings'
@@ -14,11 +15,12 @@ import { useSheetDrag } from '../lib/useSheetDrag'
 const RDV_TYPES = ['cafe', 'run', 'visio']
 
 export default function MemberSheet({ name, onClose }) {
-  const { contacted, contactMember, messageMember, openActivity, proposeMeeting, matchDetail, startIcebreaker } = useApp()
+  const { contacted, contactMember, messageMember, openActivity, proposeMeeting, matchDetail, startIcebreaker, pipeline, addToPipeline, showToast } = useApp()
   const drag = useSheetDrag(onClose)
   const [proposing, setProposing] = useState(false)
   const p = personFor(name)
   const isContacted = contacted[name]
+  const deal = pipeline?.find((d) => d.name === name)
   const match = matchDetail ? matchDetail(name) : null
   const arche = match ? ARCHETYPES[match.archetype] : null
   const category = MEMBERS.find((m) => m.name === name)?.category
@@ -100,6 +102,26 @@ export default function MemberSheet({ name, onClose }) {
               <Icon name="send" className="h-3.5 w-3.5" /> Utiliser ce message
             </button>
           </div>
+
+          {/* Pipeline ROI — statut de la relation ou ajout */}
+          {deal ? (
+            <div className="mt-3 flex items-center gap-2.5 rounded-2xl border border-gold/30 bg-gold-light/40 p-3">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gold/15 text-gold-dark">
+                <Icon name="briefcase" className="h-4 w-4" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="text-[13px] font-bold text-fg">Dans ton pipeline ROI</div>
+                <div className="truncate text-[12px] text-fg-muted">Étape : {stageMeta(deal.stage).label}</div>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => { addToPipeline(name); showToast('Ajouté à ton pipeline ROI ✓') }}
+              className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-2xl border border-line-strong py-2.5 text-[13px] font-bold text-fg-soft tap hover:bg-black/[0.04]"
+            >
+              <Icon name="briefcase" className="h-4 w-4 text-gold-dark" /> Suivre dans le pipeline ROI
+            </button>
+          )}
 
           {p.looking?.length > 0 && (
             <div className="mt-4">

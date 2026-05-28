@@ -91,3 +91,18 @@ export const ACTIVITIES = [
 export function activityById(id) {
   return ACTIVITIES.find((a) => a.id === id)
 }
+
+/* Sorties courues avec une personne (rencontrée pendant l'activité de l'user,
+   ou activité de la personne où l'user figure parmi les contacts rencontrés). */
+export function runsWith(me, name) {
+  return ACTIVITIES.filter(
+    (a) =>
+      (a.athlete === me && a.metContacts.includes(name)) ||
+      (a.athlete === name && a.metContacts.includes(me)),
+  )
+}
+
+/* Total des kilomètres « investis » avec une personne (pour le Pipeline ROI). */
+export function kmWith(me, name) {
+  return runsWith(me, name).reduce((s, a) => s + a.distance, 0)
+}

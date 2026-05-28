@@ -16,9 +16,32 @@ export default function Courir() {
   const {
     actKudos, toggleActKudos, openActivity, openMember, showToast,
     eventKudos, toggleEventKudos, joined, toggleJoin, openEvent,
-    integrations, openIntegrations,
+    integrations, openIntegrations, openRunMatch, runMatches,
   } = useApp()
   const [view, setView] = useState('activites')
+  const topRun = runMatches?.[0]
+
+  const RunMatchBanner = () => (
+    <button
+      onClick={openRunMatch}
+      className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-left text-white shadow-float tap"
+    >
+      <div className="absolute inset-0 bg-aurora" />
+      <div className="relative flex items-center gap-3">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/12 text-gold-300 ring-1 ring-white/15">
+          <Icon name="activity" className="h-5 w-5" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">RunMatch · binôme de course</p>
+          <p className="mt-0.5 text-[14px] font-extrabold leading-snug">
+            {topRun ? `Cours avec ${topRun.name.split(' ')[0]} cette semaine` : 'Trouve ton binôme de run'}
+          </p>
+          <p className="mt-0.5 text-[12px] leading-snug text-white/65">Même allure, et un vrai intérêt business. La sortie devient le RDV.</p>
+        </div>
+        <Icon name="chevronRight" className="h-5 w-5 shrink-0 text-white/60" />
+      </div>
+    </button>
+  )
   const pct = Math.round((CHALLENGE.current / CHALLENGE.total) * 100)
   const km = CURRENT_USER.stats.km
   const season = seasonProgress(km)
@@ -49,6 +72,7 @@ export default function Courir() {
 
       {view === 'activites' ? (
         <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar px-5 pb-6 pt-3">
+          <RunMatchBanner />
           {integrations.strava ? (
             <div className="flex items-center gap-2 rounded-2xl bg-success-light px-3.5 py-2.5 text-[12px] font-semibold text-success-dark">
               <Icon name="check" className="h-4 w-4 shrink-0" /> Tes courses sont synchronisées via Strava
@@ -93,6 +117,7 @@ export default function Courir() {
         </div>
       ) : (
         <div className="flex-1 space-y-5 overflow-y-auto no-scrollbar px-5 pb-6 pt-3">
+          <RunMatchBanner />
           {/* Défi + classement */}
           <section className="overflow-hidden rounded-[28px] surface-hero text-white shadow-float">
             <div className="relative overflow-hidden p-5">
