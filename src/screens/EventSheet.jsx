@@ -93,7 +93,7 @@ export default function EventSheet({ id, onClose }) {
                   <button
                     onClick={() => contactMember(name)}
                     className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-bold tap ${
-                      contacted[name] ? 'bg-success-light text-success-dark' : 'bg-brand-500 text-white shadow-brand'
+                      contacted[name] ? 'bg-success-light text-success-dark' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand'
                     }`}
                   >
                     {contacted[name] ? 'Demandé ✓' : 'Connecter'}
@@ -110,7 +110,7 @@ export default function EventSheet({ id, onClose }) {
         <div className="glass flex shrink-0 items-center gap-2 border-t border-line px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             onClick={() => toggleJoin(e.id)}
-            className={`flex-1 rounded-2xl py-3 text-sm font-bold text-white tap ${isJoined ? 'bg-success' : 'bg-brand-500 shadow-brand'}`}
+            className={`flex-1 rounded-full py-3 text-sm font-bold text-white tap ${isJoined ? 'bg-success' : 'bg-gradient-to-b from-brand-500 to-brand-600 shadow-brand'}`}
           >
             {isJoined ? 'Inscrit ✓' : 'Je participe'}
           </button>

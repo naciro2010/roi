@@ -74,7 +74,7 @@ export default function Accueil() {
         >
           Partage une réflexion, un REX, un tip…
         </button>
-        <button onClick={openComposer} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-500 text-white shadow-brand tap" aria-label="Nouveau post">
+        <button onClick={openComposer} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand tap" aria-label="Nouveau post">
           <Icon name="pencil" className="h-4 w-4" />
         </button>
       </div>

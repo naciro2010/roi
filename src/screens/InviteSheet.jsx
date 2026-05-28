@@ -107,7 +107,7 @@ export default function InviteSheet({ onClose }) {
                     <Icon name="copy" className="h-3.5 w-3.5" />
                   </button>
                 </div>
-                <button onClick={shareLink} className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-500 py-3 text-sm font-bold text-white shadow-brand tap">
+                <button onClick={shareLink} className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 py-3 text-sm font-bold text-white shadow-brand tap">
                   <Icon name="share" className="h-4 w-4" /> Partager mon lien
                 </button>
               </section>
@@ -127,7 +127,7 @@ export default function InviteSheet({ onClose }) {
                       className="min-w-0 flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-fg-faint"
                     />
                   </div>
-                  <button type="submit" className="shrink-0 rounded-2xl bg-brand-500 px-4 py-2.5 text-sm font-bold text-white shadow-brand tap">Inviter</button>
+                  <button type="submit" className="shrink-0 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-2.5 text-sm font-bold text-white shadow-brand tap">Inviter</button>
                 </form>
               </section>
 
@@ -205,7 +205,7 @@ export default function InviteSheet({ onClose }) {
                           className="min-w-0 flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-fg-faint"
                         />
                       </div>
-                      <button type="submit" className="shrink-0 rounded-2xl bg-brand-500 px-4 py-2.5 text-sm font-bold text-white shadow-brand tap">
+                      <button type="submit" className="shrink-0 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-2.5 text-sm font-bold text-white shadow-brand tap">
                         <Icon name="userPlus" className="h-4 w-4" />
                       </button>
                     </form>

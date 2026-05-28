@@ -132,7 +132,7 @@ export default function PlansSheet({ onClose }) {
                   <button
                     disabled={current}
                     onClick={() => upgradePlan(p.id)}
-                    className={`mt-4 w-full rounded-2xl py-3 text-sm font-bold tap disabled:opacity-60 ${
+                    className={`mt-4 w-full rounded-full py-3.5 text-sm font-bold tap disabled:opacity-60 ${
                       current
                         ? highlight
                           ? 'bg-white/15 text-white'
@@ -141,7 +141,7 @@ export default function PlansSheet({ onClose }) {
                           ? 'bg-white text-fg'
                           : business
                             ? 'bg-gradient-to-r from-gold-dark to-gold text-white shadow-brand'
-                            : 'bg-brand-500 text-white shadow-brand'
+                            : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand'
                     }`}
                   >
                     {current ? 'Ton plan actuel' : p.cta}

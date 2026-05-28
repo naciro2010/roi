@@ -32,7 +32,7 @@ export default function PostComposer({ open, onClose, onPublish }) {
           <button
             onClick={publish}
             disabled={!text.trim()}
-            className="rounded-full bg-brand-500 px-4 py-1.5 text-sm font-bold text-white shadow-brand tap disabled:opacity-40"
+            className="rounded-full bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-1.5 text-sm font-bold text-white shadow-brand tap disabled:opacity-40"
           >
             Publier
           </button>

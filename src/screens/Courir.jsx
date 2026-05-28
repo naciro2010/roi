@@ -239,8 +239,8 @@ export default function Courir() {
                   <div className="px-4 pb-4">
                     <button
                       onClick={() => toggleJoin(a.id)}
-                      className={`w-full rounded-2xl py-2.5 text-sm font-bold tap ${
-                        isJoined ? 'bg-success text-white' : 'bg-brand-500 text-white shadow-brand hover:bg-brand-600'
+                      className={`w-full rounded-full py-3 text-sm font-bold tap ${
+                        isJoined ? 'bg-success text-white' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand hover:to-brand-700'
                       }`}
                     >
                       {isJoined ? 'Inscrit ✓' : 'Je participe'}
