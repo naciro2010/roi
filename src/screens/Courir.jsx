@@ -69,7 +69,7 @@ export default function Courir() {
 
           <button
             onClick={() => showToast('Enregistrement bientôt disponible 🏃')}
-            className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-line-strong px-3 py-3 text-left tap hover:bg-white/[0.04]"
+            className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-line-strong px-3 py-3 text-left tap hover:bg-black/[0.04]"
           >
             <span className="grid h-10 w-10 place-items-center rounded-full bg-brand-50 text-brand-600">
               <Icon name="activity" className="h-5 w-5" />
@@ -139,7 +139,7 @@ export default function Courir() {
           <section className="rounded-[28px] border border-line bg-surface p-5 shadow-soft">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="grid h-9 w-9 place-items-center rounded-xl bg-gold/15 text-gold-300 ring-1 ring-gold/25">
+                <span className="grid h-9 w-9 place-items-center rounded-xl bg-gold/15 text-gold-dark ring-1 ring-gold/25">
                   <Icon name="trophy" className="h-4 w-4" />
                 </span>
                 <div>
@@ -147,7 +147,7 @@ export default function Courir() {
                   <div className="text-[11px] text-fg-muted">Cours, débloque · fin dans {SEASON.endsIn}</div>
                 </div>
               </div>
-              <span className="rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-extrabold text-brand-300">Niveau {season.level}</span>
+              <span className="rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-extrabold text-brand-700">Niveau {season.level}</span>
             </div>
 
             <div className="mt-3 flex items-center gap-3">
@@ -171,7 +171,7 @@ export default function Courir() {
                       isNext ? 'bg-brand-light/50 ring-1 ring-brand-200' : unlocked ? 'bg-surface-soft' : ''
                     }`}
                   >
-                    <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${unlocked ? 'bg-success-light text-success-300' : 'bg-surface-2 text-fg-faint'}`}>
+                    <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${unlocked ? 'bg-success-light text-success-dark' : 'bg-surface-2 text-fg-faint'}`}>
                       <Icon name={unlocked ? 'checkCircle' : 'lock'} className="h-4 w-4" />
                     </span>
                     <div className="min-w-0 flex-1">

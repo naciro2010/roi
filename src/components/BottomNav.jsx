@@ -22,7 +22,7 @@ export default function BottomNav({ active, onChange, unread }) {
               aria-current={isActive ? 'page' : undefined}
               className="relative flex flex-1 flex-col items-center gap-1 rounded-2xl py-1.5 tap"
             >
-              <span className={`relative grid h-8 w-8 place-items-center rounded-xl transition-colors ${isActive ? 'bg-brand-light text-brand-300 ring-1 ring-brand-500/30' : 'text-fg-faint'}`}>
+              <span className={`relative grid h-8 w-8 place-items-center rounded-xl transition-colors ${isActive ? 'bg-brand-light text-brand-600 ring-1 ring-brand-500/25' : 'text-fg-faint'}`}>
                 <Icon name={tab.icon} className="h-[22px] w-[22px]" filled={isActive && tab.icon === 'sparkles'} />
                 {tab.id === 'messages' && unread > 0 && (
                   <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-bold text-white ring-2 ring-canvas">

@@ -32,7 +32,7 @@ export default function AgendaSheet({ onClose }) {
             <Icon name="x" className="h-5 w-5" />
           </button>
           <div className="relative flex items-center gap-3">
-            <span className="grid h-11 w-11 place-items-center rounded-2xl bg-white/10 ring-1 ring-white/15 text-brand-300">
+            <span className="grid h-11 w-11 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/15 text-white">
               <Icon name="calendar" className="h-5 w-5" />
             </span>
             <div>
@@ -69,7 +69,7 @@ export default function AgendaSheet({ onClose }) {
                   <span className="inline-flex items-center gap-1.5 font-semibold text-fg-soft">
                     <Icon name="calendar" className="h-4 w-4 text-brand-400" /> {d.full} · {m.time}
                   </span>
-                  <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-bold text-brand-300">{d.relative}</span>
+                  <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-bold text-brand-700">{d.relative}</span>
                 </div>
                 <div className="mt-1 flex items-center gap-1.5 text-[12.5px] text-fg-muted">
                   <Icon name="mapPin" className="h-4 w-4 shrink-0 text-fg-faint" /> {m.place}
@@ -78,7 +78,7 @@ export default function AgendaSheet({ onClose }) {
 
                 <div className="mt-3 flex items-center gap-2">
                   {confirmed ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-success-light px-3 py-1.5 text-[12px] font-bold text-success-300">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-success-light px-3 py-1.5 text-[12px] font-bold text-success-dark">
                       <Icon name="checkCircle" className="h-4 w-4" /> Confirmé
                     </span>
                   ) : (

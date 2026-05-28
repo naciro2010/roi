@@ -29,9 +29,9 @@ export default function EventSheet({ id, onClose }) {
           <button onClick={onClose} className="glass-dark absolute right-3 top-3 z-[500] grid h-9 w-9 place-items-center rounded-full text-white tap" aria-label="Fermer">
             <Icon name="x" className="h-5 w-5" />
           </button>
-          <span className="pointer-events-none absolute left-4 top-3 z-[500] rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-bold text-white shadow-soft ring-1 ring-white/10 backdrop-blur">
+          <span className="pointer-events-none absolute left-4 top-3 z-[500] rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-bold text-fg-soft shadow-soft backdrop-blur">
             {d.relative} · {e.time}
-            {e.tag && <span className="ml-1 text-brand-300">{e.tag}</span>}
+            {e.tag && <span className="ml-1 text-brand-600">{e.tag}</span>}
           </span>
         </div>
 

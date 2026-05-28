@@ -12,7 +12,7 @@ const PEOPLE_NAMES = Array.from(new Set([...MEMBERS.map((m) => m.name), ...Objec
 
 function ResultRow({ icon, tone = 'bg-surface-2 text-fg-muted', avatar, title, subtitle, onClick }) {
   return (
-    <button onClick={onClick} className="flex w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left tap hover:bg-white/[0.04]">
+    <button onClick={onClick} className="flex w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left tap hover:bg-black/[0.04]">
       {avatar ? (
         <Avatar name={avatar} size="sm" />
       ) : (
