@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
-import { ProgressRing } from '../components/primitives'
+import { Sparkline } from '../components/primitives'
 import PostCard from '../components/PostCard'
 import { CURRENT_USER } from '../data/user'
 import { activityById } from '../data/activities'
@@ -27,7 +27,7 @@ function PostSkeleton() {
 }
 
 export default function Accueil() {
-  const { goTo, openRoiInfo, openComposer, openMember, openActivity, openAgenda, meetings, posts, togglePostLike, addComment, showToast } = useApp()
+  const { goTo, openRoiInfo, openComposer, openMember, openActivity, openAgenda, openInvite, meetings, posts, togglePostLike, addComment, showToast } = useApp()
   const u = CURRENT_USER
   const hour = new Date().getHours()
   const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir'
@@ -40,30 +40,61 @@ export default function Accueil() {
 
   return (
     <div className="animate-screenIn space-y-3 overflow-y-auto no-scrollbar px-4 pb-6 pt-3">
-      {/* ROI compact */}
+      {/* Hero « balance card » — score ROI mis en avant, façon Revolut */}
       <button
         onClick={openRoiInfo}
-        className="relative flex w-full items-center gap-4 overflow-hidden rounded-3xl surface-hero p-4 text-left text-white shadow-float tap"
+        className="relative block w-full overflow-hidden rounded-[28px] surface-hero p-5 text-left text-white shadow-float tap"
       >
-        <div className="absolute inset-0 bg-hero-glow" />
+        <div className="absolute inset-0 bg-aurora" />
         <div className="relative">
-          <ProgressRing value={u.roi.score} size={62} stroke={6} color="#FFFFFF" track="rgba(255,255,255,0.14)">
-            <div className="text-lg font-extrabold leading-none">{u.roi.score}</div>
-          </ProgressRing>
-        </div>
-        <div className="relative flex-1">
-          <div className="flex items-center gap-1.5 text-sm font-bold">
-            {greet}, {u.name.split(' ')[0]}
-            <span className="inline-flex items-center gap-0.5 rounded-full bg-white/15 px-1.5 py-0.5 text-[11px] font-bold text-success-300 ring-1 ring-white/15">
-              <Icon name="trendingUp" className="h-3 w-3" /> +{u.roi.weekDelta}
-            </span>
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-[13px] font-medium text-white/70">{greet}, {u.name.split(' ')[0]}</p>
+              <div className="mt-1 flex items-end gap-1.5">
+                <span className="text-[44px] font-extrabold leading-none tracking-tight tabular-nums">{u.roi.score}</span>
+                <span className="mb-1 text-sm font-bold text-white/55">/100</span>
+              </div>
+              <p className="mt-1.5 text-[12px] font-semibold text-white/65">Score réseau ROI</p>
+            </div>
+            <div className="flex flex-col items-end gap-2">
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1 text-[11px] font-bold text-success-300 ring-1 ring-white/15">
+                <Icon name="trendingUp" className="h-3 w-3" /> +{u.roi.weekDelta} cette sem.
+              </span>
+              <Sparkline data={u.roi.trend} width={96} height={36} />
+            </div>
           </div>
-          <p className="mt-0.5 text-[12px] leading-snug text-white/65">
-            Score réseau · {u.roi.connections} connexions · {u.roi.opportunities} opportunités
-          </p>
+
+          <div className="mt-4 grid grid-cols-3 gap-2 border-t border-white/12 pt-3">
+            {[
+              { value: u.roi.connections, label: 'Connexions' },
+              { value: meetings.length, label: 'RDV' },
+              { value: u.roi.opportunities, label: 'Opportunités' },
+            ].map((s) => (
+              <div key={s.label}>
+                <div className="text-lg font-extrabold tabular-nums leading-none">{s.value}</div>
+                <div className="mt-1 text-[11px] text-white/60">{s.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
-        <Icon name="chevronRight" className="relative h-5 w-5 text-white/60" />
       </button>
+
+      {/* Actions rapides — pastilles circulaires façon Revolut */}
+      <div className="grid grid-cols-4 gap-1">
+        {[
+          { icon: 'sparkles', label: 'Réseau', onClick: () => goTo('reseau') },
+          { icon: 'activity', label: 'Courir', onClick: () => goTo('courir') },
+          { icon: 'calendar', label: 'RDV', onClick: openAgenda },
+          { icon: 'gift', label: 'Inviter', onClick: openInvite },
+        ].map((a) => (
+          <button key={a.label} onClick={a.onClick} className="flex flex-col items-center gap-1.5 py-1 tap">
+            <span className="grid h-14 w-14 place-items-center rounded-full bg-brand-50 text-brand-600 ring-1 ring-brand-100">
+              <Icon name={a.icon} className="h-[22px] w-[22px]" />
+            </span>
+            <span className="text-[11px] font-semibold text-fg-soft">{a.label}</span>
+          </button>
+        ))}
+      </div>
 
       {/* Composer */}
       <div className="flex items-center gap-3 rounded-3xl border border-line bg-surface p-3 shadow-soft">
@@ -79,27 +110,6 @@ export default function Accueil() {
         </button>
       </div>
 
-      {/* Tempo de la semaine — business & running en un coup d'œil */}
-      <div className="grid grid-cols-3 gap-2.5">
-        {[
-          { icon: 'route', value: `${u.stats.km}`, unit: 'km', label: 'ce mois', tone: 'text-brand-500', onClick: () => goTo('courir') },
-          { icon: 'calendar', value: `${meetings.length}`, unit: '', label: 'RDV à venir', tone: 'text-success', onClick: openAgenda },
-          { icon: 'briefcase', value: `${u.roi.opportunities}`, unit: '', label: 'opportunités', tone: 'text-gold-dark', onClick: openRoiInfo },
-        ].map((s) => (
-          <button
-            key={s.label}
-            onClick={s.onClick}
-            className="rounded-2xl border border-line bg-surface p-3 text-left shadow-soft tap"
-          >
-            <Icon name={s.icon} className={`h-4 w-4 ${s.tone}`} />
-            <div className="mt-2 flex items-baseline gap-0.5">
-              <span className="text-xl font-extrabold tabular-nums text-fg">{s.value}</span>
-              {s.unit && <span className="text-[11px] font-bold text-fg-faint">{s.unit}</span>}
-            </div>
-            <div className="text-[11px] text-fg-muted">{s.label}</div>
-          </button>
-        ))}
-      </div>
 
       {/* Feed */}
       {loading ? (
