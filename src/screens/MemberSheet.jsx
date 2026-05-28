@@ -2,28 +2,32 @@ import { useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar, AvatarStack } from '../components/Avatar'
-import { MatchRing, Badge } from '../components/primitives'
-import { personFor, matchFor, MEMBERS } from '../data/network'
+import { MatchRing, Badge, CompatBars } from '../components/primitives'
+import { personFor, MEMBERS } from '../data/network'
+import { ARCHETYPES } from '../data/profiling'
 import { ACTIVITIES } from '../data/activities'
 import { CURRENT_USER } from '../data/user'
 import { MEETING_TYPES } from '../data/meetings'
+import { icebreaker } from '../lib/matching'
 import { useSheetDrag } from '../lib/useSheetDrag'
 
 const RDV_TYPES = ['cafe', 'run', 'visio']
 
 export default function MemberSheet({ name, onClose }) {
-  const { contacted, contactMember, messageMember, openActivity, proposeMeeting } = useApp()
+  const { contacted, contactMember, messageMember, openActivity, proposeMeeting, matchDetail, startIcebreaker } = useApp()
   const drag = useSheetDrag(onClose)
   const [proposing, setProposing] = useState(false)
   const p = personFor(name)
   const isContacted = contacted[name]
-  const match = matchFor(name)
+  const match = matchDetail ? matchDetail(name) : null
+  const arche = match ? ARCHETYPES[match.archetype] : null
   const category = MEMBERS.find((m) => m.name === name)?.category
   const sharedRuns = ACTIVITIES.filter(
     (a) =>
       (a.athlete === CURRENT_USER.name && a.metContacts.includes(name)) ||
       (a.athlete === name && a.metContacts.includes(CURRENT_USER.name)),
   )
+  const ice = icebreaker(name, sharedRuns.length)
 
   return (
     <div className="absolute inset-0 z-40">
@@ -50,7 +54,7 @@ export default function MemberSheet({ name, onClose }) {
             </div>
             {match && (
               <div className="pb-1">
-                <MatchRing value={match.match} size={50} />
+                <MatchRing value={match.score} size={50} />
               </div>
             )}
           </div>
@@ -64,21 +68,38 @@ export default function MemberSheet({ name, onClose }) {
 
           <p className="mt-3 text-sm leading-relaxed text-fg-soft">{p.bio}</p>
 
-          {match && (
+          {match && match.reasons.length > 0 && (
             <div className="mt-4 rounded-2xl border border-brand-200 bg-brand-light/50 p-3.5">
-              <div className="mb-1.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-brand-700">
-                <Icon name="sparkles" className="h-3.5 w-3.5" filled /> Pourquoi vous matchez
+              <div className="mb-2 flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-brand-700">
+                  <Icon name="sparkles" className="h-3.5 w-3.5" filled /> Pourquoi vous matchez
+                </div>
+                {arche && <Badge tone={arche.tone} dot={false}>{arche.short}</Badge>}
               </div>
-              <p className="text-[13px] leading-relaxed text-fg-soft">{match.reason}</p>
-              <div className="mt-2.5 space-y-1.5">
-                {match.context.map((c) => (
-                  <div key={c} className="flex items-center gap-2 text-[13px] font-medium text-fg-soft">
-                    <Icon name="check" className="h-3.5 w-3.5 shrink-0 text-brand-600" /> {c}
+              <div className="space-y-1.5">
+                {match.reasons.map((r) => (
+                  <div key={r.text} className="flex items-center gap-2 text-[13px] font-medium text-fg-soft">
+                    <Icon name={r.icon} className="h-3.5 w-3.5 shrink-0 text-brand-600" /> {r.text}
                   </div>
                 ))}
               </div>
+              <CompatBars parts={match.parts} className="mt-3" />
             </div>
           )}
+
+          {/* Brise-glace IA — message d'intro prêt à l'emploi */}
+          <div className="mt-3 rounded-2xl border border-line bg-surface-soft p-3.5">
+            <div className="mb-1.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-fg-muted">
+              <Icon name="wand" className="h-3.5 w-3.5 text-brand-600" /> Brise-glace suggéré
+            </div>
+            <p className="text-[13px] italic leading-relaxed text-fg-soft">« {ice} »</p>
+            <button
+              onClick={() => startIcebreaker(name)}
+              className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-xl border border-brand-300 py-2 text-[13px] font-bold text-brand-700 tap hover:bg-brand-light"
+            >
+              <Icon name="send" className="h-3.5 w-3.5" /> Utiliser ce message
+            </button>
+          </div>
 
           {p.looking?.length > 0 && (
             <div className="mt-4">

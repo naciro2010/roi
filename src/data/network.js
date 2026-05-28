@@ -1,71 +1,7 @@
-export const SUGGESTIONS = [
-  {
-    id: 1,
-    name: 'Sarah Khalil',
-    match: 94,
-    needBadge: 'Lève des fonds',
-    runBadge: 'Court le dimanche',
-    context: ['Même objectif : seed', 'Vous courez la Seine le dimanche', '5 connexions en commun'],
-    reason:
-      "Comme toi, elle prépare une levée. Vous courez tous les deux le long de la Seine le dimanche — l'occasion d'échanger sur vos pitchs.",
-    primaryAction: 'Proposer une sortie',
-  },
-  {
-    id: 2,
-    name: 'Yanis Benali',
-    match: 89,
-    needBadge: 'Cherche des missions',
-    runBadge: 'Même défi 10 km',
-    context: ['Répond à ton besoin : dev React', 'Inscrit au même défi 10 km', 'Dispo sous 2 semaines'],
-    reason:
-      "Tu cherches un dev React pour ton MVP ; lui prend justement des missions. Vous êtes inscrits au même défi 10 km — parfait pour faire connaissance en courant.",
-    primaryAction: 'Proposer une sortie',
-  },
-  {
-    id: 3,
-    name: 'Claire Moreau',
-    match: 86,
-    needBadge: 'Propose du mentorat',
-    runBadge: "Sera à l'event jeudi",
-    context: ['A scalé une marque retail 0→200 boutiques', 'Présente au Run & Pitch jeudi', 'Mentor scaling'],
-    reason:
-      "Elle a scalé une marque retail de 0 à 200 boutiques et propose du mentorat. Elle sera à la sortie + afterwork de jeudi : le moment idéal pour parler scaling.",
-    primaryAction: 'La voir jeudi',
-  },
-  {
-    id: 4,
-    name: 'Karim Haddad',
-    match: 83,
-    needBadge: 'Investit',
-    runBadge: 'Court le fractionné',
-    context: ['Investit en pré-seed / seed', 'Tickets 20–50k', 'Croisé au Run & Pitch'],
-    reason:
-      "Business angel ex-CFO, il investit en pré-seed/seed sur des fondateurs obsédés par leur problème — exactement ton profil de levée.",
-    primaryAction: 'Demander une intro',
-  },
-  {
-    id: 5,
-    name: 'Inès Roy',
-    match: 80,
-    needBadge: 'Investit',
-    runBadge: 'Sera au Run & Pitch',
-    context: ['VC early-stage · B2B & climat', 'Présente jeudi', 'Partante pour un run'],
-    reason:
-      "VC early-stage sur le B2B : elle regarde des dossiers comme le tien et adore échanger en courant.",
-    primaryAction: 'La voir jeudi',
-  },
-  {
-    id: 6,
-    name: 'Nadia Cherif',
-    match: 76,
-    needBadge: 'Mentor go-to-market',
-    runBadge: 'Trail le week-end',
-    context: ['Serial entrepreneuse · 1 revente', 'Mentor go-to-market', 'Croisée au défi 10 km'],
-    reason:
-      "3 boîtes lancées, 1 revente : elle accompagne sur le go-to-market et adore connecter les bonnes personnes.",
-    primaryAction: 'Proposer une sortie',
-  },
-]
+/* NB : les suggestions de match ne sont plus codées en dur ici. Elles sont
+   calculées dynamiquement par le moteur comportemental « Pour toi »
+   (src/lib/matching.js) à partir des profils (src/data/profiling.js) et du
+   comportement de l'utilisateur dans l'app. */
 
 export const FILTERS = ['Tous', 'Cherche un associé', 'Recrute', 'Investit', 'Mentor']
 
@@ -143,10 +79,6 @@ export const OPPORTUNITIES = [
   { id: 'o2', icon: 'briefcase', tone: 'emerald', who: 'Yanis Benali', detail: 'discute de ton MVP React.', time: 'Il y a 3 j' },
   { id: 'o3', icon: 'trendingUp', tone: 'brand', who: 'Karim Haddad', detail: 'a demandé ton deck (seed).', time: 'Il y a 5 j' },
 ]
-
-export function matchFor(name) {
-  return SUGGESTIONS.find((s) => s.name === name) || null
-}
 
 export function personFor(name) {
   return (
