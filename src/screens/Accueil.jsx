@@ -119,17 +119,18 @@ export default function Accueil() {
         </>
       ) : (
         <>
-          {posts.map((p) => (
-            <PostCard
-              key={p.id}
-              post={p}
-              activity={activityById(p.activityId)}
-              onLike={() => togglePostLike(p.id)}
-              onAddComment={(text) => addComment(p.id, text)}
-              onShare={() => showToast('Partage bientôt disponible')}
-              onOpenActivity={() => openActivity(p.activityId)}
-              onOpenAuthor={(name) => openMember(name || p.author)}
-            />
+          {posts.map((p, i) => (
+            <div key={p.id} className="animate-cardIn" style={{ animationDelay: `${Math.min(i, 6) * 70}ms` }}>
+              <PostCard
+                post={p}
+                activity={activityById(p.activityId)}
+                onLike={() => togglePostLike(p.id)}
+                onAddComment={(text) => addComment(p.id, text)}
+                onShare={() => showToast('Partage bientôt disponible')}
+                onOpenActivity={() => openActivity(p.activityId)}
+                onOpenAuthor={(name) => openMember(name || p.author)}
+              />
+            </div>
           ))}
           <p className="pt-1 text-center text-xs text-fg-faint">Tu es à jour ✓</p>
         </>

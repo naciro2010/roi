@@ -1,5 +1,5 @@
 import Icon from '../components/Icon'
-import { ProgressRing, ProgressBar, PILL_TONES } from '../components/primitives'
+import { ProgressRing, ProgressBar, PILL_TONES, Sparkline } from '../components/primitives'
 import { CURRENT_USER } from '../data/user'
 
 const FACTORS = [
@@ -34,6 +34,22 @@ export default function RoiInfoSheet({ onClose }) {
         </div>
 
         <div className="flex-1 overflow-y-auto no-scrollbar px-5 py-4">
+          {/* Évolution du score — graphe sur les dernières semaines */}
+          <div className="mb-4 rounded-2xl border border-line bg-surface p-4 shadow-soft">
+            <div className="flex items-end justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-fg-faint">Évolution · 8 sem.</p>
+                <div className="mt-1 flex items-baseline gap-1.5">
+                  <span className="text-2xl font-extrabold tabular-nums text-fg">{u.roi.score}</span>
+                  <span className="inline-flex items-center gap-0.5 text-[12px] font-bold text-success-dark">
+                    <Icon name="trendingUp" className="h-3.5 w-3.5" /> +{u.roi.trend[u.roi.trend.length - 1] - u.roi.trend[0]}
+                  </span>
+                </div>
+              </div>
+              <Sparkline data={u.roi.trend} width={140} height={48} stroke="#3B5BFF" strokeWidth={2.5} />
+            </div>
+          </div>
+
           <p className="text-xs font-bold uppercase tracking-wide text-fg-faint">Ce qui fait monter ton score</p>
           <div className="mt-3 space-y-3">
             {FACTORS.map((f) => (

@@ -120,6 +120,10 @@ export default {
           '0%': { opacity: '0', transform: 'translateY(8px) scale(0.98)' },
           '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
         },
+        cardIn: {
+          '0%': { opacity: '0', transform: 'translateY(14px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
       },
       animation: {
         fadeIn: 'fadeIn 0.25s ease-out both',
@@ -129,6 +133,7 @@ export default {
         drawerIn: 'drawerIn 0.3s cubic-bezier(0.22,1,0.36,1) both',
         popIn: 'popIn 0.22s cubic-bezier(0.22,1,0.36,1) both',
         bubbleIn: 'bubbleIn 0.3s cubic-bezier(0.22,1,0.36,1) both',
+        cardIn: 'cardIn 0.45s cubic-bezier(0.22,1,0.36,1) both',
       },
     },
   },
