@@ -6,12 +6,12 @@ import { PLANS, planById } from '../data/plans'
 
 function PriceBlock({ plan, annual }) {
   if (plan.priceMonthly === 0) {
-    return <div className="text-3xl font-extrabold tabular-nums">Gratuit</div>
+    return <div className="text-3xl font-semibold tabular-nums">Gratuit</div>
   }
   const price = annual ? plan.priceAnnual : plan.priceMonthly
   return (
     <div className="flex items-baseline gap-1">
-      <span className="text-3xl font-extrabold tabular-nums">{price}€</span>
+      <span className="text-3xl font-semibold tabular-nums">{price}€</span>
       <span className="text-sm font-semibold opacity-60">/ mois{plan.perSeat ? ' / siège' : ''}</span>
     </div>
   )
@@ -41,10 +41,10 @@ export default function PlansSheet({ onClose }) {
             <Icon name="x" className="h-5 w-5" />
           </button>
           <div className="relative">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-gold-300">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-gold-300">
               <Icon name="crown" className="h-3.5 w-3.5" filled /> Abonnement ROI
             </span>
-            <h2 className="mt-3 text-2xl font-extrabold leading-tight">Débloque tout ton réseau</h2>
+            <h2 className="mt-3 text-2xl font-semibold leading-tight">Débloque tout ton réseau</h2>
             <p className="mt-1 max-w-[300px] text-[13px] leading-relaxed text-white/65">
               Matchs illimités, agenda & RDV, intros prioritaires et analytics ROI. Annule quand tu veux.
             </p>
@@ -53,16 +53,16 @@ export default function PlansSheet({ onClose }) {
             <div className="mt-4 inline-flex items-center gap-1 rounded-full bg-white/10 p-1">
               <button
                 onClick={() => setAnnual(false)}
-                className={`rounded-full px-3.5 py-1.5 text-[13px] font-bold tap ${!annual ? 'bg-white text-fg' : 'text-white/70'}`}
+                className={`rounded-full px-3.5 py-1.5 text-[13px] font-semibold tap ${!annual ? 'bg-white text-fg' : 'text-white/70'}`}
               >
                 Mensuel
               </button>
               <button
                 onClick={() => setAnnual(true)}
-                className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-bold tap ${annual ? 'bg-white text-fg' : 'text-white/70'}`}
+                className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-semibold tap ${annual ? 'bg-white text-fg' : 'text-white/70'}`}
               >
                 Annuel
-                <span className="rounded-full bg-gold/90 px-1.5 py-0.5 text-[10px] font-extrabold text-fg">−25%</span>
+                <span className="rounded-full bg-gold/90 px-1.5 py-0.5 text-[10px] font-semibold text-fg">−25%</span>
               </button>
             </div>
           </div>
@@ -91,9 +91,9 @@ export default function PlansSheet({ onClose }) {
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-extrabold">{p.name}</h3>
+                        <h3 className="text-lg font-semibold">{p.name}</h3>
                         {p.badge && (
-                          <span className="rounded-full bg-gold px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-white">
+                          <span className="rounded-full bg-gold px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
                             {p.badge}
                           </span>
                         )}
@@ -102,7 +102,7 @@ export default function PlansSheet({ onClose }) {
                       <p className={`mt-0.5 text-[13px] ${highlight ? 'text-white/60' : 'text-fg-muted'}`}>{p.tagline}</p>
                     </div>
                     {current && (
-                      <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${highlight ? 'bg-white/15 text-white' : 'bg-surface-2 text-fg-soft'}`}>
+                      <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${highlight ? 'bg-white/15 text-white' : 'bg-surface-2 text-fg-soft'}`}>
                         Actuel
                       </span>
                     )}
@@ -132,7 +132,7 @@ export default function PlansSheet({ onClose }) {
                   <button
                     disabled={current}
                     onClick={() => upgradePlan(p.id)}
-                    className={`mt-4 w-full rounded-full py-3.5 text-sm font-bold tap disabled:opacity-60 ${
+                    className={`mt-4 w-full rounded-full py-3.5 text-sm font-semibold tap disabled:opacity-60 ${
                       current
                         ? highlight
                           ? 'bg-white/15 text-white'

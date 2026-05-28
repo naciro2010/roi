@@ -12,7 +12,7 @@ function Glyph({ id }) {
       </svg>
     )
   }
-  if (id === 'linkedin') return <span className="text-[15px] font-extrabold lowercase text-white">in</span>
+  if (id === 'linkedin') return <span className="text-[15px] font-semibold lowercase text-white">in</span>
   if (id === 'apple') return <Icon name="heart" className="h-5 w-5 text-white" filled />
   if (id === 'garmin') {
     return (
@@ -21,11 +21,11 @@ function Glyph({ id }) {
       </svg>
     )
   }
-  if (id === 'coros') return <span className="text-[15px] font-extrabold text-white">C</span>
+  if (id === 'coros') return <span className="text-[15px] font-semibold text-white">C</span>
   if (id === 'polar') {
     return <span className="grid h-5 w-5 place-items-center rounded-full border-[3px] border-canvas" />
   }
-  return <span className="text-[15px] font-extrabold text-white">{id[0]?.toUpperCase()}</span>
+  return <span className="text-[15px] font-semibold text-white">{id[0]?.toUpperCase()}</span>
 }
 
 export default function ServiceLogo({ service, size = 'md' }) {

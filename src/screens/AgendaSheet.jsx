@@ -36,7 +36,7 @@ export default function AgendaSheet({ onClose }) {
               <Icon name="calendar" className="h-5 w-5" />
             </span>
             <div>
-              <h2 className="text-lg font-extrabold leading-tight">Agenda & RDV</h2>
+              <h2 className="text-lg font-semibold leading-tight">Agenda & RDV</h2>
               <p className="text-[12.5px] text-white/65">
                 {meetings.length} à venir · {confirmedCount} confirmé{confirmedCount > 1 ? 's' : ''}
               </p>
@@ -56,7 +56,7 @@ export default function AgendaSheet({ onClose }) {
                   <Avatar name={m.with} size="md" onClick={() => openMember(m.with)} />
                   <button onClick={() => openMember(m.with)} className="min-w-0 flex-1 text-left">
                     <div className="flex items-center gap-1.5">
-                      <span className="truncate font-bold text-fg">{meta.label} avec {m.with.split(' ')[0]}</span>
+                      <span className="truncate font-semibold text-fg">{meta.label} avec {m.with.split(' ')[0]}</span>
                     </div>
                     <div className="truncate text-[12px] text-fg-muted">{m.with}</div>
                   </button>
@@ -69,7 +69,7 @@ export default function AgendaSheet({ onClose }) {
                   <span className="inline-flex items-center gap-1.5 font-semibold text-fg-soft">
                     <Icon name="calendar" className="h-4 w-4 text-brand-400" /> {d.full} · {m.time}
                   </span>
-                  <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-bold text-brand-700">{d.relative}</span>
+                  <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-semibold text-brand-700">{d.relative}</span>
                 </div>
                 <div className="mt-1 flex items-center gap-1.5 text-[12.5px] text-fg-muted">
                   <Icon name="mapPin" className="h-4 w-4 shrink-0 text-fg-faint" /> {m.place}
@@ -78,13 +78,13 @@ export default function AgendaSheet({ onClose }) {
 
                 <div className="mt-3 flex items-center gap-2">
                   {confirmed ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-success-light px-3 py-1.5 text-[12px] font-bold text-success-dark">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-success-light px-3 py-1.5 text-[12px] font-semibold text-success-dark">
                       <Icon name="checkCircle" className="h-4 w-4" /> Confirmé
                     </span>
                   ) : (
                     <button
                       onClick={() => confirmMeeting(m.id)}
-                      className="flex-1 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 py-2.5 text-sm font-bold text-white shadow-brand tap"
+                      className="flex-1 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 py-2.5 text-sm font-semibold text-white shadow-brand tap"
                     >
                       Confirmer le RDV
                     </button>

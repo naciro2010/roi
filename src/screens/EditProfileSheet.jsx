@@ -5,7 +5,7 @@ import Icon from '../components/Icon'
 function ChipListEditor({ label, values, onChange, placeholder }) {
   return (
     <div>
-      <div className="mb-2 text-xs font-bold uppercase tracking-wide text-fg-muted">{label}</div>
+      <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">{label}</div>
       <div className="space-y-2">
         {values.map((v, i) => (
           <div key={i} className="flex items-center gap-2">
@@ -24,7 +24,7 @@ function ChipListEditor({ label, values, onChange, placeholder }) {
             </button>
           </div>
         ))}
-        <button onClick={() => onChange([...values, ''])} className="flex items-center gap-1 text-sm font-bold text-brand-700 tap">
+        <button onClick={() => onChange([...values, ''])} className="flex items-center gap-1 text-sm font-semibold text-brand-700 tap">
           <Icon name="plus" className="h-4 w-4" /> Ajouter
         </button>
       </div>
@@ -63,15 +63,15 @@ export default function EditProfileSheet({ onClose }) {
       <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-surface shadow-float">
         <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-3.5">
           <button onClick={onClose} className="text-sm font-semibold text-fg-muted tap">Annuler</button>
-          <h2 className="text-base font-bold text-fg">Éditer le profil</h2>
-          <button onClick={save} className="rounded-full bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-1.5 text-sm font-bold text-white shadow-brand tap">
+          <h2 className="text-base font-semibold text-fg">Éditer le profil</h2>
+          <button onClick={save} className="rounded-full bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-1.5 text-sm font-semibold text-white shadow-brand tap">
             Enregistrer
           </button>
         </div>
 
         <div className="flex-1 space-y-5 overflow-y-auto no-scrollbar px-5 py-4">
           <div>
-            <div className="mb-2 text-xs font-bold uppercase tracking-wide text-fg-muted">Titre</div>
+            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">Titre</div>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -81,7 +81,7 @@ export default function EditProfileSheet({ onClose }) {
           </div>
 
           <div>
-            <div className="mb-2 text-xs font-bold uppercase tracking-wide text-fg-muted">Bio</div>
+            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">Bio</div>
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}

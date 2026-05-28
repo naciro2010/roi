@@ -90,13 +90,13 @@ export function CompatBars({ parts, className = '' }) {
 
 export function MatchRing({ value, size = 44 }) {
   return (
-    <ProgressRing value={value} size={size} stroke={4} track="rgba(59,91,255,0.14)" color="#3B5BFF">
-      <div className="text-[11px] font-extrabold text-fg">{value}</div>
+    <ProgressRing value={value} size={size} stroke={4} track="rgba(0,0,0,0.10)" color="#1D1D1F">
+      <div className="text-[11px] font-semibold text-fg">{value}</div>
     </ProgressRing>
   )
 }
 
-// Mini-courbe de tendance (façon « solde » Revolut). Ligne + aire dégradée.
+// Mini-courbe de tendance sobre. Ligne + aire dégradée.
 export function Sparkline({ data, width = 92, height = 34, stroke = '#FFFFFF', strokeWidth = 2.25, className = '' }) {
   if (!data || data.length < 2) return null
   const max = Math.max(...data)
@@ -128,7 +128,7 @@ export function Logo({ light = false }) {
       <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-brand">
         <Icon name="zap" className="h-4 w-4" filled />
       </span>
-      <span className={`font-display text-[22px] font-extrabold tracking-tight ${light ? 'text-white' : 'text-fg'}`}>
+      <span className={`font-display text-[22px] font-semibold tracking-tight ${light ? 'text-white' : 'text-fg'}`}>
         R<span className="text-gold-dark">O</span>I
       </span>
     </div>
@@ -141,7 +141,7 @@ export function PlanBadge({ plan, className = '' }) {
   const isBusiness = plan === 'business'
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide ring-1 ${
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ${
         isBusiness
           ? 'bg-gold/15 text-gold-dark ring-gold/30'
           : 'bg-brand-50 text-brand-700 ring-brand-200'
@@ -156,7 +156,7 @@ export function PlanBadge({ plan, className = '' }) {
 // Puce « verrouillé » pour signaler une fonctionnalité premium.
 export function LockChip({ label = 'Pro', className = '' }) {
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full bg-surface-3/90 px-2 py-0.5 text-[10px] font-bold text-white ${className}`}>
+    <span className={`inline-flex items-center gap-1 rounded-full bg-surface-3/90 px-2 py-0.5 text-[10px] font-semibold text-white ${className}`}>
       <Icon name="lock" className="h-2.5 w-2.5" />
       {label}
     </span>
@@ -166,7 +166,7 @@ export function LockChip({ label = 'Pro', className = '' }) {
 export function SectionTitle({ children, action, onAction }) {
   return (
     <div className="mb-2.5 flex items-end justify-between">
-      <h2 className="text-base font-bold text-fg">{children}</h2>
+      <h2 className="text-base font-semibold text-fg">{children}</h2>
       {action && (
         <button onClick={onAction} className="flex items-center gap-0.5 text-xs font-semibold text-brand-600 tap">
           {action}

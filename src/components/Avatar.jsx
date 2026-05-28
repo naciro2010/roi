@@ -8,7 +8,7 @@ export function Avatar({ name, size = 'md', ring = false, onClick }) {
       aria-label={onClick ? `Voir ${name}` : undefined}
       className={`${AVATAR_SIZES[size]} ${tintFor(name)} ${
         ring ? 'ring-2 ring-canvas' : ''
-      } ${onClick ? 'tap' : ''} relative shrink-0 rounded-full grid place-items-center font-bold select-none`}
+      } ${onClick ? 'tap' : ''} relative shrink-0 rounded-full grid place-items-center font-semibold select-none`}
     >
       {initials(name)}
     </Tag>
@@ -27,7 +27,7 @@ export function AvatarStack({ names, total, onMore }) {
       {extra > 0 && (
         <button
           onClick={onMore}
-          className="ml-2 grid h-9 min-w-9 place-items-center rounded-full border-2 border-canvas bg-surface-2 px-1 text-xs font-bold text-fg-muted"
+          className="ml-2 grid h-9 min-w-9 place-items-center rounded-full border-2 border-canvas bg-surface-2 px-1 text-xs font-semibold text-fg-muted"
         >
           +{extra}
         </button>

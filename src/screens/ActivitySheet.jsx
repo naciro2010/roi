@@ -23,7 +23,7 @@ function SplitChart({ splits }) {
     <div>
       <div className="mb-1.5 flex items-center justify-between text-[11px]">
         <span className="text-fg-muted">Barre haute = plus rapide</span>
-        <span className="font-bold text-fg tabular-nums">
+        <span className="font-semibold text-fg tabular-nums">
           {sel != null ? `Km ${sel + 1} · ${fmtPace(splits[sel])}/km` : `moy. ${fmtPace(avg)}/km`}
         </span>
       </div>
@@ -60,7 +60,7 @@ function SplitChart({ splits }) {
 function StatBlock({ value, label }) {
   return (
     <div className="rounded-2xl bg-surface-soft p-3 text-center">
-      <div className="text-lg font-extrabold text-fg tabular-nums">{value}</div>
+      <div className="text-lg font-semibold text-fg tabular-nums">{value}</div>
       <div className="text-[11px] text-fg-muted">{label}</div>
     </div>
   )
@@ -86,7 +86,7 @@ export default function ActivitySheet({ id, onClose }) {
           <button onClick={onClose} className="glass-dark absolute right-3 top-3 z-[500] grid h-9 w-9 place-items-center rounded-full text-white tap" aria-label="Fermer">
             <Icon name="x" className="h-5 w-5" />
           </button>
-          <span className="pointer-events-none absolute left-4 top-3 z-[500] rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-bold text-fg-soft shadow-soft backdrop-blur">
+          <span className="pointer-events-none absolute left-4 top-3 z-[500] rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-semibold text-fg-soft shadow-soft backdrop-blur">
             {a.type}
           </span>
         </div>
@@ -95,12 +95,12 @@ export default function ActivitySheet({ id, onClose }) {
           <div className="flex items-center gap-3">
             <Avatar name={a.athlete} size="md" onClick={() => openMember(a.athlete)} />
             <div className="min-w-0 flex-1">
-              <button onClick={() => openMember(a.athlete)} className="truncate font-bold text-fg">{a.athlete}</button>
+              <button onClick={() => openMember(a.athlete)} className="truncate font-semibold text-fg">{a.athlete}</button>
               <div className="truncate text-[12px] text-fg-muted">{a.date}</div>
             </div>
             <button
               onClick={() => toggleActKudos(a.id)}
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold tap ${
+              className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold tap ${
                 k?.liked ? 'bg-like-light text-like' : 'bg-surface-2 text-fg-muted'
               }`}
             >
@@ -109,7 +109,7 @@ export default function ActivitySheet({ id, onClose }) {
             </button>
           </div>
 
-          <h2 className="mt-3 text-lg font-extrabold text-fg">{a.title}</h2>
+          <h2 className="mt-3 text-lg font-semibold text-fg">{a.title}</h2>
 
           <div className="mt-3 grid grid-cols-4 gap-2">
             <StatBlock value={`${a.distance.toFixed(1)}`} label="km" />
@@ -121,7 +121,7 @@ export default function ActivitySheet({ id, onClose }) {
           {a.note && <p className="mt-4 text-[14px] leading-relaxed text-fg-soft">{a.note}</p>}
 
           <div className="mt-5">
-            <div className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-fg-muted">
+            <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-fg-muted">
               <Icon name="activity" className="h-3.5 w-3.5" /> Allure par km
             </div>
             <SplitChart splits={a.splits} />
@@ -129,17 +129,17 @@ export default function ActivitySheet({ id, onClose }) {
 
           {a.metContacts.length > 0 && (
             <div className="mt-5">
-              <div className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-brand-700">
+              <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-brand-700">
                 <Icon name="users" className="h-3.5 w-3.5" /> Rencontré sur cette sortie
               </div>
               <div className="space-y-2">
                 {a.metContacts.map((name) => (
                   <div key={name} className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-2.5 shadow-soft">
                     <Avatar name={name} size="sm" onClick={() => openMember(name)} />
-                    <button onClick={() => openMember(name)} className="min-w-0 flex-1 truncate text-left text-sm font-bold text-fg">{name}</button>
+                    <button onClick={() => openMember(name)} className="min-w-0 flex-1 truncate text-left text-sm font-semibold text-fg">{name}</button>
                     <button
                       onClick={() => contactMember(name)}
-                      className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-bold tap ${
+                      className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold tap ${
                         contacted[name] ? 'bg-success-light text-success-dark' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand'
                       }`}
                     >

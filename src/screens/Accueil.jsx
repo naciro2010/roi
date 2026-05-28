@@ -51,13 +51,13 @@ export default function Accueil() {
             <div>
               <p className="text-[13px] font-medium text-white/70">{greet}, {u.name.split(' ')[0]}</p>
               <div className="mt-1 flex items-end gap-1.5">
-                <span className="text-[44px] font-extrabold leading-none tracking-tight tabular-nums">{u.roi.score}</span>
-                <span className="mb-1 text-sm font-bold text-white/55">/100</span>
+                <span className="text-[44px] font-bold leading-none tracking-tight tabular-nums">{u.roi.score}</span>
+                <span className="mb-1 text-sm font-semibold text-white/55">/100</span>
               </div>
               <p className="mt-1.5 text-[12px] font-semibold text-white/65">Score réseau ROI</p>
             </div>
             <div className="flex flex-col items-end gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1 text-[11px] font-bold text-success-300 ring-1 ring-white/15">
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1 text-[11px] font-semibold text-success-300 ring-1 ring-white/15">
                 <Icon name="trendingUp" className="h-3 w-3" /> +{u.roi.weekDelta} cette sem.
               </span>
               <Sparkline data={u.roi.trend} width={96} height={36} />
@@ -71,7 +71,7 @@ export default function Accueil() {
               { value: u.roi.opportunities, label: 'Opportunités' },
             ].map((s) => (
               <div key={s.label}>
-                <div className="text-lg font-extrabold tabular-nums leading-none">{s.value}</div>
+                <div className="text-lg font-semibold tabular-nums leading-none">{s.value}</div>
                 <div className="mt-1 text-[11px] text-white/60">{s.label}</div>
               </div>
             ))}

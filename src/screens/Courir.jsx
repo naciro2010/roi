@@ -26,7 +26,7 @@ export default function Courir() {
   return (
     <div className="animate-screenIn flex h-full flex-col">
       <div className="px-5 pb-1 pt-4">
-        <h1 className="text-2xl font-extrabold text-fg">Courir</h1>
+        <h1 className="text-2xl font-semibold text-fg">Courir</h1>
         <p className="mt-0.5 text-sm text-fg-muted">Cours, rencontre, avance.</p>
 
         <div className="mt-4 flex gap-1 rounded-2xl bg-surface-2 p-1">
@@ -37,7 +37,7 @@ export default function Courir() {
             <button
               key={s.id}
               onClick={() => setView(s.id)}
-              className={`flex-1 rounded-xl py-2 text-sm font-bold transition tap ${
+              className={`flex-1 rounded-xl py-2 text-sm font-semibold transition tap ${
                 view === s.id ? 'bg-surface-3 text-fg shadow-card' : 'text-fg-muted'
               }`}
             >
@@ -60,7 +60,7 @@ export default function Courir() {
             >
               <ServiceLogo service={serviceById('strava')} />
               <div className="min-w-0 flex-1">
-                <div className="text-sm font-bold text-fg">Connecter Strava</div>
+                <div className="text-sm font-semibold text-fg">Connecter Strava</div>
                 <div className="truncate text-xs text-fg-faint">Importe tes courses automatiquement</div>
               </div>
               <Icon name="chevronRight" className="h-5 w-5 shrink-0 text-fg-faint" />
@@ -75,7 +75,7 @@ export default function Courir() {
               <Icon name="activity" className="h-5 w-5" />
             </span>
             <div>
-              <div className="text-sm font-bold text-fg">Enregistrer une activité</div>
+              <div className="text-sm font-semibold text-fg">Enregistrer une activité</div>
               <div className="text-xs text-fg-faint">Ta sortie devient un post partageable</div>
             </div>
           </button>
@@ -99,13 +99,13 @@ export default function Courir() {
               <div className="absolute inset-0 bg-hero-glow" />
               <div className="relative flex items-center gap-4">
                 <ProgressRing value={pct} size={84} stroke={9} color="#FFFFFF" track="rgba(255,255,255,0.14)">
-                  <div className="text-xl font-extrabold leading-none">{pct}%</div>
+                  <div className="text-xl font-semibold leading-none">{pct}%</div>
                 </ProgressRing>
                 <div className="flex-1">
-                  <div className="flex items-center gap-1.5 text-sm font-bold">
+                  <div className="flex items-center gap-1.5 text-sm font-semibold">
                     <Icon name="flame" className="h-4 w-4 text-gold-300" filled /> {CHALLENGE.title}
                   </div>
-                  <div className="text-2xl font-extrabold">{CHALLENGE.subtitle}</div>
+                  <div className="text-2xl font-semibold">{CHALLENGE.subtitle}</div>
                   <div className="mt-1 text-[13px] text-white/65">
                     {CHALLENGE.current} km · plus que {CHALLENGE.total - CHALLENGE.current} km en {CHALLENGE.daysLeft} jours
                   </div>
@@ -114,7 +114,7 @@ export default function Courir() {
             </div>
 
             <div className="border-t border-white/10 px-5 py-4">
-              <div className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-white/55">
+              <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-white/55">
                 <Icon name="trophy" className="h-3.5 w-3.5" /> Classement
               </div>
               <div className="space-y-1">
@@ -123,12 +123,12 @@ export default function Courir() {
                     key={p.name}
                     className={`flex items-center gap-3 rounded-xl px-2 py-1.5 ${p.me ? 'bg-brand-500/20 ring-1 ring-brand-400/40' : ''}`}
                   >
-                    <span className={`w-5 text-center text-sm font-bold ${i < 3 ? 'text-gold-300' : 'text-white/40'}`}>{i + 1}</span>
+                    <span className={`w-5 text-center text-sm font-semibold ${i < 3 ? 'text-gold-300' : 'text-white/40'}`}>{i + 1}</span>
                     <Avatar name={p.name} size="xs" />
-                    <span className={`flex-1 truncate text-sm ${p.me ? 'font-bold text-white' : 'text-white/80'}`}>
+                    <span className={`flex-1 truncate text-sm ${p.me ? 'font-semibold text-white' : 'text-white/80'}`}>
                       {p.name} {p.me && <span className="text-gold-300">· toi</span>}
                     </span>
-                    <span className="text-sm font-bold text-white/90">{p.km} km</span>
+                    <span className="text-sm font-semibold text-white/90">{p.km} km</span>
                   </div>
                 ))}
               </div>
@@ -143,20 +143,20 @@ export default function Courir() {
                   <Icon name="trophy" className="h-4 w-4" />
                 </span>
                 <div>
-                  <div className="text-sm font-bold text-fg">{SEASON.label}</div>
+                  <div className="text-sm font-semibold text-fg">{SEASON.label}</div>
                   <div className="text-[11px] text-fg-muted">Cours, débloque · fin dans {SEASON.endsIn}</div>
                 </div>
               </div>
-              <span className="rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-extrabold text-brand-700">Niveau {season.level}</span>
+              <span className="rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">Niveau {season.level}</span>
             </div>
 
             <div className="mt-3 flex items-center gap-3">
               <ProgressBar value={season.pct} total={100} className="bg-surface-2" barClassName="bg-gradient-to-r from-brand-500 to-gold" />
-              <span className="shrink-0 text-[12px] font-bold tabular-nums text-fg">{km} km</span>
+              <span className="shrink-0 text-[12px] font-semibold tabular-nums text-fg">{km} km</span>
             </div>
             <p className="mt-1.5 text-[12px] text-fg-muted">
               {season.next
-                ? <>Plus que <span className="font-bold text-fg">{season.remaining} km</span> pour « {season.next.title} ».</>
+                ? <>Plus que <span className="font-semibold text-fg">{season.remaining} km</span> pour « {season.next.title} ».</>
                 : 'Tous les paliers débloqués 🎉'}
             </p>
 
@@ -176,12 +176,12 @@ export default function Courir() {
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5">
-                        <span className={`text-sm font-bold ${unlocked ? 'text-fg' : 'text-fg-soft'}`}>{t.title}</span>
-                        <span className="text-[11px] font-bold tabular-nums text-fg-faint">{t.km} km</span>
+                        <span className={`text-sm font-semibold ${unlocked ? 'text-fg' : 'text-fg-soft'}`}>{t.title}</span>
+                        <span className="text-[11px] font-semibold tabular-nums text-fg-faint">{t.km} km</span>
                       </div>
                       <div className="truncate text-[12px] text-fg-muted">{t.reward}</div>
                     </div>
-                    {isNext && <span className="shrink-0 rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-white">À venir</span>}
+                    {isNext && <span className="shrink-0 rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">À venir</span>}
                   </div>
                 )
               })}
@@ -199,14 +199,14 @@ export default function Courir() {
                 <article key={a.id} className="overflow-hidden rounded-3xl border border-line bg-surface shadow-soft">
                   <button onClick={() => openEvent(a.id)} className="flex w-full items-stretch text-left tap">
                     <div className="flex w-16 shrink-0 flex-col items-center justify-center bg-surface-soft py-3 text-center">
-                      <span className="text-[11px] font-bold uppercase text-brand-600">{a.day.slice(0, 3)}</span>
-                      <span className="text-lg font-extrabold leading-none text-fg">{a.time.slice(0, 2)}</span>
+                      <span className="text-[11px] font-semibold uppercase text-brand-600">{a.day.slice(0, 3)}</span>
+                      <span className="text-lg font-semibold leading-none text-fg">{a.time.slice(0, 2)}</span>
                       <span className="text-[11px] text-fg-faint">{a.time.slice(2)}</span>
                     </div>
                     <div className="min-w-0 flex-1 p-4">
                       <div className="flex items-start justify-between gap-2">
-                        <h3 className="font-bold leading-tight text-fg">{a.title}</h3>
-                        <span className="mt-0.5 shrink-0 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-bold text-brand-700">{d.relative}</span>
+                        <h3 className="font-semibold leading-tight text-fg">{a.title}</h3>
+                        <span className="mt-0.5 shrink-0 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-semibold text-brand-700">{d.relative}</span>
                       </div>
                       <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[12px] text-fg-muted">
                         <span className="inline-flex items-center gap-1"><Icon name="route" className="h-3.5 w-3.5" /> {a.distance}</span>
@@ -217,7 +217,7 @@ export default function Courir() {
                       </div>
                       <div className="mt-0.5 flex items-center gap-1 text-[12px] text-fg-muted">
                         <Icon name="mapPin" className="h-3.5 w-3.5" /> {a.place}
-                        {a.tag && <span className="ml-1 font-bold text-brand-600">{a.tag}</span>}
+                        {a.tag && <span className="ml-1 font-semibold text-brand-600">{a.tag}</span>}
                       </div>
                     </div>
                     <Icon name="chevronRight" className="mr-3 h-5 w-5 shrink-0 self-center text-fg-faint" />
@@ -227,7 +227,7 @@ export default function Courir() {
                     <AvatarStack names={a.attendees} total={a.participants} onMore={() => showToast(`${a.participants} inscrits`)} />
                     <button
                       onClick={() => toggleEventKudos(a.id)}
-                      className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold tap ${
+                      className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold tap ${
                         k.liked ? 'bg-like-light text-like' : 'bg-surface-2 text-fg-muted'
                       }`}
                     >
@@ -239,7 +239,7 @@ export default function Courir() {
                   <div className="px-4 pb-4">
                     <button
                       onClick={() => toggleJoin(a.id)}
-                      className={`w-full rounded-full py-3 text-sm font-bold tap ${
+                      className={`w-full rounded-full py-3 text-sm font-semibold tap ${
                         isJoined ? 'bg-success text-white' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand hover:to-brand-700'
                       }`}
                     >
