@@ -13,6 +13,8 @@ export const PLANS = [
     cta: 'Ton plan actuel',
     features: [
       '3 matchs / semaine',
+      'RunMatch : 1 binôme / semaine',
+      'Pipeline ROI · suivi des relations',
       'Fil, sorties & messages',
       'Suivi des kilomètres & défis',
       'Profil & connexions',
@@ -30,10 +32,11 @@ export const PLANS = [
     cta: 'Passer à Pro',
     features: [
       'Matchs illimités',
+      'RunMatch illimité · tous tes binômes',
+      'Pipeline ROI + analytics (valeur & km investis)',
       'Vois qui veut te rencontrer',
       'Agenda & RDV illimités',
       'Filtres & recherche avancés',
-      'Analytics ROI réseau',
       'Boost de profil chaque mois',
       'Badge Pro sur ton profil',
     ],

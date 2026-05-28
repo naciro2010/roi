@@ -28,9 +28,10 @@ function PostSkeleton() {
 }
 
 export default function Accueil() {
-  const { goTo, openRoiInfo, openComposer, openMember, openActivity, openAgenda, openInvite, openPipeline, openRunMatch, runMatches, pipeline, meetings, posts, togglePostLike, addComment, showToast } = useApp()
+  const { goTo, openRoiInfo, openComposer, openMember, openActivity, openAgenda, openInvite, openPipeline, openRunMatch, runMatches, pipeline, hasFeature, meetings, posts, togglePostLike, addComment, showToast } = useApp()
   const u = CURRENT_USER
   const pstats = pipelineStats(pipeline)
+  const showPipelineValue = hasFeature('analytics')
   const topRun = runMatches?.[0]
   const hour = new Date().getHours()
   const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir'
@@ -108,9 +109,15 @@ export default function Accueil() {
             </span>
             <Icon name="chevronRight" className="h-4 w-4 text-fg-faint" />
           </div>
-          <div className="mt-2.5 text-xl font-extrabold tabular-nums leading-none text-fg">{pstats.value} k€</div>
+          <div className="mt-2.5 text-xl font-extrabold tabular-nums leading-none text-fg">
+            {showPipelineValue ? `${pstats.value} k€` : pstats.active}
+          </div>
           <div className="mt-1 text-[12px] font-semibold text-fg-soft">Pipeline ROI</div>
-          <div className="text-[11px] text-fg-faint">{pstats.active} relation{pstats.active > 1 ? 's' : ''} active{pstats.active > 1 ? 's' : ''}</div>
+          <div className="text-[11px] text-fg-faint">
+            {showPipelineValue
+              ? `${pstats.active} relation${pstats.active > 1 ? 's' : ''} active${pstats.active > 1 ? 's' : ''}`
+              : 'Suivi des relations · Analytics Pro'}
+          </div>
         </button>
 
         <button onClick={openRunMatch} className="relative overflow-hidden rounded-3xl surface-hero p-3.5 text-left text-white shadow-float tap">

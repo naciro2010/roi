@@ -9,9 +9,10 @@ import { CURRENT_USER } from '../data/user'
 import { useSheetDrag } from '../lib/useSheetDrag'
 
 export default function PipelineSheet({ onClose }) {
-  const { pipeline, advanceDeal, openMember } = useApp()
+  const { pipeline, advanceDeal, openMember, hasFeature, openPlans } = useApp()
   const drag = useSheetDrag(onClose)
 
+  const showAnalytics = hasFeature('analytics')
   const stats = pipelineStats(pipeline)
   const me = CURRENT_USER.name
   // Kilomètres « investis » : somme des sorties courues avec les contacts du pipeline.
@@ -47,6 +48,7 @@ export default function PipelineSheet({ onClose }) {
             </div>
           </div>
 
+          {showAnalytics ? (
           <div className="relative mt-4 grid grid-cols-3 gap-2 border-t border-white/12 pt-3">
             {[
               { value: `${stats.value} k€`, label: 'En jeu' },
@@ -59,6 +61,24 @@ export default function PipelineSheet({ onClose }) {
               </div>
             ))}
           </div>
+          ) : (
+            <button
+              onClick={openPlans}
+              className="relative mt-4 flex w-full items-center gap-3 border-t border-white/12 pt-3 text-left tap"
+            >
+              <div className="grid flex-1 grid-cols-3 gap-2 blur-[5px]" aria-hidden="true">
+                {[`${stats.value} k€`, `${kmInvested} km`, stats.total].map((v, i) => (
+                  <div key={i}>
+                    <div className="text-lg font-extrabold tabular-nums leading-none">{v}</div>
+                    <div className="mt-1 h-2.5 w-12 rounded-full bg-white/20" />
+                  </div>
+                ))}
+              </div>
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-fg">
+                <Icon name="lock" className="h-3.5 w-3.5" /> Analytics Pro
+              </span>
+            </button>
+          )}
         </div>
 
         {/* Colonnes (kanban horizontal) */}
@@ -74,7 +94,7 @@ export default function PipelineSheet({ onClose }) {
                   </span>
                   <span className="text-sm font-bold text-fg">{stage.label}</span>
                   <span className="grid h-5 min-w-5 place-items-center rounded-full bg-surface-2 px-1.5 text-[11px] font-bold text-fg-muted">{deals.length}</span>
-                  {colValue > 0 && <span className="ml-auto text-[11px] font-bold tabular-nums text-fg-faint">{colValue} k€</span>}
+                  {showAnalytics && colValue > 0 && <span className="ml-auto text-[11px] font-bold tabular-nums text-fg-faint">{colValue} k€</span>}
                 </div>
 
                 <div className="flex-1 space-y-2.5 overflow-y-auto no-scrollbar pb-2">
@@ -95,7 +115,7 @@ export default function PipelineSheet({ onClose }) {
                             <div className="truncate text-sm font-bold text-fg">{d.name}</div>
                             <div className="truncate text-[12px] text-fg-muted">{d.kind}</div>
                           </div>
-                          {d.value > 0 && (
+                          {showAnalytics && d.value > 0 && (
                             <span className="shrink-0 rounded-full bg-gold-light px-2 py-0.5 text-[11px] font-extrabold text-gold-dark">{d.value} k€</span>
                           )}
                         </button>

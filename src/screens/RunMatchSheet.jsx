@@ -30,11 +30,13 @@ function RunPlan({ plan, compact = false }) {
 }
 
 export default function RunMatchSheet({ onClose }) {
-  const { runMatches, proposeRun, openMember, proposedRuns } = useApp()
+  const { runMatches, proposeRun, openMember, proposedRuns, hasFeature, openPlans } = useApp()
   const drag = useSheetDrag(onClose)
 
+  const unlimited = hasFeature('unlimitedMatches')
   const [top, ...others] = runMatches
-  const rest = others.slice(0, 3)
+  const rest = unlimited ? others.slice(0, 3) : []
+  const lockedCount = unlimited ? 0 : others.length
 
   function ProposeButton({ name, className = '' }) {
     const done = proposedRuns[name]
@@ -154,6 +156,25 @@ export default function RunMatchSheet({ onClose }) {
                 })}
               </div>
             </div>
+          )}
+
+          {lockedCount > 0 && (
+            <button
+              onClick={openPlans}
+              className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-left text-white shadow-float tap"
+            >
+              <div className="absolute inset-0 bg-aurora" />
+              <div className="relative flex items-center gap-3">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/10 text-gold-300">
+                  <Icon name="lock" className="h-5 w-5" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-extrabold">{lockedCount} autre{lockedCount > 1 ? 's' : ''} binôme{lockedCount > 1 ? 's' : ''} pour toi</div>
+                  <p className="text-[12px] text-white/60">RunMatch illimité avec Pro · 1 binôme / semaine en gratuit.</p>
+                </div>
+                <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-fg">Pro</span>
+              </div>
+            </button>
           )}
 
           <p className="flex items-center justify-center gap-1.5 pt-1 text-center text-[11px] text-fg-faint">
