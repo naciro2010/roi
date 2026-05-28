@@ -98,12 +98,12 @@ export default function Courir() {
             <div className="relative overflow-hidden p-5">
               <div className="absolute inset-0 bg-hero-glow" />
               <div className="relative flex items-center gap-4">
-                <ProgressRing value={pct} size={84} stroke={9} color="#AEB8D6" track="rgba(255,255,255,0.14)">
+                <ProgressRing value={pct} size={84} stroke={9} color="#E0C66D" track="rgba(255,255,255,0.14)">
                   <div className="text-xl font-extrabold leading-none">{pct}%</div>
                 </ProgressRing>
                 <div className="flex-1">
                   <div className="flex items-center gap-1.5 text-sm font-bold">
-                    <Icon name="flame" className="h-4 w-4 text-brand-400" filled /> {CHALLENGE.title}
+                    <Icon name="flame" className="h-4 w-4 text-gold-300" filled /> {CHALLENGE.title}
                   </div>
                   <div className="text-2xl font-extrabold">{CHALLENGE.subtitle}</div>
                   <div className="mt-1 text-[13px] text-white/65">
@@ -123,10 +123,10 @@ export default function Courir() {
                     key={p.name}
                     className={`flex items-center gap-3 rounded-xl px-2 py-1.5 ${p.me ? 'bg-brand-500/20 ring-1 ring-brand-400/40' : ''}`}
                   >
-                    <span className={`w-5 text-center text-sm font-bold ${i < 3 ? 'text-brand-400' : 'text-white/40'}`}>{i + 1}</span>
+                    <span className={`w-5 text-center text-sm font-bold ${i < 3 ? 'text-gold-300' : 'text-white/40'}`}>{i + 1}</span>
                     <Avatar name={p.name} size="xs" />
                     <span className={`flex-1 truncate text-sm ${p.me ? 'font-bold text-white' : 'text-white/80'}`}>
-                      {p.name} {p.me && <span className="text-brand-300">· toi</span>}
+                      {p.name} {p.me && <span className="text-gold-300">· toi</span>}
                     </span>
                     <span className="text-sm font-bold text-white/90">{p.km} km</span>
                   </div>

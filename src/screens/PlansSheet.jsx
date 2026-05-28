@@ -93,7 +93,7 @@ export default function PlansSheet({ onClose }) {
                       <div className="flex items-center gap-2">
                         <h3 className="text-lg font-extrabold">{p.name}</h3>
                         {p.badge && (
-                          <span className="rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-white">
+                          <span className="rounded-full bg-gold px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-white">
                             {p.badge}
                           </span>
                         )}
