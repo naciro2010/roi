@@ -47,7 +47,7 @@ export default function Accueil() {
       >
         <div className="absolute inset-0 bg-hero-glow" />
         <div className="relative">
-          <ProgressRing value={u.roi.score} size={62} stroke={6} color="#E0C66D" track="rgba(255,255,255,0.14)">
+          <ProgressRing value={u.roi.score} size={62} stroke={6} color="#FFFFFF" track="rgba(255,255,255,0.14)">
             <div className="text-lg font-extrabold leading-none">{u.roi.score}</div>
           </ProgressRing>
         </div>

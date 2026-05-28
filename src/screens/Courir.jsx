@@ -98,7 +98,7 @@ export default function Courir() {
             <div className="relative overflow-hidden p-5">
               <div className="absolute inset-0 bg-hero-glow" />
               <div className="relative flex items-center gap-4">
-                <ProgressRing value={pct} size={84} stroke={9} color="#E0C66D" track="rgba(255,255,255,0.14)">
+                <ProgressRing value={pct} size={84} stroke={9} color="#FFFFFF" track="rgba(255,255,255,0.14)">
                   <div className="text-xl font-extrabold leading-none">{pct}%</div>
                 </ProgressRing>
                 <div className="flex-1">

@@ -66,7 +66,7 @@ export function ProgressRing({ value, size = 76, stroke = 8, track = 'rgba(255,2
 
 export function MatchRing({ value, size = 44 }) {
   return (
-    <ProgressRing value={value} size={size} stroke={4} track="rgba(20,24,33,0.10)" color="#1F242F">
+    <ProgressRing value={value} size={size} stroke={4} track="rgba(59,91,255,0.14)" color="#3B5BFF">
       <div className="text-[11px] font-extrabold text-fg">{value}</div>
     </ProgressRing>
   )

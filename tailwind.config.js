@@ -5,46 +5,47 @@ export default {
     extend: {
       colors: {
         // ----------------------------------------------------------------
-        // Thème clair premium (sobre, sans à-plat noir).
+        // Thème clair façon Revolut : fond net et froid, surfaces empilées,
+        // accent bleu électrique / indigo vibrant (jamais d'à-plat sombre).
         // Surfaces empilées : canvas < surface-soft < surface (cartes) < 2/3.
         // Tokens sémantiques → l'app peut basculer thème sans changer le code.
         // ----------------------------------------------------------------
-        canvas: '#F6F7FB', // fond de l'app (chaud, off-white)
+        canvas: '#F4F6FD', // fond de l'app (off-white froid, légèrement bleuté)
         surface: {
           DEFAULT: '#FFFFFF', // cartes
-          soft: '#F1F3F8', // tuiles internes / hover / fonds discrets
-          2: '#E8ECF2', // inputs, pistes, pills
-          3: '#FFFFFF', // segment actif (pill blanche sur piste grise)
+          soft: '#EEF1FB', // tuiles internes / hover / fonds discrets
+          2: '#E4E9F6', // inputs, pistes, pills
+          3: '#FFFFFF', // segment actif (pill blanche sur piste claire)
         },
-        // Filets (hairlines) noir translucides pour un rendu « papier ».
+        // Filets (hairlines) translucides froids pour un rendu net.
         line: {
-          DEFAULT: 'rgba(14,19,32,0.08)',
-          strong: 'rgba(14,19,32,0.14)',
+          DEFAULT: 'rgba(17,24,52,0.08)',
+          strong: 'rgba(17,24,52,0.14)',
         },
-        // Texte : du plus contrasté au plus discret.
+        // Texte : du plus contrasté au plus discret (navy froid).
         fg: {
-          DEFAULT: '#0E1320', // primaire, presque noir
-          soft: '#2E3445', // secondaire
-          muted: '#5F6678', // tertiaire
-          faint: '#9098AB', // quaternaire (icônes / placeholders)
+          DEFAULT: '#0B1020', // primaire, navy presque noir
+          soft: '#2A3147', // secondaire
+          muted: '#5C6479', // tertiaire
+          faint: '#8B93AB', // quaternaire (icônes / placeholders)
         },
 
-        // Accent principal : anthracite/graphite. Mono-chrome premium —
-        // l'or champagne reste le seul accent vraiment coloré de l'app.
+        // Accent principal : bleu électrique / indigo (signature Revolut clair).
+        // L'or champagne reste réservé au « premium / Metal ».
         brand: {
-          50: '#ECEEF2',
-          100: '#DCDFE5',
-          200: '#BEC2CD',
-          300: '#8E94A4',
-          400: '#5C6373',
-          500: '#1F242F',
-          600: '#181C25',
-          700: '#12161D',
-          800: '#0C0F14',
-          900: '#06080B',
-          DEFAULT: '#1F242F',
-          dark: '#12161D',
-          light: '#ECEEF2',
+          50: '#ECF0FF',
+          100: '#DCE3FF',
+          200: '#BBC8FF',
+          300: '#93A6FF',
+          400: '#6680FF',
+          500: '#3B5BFF',
+          600: '#2742F0',
+          700: '#1D33C7',
+          800: '#172796',
+          900: '#111D6B',
+          DEFAULT: '#3B5BFF',
+          dark: '#1D33C7',
+          light: '#ECF0FF',
         },
         // Conserve `ink` pour rares usages explicitement « papier sombre ».
         ink: {
@@ -72,25 +73,25 @@ export default {
         sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       boxShadow: {
-        soft: '0 1px 2px rgba(14,17,22,0.04), 0 4px 14px rgba(14,17,22,0.05)',
-        card: '0 1px 2px rgba(14,17,22,0.05), 0 12px 28px -14px rgba(14,17,22,0.14)',
-        float: '0 22px 50px -22px rgba(14,17,22,0.24)',
-        brand: '0 10px 26px -10px rgba(20,24,33,0.38)',
-        ring: '0 40px 90px -30px rgba(14,17,22,0.30)',
+        soft: '0 1px 2px rgba(17,24,52,0.04), 0 4px 14px rgba(17,24,52,0.06)',
+        card: '0 1px 2px rgba(17,24,52,0.05), 0 12px 28px -14px rgba(17,24,52,0.16)',
+        float: '0 22px 50px -22px rgba(17,24,52,0.26)',
+        brand: '0 12px 30px -10px rgba(59,91,255,0.45)',
+        ring: '0 40px 90px -30px rgba(17,24,52,0.32)',
       },
       backgroundImage: {
-        // Halo discret derrière le « téléphone » (desktop) : ambient or.
+        // Halo discret derrière le « téléphone » (desktop) : ambient bleu/violet.
         mesh:
-          'radial-gradient(60% 50% at 12% 0%, rgba(184,144,47,0.08) 0%, rgba(184,144,47,0) 60%), radial-gradient(55% 55% at 92% 100%, rgba(14,17,22,0.05) 0%, rgba(14,17,22,0) 60%)',
-        // Lueur ajoutée sur les cartes « héros » graphite : top highlight + vignette.
+          'radial-gradient(60% 50% at 12% 0%, rgba(59,91,255,0.12) 0%, rgba(59,91,255,0) 60%), radial-gradient(55% 55% at 92% 100%, rgba(138,85,255,0.10) 0%, rgba(138,85,255,0) 60%)',
+        // Lueur sur les cartes « héros » bleu/violet : top highlight + vignette douce.
         'hero-glow':
-          'radial-gradient(120% 90% at 82% -12%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 55%), radial-gradient(90% 80% at 0% 112%, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0) 60%)',
-        // Aurora premium : highlight blanc + nappe or champagne sur graphite.
+          'radial-gradient(120% 90% at 82% -12%, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0) 55%), radial-gradient(90% 80% at 0% 112%, rgba(8,12,40,0.20) 0%, rgba(8,12,40,0) 60%)',
+        // Aurora : highlight blanc + pop cyan électrique (carte façon Revolut).
         aurora:
-          'radial-gradient(70% 60% at 12% 2%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 60%), radial-gradient(60% 70% at 92% 6%, rgba(224,198,109,0.20) 0%, rgba(224,198,109,0) 58%), radial-gradient(80% 80% at 78% 112%, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 60%)',
-        // Filet doré discret pour les surfaces « premium ».
+          'radial-gradient(70% 60% at 12% 2%, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0) 60%), radial-gradient(60% 70% at 92% 6%, rgba(0,224,255,0.26) 0%, rgba(0,224,255,0) 58%), radial-gradient(80% 80% at 78% 112%, rgba(168,120,255,0.22) 0%, rgba(168,120,255,0) 60%)',
+        // Filet doré discret pour les surfaces « premium / Metal ».
         'gold-sheen':
-          'linear-gradient(135deg, rgba(184,144,47,0.10) 0%, rgba(184,144,47,0) 42%), radial-gradient(60% 80% at 90% 0%, rgba(224,198,109,0.20) 0%, rgba(224,198,109,0) 60%)',
+          'linear-gradient(135deg, rgba(184,144,47,0.12) 0%, rgba(184,144,47,0) 42%), radial-gradient(60% 80% at 90% 0%, rgba(224,198,109,0.22) 0%, rgba(224,198,109,0) 60%)',
       },
       keyframes: {
         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
