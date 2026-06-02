@@ -5,49 +5,49 @@ export default {
     extend: {
       colors: {
         // ----------------------------------------------------------------
-        // Thème clair façon Apple : neutre, sobre, haut de gamme.
-        // Gris clair signature, texte quasi-noir, accent graphite/noir
-        // (aucune couleur flashy). Surfaces empilées :
+        // Identité « exécutive » : bleu encre profond (navy) + neutres frais +
+        // or champagne en accent premium. Sobre et jamais flashy, mais plus
+        // clair, chaleureux et raffiné qu'un pur graphite. Surfaces empilées :
         // canvas < surface-soft < surface (cartes) < 2/3.
         // Tokens sémantiques → l'app peut basculer thème sans changer le code.
         // ----------------------------------------------------------------
-        canvas: '#F5F5F7', // fond de l'app (gris clair Apple)
+        canvas: '#F4F6FA', // fond de l'app (gris bleuté très clair)
         surface: {
           DEFAULT: '#FFFFFF', // cartes
-          soft: '#EFEFF2', // tuiles internes / hover / fonds discrets
-          2: '#E8E8ED', // inputs, pistes, pills
+          soft: '#EDF0F6', // tuiles internes / hover / fonds discrets
+          2: '#E5E9F1', // inputs, pistes, pills
           3: '#FFFFFF', // segment actif (pill blanche sur piste claire)
         },
-        // Filets (hairlines) neutres translucides pour un rendu net et discret.
+        // Filets (hairlines) : bleu encre très dilué, net et discret.
         line: {
-          DEFAULT: 'rgba(0,0,0,0.08)',
-          strong: 'rgba(0,0,0,0.14)',
+          DEFAULT: 'rgba(20,33,61,0.10)',
+          strong: 'rgba(20,33,61,0.16)',
         },
-        // Texte : du plus contrasté au plus discret (neutres Apple).
+        // Texte : quasi-noir à très légère âme bleutée, du plus contrasté au plus discret.
         fg: {
-          DEFAULT: '#1D1D1F', // primaire, quasi-noir
-          soft: '#3A3A3C', // secondaire
-          muted: '#6E6E73', // tertiaire
-          faint: '#A1A1A6', // quaternaire (icônes / placeholders)
+          DEFAULT: '#1A1F2B', // primaire, quasi-noir bleuté
+          soft: '#3A4151', // secondaire
+          muted: '#697086', // tertiaire
+          faint: '#9AA1B2', // quaternaire (icônes / placeholders)
         },
 
-        // Accent principal : graphite/noir. Monochrome sobre et premium —
-        // boutons noirs élégants, jamais de couleur vive. L'or reste réservé
-        // au « premium / Metal », en touche très discrète.
+        // Accent principal : bleu encre profond (navy). Élégant, sérieux,
+        // jamais vif — boutons & états actifs. L'or champagne reste l'accent
+        // premium ; ensemble navy + or = un duo « exécutif » haut de gamme.
         brand: {
-          50: '#F2F2F4',
-          100: '#E4E4E7',
-          200: '#C9C9CF',
-          300: '#9A9AA2',
-          400: '#5C5C63',
-          500: '#1D1D1F',
-          600: '#161617',
-          700: '#0F0F10',
-          800: '#0A0A0B',
-          900: '#000000',
-          DEFAULT: '#1D1D1F',
-          dark: '#000000',
-          light: '#F2F2F4',
+          50: '#EDF1F8',
+          100: '#DCE3F0',
+          200: '#B7C4DE',
+          300: '#8493B6',
+          400: '#465579',
+          500: '#243352',
+          600: '#1D2A45',
+          700: '#162036',
+          800: '#101829',
+          900: '#0A1019',
+          DEFAULT: '#243352',
+          dark: '#101829',
+          light: '#EDF1F8',
         },
         // Conserve `ink` pour rares usages explicitement « papier sombre ».
         ink: {
@@ -90,9 +90,9 @@ export default {
         ring: '0 36px 80px -34px rgba(0,0,0,0.24)',
       },
       backgroundImage: {
-        // Halo neutre très discret derrière le « téléphone » (desktop).
+        // Halo bleu encre très discret en arrière-plan (desktop).
         mesh:
-          'radial-gradient(60% 50% at 12% 0%, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 60%), radial-gradient(55% 55% at 92% 100%, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0) 60%)',
+          'radial-gradient(60% 50% at 12% 0%, rgba(20,33,61,0.06) 0%, rgba(20,33,61,0) 60%), radial-gradient(55% 55% at 92% 100%, rgba(20,33,61,0.05) 0%, rgba(20,33,61,0) 60%)',
         // Lueur sur les cartes « héros » graphite : top highlight + vignette douce.
         'hero-glow':
           'radial-gradient(120% 90% at 82% -12%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 55%), radial-gradient(90% 80% at 0% 112%, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0) 60%)',
