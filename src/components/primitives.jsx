@@ -90,7 +90,7 @@ export function CompatBars({ parts, className = '' }) {
 
 export function MatchRing({ value, size = 44 }) {
   return (
-    <ProgressRing value={value} size={size} stroke={4} track="rgba(124,45,84,0.14)" color="#7C2D54">
+    <ProgressRing value={value} size={size} stroke={4} track="rgba(10,102,194,0.14)" color="#0A66C2">
       <div className="text-[11px] font-bold text-fg">{value}</div>
     </ProgressRing>
   )

@@ -5,52 +5,51 @@ export default {
     extend: {
       colors: {
         // ----------------------------------------------------------------
-        // Style Strava (mise en page, surfaces empilées, rayons serrés, ombres
-        // discrètes) mais identité chromatique PROPRE : un prune / bordeaux
-        // désaturé (#7C2D54) comme signal d'action et de marque — rare, premium,
-        // chaud sans être flashy. Posé sur des neutres froids très clairs
-        // (presque blancs) pour que les cartes ressortent et que les données
+        // Identité chromatique PROFESSIONNELLE façon LinkedIn : un bleu corporate
+        // franc (#0A66C2) comme signal d'action et de marque — sérieux, fiable,
+        // « business ». Posé sur un fond chaud très clair (#F4F2EE, le gris-beige
+        // LinkedIn) pour que les cartes blanches ressortent et que les données
         // respirent. Surfaces empilées : canvas < surface-soft < surface
         // (cartes) < 2/3. Tokens sémantiques → l'app peut rethémer sans toucher
         // au code des écrans.
         // ----------------------------------------------------------------
-        canvas: '#F2F2F4', // fond de l'app (gris froid très clair, presque blanc)
+        canvas: '#F4F2EE', // fond de l'app (gris-beige chaud LinkedIn)
         surface: {
           DEFAULT: '#FFFFFF', // cartes
-          soft: '#F2F2F4', // tuiles internes / hover / fonds discrets
-          2: '#E7E7EC', // inputs, pistes, pills
+          soft: '#F4F2EE', // tuiles internes / hover / fonds discrets
+          2: '#E9E5DF', // inputs, pistes, pills
           3: '#FFFFFF', // segment actif (pill blanche sur piste claire)
         },
         // Filets (hairlines) : gris neutre dilué, net et discret.
         line: {
-          DEFAULT: 'rgba(20,20,28,0.09)',
-          strong: 'rgba(20,20,28,0.15)',
+          DEFAULT: 'rgba(0,0,0,0.08)',
+          strong: 'rgba(0,0,0,0.15)',
         },
-        // Texte : quasi-noir neutre « Strava », du plus contrasté au plus discret.
+        // Texte : noir LinkedIn, du plus contrasté au plus discret.
         fg: {
-          DEFAULT: '#242428', // primaire, quasi-noir neutre
-          soft: '#46464E', // secondaire
-          muted: '#6D6D78', // tertiaire
-          faint: '#A0A0AB', // quaternaire (icônes / placeholders)
+          DEFAULT: '#1D1D1F', // primaire, quasi-noir
+          soft: '#404145', // secondaire
+          muted: '#6A6D73', // tertiaire
+          faint: '#9A9DA3', // quaternaire (icônes / placeholders)
         },
 
-        // Accent principal : prune / bordeaux désaturé. Profond, élégant, à fort
-        // caractère — boutons, états actifs, kudos. C'est LE signal de marque.
+        // Accent principal : bleu LinkedIn. Franc, professionnel, rassurant —
+        // boutons, états actifs, liens, kudos. C'est LE signal de marque.
         // L'or reste un accent « récompense / premium » discret (médailles, abo).
         brand: {
-          50: '#FAF0F4',
-          100: '#F4DCE6',
-          200: '#E8B6CC',
-          300: '#D585A8',
-          400: '#B45680',
-          500: '#7C2D54',
-          600: '#6E2849',
-          700: '#5E1F40',
-          800: '#4A1832',
-          900: '#341022',
-          DEFAULT: '#7C2D54',
-          dark: '#5E1F40',
-          light: '#F4E6EC',
+          50: '#EAF2FB',
+          100: '#D2E3F7',
+          200: '#A6C8EF',
+          300: '#6FA8E4',
+          400: '#3585D4',
+          500: '#0A66C2',
+          600: '#0958A8',
+          700: '#004182',
+          800: '#003366',
+          900: '#00264D',
+          DEFAULT: '#0A66C2',
+          dark: '#004182',
+          light: '#E8F1FB',
         },
         // Conserve `ink` pour rares usages explicitement « papier sombre ».
         ink: {
@@ -90,20 +89,20 @@ export default {
         soft: '0 1px 2px rgba(0,0,0,0.04), 0 3px 10px rgba(0,0,0,0.04)',
         card: '0 1px 2px rgba(0,0,0,0.04), 0 10px 22px -16px rgba(0,0,0,0.12)',
         float: '0 16px 38px -20px rgba(0,0,0,0.20)',
-        // Ombre teintée prune sous les boutons/marque pour un relief soigné.
-        brand: '0 10px 22px -12px rgba(124,45,84,0.50)',
+        // Ombre teintée bleue sous les boutons/marque pour un relief soigné.
+        brand: '0 10px 22px -12px rgba(10,102,194,0.50)',
         ring: '0 36px 80px -34px rgba(0,0,0,0.24)',
       },
       backgroundImage: {
-        // Halo prune très discret en arrière-plan (desktop).
+        // Halo bleu très discret en arrière-plan (desktop).
         mesh:
-          'radial-gradient(60% 50% at 12% 0%, rgba(124,45,84,0.06) 0%, rgba(124,45,84,0) 60%), radial-gradient(55% 55% at 92% 100%, rgba(124,45,84,0.05) 0%, rgba(124,45,84,0) 60%)',
-        // Lueur sur les cartes « héros » prune : top highlight + vignette profonde.
+          'radial-gradient(60% 50% at 12% 0%, rgba(10,102,194,0.06) 0%, rgba(10,102,194,0) 60%), radial-gradient(55% 55% at 92% 100%, rgba(10,102,194,0.05) 0%, rgba(10,102,194,0) 60%)',
+        // Lueur sur les cartes « héros » bleues : top highlight + vignette profonde.
         'hero-glow':
-          'radial-gradient(120% 90% at 82% -12%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 55%), radial-gradient(90% 80% at 0% 112%, rgba(52,16,34,0.34) 0%, rgba(52,16,34,0) 60%)',
-        // Aurora : highlights subtils (clair + rosé) sur le prune de marque.
+          'radial-gradient(120% 90% at 82% -12%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 55%), radial-gradient(90% 80% at 0% 112%, rgba(0,38,77,0.34) 0%, rgba(0,38,77,0) 60%)',
+        // Aurora : highlights subtils (clair + bleu ciel) sur le bleu de marque.
         aurora:
-          'radial-gradient(70% 60% at 12% 2%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 60%), radial-gradient(60% 70% at 92% 6%, rgba(232,150,180,0.18) 0%, rgba(232,150,180,0) 58%), radial-gradient(80% 80% at 78% 112%, rgba(52,16,34,0.24) 0%, rgba(52,16,34,0) 60%)',
+          'radial-gradient(70% 60% at 12% 2%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 60%), radial-gradient(60% 70% at 92% 6%, rgba(150,196,242,0.20) 0%, rgba(150,196,242,0) 58%), radial-gradient(80% 80% at 78% 112%, rgba(0,38,77,0.24) 0%, rgba(0,38,77,0) 60%)',
         // Filet doré très discret pour les surfaces « premium / médaille ».
         'gold-sheen':
           'linear-gradient(135deg, rgba(199,154,46,0.12) 0%, rgba(199,154,46,0) 42%), radial-gradient(60% 80% at 90% 0%, rgba(231,199,102,0.20) 0%, rgba(231,199,102,0) 60%)',
