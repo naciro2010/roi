@@ -17,6 +17,7 @@ export default function Profil() {
     openIntegrations, integrations, profile, resetDemo,
     plan, planMeta, openPlans, openInvite, referralJoined,
     meetings, openAgenda, insights, rankedMatches, openMember,
+    eco, toggleEco,
   } = useApp()
   const topMatch = rankedMatches?.[0]
   const u = CURRENT_USER
@@ -94,7 +95,7 @@ export default function Profil() {
           </div>
         </div>
 
-        <div className="mt-4 space-y-4">
+        <div className="mt-3 space-y-3">
           {/* À propos */}
           {profile.bio && (
             <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
@@ -395,6 +396,57 @@ export default function Profil() {
               <div className="text-xs text-fg-faint">Membre de</div>
               <div className="font-semibold text-fg">{u.community}</div>
             </div>
+          </section>
+
+          {/* Numérique responsable */}
+          <section className="overflow-hidden rounded-3xl border border-line bg-surface p-4 shadow-soft">
+            <div className="flex items-center gap-2">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-success-light text-success-dark">
+                <Icon name="leaf" className="h-5 w-5" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-base font-semibold text-fg">Numérique responsable</h2>
+                <p className="text-[12px] text-fg-muted">Conçu pour consommer moins, sans rien sacrifier.</p>
+              </div>
+            </div>
+
+            {/* Mode sobriété — toggle */}
+            <button
+              onClick={toggleEco}
+              role="switch"
+              aria-checked={eco}
+              aria-label="Mode sobriété"
+              className="mt-3 flex w-full items-center gap-3 rounded-2xl bg-surface-soft p-3 text-left tap"
+            >
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-semibold text-fg">Mode sobriété</div>
+                <p className="text-[12px] leading-snug text-fg-muted">
+                  Cartes allégées et effets coupés — moins de données, plus d’autonomie.
+                </p>
+              </div>
+              <span
+                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${eco ? 'bg-success' : 'bg-surface-2'}`}
+              >
+                <span
+                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-soft transition-all duration-200 ${eco ? 'left-[22px]' : 'left-0.5'}`}
+                />
+              </span>
+            </button>
+
+            {/* Mesures d'éco-conception en place */}
+            <ul className="mt-3 space-y-2">
+              {[
+                'Polices système : zéro police web téléchargée',
+                'Cartes & écrans chargés à la demande',
+                'Aucun pisteur ni cookie publicitaire',
+                'Animations réduites selon tes préférences système',
+              ].map((m) => (
+                <li key={m} className="flex items-start gap-2 text-[12.5px] text-fg-soft">
+                  <Icon name="check" className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+                  {m}
+                </li>
+              ))}
+            </ul>
           </section>
 
           {/* Réglages */}

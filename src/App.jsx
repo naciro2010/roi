@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { lazy, Suspense, useMemo, useState } from 'react'
 import { AppContext } from './AppContext'
 import { usePersistentState, clearPersistedState } from './lib/usePersistentState'
 import {
@@ -23,23 +23,27 @@ import BottomNav from './components/BottomNav'
 import PostComposer from './components/PostComposer'
 
 import Accueil from './screens/Accueil'
-import Reseau from './screens/Reseau'
-import Courir from './screens/Courir'
-import Messages from './screens/Messages'
-import Profil from './screens/Profil'
-import MemberSheet from './screens/MemberSheet'
-import ActivitySheet from './screens/ActivitySheet'
-import EventSheet from './screens/EventSheet'
-import Onboarding from './screens/Onboarding'
-import EditProfileSheet from './screens/EditProfileSheet'
-import RoiInfoSheet from './screens/RoiInfoSheet'
-import GlobalSearch from './screens/GlobalSearch'
-import IntegrationsSheet from './screens/IntegrationsSheet'
-import AgendaSheet from './screens/AgendaSheet'
-import PlansSheet from './screens/PlansSheet'
-import InviteSheet from './screens/InviteSheet'
-import PipelineSheet from './screens/PipelineSheet'
-import RunMatchSheet from './screens/RunMatchSheet'
+
+/* Éco-conception : seul l'écran d'accueil est dans le bundle initial. Les autres
+   écrans et tous les overlays (fiches, réglages, sheets) sont chargés à la
+   demande — moins de JS à télécharger, parser et exécuter au démarrage. */
+const Reseau = lazy(() => import('./screens/Reseau'))
+const Courir = lazy(() => import('./screens/Courir'))
+const Messages = lazy(() => import('./screens/Messages'))
+const Profil = lazy(() => import('./screens/Profil'))
+const MemberSheet = lazy(() => import('./screens/MemberSheet'))
+const ActivitySheet = lazy(() => import('./screens/ActivitySheet'))
+const EventSheet = lazy(() => import('./screens/EventSheet'))
+const Onboarding = lazy(() => import('./screens/Onboarding'))
+const EditProfileSheet = lazy(() => import('./screens/EditProfileSheet'))
+const RoiInfoSheet = lazy(() => import('./screens/RoiInfoSheet'))
+const GlobalSearch = lazy(() => import('./screens/GlobalSearch'))
+const IntegrationsSheet = lazy(() => import('./screens/IntegrationsSheet'))
+const AgendaSheet = lazy(() => import('./screens/AgendaSheet'))
+const PlansSheet = lazy(() => import('./screens/PlansSheet'))
+const InviteSheet = lazy(() => import('./screens/InviteSheet'))
+const PipelineSheet = lazy(() => import('./screens/PipelineSheet'))
+const RunMatchSheet = lazy(() => import('./screens/RunMatchSheet'))
 import { INITIAL_PIPELINE, shiftStage, stageMeta } from './data/pipeline'
 import { suggestRun } from './lib/runmatch'
 import { SERVICES } from './data/integrations'
@@ -65,9 +69,34 @@ const INITIAL_SIGNALS = ['Yanis Benali', 'Sarah Khalil'].reduce(
   recordSignal(EMPTY_SIGNALS, { type: 'like', name: 'Yanis Benali' }),
 )
 
+/* Détecte une préférence de sobriété côté système : « économiseur de données »
+   ou « prefers-reduced-data ». Si l'utilisateur l'a demandée, on démarre en
+   Mode sobriété par défaut (il reste débrayable dans le profil). */
+function detectEcoDefault() {
+  try {
+    if (navigator.connection?.saveData) return true
+    if (window.matchMedia?.('(prefers-reduced-data: reduce)')?.matches) return true
+  } catch { /* API indisponible */ }
+  return false
+}
+
+/* Placeholder discret le temps qu'un écran chargé à la demande arrive. */
+function ScreenFallback() {
+  return (
+    <div className="flex flex-1 items-center justify-center" aria-busy="true">
+      <span className="h-7 w-7 animate-spin rounded-full border-2 border-line-strong border-t-transparent" />
+      <span className="sr-only">Chargement…</span>
+    </div>
+  )
+}
+
 export default function App() {
   const [tab, setTab] = useState('accueil')
   const [toast, setToast] = useState(null)
+
+  // Mode sobriété (numérique responsable) : allège les cartes (pas de tuiles
+  // réseau, le tracé GPS reste), coupe les effets gourmands en GPU/énergie.
+  const [eco, setEco] = usePersistentState('eco', detectEcoDefault())
 
   // Overlays
   const [member, setMember] = useState(null)
@@ -381,6 +410,14 @@ export default function App() {
     window.location.reload()
   }
 
+  function toggleEco() {
+    setEco((on) => {
+      const next = !on
+      showToast(next ? 'Mode sobriété activé 🌿' : 'Mode sobriété désactivé')
+      return next
+    })
+  }
+
   function toggleIntegration(id) {
     setIntegrations((prev) => {
       const next = !prev[id]
@@ -502,6 +539,8 @@ export default function App() {
     newGroupName, setNewGroupName, createGroup, joinedGroups, joinGroup,
     messageMember,
     profile, updateProfile,
+    // Numérique responsable — mode sobriété
+    eco, toggleEco,
     replayOnboarding: () => setOnboarding(true),
     resetDemo,
   }
@@ -565,7 +604,7 @@ export default function App() {
 
   return (
     <AppContext.Provider value={ctx}>
-      <div className="flex min-h-[100dvh] w-full items-center justify-center bg-canvas bg-mesh sm:py-8">
+      <div className={`flex min-h-[100dvh] w-full items-center justify-center bg-canvas bg-mesh sm:py-8 ${eco ? 'eco' : ''}`}>
         <div className="relative flex h-[100dvh] w-full max-w-[420px] flex-col overflow-hidden bg-canvas shadow-ring sm:h-[860px] sm:max-h-[94vh] sm:rounded-[2.75rem] sm:ring-[10px] sm:ring-ink-950/90">
           <div className="pointer-events-none absolute left-1/2 top-2 z-30 hidden h-7 w-28 -translate-x-1/2 rounded-full bg-ink-950 sm:block" />
 
@@ -593,7 +632,9 @@ export default function App() {
             </header>
           )}
 
-          <main className="relative flex flex-1 flex-col overflow-hidden">{renderScreen()}</main>
+          <main className="relative flex flex-1 flex-col overflow-hidden">
+            <Suspense fallback={<ScreenFallback />}>{renderScreen()}</Suspense>
+          </main>
 
           {toast && (
             <div
@@ -604,25 +645,29 @@ export default function App() {
             </div>
           )}
 
-          {searchOpen && <GlobalSearch onClose={() => setSearchOpen(false)} />}
-          {plansOpen && <PlansSheet onClose={() => setPlansOpen(false)} />}
-          {inviteOpen && <InviteSheet onClose={() => setInviteOpen(false)} />}
-          {agendaOpen && <AgendaSheet onClose={() => setAgendaOpen(false)} />}
-          {pipelineOpen && <PipelineSheet onClose={() => setPipelineOpen(false)} />}
-          {runMatchOpen && <RunMatchSheet onClose={() => setRunMatchOpen(false)} />}
-          {member && <MemberSheet name={member} onClose={() => setMember(null)} />}
-          {activityId && <ActivitySheet id={activityId} onClose={() => setActivityId(null)} />}
-          {eventId && <EventSheet id={eventId} onClose={() => setEventId(null)} />}
-          {editProfileOpen && <EditProfileSheet onClose={() => setEditProfileOpen(false)} />}
-          {roiInfoOpen && <RoiInfoSheet onClose={() => setRoiInfoOpen(false)} />}
-          {integrationsOpen && <IntegrationsSheet onClose={() => setIntegrationsOpen(false)} />}
+          <Suspense fallback={null}>
+            {searchOpen && <GlobalSearch onClose={() => setSearchOpen(false)} />}
+            {plansOpen && <PlansSheet onClose={() => setPlansOpen(false)} />}
+            {inviteOpen && <InviteSheet onClose={() => setInviteOpen(false)} />}
+            {agendaOpen && <AgendaSheet onClose={() => setAgendaOpen(false)} />}
+            {pipelineOpen && <PipelineSheet onClose={() => setPipelineOpen(false)} />}
+            {runMatchOpen && <RunMatchSheet onClose={() => setRunMatchOpen(false)} />}
+            {member && <MemberSheet name={member} onClose={() => setMember(null)} />}
+            {activityId && <ActivitySheet id={activityId} onClose={() => setActivityId(null)} />}
+            {eventId && <EventSheet id={eventId} onClose={() => setEventId(null)} />}
+            {editProfileOpen && <EditProfileSheet onClose={() => setEditProfileOpen(false)} />}
+            {roiInfoOpen && <RoiInfoSheet onClose={() => setRoiInfoOpen(false)} />}
+            {integrationsOpen && <IntegrationsSheet onClose={() => setIntegrationsOpen(false)} />}
+          </Suspense>
           <PostComposer open={composerOpen} onClose={() => setComposerOpen(false)} onPublish={publishPost} />
           <NotifDrawer />
           {onboarding && (
-            <Onboarding
-              onClose={finishOnboarding}
-              onEditProfile={() => { finishOnboarding(); goTo('profil'); setEditProfileOpen(true) }}
-            />
+            <Suspense fallback={null}>
+              <Onboarding
+                onClose={finishOnboarding}
+                onEditProfile={() => { finishOnboarding(); goTo('profil'); setEditProfileOpen(true) }}
+              />
+            </Suspense>
           )}
 
           <BottomNav active={tab} onChange={goTo} unread={navUnread} />
