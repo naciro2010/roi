@@ -11,43 +11,43 @@ export default {
         // canvas < surface-soft < surface (cartes) < 2/3.
         // Tokens sémantiques → l'app peut basculer thème sans changer le code.
         // ----------------------------------------------------------------
-        canvas: '#F4F6FA', // fond de l'app (gris bleuté très clair)
+        canvas: '#F4F7F4', // fond de l'app (gris vert très clair, aéré)
         surface: {
           DEFAULT: '#FFFFFF', // cartes
-          soft: '#EDF0F6', // tuiles internes / hover / fonds discrets
-          2: '#E5E9F1', // inputs, pistes, pills
+          soft: '#EAF0EC', // tuiles internes / hover / fonds discrets
+          2: '#E1E9E3', // inputs, pistes, pills
           3: '#FFFFFF', // segment actif (pill blanche sur piste claire)
         },
-        // Filets (hairlines) : bleu encre très dilué, net et discret.
+        // Filets (hairlines) : vert sapin très dilué, net et discret.
         line: {
-          DEFAULT: 'rgba(20,33,61,0.10)',
-          strong: 'rgba(20,33,61,0.16)',
+          DEFAULT: 'rgba(20,45,35,0.10)',
+          strong: 'rgba(20,45,35,0.16)',
         },
-        // Texte : quasi-noir à très légère âme bleutée, du plus contrasté au plus discret.
+        // Texte : quasi-noir à très légère âme verte, du plus contrasté au plus discret.
         fg: {
-          DEFAULT: '#1A1F2B', // primaire, quasi-noir bleuté
-          soft: '#3A4151', // secondaire
-          muted: '#697086', // tertiaire
-          faint: '#9AA1B2', // quaternaire (icônes / placeholders)
+          DEFAULT: '#1A201D', // primaire, quasi-noir verdâtre
+          soft: '#3A423E', // secondaire
+          muted: '#69716C', // tertiaire
+          faint: '#9AA29C', // quaternaire (icônes / placeholders)
         },
 
-        // Accent principal : bleu encre profond (navy). Élégant, sérieux,
-        // jamais vif — boutons & états actifs. L'or champagne reste l'accent
-        // premium ; ensemble navy + or = un duo « exécutif » haut de gamme.
+        // Accent principal : vert sapin profond. Élégant, sérieux, jamais vif —
+        // boutons & états actifs. L'or champagne reste l'accent premium ;
+        // ensemble sapin + or = un duo « exécutif » haut de gamme.
         brand: {
-          50: '#EDF1F8',
-          100: '#DCE3F0',
-          200: '#B7C4DE',
-          300: '#8493B6',
-          400: '#465579',
-          500: '#243352',
-          600: '#1D2A45',
-          700: '#162036',
-          800: '#101829',
-          900: '#0A1019',
-          DEFAULT: '#243352',
-          dark: '#101829',
-          light: '#EDF1F8',
+          50: '#ECF2EE',
+          100: '#D5E2DB',
+          200: '#ABC2B7',
+          300: '#769A89',
+          400: '#3F6151',
+          500: '#1F3D33',
+          600: '#19332A',
+          700: '#132820',
+          800: '#0E1F18',
+          900: '#091410',
+          DEFAULT: '#1F3D33',
+          dark: '#0E1F18',
+          light: '#ECF2EE',
         },
         // Conserve `ink` pour rares usages explicitement « papier sombre ».
         ink: {
@@ -63,8 +63,9 @@ export default {
           900: '#10141F',
           950: '#0A0D14',
         },
-        // Vert sobre = « validé / fait ».
-        success: { 300: '#6FCC9A', DEFAULT: '#2E7D5A', light: '#E6F3EC', dark: '#1B5C42' },
+        // Émeraude net = « validé / fait » — volontairement plus clair et vif que
+        // le sapin de marque pour rester un signal positif distinct.
+        success: { 300: '#66CFA0', DEFAULT: '#228B5E', light: '#E4F4EC', dark: '#18664A' },
         // Rose désaturé = « j'aime » (kudos likés).
         like: { DEFAULT: '#C2596A', light: '#F8E8EA' },
         // Or champagne = accent « premium / abonnement ».
@@ -90,9 +91,9 @@ export default {
         ring: '0 36px 80px -34px rgba(0,0,0,0.24)',
       },
       backgroundImage: {
-        // Halo bleu encre très discret en arrière-plan (desktop).
+        // Halo vert sapin très discret en arrière-plan (desktop).
         mesh:
-          'radial-gradient(60% 50% at 12% 0%, rgba(20,33,61,0.06) 0%, rgba(20,33,61,0) 60%), radial-gradient(55% 55% at 92% 100%, rgba(20,33,61,0.05) 0%, rgba(20,33,61,0) 60%)',
+          'radial-gradient(60% 50% at 12% 0%, rgba(20,45,35,0.06) 0%, rgba(20,45,35,0) 60%), radial-gradient(55% 55% at 92% 100%, rgba(20,45,35,0.05) 0%, rgba(20,45,35,0) 60%)',
         // Lueur sur les cartes « héros » graphite : top highlight + vignette douce.
         'hero-glow':
           'radial-gradient(120% 90% at 82% -12%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 55%), radial-gradient(90% 80% at 0% 112%, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0) 60%)',
