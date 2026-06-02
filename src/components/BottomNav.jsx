@@ -10,7 +10,7 @@ export const TABS = [
 
 export default function BottomNav({ active, onChange, unread }) {
   return (
-    <nav className="glass z-20 shrink-0 border-t border-line px-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1.5">
+    <nav className="glass z-20 shrink-0 border-t border-line px-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1.5 lg:hidden">
       <div className="flex items-stretch justify-between">
         {TABS.map((tab) => {
           const isActive = active === tab.id

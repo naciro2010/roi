@@ -20,6 +20,7 @@ import Icon from './components/Icon'
 import { Avatar } from './components/Avatar'
 import { Logo, PILL_TONES } from './components/primitives'
 import BottomNav from './components/BottomNav'
+import Sidebar from './components/Sidebar'
 import PostComposer from './components/PostComposer'
 
 import Accueil from './screens/Accueil'
@@ -604,12 +605,23 @@ export default function App() {
 
   return (
     <AppContext.Provider value={ctx}>
-      <div className={`flex min-h-[100dvh] w-full items-center justify-center bg-canvas bg-mesh sm:py-8 ${eco ? 'eco' : ''}`}>
-        <div className="relative flex h-[100dvh] w-full max-w-[420px] flex-col overflow-hidden bg-canvas shadow-ring sm:h-[860px] sm:max-h-[94vh] sm:rounded-[2.75rem] sm:ring-[10px] sm:ring-ink-950/90">
-          <div className="pointer-events-none absolute left-1/2 top-2 z-30 hidden h-7 w-28 -translate-x-1/2 rounded-full bg-ink-950 sm:block" />
+      <div className={`relative flex h-[100dvh] w-full justify-center overflow-hidden bg-canvas bg-mesh ${eco ? 'eco' : ''}`}>
+        {/* Navigation latérale (desktop) — remplace la BottomNav sur grand écran. */}
+        <Sidebar
+          active={tab}
+          onChange={goTo}
+          unread={navUnread}
+          unreadNotif={unreadNotif}
+          onSearch={() => setSearchOpen(true)}
+          onNotif={() => setNotifOpen(true)}
+        />
+
+        {/* Colonne de contenu : pleine largeur sur mobile, colonne centrée et
+            confortable sur bureau (vrai layout web, sans maquette « téléphone »). */}
+        <div className="relative flex h-full w-full max-w-[480px] flex-col overflow-hidden bg-canvas lg:max-w-[640px] lg:border-x lg:border-line">
 
           {showHeader && (
-            <header className="glass z-20 flex shrink-0 items-center justify-between border-b border-line px-5 pb-3 pt-4 sm:pt-7">
+            <header className="glass z-20 flex shrink-0 items-center justify-between border-b border-line px-5 pb-3 pt-[max(1rem,env(safe-area-inset-top))] lg:hidden">
               <Logo />
               <div className="flex items-center gap-1">
                 <button
@@ -661,17 +673,19 @@ export default function App() {
           </Suspense>
           <PostComposer open={composerOpen} onClose={() => setComposerOpen(false)} onPublish={publishPost} />
           <NotifDrawer />
-          {onboarding && (
-            <Suspense fallback={null}>
-              <Onboarding
-                onClose={finishOnboarding}
-                onEditProfile={() => { finishOnboarding(); goTo('profil'); setEditProfileOpen(true) }}
-              />
-            </Suspense>
-          )}
 
           <BottomNav active={tab} onChange={goTo} unread={navUnread} />
         </div>
+
+        {/* Onboarding plein écran (couvre toute la fenêtre, sidebar incluse). */}
+        {onboarding && (
+          <Suspense fallback={null}>
+            <Onboarding
+              onClose={finishOnboarding}
+              onEditProfile={() => { finishOnboarding(); goTo('profil'); setEditProfileOpen(true) }}
+            />
+          </Suspense>
+        )}
       </div>
     </AppContext.Provider>
   )

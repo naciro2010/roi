@@ -99,8 +99,10 @@ moins de données, d'énergie et de requêtes possible, sans rogner sur l'expér
 ## Stack
 
 React 18 · Vite · Tailwind CSS · Leaflet (cartes). Données fictives, aucune dépendance back-end.
-PWA installable (manifest + icône, `display: standalone`) pour un rendu d'app
-mobile plein écran ; mobile-first et responsive (cadre « téléphone » sur desktop).
+PWA installable (manifest + icône, `display: standalone`). **Responsive de bout en bout** :
+plein écran mobile-first sur téléphone (barre de navigation basse), et véritable
+layout web sur ordinateur (navigation latérale + colonne de contenu centrée),
+sans maquette « téléphone ».
 
 > Hors Mode sobriété, les cartes chargent leurs tuiles depuis OpenStreetMap/CARTO :
 > un accès réseau sortant est alors nécessaire au fond de carte (le tracé GPS,
