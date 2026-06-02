@@ -2,7 +2,8 @@
 
 Application mobile-first de networking d'affaires pour **dirigeants, fondateurs
 et top managers qui courent**. Un mélange de **LinkedIn**, **Strava** et **Happn**
-au design sobre, corporate et haut de gamme : on partage ses sorties et ses
+au design directement inspiré de **Strava** — orange signature, gros chiffres de
+stats, kudos au pouce levé et tracés GPS : on partage ses sorties et ses
 analyses, on participe à des courses pour rencontrer les bonnes personnes, on se
 fait matcher au plus haut niveau, et on crée des cercles pour échanger.
 

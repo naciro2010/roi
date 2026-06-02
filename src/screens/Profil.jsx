@@ -120,7 +120,7 @@ export default function Profil() {
                     <Sparkline data={u.roi.trend} width={84} height={30} />
                   </div>
                   <p className="mt-0.5 text-[12px] leading-snug text-white/55">La valeur que ton réseau te rapporte ce mois-ci.</p>
-                  <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[12px] font-semibold text-success-300">
+                  <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/18 px-2.5 py-1 text-[12px] font-bold text-white ring-1 ring-white/20">
                     <Icon name="trendingUp" className="h-3.5 w-3.5" /> +{u.roi.weekDelta} cette semaine
                   </span>
                 </div>
@@ -130,7 +130,7 @@ export default function Profil() {
                   <div key={s.label} className="rounded-2xl bg-white/10 p-2.5">
                     <div className="flex items-baseline gap-1">
                       <span className="text-lg font-semibold text-white tabular-nums">{s.value}</span>
-                      {s.delta != null && <span className="text-[11px] font-semibold text-success-300 tabular-nums">+{s.delta}</span>}
+                      {s.delta != null && <span className="text-[11px] font-bold text-white/90 tabular-nums">+{s.delta}</span>}
                     </div>
                     <div className="text-[11px] text-white/55">{s.label}</div>
                   </div>
@@ -237,7 +237,7 @@ export default function Profil() {
               <div className="absolute inset-0 bg-aurora" />
               <div className="relative">
                 <div className="flex items-center gap-2">
-                  <Icon name="crown" className="h-5 w-5 text-gold-300" filled />
+                  <Icon name="crown" className="h-5 w-5 text-white" filled />
                   <span className="text-base font-semibold">Passe à Pro</span>
                   <span className="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-white/70">dès 9€/mois</span>
                 </div>

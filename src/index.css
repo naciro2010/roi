@@ -31,13 +31,13 @@ body {
   textarea:focus-visible,
   [role='button']:focus-visible,
   [tabindex]:focus-visible {
-    outline: 2px solid #1f3d33;
+    outline: 2px solid #fc4c02;
     outline-offset: 2px;
   }
 
   ::selection {
-    background: rgba(31, 61, 51, 0.16);
-    color: #1a201d;
+    background: rgba(252, 76, 2, 0.18);
+    color: #242428;
   }
 }
 
@@ -57,18 +57,18 @@ body {
     -webkit-backdrop-filter: saturate(180%) blur(16px);
   }
   .glass-dark {
-    background: rgba(16, 32, 25, 0.58);
+    background: rgba(24, 24, 28, 0.62);
     backdrop-filter: saturate(160%) blur(14px);
     -webkit-backdrop-filter: saturate(160%) blur(14px);
   }
 
-  /* Surface « héros » : dégradé vert sapin profond, sobre et premium.
-     Fin trait lumineux en haut pour le rendu « verre ». */
+  /* Surface « héros » : dégradé orange Strava, vif puis profond vers le bas
+     pour garder un texte blanc lisible. Fin trait lumineux en haut. */
   .surface-hero {
-    background: linear-gradient(155deg, #2c5044 0%, #1e3d33 52%, #142a22 100%);
+    background: linear-gradient(155deg, #ff6a2b 0%, #fc4c02 46%, #c23a02 100%);
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
-      0 18px 40px -18px rgba(8, 20, 14, 0.55);
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
+      0 18px 40px -18px rgba(180, 54, 2, 0.55);
   }
 
   .tap {
@@ -134,7 +134,7 @@ input::-webkit-inner-spin-button {
   -webkit-backdrop-filter: none;
 }
 .eco .glass-dark {
-  background: rgba(16, 32, 25, 0.96);
+  background: rgba(24, 24, 28, 0.96);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }

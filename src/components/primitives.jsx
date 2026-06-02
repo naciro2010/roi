@@ -90,8 +90,8 @@ export function CompatBars({ parts, className = '' }) {
 
 export function MatchRing({ value, size = 44 }) {
   return (
-    <ProgressRing value={value} size={size} stroke={4} track="rgba(20,45,35,0.12)" color="#1F3D33">
-      <div className="text-[11px] font-semibold text-fg">{value}</div>
+    <ProgressRing value={value} size={size} stroke={4} track="rgba(252,76,2,0.14)" color="#FC4C02">
+      <div className="text-[11px] font-bold text-fg">{value}</div>
     </ProgressRing>
   )
 }
@@ -125,11 +125,11 @@ export function Sparkline({ data, width = 92, height = 34, stroke = '#FFFFFF', s
 export function Logo({ light = false }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-brand">
-        <Icon name="zap" className="h-4 w-4" filled />
+      <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-brand">
+        <Icon name="activity" className="h-[18px] w-[18px]" />
       </span>
-      <span className={`font-display text-[22px] font-semibold tracking-tight ${light ? 'text-white' : 'text-fg'}`}>
-        R<span className="text-gold-dark">O</span>I
+      <span className={`font-display text-[22px] font-extrabold tracking-tight ${light ? 'text-white' : 'text-fg'}`}>
+        R<span className="text-brand-500">O</span>I
       </span>
     </div>
   )
