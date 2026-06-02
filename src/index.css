@@ -104,3 +104,46 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+/* ------------------------------------------------------------------------
+   Sobriété & accessibilité (numérique responsable)
+   ------------------------------------------------------------------------ */
+
+/* Respecte la préférence système « animations réduites » : on coupe les
+   mouvements (confort vestibulaire) ET on économise du calcul / de la batterie. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .shimmer::after {
+    animation: none;
+  }
+}
+
+/* Mode sobriété (activable dans le profil) : on remplace les effets coûteux en
+   GPU/énergie — flou « verre dépoli », reflets animés, dégradés décoratifs — par
+   des aplats nets. L'interface reste lisible et agréable, mais consomme moins. */
+.eco .glass {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.eco .glass-dark {
+  background: rgba(20, 20, 22, 0.96);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.eco .shimmer::after {
+  display: none;
+}
+.eco.bg-mesh,
+.eco .bg-aurora,
+.eco .bg-hero-glow,
+.eco .bg-gold-sheen {
+  background-image: none !important;
+}

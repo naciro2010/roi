@@ -75,15 +75,36 @@ src/
   screens/           écrans (Accueil/Fil, Reseau, Courir, Messages, Profil) + overlays (MemberSheet, ActivitySheet)
 ```
 
+## Numérique responsable (éco-conception)
+
+L'app est conçue selon les principes de **sobriété numérique** — consommer le
+moins de données, d'énergie et de requêtes possible, sans rogner sur l'expérience :
+
+- **Zéro police web** — l'interface utilise la police déjà installée sur
+  l'appareil (San Francisco, Segoe UI, Roboto…). Aucun téléchargement, aucune
+  connexion à un service tiers (Google Fonts retiré), meilleure confidentialité.
+- **Chargement à la demande** — seul l'écran d'accueil est dans le bundle
+  initial ; les autres écrans, les fiches, les réglages et la lib de cartes
+  (Leaflet) sont chargés au moment où on les ouvre. Le JS de départ est ~2,5×
+  plus léger.
+- **Mode sobriété** (réglable dans le profil, activé d'office si l'appareil
+  signale « économiseur de données ») — les cartes n'appellent **aucune tuile
+  réseau** (seul le tracé GPS s'affiche) et les effets coûteux en GPU (flou
+  « verre dépoli », reflets animés, dégradés décoratifs) sont coupés.
+- **Animations réduites** — `prefers-reduced-motion` est respecté : les
+  mouvements sont désactivés, ce qui ménage le confort, le CPU et la batterie.
+- **Aucun pisteur, aucun cookie publicitaire**, build moderne minifié
+  (`console`/`debugger` retirés en prod), React isolé dans un chunk mis en cache.
+
 ## Stack
 
 React 18 · Vite · Tailwind CSS · Leaflet (cartes). Données fictives, aucune dépendance back-end.
 PWA installable (manifest + icône, `display: standalone`) pour un rendu d'app
 mobile plein écran ; mobile-first et responsive (cadre « téléphone » sur desktop).
 
-> Les cartes chargent leurs tuiles depuis OpenStreetMap/CARTO : un accès réseau
-> sortant est nécessaire à l'affichage du fond de carte (le tracé GPS, lui,
-> s'affiche toujours).
+> Hors Mode sobriété, les cartes chargent leurs tuiles depuis OpenStreetMap/CARTO :
+> un accès réseau sortant est alors nécessaire au fond de carte (le tracé GPS,
+> lui, s'affiche toujours).
 
 ## Démarrer
 

@@ -150,7 +150,6 @@ export default function Accueil() {
         </button>
       </div>
 
-
       {/* Feed */}
       {loading ? (
         <>

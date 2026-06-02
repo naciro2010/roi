@@ -84,7 +84,7 @@ export default function Reseau() {
       </div>
 
       {netView === 'suggestions' && (
-        <div className="flex-1 space-y-4 overflow-y-auto no-scrollbar px-5 pb-6 pt-4">
+        <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar px-5 pb-6 pt-4">
           {/* Bandeau « Pour toi » — ce que l'algorithme apprend de ton activité */}
           <div className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-white shadow-float">
             <div className="absolute inset-0 bg-aurora" />

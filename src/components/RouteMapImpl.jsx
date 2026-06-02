@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css'
 /* Implémentation Leaflet (chargée à la demande via RouteMap).
    `interactive=false` → vignette figée (cartes du feed / liste).
    `interactive=true`  → carte manipulable (vue détail). */
-export default function RouteMapImpl({ route, interactive = false, className = '' }) {
+export default function RouteMapImpl({ route, interactive = false, className = '', lowData = false }) {
   const ref = useRef(null)
   const mapRef = useRef(null)
 
@@ -25,11 +25,15 @@ export default function RouteMapImpl({ route, interactive = false, className = '
     })
     mapRef.current = map
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '© OpenStreetMap · © CARTO',
-      subdomains: 'abcd',
-      maxZoom: 19,
-    }).addTo(map)
+    // Sobriété : en mode allégé on ne télécharge aucune tuile réseau — seul le
+    // tracé GPS est rendu sur un fond neutre. Sinon, fond clair CARTO/OSM.
+    if (!lowData) {
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© OpenStreetMap · © CARTO',
+        subdomains: 'abcd',
+        maxZoom: 19,
+      }).addTo(map)
+    }
 
     const latlngs = route.map((p) => L.latLng(p[0], p[1]))
 
@@ -57,5 +61,12 @@ export default function RouteMapImpl({ route, interactive = false, className = '
     }
   }, [route, interactive])
 
-  return <div ref={ref} className={className} aria-label="Carte du parcours" />
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={lowData ? { background: '#EFEFF2' } : undefined}
+      aria-label={lowData ? 'Tracé du parcours (mode sobriété)' : 'Carte du parcours'}
+    />
+  )
 }
