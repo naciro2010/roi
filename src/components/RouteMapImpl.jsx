@@ -37,14 +37,14 @@ export default function RouteMapImpl({ route, interactive = false, className = '
 
     const latlngs = route.map((p) => L.latLng(p[0], p[1]))
 
-    // Tracé : halo blanc puis ligne orange « Strava » pour le contraste.
+    // Tracé : halo blanc puis ligne prune (marque) pour le contraste.
     L.polyline(latlngs, { color: '#ffffff', weight: 7, opacity: 0.9, lineJoin: 'round' }).addTo(map)
-    L.polyline(latlngs, { color: '#FC4C02', weight: 4, opacity: 1, lineJoin: 'round' }).addTo(map)
+    L.polyline(latlngs, { color: '#7C2D54', weight: 4, opacity: 1, lineJoin: 'round' }).addTo(map)
 
     const start = latlngs[0]
     const end = latlngs[latlngs.length - 1]
     L.circleMarker(start, { radius: 5, color: '#fff', weight: 2, fillColor: '#1FA463', fillOpacity: 1 }).addTo(map)
-    L.circleMarker(end, { radius: 5, color: '#fff', weight: 2, fillColor: '#FC4C02', fillOpacity: 1 }).addTo(map)
+    L.circleMarker(end, { radius: 5, color: '#fff', weight: 2, fillColor: '#7C2D54', fillOpacity: 1 }).addTo(map)
 
     map.fitBounds(L.latLngBounds(latlngs), { padding: [22, 22] })
 

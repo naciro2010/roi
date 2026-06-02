@@ -5,8 +5,10 @@ export default {
     extend: {
       colors: {
         // ----------------------------------------------------------------
-        // Identité inspirée de Strava : l'orange « Strava » (#FC4C02) comme
-        // signal d'action et de marque, posé sur des neutres froids très clairs
+        // Style Strava (mise en page, surfaces empilées, rayons serrés, ombres
+        // discrètes) mais identité chromatique PROPRE : un prune / bordeaux
+        // désaturé (#7C2D54) comme signal d'action et de marque — rare, premium,
+        // chaud sans être flashy. Posé sur des neutres froids très clairs
         // (presque blancs) pour que les cartes ressortent et que les données
         // respirent. Surfaces empilées : canvas < surface-soft < surface
         // (cartes) < 2/3. Tokens sémantiques → l'app peut rethémer sans toucher
@@ -32,23 +34,23 @@ export default {
           faint: '#A0A0AB', // quaternaire (icônes / placeholders)
         },
 
-        // Accent principal : l'orange Strava. Vif, énergique, sportif — boutons,
-        // états actifs, kudos. C'est LE signal de marque. L'or reste un accent
-        // « récompense / premium » discret (médailles, abonnement).
+        // Accent principal : prune / bordeaux désaturé. Profond, élégant, à fort
+        // caractère — boutons, états actifs, kudos. C'est LE signal de marque.
+        // L'or reste un accent « récompense / premium » discret (médailles, abo).
         brand: {
-          50: '#FFF1EA',
-          100: '#FFDDCC',
-          200: '#FEB892',
-          300: '#FD8E55',
-          400: '#FC6826',
-          500: '#FC4C02',
-          600: '#E14302',
-          700: '#B83602',
-          800: '#8C2904',
-          900: '#5C1B03',
-          DEFAULT: '#FC4C02',
-          dark: '#C23A02',
-          light: '#FFF1EA',
+          50: '#FAF0F4',
+          100: '#F4DCE6',
+          200: '#E8B6CC',
+          300: '#D585A8',
+          400: '#B45680',
+          500: '#7C2D54',
+          600: '#6E2849',
+          700: '#5E1F40',
+          800: '#4A1832',
+          900: '#341022',
+          DEFAULT: '#7C2D54',
+          dark: '#5E1F40',
+          light: '#F4E6EC',
         },
         // Conserve `ink` pour rares usages explicitement « papier sombre ».
         ink: {
@@ -88,20 +90,20 @@ export default {
         soft: '0 1px 2px rgba(0,0,0,0.04), 0 3px 10px rgba(0,0,0,0.04)',
         card: '0 1px 2px rgba(0,0,0,0.04), 0 10px 22px -16px rgba(0,0,0,0.12)',
         float: '0 16px 38px -20px rgba(0,0,0,0.20)',
-        // Ombre teintée orange sous les boutons/marque pour un relief « Strava ».
-        brand: '0 10px 22px -12px rgba(252,76,2,0.55)',
+        // Ombre teintée prune sous les boutons/marque pour un relief soigné.
+        brand: '0 10px 22px -12px rgba(124,45,84,0.50)',
         ring: '0 36px 80px -34px rgba(0,0,0,0.24)',
       },
       backgroundImage: {
-        // Halo orange très discret en arrière-plan (desktop).
+        // Halo prune très discret en arrière-plan (desktop).
         mesh:
-          'radial-gradient(60% 50% at 12% 0%, rgba(252,76,2,0.06) 0%, rgba(252,76,2,0) 60%), radial-gradient(55% 55% at 92% 100%, rgba(252,76,2,0.05) 0%, rgba(252,76,2,0) 60%)',
-        // Lueur sur les cartes « héros » orange : top highlight + vignette chaude.
+          'radial-gradient(60% 50% at 12% 0%, rgba(124,45,84,0.06) 0%, rgba(124,45,84,0) 60%), radial-gradient(55% 55% at 92% 100%, rgba(124,45,84,0.05) 0%, rgba(124,45,84,0) 60%)',
+        // Lueur sur les cartes « héros » prune : top highlight + vignette profonde.
         'hero-glow':
-          'radial-gradient(120% 90% at 82% -12%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 55%), radial-gradient(90% 80% at 0% 112%, rgba(120,30,0,0.30) 0%, rgba(120,30,0,0) 60%)',
-        // Aurora : highlights chauds subtils sur l'orange de marque.
+          'radial-gradient(120% 90% at 82% -12%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 55%), radial-gradient(90% 80% at 0% 112%, rgba(52,16,34,0.34) 0%, rgba(52,16,34,0) 60%)',
+        // Aurora : highlights subtils (clair + rosé) sur le prune de marque.
         aurora:
-          'radial-gradient(70% 60% at 12% 2%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 60%), radial-gradient(60% 70% at 92% 6%, rgba(255,225,120,0.18) 0%, rgba(255,225,120,0) 58%), radial-gradient(80% 80% at 78% 112%, rgba(120,30,0,0.22) 0%, rgba(120,30,0,0) 60%)',
+          'radial-gradient(70% 60% at 12% 2%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 60%), radial-gradient(60% 70% at 92% 6%, rgba(232,150,180,0.18) 0%, rgba(232,150,180,0) 58%), radial-gradient(80% 80% at 78% 112%, rgba(52,16,34,0.24) 0%, rgba(52,16,34,0) 60%)',
         // Filet doré très discret pour les surfaces « premium / médaille ».
         'gold-sheen':
           'linear-gradient(135deg, rgba(199,154,46,0.12) 0%, rgba(199,154,46,0) 42%), radial-gradient(60% 80% at 90% 0%, rgba(231,199,102,0.20) 0%, rgba(231,199,102,0) 60%)',
