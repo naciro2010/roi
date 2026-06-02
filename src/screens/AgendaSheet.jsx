@@ -90,7 +90,7 @@ export default function AgendaSheet({ onClose }) {
                     </button>
                   )}
                   <button
-                    onClick={() => showToast('Ajouté à ton calendrier ✓')}
+                    onClick={() => showToast('Ajouté à ton calendrier')}
                     className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-line-strong text-fg-soft tap"
                     aria-label="Ajouter au calendrier"
                   >

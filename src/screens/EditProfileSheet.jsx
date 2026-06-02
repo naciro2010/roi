@@ -53,7 +53,7 @@ export default function EditProfileSheet({ onClose }) {
       needs: clean(needs, ['—']),
       interests: clean(interests, []),
     })
-    showToast('Profil mis à jour ✓')
+    showToast('Profil mis à jour')
     onClose()
   }
 

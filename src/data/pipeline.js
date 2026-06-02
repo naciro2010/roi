@@ -1,5 +1,5 @@
 /* Pipeline ROI — le CRM léger branché sur les kilomètres.
-   ───────────────────────────────────────────────────────
+
    Chaque relation business suit un cycle visible : Rencontré → En discussion →
    Intro / pitch → Deal en cours → Conclu. Le pipeline rend le « score réseau »
    vivant : on voit le retour sur les km investis (qui on a rencontré en

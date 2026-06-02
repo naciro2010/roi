@@ -20,6 +20,7 @@ import Icon from './components/Icon'
 import { Avatar } from './components/Avatar'
 import { Logo, PILL_TONES } from './components/primitives'
 import BottomNav from './components/BottomNav'
+import Sidebar from './components/Sidebar'
 import PostComposer from './components/PostComposer'
 
 import Accueil from './screens/Accueil'
@@ -50,7 +51,7 @@ import { SERVICES } from './data/integrations'
 import { planById, hasFeature } from './data/plans'
 import { INITIAL_INVITES, INITIAL_TEAMMATES } from './data/invites'
 
-/* ── Contexte de matching (constant) : sorties & connexions en commun ───── */
+/* Contexte de matching (constant) : sorties & connexions en commun */
 const MATCH_NAMES = Object.keys(PROFILES)
 const SHARED_RUNS = (() => {
   const m = {}
@@ -244,7 +245,7 @@ export default function App() {
     setContacted((c) => ({ ...c, [name]: true }))
     track({ type: 'contact', name })
     addToPipeline(name, { via: 'Demande de contact envoyée' })
-    showToast('Demande envoyée ✓ · ajoutée au pipeline')
+    showToast('Demande envoyée · ajoutée au pipeline')
   }
 
   function sendSuggestion(id, name) {
@@ -254,13 +255,13 @@ export default function App() {
       track({ type: 'contact', name })
       addToPipeline(name, { via: 'Match contacté' })
     }
-    showToast('Demande envoyée ✓ · ajoutée au pipeline')
+    showToast('Demande envoyée · ajoutée au pipeline')
   }
 
   function acceptRequest(name) {
     setRequests((rs) => rs.filter((r) => r.name !== name))
     setConnections((cs) => (cs.some((c) => c.name === name) ? cs : [{ name, context: 'Connexion acceptée' }, ...cs]))
-    showToast(`${name.split(' ')[0]} ajouté·e à ton réseau ✓`)
+    showToast(`${name.split(' ')[0]} ajouté·e à ton réseau`)
   }
 
   function declineRequest(name) {
@@ -285,7 +286,7 @@ export default function App() {
   function toggleJoin(id) {
     setJoined((prev) => {
       const next = !prev[id]
-      showToast(next ? 'Inscription confirmée ✓' : 'Inscription annulée')
+      showToast(next ? 'Inscription confirmée' : 'Inscription annulée')
       return { ...prev, [id]: next }
     })
   }
@@ -311,7 +312,7 @@ export default function App() {
       ...prev,
     ])
     setComposerOpen(false)
-    showToast('Post publié ✓')
+    showToast('Post publié')
   }
 
   function openChat(id) {
@@ -357,7 +358,7 @@ export default function App() {
       showToast('Brise-glace prêt — plus qu’à envoyer')
     } else {
       navigator?.clipboard?.writeText?.(text)
-      showToast('Brise-glace copié ✓')
+      showToast('Brise-glace copié')
     }
   }
 
@@ -373,7 +374,7 @@ export default function App() {
     setJoinedGroups((j) => ({ ...j, [id]: true }))
     setNewGroupName('')
     setCreatingGroup(false)
-    showToast('Groupe créé ✓')
+    showToast('Groupe créé')
     openGroupChat(id)
   }
 
@@ -382,7 +383,7 @@ export default function App() {
     setJoinedGroups((j) => ({ ...j, [g.id]: true }))
     setGroups((gs) => [...gs, { ...g, members: g.members + 1, time: 'maintenant', unread: 0 }])
     setGroupThreads((t) => ({ ...t, [g.id]: t[g.id] || [] }))
-    showToast('Groupe rejoint ✓')
+    showToast('Groupe rejoint')
   }
 
   function messageMember(name) {
@@ -413,7 +414,7 @@ export default function App() {
   function toggleEco() {
     setEco((on) => {
       const next = !on
-      showToast(next ? 'Mode sobriété activé 🌿' : 'Mode sobriété désactivé')
+      showToast(next ? 'Mode sobriété activé' : 'Mode sobriété désactivé')
       return next
     })
   }
@@ -422,7 +423,7 @@ export default function App() {
     setIntegrations((prev) => {
       const next = !prev[id]
       const name = SERVICES.find((s) => s.id === id)?.name || ''
-      showToast(next ? `${name} connecté ✓` : `${name} déconnecté`)
+      showToast(next ? `${name} connecté` : `${name} déconnecté`)
       return { ...prev, [id]: next }
     })
   }
@@ -432,7 +433,7 @@ export default function App() {
     setPlan(id)
     setPlansOpen(false)
     const meta = planById(id)
-    showToast(id === 'free' ? 'Plan Découverte activé' : `Bienvenue dans ${meta.name} ✨`)
+    showToast(id === 'free' ? 'Plan Découverte activé' : `Bienvenue dans ${meta.name}`)
   }
 
   function nameFromEmail(email) {
@@ -449,7 +450,7 @@ export default function App() {
       { id: `inv-${Date.now()}`, name: nameFromEmail(email), email, status: 'pending', context: 'Invitation envoyée', date: 'à l’instant' },
       ...prev,
     ])
-    showToast('Invitation envoyée ✓')
+    showToast('Invitation envoyée')
   }
 
   function inviteTeammate(email) {
@@ -461,12 +462,12 @@ export default function App() {
       ...prev,
       { id: `t-${Date.now()}`, name: nameFromEmail(email), email, role: 'Invité·e', status: 'pending' },
     ])
-    showToast('Coéquipier invité ✓')
+    showToast('Coéquipier invité')
   }
 
   function confirmMeeting(id) {
     setMeetingStatus((s) => ({ ...s, [id]: 'confirmed' }))
-    showToast('RDV confirmé ✓')
+    showToast('RDV confirmé')
   }
 
   function proposeMeeting({ with: who, type = 'cafe', date, time, place, note }) {
@@ -483,7 +484,7 @@ export default function App() {
       ...prev,
     ])
     addToPipeline(who)
-    if (type !== 'run') showToast('Proposition de RDV envoyée ✓')
+    if (type !== 'run') showToast('Proposition de RDV envoyée')
   }
 
   // RunMatch : proposer une sortie matchée → crée un RDV « run » daté, alimente
@@ -494,7 +495,7 @@ export default function App() {
     proposeMeeting({ with: name, type: 'run', date: plan.date, time: plan.time, place: plan.place, note: plan.note })
     track({ type: 'contact', name })
     setProposedRuns((p) => ({ ...p, [name]: true }))
-    showToast('Run proposé ✓ · agenda & pipeline mis à jour')
+    showToast('Run proposé · agenda & pipeline mis à jour')
   }
 
   const ctx = {
@@ -604,12 +605,23 @@ export default function App() {
 
   return (
     <AppContext.Provider value={ctx}>
-      <div className={`flex min-h-[100dvh] w-full items-center justify-center bg-canvas bg-mesh sm:py-8 ${eco ? 'eco' : ''}`}>
-        <div className="relative flex h-[100dvh] w-full max-w-[420px] flex-col overflow-hidden bg-canvas shadow-ring sm:h-[860px] sm:max-h-[94vh] sm:rounded-[2.75rem] sm:ring-[10px] sm:ring-ink-950/90">
-          <div className="pointer-events-none absolute left-1/2 top-2 z-30 hidden h-7 w-28 -translate-x-1/2 rounded-full bg-ink-950 sm:block" />
+      <div className={`relative flex h-[100dvh] w-full justify-center overflow-hidden bg-canvas bg-mesh ${eco ? 'eco' : ''}`}>
+        {/* Navigation latérale (desktop) — remplace la BottomNav sur grand écran. */}
+        <Sidebar
+          active={tab}
+          onChange={goTo}
+          unread={navUnread}
+          unreadNotif={unreadNotif}
+          onSearch={() => setSearchOpen(true)}
+          onNotif={() => setNotifOpen(true)}
+        />
+
+        {/* Colonne de contenu : pleine largeur sur mobile, colonne centrée et
+            confortable sur bureau (vrai layout web, sans maquette « téléphone »). */}
+        <div className="relative flex h-full w-full max-w-[480px] flex-col overflow-hidden bg-canvas lg:max-w-[640px] lg:border-x lg:border-line">
 
           {showHeader && (
-            <header className="glass z-20 flex shrink-0 items-center justify-between border-b border-line px-5 pb-3 pt-4 sm:pt-7">
+            <header className="glass z-20 flex shrink-0 items-center justify-between border-b border-line px-5 pb-3 pt-[max(1rem,env(safe-area-inset-top))] lg:hidden">
               <Logo />
               <div className="flex items-center gap-1">
                 <button
@@ -661,17 +673,19 @@ export default function App() {
           </Suspense>
           <PostComposer open={composerOpen} onClose={() => setComposerOpen(false)} onPublish={publishPost} />
           <NotifDrawer />
-          {onboarding && (
-            <Suspense fallback={null}>
-              <Onboarding
-                onClose={finishOnboarding}
-                onEditProfile={() => { finishOnboarding(); goTo('profil'); setEditProfileOpen(true) }}
-              />
-            </Suspense>
-          )}
 
           <BottomNav active={tab} onChange={goTo} unread={navUnread} />
         </div>
+
+        {/* Onboarding plein écran (couvre toute la fenêtre, sidebar incluse). */}
+        {onboarding && (
+          <Suspense fallback={null}>
+            <Onboarding
+              onClose={finishOnboarding}
+              onEditProfile={() => { finishOnboarding(); goTo('profil'); setEditProfileOpen(true) }}
+            />
+          </Suspense>
+        )}
       </div>
     </AppContext.Provider>
   )

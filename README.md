@@ -1,10 +1,10 @@
 # ROI — Le réseau qui rapporte
 
-Application mobile-first de networking pour entrepreneurs qui courent.
-Un mélange de **LinkedIn**, **Strava** et **Happn** au design épuré et professionnel :
-on partage ses sorties et ses réflexions, on participe à des courses pour
-rencontrer du monde, on se fait matcher avec les bonnes personnes, et on crée
-des groupes pour échanger.
+Application mobile-first de networking d'affaires pour **dirigeants, fondateurs
+et top managers qui courent**. Un mélange de **LinkedIn**, **Strava** et **Happn**
+au design sobre, corporate et haut de gamme : on partage ses sorties et ses
+analyses, on participe à des courses pour rencontrer les bonnes personnes, on se
+fait matcher au plus haut niveau, et on crée des cercles pour échanger.
 
 ## Fonctionnalités
 
@@ -99,8 +99,10 @@ moins de données, d'énergie et de requêtes possible, sans rogner sur l'expér
 ## Stack
 
 React 18 · Vite · Tailwind CSS · Leaflet (cartes). Données fictives, aucune dépendance back-end.
-PWA installable (manifest + icône, `display: standalone`) pour un rendu d'app
-mobile plein écran ; mobile-first et responsive (cadre « téléphone » sur desktop).
+PWA installable (manifest + icône, `display: standalone`). **Responsive de bout en bout** :
+plein écran mobile-first sur téléphone (barre de navigation basse), et véritable
+layout web sur ordinateur (navigation latérale + colonne de contenu centrée),
+sans maquette « téléphone ».
 
 > Hors Mode sobriété, les cartes chargent leurs tuiles depuis OpenStreetMap/CARTO :
 > un accès réseau sortant est alors nécessaire au fond de carte (le tracé GPS,

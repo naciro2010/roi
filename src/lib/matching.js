@@ -1,5 +1,5 @@
 /* Moteur de matching « Pour toi » — ROI Match IA.
-   ───────────────────────────────────────────────
+
    Le score de match n'est PAS figé : il combine la complémentarité statique
    (besoins ↔ offres, running, sujets, réseau) avec le COMPORTEMENT de
    l'utilisateur dans l'app — comme l'algorithme d'un feed social, mais orienté
@@ -35,7 +35,7 @@ const FILTER_ARCHE = {
 
 const clamp = (n, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, n))
 
-/* ───────────────────────────────────────── signaux (réducteur pur) */
+/* signaux (réducteur pur) */
 
 export function recordSignal(signals, { type, name, category, topics }) {
   const s = {
@@ -58,7 +58,7 @@ export function recordSignal(signals, { type, name, category, topics }) {
   return s
 }
 
-/* ───────────────────────────────────────── vecteur d'intérêt comportemental */
+/* vecteur d'intérêt comportemental */
 
 /* Agrège le comportement en un vecteur d'affinité par archétype + sujets.
    C'est le « modèle » que l'algorithme apprend de l'utilisateur. */
@@ -93,7 +93,7 @@ export function interestVector(signals = EMPTY_SIGNALS) {
   }
 }
 
-/* ───────────────────────────────────────── composantes du score */
+/* composantes du score */
 
 const overlap = (a = [], b = []) => a.filter((x) => b.includes(x)).length
 
@@ -158,7 +158,7 @@ function behaviorFit(them, vec, name) {
   return clamp(0.55 * arche + 0.3 * topic + 0.3 * direct)
 }
 
-/* ───────────────────────────────────────── score complet + explications */
+/* score complet + explications */
 
 export function scoreMatch(name, signals = EMPTY_SIGNALS, opts = {}) {
   const them = profileFor(name)
@@ -211,7 +211,7 @@ function buildReasons(them, parts, vec, name, sharedRuns, mutuals) {
   return out.slice(0, 4)
 }
 
-/* ───────────────────────────────────────── classement & insights */
+/* classement & insights */
 
 export function rankMatches(names, signals = EMPTY_SIGNALS, ctx = {}) {
   const vec = interestVector(signals)
@@ -226,7 +226,7 @@ export function rankMatches(names, signals = EMPTY_SIGNALS, ctx = {}) {
     .sort((a, b) => b.score - a.score)
 }
 
-/* ───────────────────────────────────────── RunMatch (binôme de course)
+/* RunMatch (binôme de course)
 
    Même matière première que le « Pour toi », mais ré-pondérée autour de la
    compatibilité running : on veut d'abord quelqu'un avec qui courir (même

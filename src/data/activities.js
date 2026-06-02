@@ -36,7 +36,7 @@ export const ACTIVITIES = [
     elevation: 22,
     kudos: 24,
     metContacts: ['Claire Moreau'],
-    note: "8 x 400m le long du canal. Objectif 10 km sous 50 min, ça avance 💪",
+    note: "8 x 400m le long du canal. Objectif 10 km sous 50 min, ça avance",
     splits: [5.3, 4.6, 5.2, 4.5, 5.1, 4.4, 5.2, 4.6],
     route: [
       [48.8709, 2.3658], [48.8722, 2.3651], [48.8738, 2.3645], [48.8754, 2.3639],
@@ -78,7 +78,7 @@ export const ACTIVITIES = [
     elevation: 71,
     kudos: 9,
     metContacts: [],
-    note: "Footing tranquille avant une journée de code. Les côtes des Buttes réveillent 😅",
+    note: "Footing tranquille avant une journée de code. Les côtes des Buttes réveillent",
     splits: [6.5, 6.2, 6.4, 6.3, 6.5],
     route: [
       [48.8799, 2.3812], [48.8806, 2.3835], [48.8815, 2.3856], [48.8808, 2.3878],

@@ -75,12 +75,19 @@ export default {
         display: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', '"Inter Tight"', 'Inter', '"Segoe UI"', 'sans-serif'],
         sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"SF Pro Display"', 'Inter', '"Segoe UI"', 'Roboto', 'sans-serif'],
       },
+      // Rayons plus serrés et « architecturaux » : un rendu corporate/exécutif
+      // (façon Linear/Stripe) plutôt que des cartes très arrondies « grand public ».
+      borderRadius: {
+        '2xl': '0.875rem',
+        '3xl': '1.125rem',
+      },
       boxShadow: {
-        soft: '0 1px 2px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.05)',
-        card: '0 1px 2px rgba(0,0,0,0.04), 0 12px 28px -14px rgba(0,0,0,0.14)',
-        float: '0 22px 50px -22px rgba(0,0,0,0.24)',
-        brand: '0 12px 28px -12px rgba(0,0,0,0.40)',
-        ring: '0 40px 90px -30px rgba(0,0,0,0.28)',
+        // Ombres retenues : profondeur discrète, rendu plat et professionnel.
+        soft: '0 1px 2px rgba(0,0,0,0.04), 0 3px 10px rgba(0,0,0,0.04)',
+        card: '0 1px 2px rgba(0,0,0,0.04), 0 10px 22px -16px rgba(0,0,0,0.12)',
+        float: '0 16px 38px -20px rgba(0,0,0,0.20)',
+        brand: '0 10px 24px -14px rgba(0,0,0,0.38)',
+        ring: '0 36px 80px -34px rgba(0,0,0,0.24)',
       },
       backgroundImage: {
         // Halo neutre très discret derrière le « téléphone » (desktop).

@@ -145,7 +145,7 @@ export default function Reseau() {
                       sent ? 'bg-success' : 'bg-gradient-to-b from-brand-500 to-brand-600 shadow-brand hover:to-brand-700'
                     }`}
                   >
-                    {sent ? 'Demande envoyée ✓' : action}
+                    {sent ? 'Demande envoyée' : action}
                   </button>
                   <button
                     onClick={() => openMember(m.name)}
@@ -183,7 +183,7 @@ export default function Reseau() {
             </button>
           )}
 
-          <p className="pt-1 text-center text-xs text-fg-faint">De nouveaux matchs chaque lundi matin ☕</p>
+          <p className="pt-1 text-center text-xs text-fg-faint">De nouveaux matchs chaque lundi matin</p>
         </div>
       )}
 
@@ -247,7 +247,7 @@ export default function Reseau() {
                     contacted[m.name] ? 'bg-success text-white' : 'border border-brand-300 text-brand-700 hover:bg-brand-light'
                   }`}
                 >
-                  {contacted[m.name] ? 'Demande envoyée ✓' : 'Entrer en contact'}
+                  {contacted[m.name] ? 'Demande envoyée' : 'Entrer en contact'}
                 </button>
               </article>
             ))}

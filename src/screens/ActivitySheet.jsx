@@ -143,7 +143,7 @@ export default function ActivitySheet({ id, onClose }) {
                         contacted[name] ? 'bg-success-light text-success-dark' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand'
                       }`}
                     >
-                      {contacted[name] ? 'Demandé ✓' : 'Connecter'}
+                      {contacted[name] ? 'Demandé' : 'Connecter'}
                     </button>
                   </div>
                 ))}

@@ -96,7 +96,7 @@ export default function EventSheet({ id, onClose }) {
                       contacted[name] ? 'bg-success-light text-success-dark' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand'
                     }`}
                   >
-                    {contacted[name] ? 'Demandé ✓' : 'Connecter'}
+                    {contacted[name] ? 'Demandé' : 'Connecter'}
                   </button>
                 </div>
               ))}
@@ -112,7 +112,7 @@ export default function EventSheet({ id, onClose }) {
             onClick={() => toggleJoin(e.id)}
             className={`flex-1 rounded-full py-3 text-sm font-semibold text-white tap ${isJoined ? 'bg-success' : 'bg-gradient-to-b from-brand-500 to-brand-600 shadow-brand'}`}
           >
-            {isJoined ? 'Inscrit ✓' : 'Je participe'}
+            {isJoined ? 'Inscrit' : 'Je participe'}
           </button>
           <button
             onClick={() => showToast(`Ajouté à ton agenda · ${d.full}`)}
