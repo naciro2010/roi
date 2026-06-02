@@ -19,9 +19,16 @@ export function ActivityPreview({ activity, onOpen, mapClass = 'h-44' }) {
     <button onClick={onOpen} className="block w-full overflow-hidden rounded-2xl border border-line bg-surface text-left tap">
       <div className={`relative ${mapClass} bg-surface-2`}>
         <RouteMap route={activity.route} className="h-full w-full" />
-        <span className="pointer-events-none absolute left-2.5 top-2.5 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-fg-soft shadow-soft backdrop-blur">
-          <Icon name="activity" className="h-3 w-3 text-brand-500" /> {activity.type}
-        </span>
+        <div className="pointer-events-none absolute left-2.5 top-2.5 flex items-center gap-1.5">
+          <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-fg-soft shadow-soft backdrop-blur">
+            <Icon name="activity" className="h-3 w-3 text-brand-500" /> {activity.type}
+          </span>
+          {activity.achievements?.length > 0 && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-gold px-2 py-1 text-[11px] font-bold text-white shadow-soft">
+              <Icon name="trophy" className="h-3 w-3" /> {activity.achievements.length}
+            </span>
+          )}
+        </div>
       </div>
       <div className="flex items-stretch gap-3 px-3.5 py-3.5">
         <Stat value={`${activity.distance.toFixed(1)}`} label="Distance km" />
