@@ -61,7 +61,7 @@ export default function Accueil() {
               <p className="mt-1.5 text-[12px] font-semibold text-white/65">Score réseau ROI</p>
             </div>
             <div className="flex flex-col items-end gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1 text-[11px] font-semibold text-success-300 ring-1 ring-white/15">
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/18 px-2 py-1 text-[11px] font-bold text-white ring-1 ring-white/20">
                 <Icon name="trendingUp" className="h-3 w-3" /> +{u.roi.weekDelta} cette sem.
               </span>
               <Sparkline data={u.roi.trend} width={96} height={36} />

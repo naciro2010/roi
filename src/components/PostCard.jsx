@@ -51,7 +51,7 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
       {/* Compteurs */}
       <div className="flex items-center justify-between px-4 pt-3 text-[12px] text-fg-faint">
         <span className="inline-flex items-center gap-1">
-          <span className="grid h-4 w-4 place-items-center rounded-full bg-brand-500 text-white">
+          <span className="grid h-4 w-4 place-items-center rounded-full bg-like text-white">
             <Icon name="heart" className="h-2.5 w-2.5" filled />
           </span>
           {post.likes}

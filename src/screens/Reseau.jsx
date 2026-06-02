@@ -89,7 +89,7 @@ export default function Reseau() {
           <div className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-white shadow-float">
             <div className="absolute inset-0 bg-aurora" />
             <div className="relative flex items-start gap-3">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/12 text-gold-300 ring-1 ring-white/15">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/15 text-white ring-1 ring-white/20">
                 <Icon name={insights.learning ? insights.icon : 'wand'} className="h-5 w-5" filled />
               </span>
               <div className="min-w-0 flex-1">
@@ -171,7 +171,7 @@ export default function Reseau() {
             >
               <div className="absolute inset-0 bg-aurora" />
               <div className="relative flex items-center gap-3">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/10 text-gold-300">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/15 text-white">
                   <Icon name="lock" className="h-5 w-5" />
                 </span>
                 <div className="min-w-0 flex-1">
@@ -308,7 +308,7 @@ export default function Reseau() {
                   <div className="text-sm font-semibold">2 personnes veulent te rencontrer</div>
                   <p className="text-[12px] text-white/60">Débloque-les avec Pro.</p>
                 </div>
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/10 text-gold-300">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/15 text-white">
                   <Icon name="lock" className="h-4 w-4" />
                 </span>
               </div>

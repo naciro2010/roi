@@ -28,7 +28,7 @@ export default function Courir() {
     >
       <div className="absolute inset-0 bg-aurora" />
       <div className="relative flex items-center gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/12 text-gold-300 ring-1 ring-white/15">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/15 text-white ring-1 ring-white/20">
           <Icon name="activity" className="h-5 w-5" />
         </span>
         <div className="min-w-0 flex-1">
@@ -128,7 +128,7 @@ export default function Courir() {
                 </ProgressRing>
                 <div className="flex-1">
                   <div className="flex items-center gap-1.5 text-sm font-semibold">
-                    <Icon name="flame" className="h-4 w-4 text-gold-300" filled /> {CHALLENGE.title}
+                    <Icon name="flame" className="h-4 w-4 text-white" filled /> {CHALLENGE.title}
                   </div>
                   <div className="text-2xl font-semibold">{CHALLENGE.subtitle}</div>
                   <div className="mt-1 text-[13px] text-white/65">
@@ -146,12 +146,12 @@ export default function Courir() {
                 {LEADERBOARD.map((p, i) => (
                   <div
                     key={p.name}
-                    className={`flex items-center gap-3 rounded-xl px-2 py-1.5 ${p.me ? 'bg-brand-500/20 ring-1 ring-brand-400/40' : ''}`}
+                    className={`flex items-center gap-3 rounded-xl px-2 py-1.5 ${p.me ? 'bg-white/15 ring-1 ring-white/25' : ''}`}
                   >
-                    <span className={`w-5 text-center text-sm font-semibold ${i < 3 ? 'text-gold-300' : 'text-white/40'}`}>{i + 1}</span>
+                    <span className={`w-5 text-center text-sm font-bold ${i < 3 ? 'text-white' : 'text-white/45'}`}>{i + 1}</span>
                     <Avatar name={p.name} size="xs" />
                     <span className={`flex-1 truncate text-sm ${p.me ? 'font-semibold text-white' : 'text-white/80'}`}>
-                      {p.name} {p.me && <span className="text-gold-300">· toi</span>}
+                      {p.name} {p.me && <span className="font-bold text-white">· toi</span>}
                     </span>
                     <span className="text-sm font-semibold text-white/90">{p.km} km</span>
                   </div>
@@ -252,12 +252,13 @@ export default function Courir() {
                     <AvatarStack names={a.attendees} total={a.participants} onMore={() => showToast(`${a.participants} inscrits`)} />
                     <button
                       onClick={() => toggleEventKudos(a.id)}
-                      className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold tap ${
-                        k.liked ? 'bg-like-light text-like' : 'bg-surface-2 text-fg-muted'
+                      aria-pressed={k.liked}
+                      className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold tap ${
+                        k.liked ? 'bg-brand-500 text-white shadow-brand' : 'bg-surface-2 text-fg-muted'
                       }`}
                     >
-                      <Icon name="heart" className="h-4 w-4" filled={k.liked} />
-                      {k.count}
+                      <Icon name="thumbsUp" className="h-4 w-4" filled={k.liked} />
+                      <span className="tabular-nums">{k.count}</span>
                     </button>
                   </div>
 

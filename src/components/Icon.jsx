@@ -47,6 +47,9 @@ const ICON_PATHS = {
   coffee: 'M4 8h12v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8zM16 9h2a2 2 0 0 1 0 5h-1M7 2v2M11 2v2',
   video: 'M3 7a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM16 10l5-3v10l-5-3',
   leaf: 'M11 20A7 7 0 0 1 4 13C4 8 8 4 20 4c0 9-4 13-9 13-2 0-4-1-4-1M4 21c2-6 5-9 9-11',
+  // Kudos « pouce levé » — l'interaction signature de Strava.
+  thumbsUp: 'M7 11v9H4a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1zM7 11l4.2-7.3a1 1 0 0 1 1.7.1l.4.8a3 3 0 0 1 .2 2.2L12.5 10H19a2 2 0 0 1 2 2.3l-1 6A2 2 0 0 1 18 20H7',
+  medal: 'M8.2 13.5 5 3h4l2.5 6M15.8 13.5 19 3h-4l-2.5 6M12 22a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 15v2',
 }
 
 export default function Icon({ name, className = 'w-5 h-5', filled = false }) {

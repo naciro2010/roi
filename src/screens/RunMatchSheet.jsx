@@ -165,7 +165,7 @@ export default function RunMatchSheet({ onClose }) {
             >
               <div className="absolute inset-0 bg-aurora" />
               <div className="relative flex items-center gap-3">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/10 text-gold-300">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/15 text-white">
                   <Icon name="lock" className="h-5 w-5" />
                 </span>
                 <div className="min-w-0 flex-1">
