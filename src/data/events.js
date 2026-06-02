@@ -25,7 +25,7 @@ export const EVENTS = [
     kudos: 23,
     attendees: ['Sarah Khalil', 'Claire Moreau', 'Marc Dubois', 'Nadia Cherif', 'Léa Fontaine'],
     description:
-      "Sortie longue tranquille le long de la Seine, en groupe. On part du pont de l'Alma vers l'est, allure conversation — parfait pour pitcher en courant. Café offert à l'arrivée ☕",
+      "Sortie longue tranquille le long de la Seine, en groupe. On part du pont de l'Alma vers l'est, allure conversation — parfait pour pitcher en courant. Café offert à l'arrivée",
     route: [
       [48.8638, 2.3009], [48.8625, 2.3072], [48.8609, 2.3135], [48.8597, 2.3198],
       [48.8588, 2.3262], [48.8575, 2.3325], [48.8566, 2.3389], [48.8552, 2.3451],

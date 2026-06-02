@@ -7,7 +7,7 @@
    business.
 
    Taxonomie
-   ─────────
+
    seeks / provides  → besoins & offres (complémentarité)
      capital · talent · cofounder · mentor · expertise · clients · intros
    topics            → centres de gravité (saas, fintech, growth, climat…)

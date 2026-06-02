@@ -92,7 +92,7 @@ export default function Courir() {
           )}
 
           <button
-            onClick={() => showToast('Enregistrement bientôt disponible 🏃')}
+            onClick={() => showToast('Enregistrement bientôt disponible')}
             className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-line-strong px-3 py-3 text-left tap hover:bg-black/[0.04]"
           >
             <span className="grid h-10 w-10 place-items-center rounded-full bg-brand-50 text-brand-600">
@@ -119,7 +119,7 @@ export default function Courir() {
         <div className="flex-1 space-y-5 overflow-y-auto no-scrollbar px-5 pb-6 pt-3">
           <RunMatchBanner />
           {/* Défi + classement */}
-          <section className="overflow-hidden rounded-[28px] surface-hero text-white shadow-float">
+          <section className="overflow-hidden rounded-3xl surface-hero text-white shadow-float">
             <div className="relative overflow-hidden p-5">
               <div className="absolute inset-0 bg-hero-glow" />
               <div className="relative flex items-center gap-4">
@@ -161,7 +161,7 @@ export default function Courir() {
           </section>
 
           {/* Saison — cours, débloque */}
-          <section className="rounded-[28px] border border-line bg-surface p-5 shadow-soft">
+          <section className="rounded-3xl border border-line bg-surface p-5 shadow-soft">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="grid h-9 w-9 place-items-center rounded-xl bg-gold/15 text-gold-dark ring-1 ring-gold/25">
@@ -182,7 +182,7 @@ export default function Courir() {
             <p className="mt-1.5 text-[12px] text-fg-muted">
               {season.next
                 ? <>Plus que <span className="font-semibold text-fg">{season.remaining} km</span> pour « {season.next.title} ».</>
-                : 'Tous les paliers débloqués 🎉'}
+                : 'Tous les paliers débloqués'}
             </p>
 
             <div className="mt-4 space-y-2">
@@ -268,7 +268,7 @@ export default function Courir() {
                         isJoined ? 'bg-success text-white' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand hover:to-brand-700'
                       }`}
                     >
-                      {isJoined ? 'Inscrit ✓' : 'Je participe'}
+                      {isJoined ? 'Inscrit' : 'Je participe'}
                     </button>
                   </div>
                 </article>

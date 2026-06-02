@@ -47,7 +47,7 @@ export default function Accueil() {
       {/* Hero « balance card » — score ROI mis en avant, façon Revolut */}
       <button
         onClick={openRoiInfo}
-        className="relative block w-full overflow-hidden rounded-[28px] surface-hero p-5 text-left text-white shadow-float tap"
+        className="relative block w-full overflow-hidden rounded-3xl surface-hero p-5 text-left text-white shadow-float tap"
       >
         <div className="absolute inset-0 bg-aurora" />
         <div className="relative">
@@ -143,7 +143,7 @@ export default function Accueil() {
           onClick={openComposer}
           className="flex-1 rounded-full bg-surface-2 px-4 py-2.5 text-left text-sm text-fg-faint tap"
         >
-          Partage une réflexion, un REX, un tip…
+          Partage une analyse, un retour d’expérience, une opportunité…
         </button>
         <button onClick={openComposer} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand tap" aria-label="Nouveau post">
           <Icon name="pencil" className="h-4 w-4" />
@@ -171,7 +171,7 @@ export default function Accueil() {
               />
             </div>
           ))}
-          <p className="pt-1 text-center text-xs text-fg-faint">Tu es à jour ✓</p>
+          <p className="pt-1 text-center text-xs text-fg-faint">Tu es à jour</p>
         </>
       )}
     </div>

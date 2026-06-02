@@ -53,7 +53,7 @@ export default function Profil() {
       navigator.share({ title: `${u.name} · ROI`, text: `${u.name} — ${profile.title}`, url }).catch(() => {})
     } else {
       try { navigator.clipboard?.writeText(url) } catch { /* presse-papier indisponible */ }
-      showToast('Lien du profil copié ✓')
+      showToast('Lien du profil copié')
     }
   }
 
@@ -207,7 +207,7 @@ export default function Profil() {
             <p className="mt-2 text-[12px] text-fg-muted">
               {season.next
                 ? <>Plus que <span className="font-semibold text-fg">{season.remaining} km</span> pour débloquer « {season.next.title} » — {season.next.reward.toLowerCase()}.</>
-                : 'Tous les paliers de la saison sont débloqués 🎉'}
+                : 'Tous les paliers de la saison sont débloqués'}
             </p>
           </section>
 
@@ -465,7 +465,7 @@ export default function Profil() {
             ))}
           </section>
 
-          <button onClick={() => showToast('À bientôt 👋')} className="flex w-full items-center justify-center gap-2 py-2 text-sm font-semibold text-fg-faint tap">
+          <button onClick={() => showToast('À bientôt')} className="flex w-full items-center justify-center gap-2 py-2 text-sm font-semibold text-fg-faint tap">
             <Icon name="logout" className="h-4 w-4" /> Se déconnecter
           </button>
         </div>

@@ -27,7 +27,7 @@ export default function InviteSheet({ onClose }) {
 
   function copyLink() {
     try { navigator.clipboard?.writeText(REFERRAL.url) } catch { /* presse-papier indisponible */ }
-    showToast('Lien d’invitation copié ✓')
+    showToast('Lien d’invitation copié')
   }
   function shareLink() {
     if (navigator.share) {
@@ -93,7 +93,7 @@ export default function InviteSheet({ onClose }) {
                     <ProgressBar value={referralJoined} total={REFERRAL.goal} className="bg-white/15" barClassName="bg-gold-300" />
                     <span className="shrink-0 text-[12px] font-semibold tabular-nums text-gold-300">{referralJoined}/{REFERRAL.goal}</span>
                   </div>
-                  <p className="mt-1.5 text-[11px] text-white/45">{pct}% du chemin — continue, ça paie 💪</p>
+                  <p className="mt-1.5 text-[11px] text-white/45">{pct}% du chemin — continue, ça paie</p>
                 </div>
               </section>
 
@@ -159,7 +159,7 @@ export default function InviteSheet({ onClose }) {
                             <div className="truncate text-[12px] text-fg-faint">{inv.context} · {inv.date}</div>
                           </div>
                           <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold ${joined ? 'bg-success-light text-success-dark' : 'bg-surface-2 text-fg-muted'}`}>
-                            {joined ? 'Inscrit·e ✓' : 'En attente'}
+                            {joined ? 'Inscrit·e' : 'En attente'}
                           </span>
                         </div>
                       )

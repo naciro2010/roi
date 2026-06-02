@@ -1,5 +1,5 @@
 /* RunMatch — la sortie matchée à 2 (Happn × pitch).
-   ──────────────────────────────────────────────────
+
    À partir du profil de course d'un membre (créneau, allure, zone, distance),
    on propose un créneau de sortie concret : un jour, une heure, un lieu, une
    distance et une allure cible (la moyenne des deux allures, pour tenir la

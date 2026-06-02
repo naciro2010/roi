@@ -116,7 +116,7 @@ export default function MemberSheet({ name, onClose }) {
             </div>
           ) : (
             <button
-              onClick={() => { addToPipeline(name); showToast('Ajouté à ton pipeline ROI ✓') }}
+              onClick={() => { addToPipeline(name); showToast('Ajouté à ton pipeline ROI') }}
               className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-2xl border border-line-strong py-2.5 text-[13px] font-bold text-fg-soft tap hover:bg-black/[0.04]"
             >
               <Icon name="briefcase" className="h-4 w-4 text-gold-dark" /> Suivre dans le pipeline ROI
@@ -219,7 +219,7 @@ export default function MemberSheet({ name, onClose }) {
             onClick={() => contactMember(name)}
             className={`flex-1 rounded-full py-3 text-sm font-semibold text-white tap ${isContacted ? 'bg-success' : 'bg-gradient-to-b from-brand-500 to-brand-600 shadow-brand'}`}
           >
-            {isContacted ? 'Demande envoyée ✓' : 'Entrer en contact'}
+            {isContacted ? 'Demande envoyée' : 'Entrer en contact'}
           </button>
           <button
             onClick={() => setProposing((v) => !v)}

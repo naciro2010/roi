@@ -7,7 +7,7 @@ const STEPS = [
   {
     icon: 'home', tone: 'text-white',
     title: 'Le réseau qui rapporte',
-    text: "Poste tes sorties, tes réflexions et tes REX de rencontre. Le fil où les entrepreneurs-runners s'entraident.",
+    text: "Partage tes sorties, tes analyses et tes rencontres. Le cercle où dirigeants et fondateurs qui courent avancent ensemble.",
   },
   {
     icon: 'sparkles', tone: 'text-white',
@@ -54,7 +54,7 @@ export default function Onboarding({ onClose, onEditProfile }) {
             </span>
             <h1 className="mt-3 text-[26px] font-semibold leading-tight">{inviter} t’a invité·e sur ROI</h1>
             <p className="mt-3 max-w-[300px] text-[15px] leading-relaxed text-white/65">
-              Rejoins la communauté des entrepreneurs qui courent et networkent. Quelques écrans pour découvrir comment ça marche.
+              Rejoins le cercle des dirigeants et fondateurs qui courent et font des affaires. Quelques écrans pour découvrir comment ça marche.
             </p>
           </>
         ) : (

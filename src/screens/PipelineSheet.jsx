@@ -153,7 +153,7 @@ export default function PipelineSheet({ onClose }) {
                           )}
                           {d.stage === 'won' ? (
                             <span className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-success-light py-2 text-[13px] font-bold text-success-dark">
-                              <Icon name="checkCircle" className="h-4 w-4" /> Conclu 🎉
+                              <Icon name="checkCircle" className="h-4 w-4" /> Conclu
                             </span>
                           ) : (
                             <button

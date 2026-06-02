@@ -49,7 +49,7 @@ export default function RunMatchSheet({ onClose }) {
         } ${className}`}
       >
         <Icon name={done ? 'check' : 'activity'} className="h-4 w-4" />
-        {done ? 'Run proposé ✓' : 'Proposer ce run'}
+        {done ? 'Run proposé' : 'Proposer ce run'}
       </button>
     )
   }
