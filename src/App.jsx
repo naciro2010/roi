@@ -45,6 +45,7 @@ const PlansSheet = lazy(() => import('./screens/PlansSheet'))
 const InviteSheet = lazy(() => import('./screens/InviteSheet'))
 const PipelineSheet = lazy(() => import('./screens/PipelineSheet'))
 const RunMatchSheet = lazy(() => import('./screens/RunMatchSheet'))
+const RaceSheet = lazy(() => import('./screens/RaceSheet'))
 import { INITIAL_PIPELINE, shiftStage, stageMeta } from './data/pipeline'
 import { suggestRun } from './lib/runmatch'
 import { SERVICES } from './data/integrations'
@@ -183,6 +184,10 @@ export default function App() {
   const [pipelineOpen, setPipelineOpen] = useState(false)
   const [runMatchOpen, setRunMatchOpen] = useState(false)
   const [proposedRuns, setProposedRuns] = usePersistentState('proposedRuns', {})
+
+  // Course officielle ROI Business Run · La Défense — annonce & inscription B2B
+  const [raceOpen, setRaceOpen] = useState(false)
+  const [raceRegistration, setRaceRegistration] = usePersistentState('raceRegistration', null)
 
   const planMeta = planById(plan)
   const referralJoined = invites.filter((i) => i.status === 'joined').length
@@ -406,6 +411,11 @@ export default function App() {
     setOnboarding(false)
   }
 
+  function registerRace(reg) {
+    setRaceRegistration(reg)
+    showToast(`Inscription confirmée · dossard ${reg.dossard}`)
+  }
+
   function resetDemo() {
     clearPersistedState()
     window.location.reload()
@@ -528,6 +538,9 @@ export default function App() {
     openPipeline: () => setPipelineOpen(true),
     runMatches, proposeRun, proposedRuns,
     openRunMatch: () => setRunMatchOpen(true),
+    // Course officielle ROI Business Run
+    openRace: () => setRaceOpen(true),
+    raceRegistration, registerRace,
     contacted, contactMember,
     sentSuggestions, sendSuggestion,
     connections, requests, acceptRequest, declineRequest,
@@ -551,7 +564,7 @@ export default function App() {
   const anyOverlay =
     member || activityId || eventId || composerOpen || notifOpen || editProfileOpen ||
     roiInfoOpen || integrationsOpen || searchOpen || plansOpen || inviteOpen || agendaOpen ||
-    pipelineOpen || runMatchOpen || onboarding
+    pipelineOpen || runMatchOpen || raceOpen || onboarding
 
   function renderScreen() {
     switch (tab) {
@@ -664,6 +677,7 @@ export default function App() {
             {agendaOpen && <AgendaSheet onClose={() => setAgendaOpen(false)} />}
             {pipelineOpen && <PipelineSheet onClose={() => setPipelineOpen(false)} />}
             {runMatchOpen && <RunMatchSheet onClose={() => setRunMatchOpen(false)} />}
+            {raceOpen && <RaceSheet onClose={() => setRaceOpen(false)} />}
             {member && <MemberSheet name={member} onClose={() => setMember(null)} />}
             {activityId && <ActivitySheet id={activityId} onClose={() => setActivityId(null)} />}
             {eventId && <EventSheet id={eventId} onClose={() => setEventId(null)} />}

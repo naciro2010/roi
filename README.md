@@ -51,6 +51,16 @@ fait matcher au plus haut niveau, et on crée des cercles pour échanger.
   un membre ou proposer un run **fait entrer la relation dans le pipeline** ; un bouton
   « Faire avancer » la pousse d'étape en étape. La carte d'accueil affiche la valeur en
   jeu et le nombre de relations actives.
+- **ROI Business Run · La Défense** — la **course officielle** de l'app, en
+  bottom-sheet : une annonce ultra-détaillée (parcours cartographié au pied de
+  *Paris La Défense Arena*, trois distances — 5 km *petite boucle*, 10 km *une
+  boucle*, semi *deux boucles* —, arguments business, programme de la matinée,
+  ce que comprend le dossard à 500 € HT, témoignages, FAQ) **suivie d'un tunnel
+  d'inscription B2B** en 6 étapes : distance → solo ou groupe (tarif dégressif
+  dès 3 dossards) → coordonnées → entreprise → sas de départ → **paiement
+  professionnel** (bon de commande / facture à 30 j, carte, PayPal, Google Pay),
+  code promo, récapitulatif HT/TVA/TTC et confirmation avec dossard. Accessible
+  depuis l'accueil et l'onglet *Courir*.
 - **Courir** — façon Strava :
   - *Activités* : sorties réalisées avec **tracé GPS sur carte** (Leaflet + OpenStreetMap/CARTO),
     distance / temps / allure / dénivelé, splits par km, kudos, et lien réseau
