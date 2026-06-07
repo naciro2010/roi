@@ -31,12 +31,12 @@ body {
   textarea:focus-visible,
   [role='button']:focus-visible,
   [tabindex]:focus-visible {
-    outline: 2px solid #6366f1;
+    outline: 2px solid #18181b;
     outline-offset: 2px;
   }
 
   ::selection {
-    background: rgba(99, 102, 241, 0.16);
+    background: rgba(0, 0, 0, 0.12);
     color: #18181b;
   }
 }
@@ -62,13 +62,13 @@ body {
     -webkit-backdrop-filter: saturate(160%) blur(14px);
   }
 
-  /* Surface « héros » : dégradé indigo, clair puis profond vers le bas pour
+  /* Surface « héros » : dégradé graphite, clair puis quasi-noir vers le bas pour
      garder un texte blanc lisible. Fin trait lumineux en haut. */
   .surface-hero {
-    background: linear-gradient(155deg, #818cf8 0%, #6366f1 46%, #4338ca 100%);
+    background: linear-gradient(155deg, #3f3f46 0%, #27272a 46%, #18181b 100%);
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
-      0 18px 40px -18px rgba(67, 56, 202, 0.55);
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.14),
+      0 18px 40px -20px rgba(0, 0, 0, 0.45);
   }
 
   .tap {

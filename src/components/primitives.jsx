@@ -4,7 +4,7 @@ import Icon from './Icon'
 export const PILL_TONES = {
   brand: 'bg-brand-50 text-brand-700',
   emerald: 'bg-success-light text-success-dark',
-  // Violet saturé : catégorie distincte de la marque (désormais indigo).
+  // Violet : pastille de catégorie (la marque, elle, est monochrome graphite).
   indigo: 'bg-[#EDE9FE] text-[#5B21B6]',
   amber: 'bg-gold-light text-gold-dark',
   rose: 'bg-like-light text-[#8B3C49]',
@@ -91,7 +91,7 @@ export function CompatBars({ parts, className = '' }) {
 
 export function MatchRing({ value, size = 44 }) {
   return (
-    <ProgressRing value={value} size={size} stroke={4} track="rgba(99,102,241,0.14)" color="#6366F1">
+    <ProgressRing value={value} size={size} stroke={4} track="rgba(0,0,0,0.12)" color="#18181B">
       <div className="text-[11px] font-bold text-fg">{value}</div>
     </ProgressRing>
   )
