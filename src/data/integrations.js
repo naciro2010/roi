@@ -3,7 +3,7 @@
 
 export const SERVICES = [
   { id: 'strava', name: 'Strava', category: 'compte', color: '#FC4C02', blurb: 'Importe tes courses, allure et tracés automatiquement' },
-  { id: 'linkedin', name: 'LinkedIn', category: 'compte', color: '#6366F1', blurb: 'Synchronise ton parcours et ton réseau pro' },
+  { id: 'linkedin', name: 'LinkedIn', category: 'compte', color: '#18181B', blurb: 'Synchronise ton parcours et ton réseau pro' },
   { id: 'apple', name: 'Apple Santé', category: 'montre', color: '#FF2D55', blurb: 'Apple Watch · cardio, activité & sommeil' },
   { id: 'garmin', name: 'Garmin Connect', category: 'montre', color: '#3F3F46', blurb: 'Montres Garmin · GPS, allure, dénivelé' },
   { id: 'coros', name: 'COROS', category: 'montre', color: '#1A1A1A', blurb: 'Montres COROS · données d’entraînement' },
