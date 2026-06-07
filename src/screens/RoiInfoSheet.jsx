@@ -46,7 +46,7 @@ export default function RoiInfoSheet({ onClose }) {
                   </span>
                 </div>
               </div>
-              <Sparkline data={u.roi.trend} width={140} height={48} stroke="#0A66C2" strokeWidth={2.5} />
+              <Sparkline data={u.roi.trend} width={140} height={48} stroke="#6366F1" strokeWidth={2.5} />
             </div>
           </div>
 
