@@ -38,7 +38,7 @@ export default function Courir() {
         </div>
         <p className="mt-2 text-[17px] font-extrabold leading-tight">ROI Business Run</p>
         <p className="mt-0.5 text-[12.5px] leading-snug text-white/70">
-          5 km · 10 km · semi au pied de l’Arena. La course où le business se court en tête.
+          10 000 dirigeants · 5 km, 10 km & semi au pied de l’Arena. La course où le business se court en tête.
         </p>
         <div className="mt-3 flex items-center justify-between">
           <span className="text-[12px] font-semibold text-white/80">

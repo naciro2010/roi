@@ -49,6 +49,8 @@ export const DISTANCES = [
     elevation: '+18 m',
     duration: '20 à 35 min',
     tone: 'emerald',
+    spots: 3000,
+    taken: 2120,
     tagline: 'Court, intense, redoutablement efficace pour briser la glace.',
     description:
       "La petite boucle de l'Esplanade : un format vif et accessible, idéal pour une première fois ou pour pitcher l'esprit léger. On part de l'Arena, on file vers la Grande Arche et on revient — 5 km pour rencontrer sans s'épuiser.",
@@ -64,6 +66,8 @@ export const DISTANCES = [
     duration: '40 min à 1 h 10',
     tone: 'brand',
     popular: true,
+    spots: 5000,
+    taken: 4380,
     tagline: 'Le format networking par excellence : assez long pour conclure.',
     description:
       "La grande boucle : Esplanade, Grande Arche, CNIT, pont de Neuilly puis les quais de Seine avant de remonter par le boulevard circulaire jusqu'à l'Arena. 10 km à l'allure conversation — le temps idéal pour faire connaissance, pitcher et caler un prochain rendez-vous.",
@@ -78,11 +82,25 @@ export const DISTANCES = [
     elevation: '+84 m',
     duration: '1 h 25 à 2 h 15',
     tone: 'gold',
+    spots: 2000,
+    taken: 1290,
     tagline: 'Le terrain des relations qui comptent vraiment.',
     description:
       "Deux fois la grande boucle, soit 21,1 km au cœur de La Défense. Le format des dirigeant·es qui veulent aller au bout — et créer, sur la durée de l'effort, le genre de lien qu'aucun déjeuner d'affaires ne reproduit. Ravitaillements premium à chaque passage à l'Arena.",
   },
 ]
+
+/* Places & jauge de remplissage (scarcité). */
+export const TOTAL_SPOTS = DISTANCES.reduce((t, d) => t + d.spots, 0)
+export const TOTAL_TAKEN = DISTANCES.reduce((t, d) => t + d.taken, 0)
+export function spotsInfo(d) {
+  const left = d.spots - d.taken
+  const pct = Math.round((d.taken / d.spots) * 100)
+  return { left, pct, almostFull: pct >= 85, full: left <= 0 }
+}
+
+/* Coureur·ses déjà engagé·es mis en avant (preuve sociale). */
+export const FEATURED_RUNNERS = ['Sarah Khalil', 'Marc Dubois', 'Nadia Cherif', 'Léa Fontaine', 'Yanis Benali']
 
 export const distanceById = (id) => DISTANCES.find((d) => d.id === id) || DISTANCES[1]
 
@@ -168,16 +186,16 @@ export const RACE = {
   address: '99 Jardin de l’Arche, 92000 Nanterre',
   tagline: 'La course officielle où le business se court en tête.',
   intro:
-    "Une matinée. 1 200 décideur·ses. Un seul peloton. Le ROI Business Run réunit l’élite entrepreneuriale française au pied de Paris La Défense Arena pour la seule course pensée de bout en bout pour faire des affaires — départ et arrivée à l’Arena, parcours fermé au cœur du premier quartier d’affaires d’Europe.",
+    "Une matinée. 10 000 décideur·ses. Un seul peloton. Le ROI Business Run réunit la plus grande communauté de dirigeant·es-coureur·ses d’Europe au pied de Paris La Défense Arena — la seule course pensée de bout en bout pour faire des affaires. Départ et arrivée à l’Arena, parcours fermé au cœur du premier quartier d’affaires d’Europe.",
   audience:
-    'Ouvert exclusivement aux dirigeant·es, fondateur·rices, top managers et décideur·ses — du CAC 40 à la TPE.',
+    'Ouvert aux dirigeant·es, fondateur·rices, top managers, cadres et entrepreneur·ses — du CAC 40 à la TPE.',
 }
 
 /* Chiffres clés affichés en bandeau. */
 export const RACE_STATS = [
-  { value: '1 200', label: 'Dirigeants attendus' },
-  { value: '350+', label: 'Entreprises' },
-  { value: '40', label: 'Nationalités' },
+  { value: '10 000', label: 'Coureurs visés' },
+  { value: '500+', label: 'Entreprises' },
+  { value: '60', label: 'Nationalités' },
   { value: '90 min', label: 'Pour tout changer' },
 ]
 
@@ -185,8 +203,8 @@ export const RACE_STATS = [
 export const WHY = [
   {
     icon: 'users',
-    title: 'Le réseau le plus dense de France',
-    text: '350 entreprises et 1 200 décideur·ses au même endroit, au même moment. En 90 minutes de course, vous croisez plus de profils qualifiés qu’en six mois de salons.',
+    title: 'Le plus grand rassemblement business d’Europe',
+    text: '10 000 décideur·ses et 500+ entreprises au même endroit, au même moment. En 90 minutes de course, vous croisez plus de profils qualifiés qu’en six mois de salons.',
   },
   {
     icon: 'activity',

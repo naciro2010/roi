@@ -114,7 +114,7 @@ export default function Accueil() {
             </div>
             <div className="mt-0.5 text-[14px] font-extrabold leading-tight text-fg">ROI Business Run</div>
             <div className="truncate text-[11.5px] text-fg-muted">
-              {raceRegistration?.confirmed ? `Inscrit·e · dossard ${raceRegistration.dossard}` : '5 · 10 · 21 km — la course networking'}
+              {raceRegistration?.confirmed ? `Inscrit·e · dossard ${raceRegistration.dossard}` : '10 000 dirigeants · 5 · 10 · 21 km'}
             </div>
           </div>
           <Icon name="chevronRight" className="h-5 w-5 shrink-0 text-fg-faint" />

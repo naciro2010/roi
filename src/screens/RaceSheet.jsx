@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
-import { Avatar } from '../components/Avatar'
+import { Avatar, AvatarStack } from '../components/Avatar'
 import RouteMap from '../components/RouteMap'
 import { useSheetDrag } from '../lib/useSheetDrag'
 import { formatEventDate } from '../lib/dates'
@@ -10,7 +10,11 @@ import {
   RACE, RACE_STATS, WHY, INCLUDED, PROGRAM, TESTIMONIALS, FAQ,
   DISTANCES, distanceById, SAS, sasById, PAY_METHODS,
   GROUP_TIERS, VOUCHERS, priceBreakdown, tierFor,
+  TOTAL_TAKEN, spotsInfo, FEATURED_RUNNERS,
 } from '../data/race'
+
+/* Formate un grand nombre à la française (10 000). */
+const fmt = (n) => n.toLocaleString('fr-FR')
 
 /* Accents par tonalité (les distances/SAS utilisent emerald/brand/gold/indigo). */
 const ACCENT = {
@@ -80,6 +84,7 @@ export default function RaceSheet({ onClose }) {
 
   const dist = distanceById(form.distance)
   const d = formatEventDate(RACE.date)
+  const daysLeft = Math.max(0, Math.round((new Date(`${RACE.date}T00:00:00`) - new Date()) / 86400000))
   const voucherOff = form.voucherOk ? form.voucherOk.off : 0
   const bill = useMemo(
     () => priceBreakdown(form.type === 'group' ? form.qty : 1, voucherOff),
@@ -133,15 +138,20 @@ export default function RaceSheet({ onClose }) {
   const renderIntro = () => (
     <div className="flex-1 overflow-y-auto no-scrollbar">
       {/* Carte du parcours en bandeau */}
-      <div className="relative h-52 shrink-0 bg-surface-2">
+      <div className="relative h-56 shrink-0 bg-surface-2">
         <RouteMap route={dist.route} className="h-full w-full" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/55 to-transparent" />
-        <span className="pointer-events-none absolute left-4 top-3 z-[500] inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold text-brand-700 shadow-soft backdrop-blur">
-          <Icon name="flag" className="h-3.5 w-3.5" /> Départ & arrivée · {RACE.venue}
-        </span>
-        <div className="pointer-events-none absolute bottom-3 left-4 z-[500] text-white">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/80">{RACE.edition} · {d.full}</div>
-          <div className="text-[22px] font-extrabold leading-tight drop-shadow">{RACE.name}</div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/65 via-black/25 to-transparent" />
+        <div className="pointer-events-none absolute left-4 right-4 top-3 z-[500] flex items-center justify-between">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold text-brand-700 shadow-soft backdrop-blur">
+            <Icon name="flag" className="h-3.5 w-3.5" /> Départ & arrivée · {RACE.venue}
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-gold px-2.5 py-1 text-[11px] font-extrabold tabular-nums text-fg shadow-soft">
+            <Icon name="flame" className="h-3.5 w-3.5" filled /> J−{daysLeft}
+          </span>
+        </div>
+        <div className="pointer-events-none absolute bottom-3 left-4 right-4 z-[500] text-white">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/85">{RACE.edition} · {d.full} · {RACE.gunTime}</div>
+          <div className="text-[24px] font-extrabold leading-tight drop-shadow">{RACE.name}</div>
         </div>
       </div>
 
@@ -151,6 +161,18 @@ export default function RaceSheet({ onClose }) {
         </span>
         <h2 className="mt-2.5 text-[22px] font-extrabold leading-tight text-fg">{RACE.tagline}</h2>
         <p className="mt-2 text-[14px] leading-relaxed text-fg-soft">{RACE.intro}</p>
+
+        {/* Preuve sociale + remplissage global */}
+        <div className="mt-3.5 flex items-center gap-3 rounded-3xl border border-line bg-surface p-3.5 shadow-soft">
+          <AvatarStack names={FEATURED_RUNNERS} total={TOTAL_TAKEN} onMore={() => {}} />
+          <div className="min-w-0 flex-1">
+            <p className="text-[12.5px] font-semibold leading-snug text-fg">
+              <span className="tabular-nums">{fmt(TOTAL_TAKEN)}</span> dirigeant·es déjà inscrit·es
+            </p>
+            <p className="text-[11px] text-fg-muted">Rejoins-les avant que les sas se remplissent.</p>
+          </div>
+          <Icon name="trendingUp" className="h-5 w-5 shrink-0 text-success" />
+        </div>
 
         <div className="mt-3 flex items-start gap-2 rounded-2xl border border-brand-100 bg-brand-light/50 px-3.5 py-3">
           <Icon name="crown" className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" filled />
@@ -177,17 +199,18 @@ export default function RaceSheet({ onClose }) {
               <div key={x.id} className="overflow-hidden rounded-3xl border border-line bg-surface shadow-soft">
                 <div className="flex items-center gap-3 p-3.5">
                   <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${a.bg} ${a.text} text-center text-[13px] font-extrabold leading-none`}>
-                    {x.label.replace(' · 21,1 km', '').replace(' km', 'k').replace('Semi', '21')}
+                    {distBadge(x)}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
                       <h4 className="truncate text-[14px] font-bold text-fg">{x.name}</h4>
                       {x.popular && <span className="rounded-full bg-brand-500 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">Top</span>}
                     </div>
-                    <p className="truncate text-[12px] text-fg-muted">{x.loops} · {x.elevation} · {x.duration}</p>
+                    <p className="truncate text-[12px] text-fg-muted">{x.label} · {x.loops} · {x.elevation} · {x.duration}</p>
                   </div>
                 </div>
-                <p className="px-3.5 pb-3.5 text-[12.5px] leading-relaxed text-fg-soft">{x.tagline}</p>
+                <p className="px-3.5 text-[12.5px] leading-relaxed text-fg-soft">{x.tagline}</p>
+                <div className="px-3.5 pb-3.5 pt-3"><Gauge info={spotsInfo(x)} /></div>
               </div>
             )
           })}
@@ -312,7 +335,7 @@ export default function RaceSheet({ onClose }) {
                     }`}
                   >
                     <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl ${a.bg} ${a.text} text-[12px] font-extrabold`}>
-                      {x.label.replace(' · 21,1 km', '').replace(' km', 'k').replace('Semi', '21')}
+                      {distBadge(x)}
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5">
@@ -320,8 +343,9 @@ export default function RaceSheet({ onClose }) {
                         {x.popular && <span className="rounded-full bg-brand-500 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">Top</span>}
                       </div>
                       <div className="truncate text-[12px] text-fg-muted">{x.loopsShort} · {x.elevation} · {x.duration}</div>
+                      <div className="mt-2"><Gauge info={spotsInfo(x)} /></div>
                     </div>
-                    <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 ${on ? `${a.solid} border-transparent text-white` : 'border-line-strong text-transparent'}`}>
+                    <span className={`grid h-6 w-6 shrink-0 place-items-center self-start rounded-full border-2 ${on ? `${a.solid} border-transparent text-white` : 'border-line-strong text-transparent'}`}>
                       <Icon name="check" className="h-3.5 w-3.5" />
                     </span>
                   </button>
@@ -374,6 +398,17 @@ export default function RaceSheet({ onClose }) {
                     </div>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-1.5">
+                    {[3, 5, 10, 20].map((n) => (
+                      <button
+                        key={n}
+                        onClick={() => set({ qty: n })}
+                        className={`rounded-full px-3 py-1 text-[12px] font-semibold tap ${form.qty === n ? 'bg-brand-500 text-white shadow-brand' : 'bg-surface-2 text-fg-soft'}`}
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-2.5 flex flex-wrap gap-1.5">
                     {GROUP_TIERS.slice().reverse().map((t) => {
                       const on = tierFor(form.qty)?.min === t.min
                       return (
@@ -601,9 +636,9 @@ export default function RaceSheet({ onClose }) {
               </p>
             </div>
 
-            {/* Billet / dossard */}
+            {/* Billet / dossard — style ticket perforé */}
             <div className="mt-6 overflow-hidden rounded-3xl surface-hero text-white shadow-float">
-              <div className="relative p-5">
+              <div className="relative p-5 pb-4">
                 <div className="absolute inset-0 bg-aurora" />
                 <div className="relative">
                   <div className="flex items-center justify-between">
@@ -620,13 +655,35 @@ export default function RaceSheet({ onClose }) {
                       <div className="text-[18px] font-extrabold">{dist.label}</div>
                     </div>
                   </div>
-                  <div className="mt-4 grid grid-cols-3 gap-2 border-t border-white/15 pt-3 text-[12px]">
-                    <div><div className="text-white/55">Sas</div><div className="font-bold">{sasById(form.sas)?.label.replace('SAS ', '')}</div></div>
-                    <div><div className="text-white/55">Format</div><div className="font-bold">{form.type === 'group' ? `Équipe ×${form.qty}` : 'Solo'}</div></div>
-                    <div><div className="text-white/55">Réglé</div><div className="font-bold tabular-nums">{bill.ttc} € TTC</div></div>
-                  </div>
                 </div>
               </div>
+              {/* Perforation */}
+              <div className="relative">
+                <div className="absolute -left-2.5 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-surface-soft" />
+                <div className="absolute -right-2.5 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-surface-soft" />
+                <div className="mx-5 border-t border-dashed border-white/30" />
+              </div>
+              <div className="relative grid grid-cols-3 gap-2 p-5 pt-4 text-[12px]">
+                <div><div className="text-white/55">Sas</div><div className="font-bold">{sasById(form.sas)?.label.replace('SAS ', '')}</div></div>
+                <div><div className="text-white/55">Format</div><div className="font-bold">{form.type === 'group' ? `Équipe ×${form.qty}` : 'Solo'}</div></div>
+                <div><div className="text-white/55">Réglé</div><div className="font-bold tabular-nums">{bill.ttc} € TTC</div></div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="mt-4 grid grid-cols-2 gap-2.5">
+              <button
+                onClick={() => showToast(`Ajouté à ton agenda · ${d.full}`)}
+                className="flex items-center justify-center gap-2 rounded-2xl border border-line-strong bg-surface py-3 text-[13px] font-semibold text-fg-soft shadow-soft tap"
+              >
+                <Icon name="calendar" className="h-4 w-4" /> Agenda
+              </button>
+              <button
+                onClick={() => { navigator?.clipboard?.writeText?.(`${RACE.name} · ${d.full} — ${RACE.venue}`); showToast('Lien copié') }}
+                className="flex items-center justify-center gap-2 rounded-2xl border border-line-strong bg-surface py-3 text-[13px] font-semibold text-fg-soft shadow-soft tap"
+              >
+                <Icon name="share" className="h-4 w-4" /> Inviter ma boîte
+              </button>
             </div>
 
             <div className="mt-5 space-y-2.5">
@@ -766,6 +823,30 @@ function Stepper({ value, min = 1, max = 99, onChange }) {
       <button className={btn} onClick={() => onChange(Math.min(max, value + 1))} disabled={value >= max} aria-label="Ajouter">
         <Icon name="plus" className="h-4 w-4" />
       </button>
+    </div>
+  )
+}
+
+/* Pastille distance compacte : 5k · 10k · 21. */
+function distBadge(x) {
+  if (x.id === 'semi') return '21'
+  return x.label.replace(' km', 'k')
+}
+
+/* Jauge de places restantes (scarcité). */
+function Gauge({ info }) {
+  const tone = info.full ? 'bg-fg-faint' : info.almostFull ? 'bg-gold' : 'bg-success'
+  return (
+    <div>
+      <div className="flex items-center justify-between text-[11px] font-semibold">
+        <span className={info.full ? 'text-fg-muted' : info.almostFull ? 'text-gold-dark' : 'text-success-dark'}>
+          {info.full ? 'Complet' : info.almostFull ? '🔥 Bientôt complet' : 'Places ouvertes'}
+        </span>
+        <span className="tabular-nums text-fg-muted">{info.full ? '—' : `${info.left.toLocaleString('fr-FR')} restantes`}</span>
+      </div>
+      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
+        <div className={`h-full rounded-full ${tone} transition-all duration-700`} style={{ width: `${info.pct}%` }} />
+      </div>
     </div>
   )
 }
