@@ -17,9 +17,40 @@ export default function Courir() {
     actKudos, toggleActKudos, openActivity, openMember, showToast,
     eventKudos, toggleEventKudos, joined, toggleJoin, openEvent,
     integrations, openIntegrations, openRunMatch, runMatches,
+    openRace, raceRegistration,
   } = useApp()
   const [view, setView] = useState('activites')
   const topRun = runMatches?.[0]
+  const raceIn = raceRegistration?.confirmed
+
+  const OfficialRaceBanner = () => (
+    <button
+      onClick={openRace}
+      className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-left text-white shadow-float tap"
+    >
+      <div className="absolute inset-0 bg-aurora" />
+      <div className="relative">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-gold/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-fg">
+            <Icon name="flag" className="h-3 w-3" /> Course officielle
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">17 sept. · La Défense</span>
+        </div>
+        <p className="mt-2 text-[17px] font-extrabold leading-tight">ROI Business Run</p>
+        <p className="mt-0.5 text-[12.5px] leading-snug text-white/70">
+          5 km · 10 km · semi au pied de l’Arena. La course où le business se court en tête.
+        </p>
+        <div className="mt-3 flex items-center justify-between">
+          <span className="text-[12px] font-semibold text-white/80">
+            {raceIn ? `Inscrit·e · dossard ${raceRegistration.dossard}` : 'Dès 500 € HT · solo ou équipe'}
+          </span>
+          <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[12px] font-bold ${raceIn ? 'bg-white/15 text-white' : 'bg-white text-fg'}`}>
+            {raceIn ? 'Voir mon dossard' : 'S’inscrire'} <Icon name="arrowRight" className="h-3.5 w-3.5" />
+          </span>
+        </div>
+      </div>
+    </button>
+  )
 
   const RunMatchBanner = () => (
     <button
@@ -114,6 +145,7 @@ export default function Courir() {
       {view === 'activites' ? (
         <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar px-5 pb-6 pt-3">
           <WeekSummary />
+          <OfficialRaceBanner />
           <RunMatchBanner />
           {integrations.strava ? (
             <div className="flex items-center gap-2 rounded-2xl bg-success-light px-3.5 py-2.5 text-[12px] font-semibold text-success-dark">
@@ -159,6 +191,7 @@ export default function Courir() {
         </div>
       ) : (
         <div className="flex-1 space-y-5 overflow-y-auto no-scrollbar px-5 pb-6 pt-3">
+          <OfficialRaceBanner />
           <RunMatchBanner />
           {/* Défi + classement */}
           <section className="overflow-hidden rounded-3xl surface-hero text-white shadow-float">

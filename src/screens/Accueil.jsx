@@ -28,7 +28,7 @@ function PostSkeleton() {
 }
 
 export default function Accueil() {
-  const { goTo, openRoiInfo, openComposer, openMember, openActivity, openAgenda, openInvite, openPipeline, openRunMatch, runMatches, pipeline, hasFeature, meetings, posts, togglePostLike, addComment, showToast } = useApp()
+  const { goTo, openRoiInfo, openComposer, openMember, openActivity, openAgenda, openInvite, openPipeline, openRunMatch, openRace, raceRegistration, runMatches, pipeline, hasFeature, meetings, posts, togglePostLike, addComment, showToast } = useApp()
   const u = CURRENT_USER
   const pstats = pipelineStats(pipeline)
   const showPipelineValue = hasFeature('analytics')
@@ -99,6 +99,27 @@ export default function Accueil() {
           </button>
         ))}
       </div>
+
+      {/* Course officielle ROI Business Run · La Défense */}
+      <button onClick={openRace} className="relative block w-full overflow-hidden rounded-3xl border border-gold/30 bg-surface p-3.5 text-left shadow-card tap">
+        <div className="absolute inset-0 bg-gold-sheen" />
+        <div className="relative flex items-center gap-3">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gold-light text-gold-dark">
+            <Icon name="flag" className="h-[22px] w-[22px]" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              <span className="rounded-full bg-gold px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">Officiel</span>
+              <span className="text-[11px] font-semibold text-fg-muted">17 sept. · La Défense</span>
+            </div>
+            <div className="mt-0.5 text-[14px] font-extrabold leading-tight text-fg">ROI Business Run</div>
+            <div className="truncate text-[11.5px] text-fg-muted">
+              {raceRegistration?.confirmed ? `Inscrit·e · dossard ${raceRegistration.dossard}` : '5 · 10 · 21 km — la course networking'}
+            </div>
+          </div>
+          <Icon name="chevronRight" className="h-5 w-5 shrink-0 text-fg-faint" />
+        </div>
+      </button>
 
       {/* Pipeline ROI & RunMatch — la boucle business × sport */}
       <div className="grid grid-cols-2 gap-3">
