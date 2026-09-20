@@ -10,11 +10,11 @@ import { bonusMatches, categoryTier, isCategoryLocked } from '../data/levels'
 import { ARCHETYPES } from '../data/profiling'
 
 const ACTION_BY_ARCHE = {
-  investor: 'Demander une intro',
-  developer: 'Proposer une mission',
+  investor: 'Proposer une rencontre',
+  developer: 'Proposer une rencontre',
   mentor: 'Demander un conseil',
   founder: 'Proposer une sortie',
-  operator: 'Entrer en contact',
+  operator: 'Proposer une rencontre',
 }
 
 export default function Reseau() {
@@ -37,7 +37,7 @@ export default function Reseau() {
   function pickFilter(f) {
     if (isCategoryLocked(km, f)) {
       const tier = categoryTier(f)
-      showToast(`Cours ${tier.km - km} km de plus pour débloquer « ${f} »`)
+      showToast(`Cours ${tier.km - km} km de plus avec quelqu'un pour ouvrir « ${f} »`)
       return
     }
     if (f !== 'Tous') track({ type: 'filter', category: f })
@@ -61,12 +61,13 @@ export default function Reseau() {
   return (
     <div className="animate-screenIn flex h-full flex-col">
       <div className="px-5 pb-1 pt-4">
-        <h1 className="text-2xl font-semibold text-fg">Réseau</h1>
-        <p className="mt-0.5 text-sm text-fg-muted">Les bonnes personnes, au bon moment.</p>
+        <span className="tmark"><b>T+</b> / L'ANNUAIRE</span>
+        <h1 className="mt-2 text-[30px]">Qui court <span className="creuse">cette année.</span></h1>
+        <p className="mt-1 text-sm text-fg-muted">Qui court cette année : recruter, lever, vendre, s'associer.</p>
 
         <div className="mt-4 flex divide-x divide-line border border-line">
           {[
-            { id: 'suggestions', label: 'Matchs' },
+            { id: 'suggestions', label: 'Pour toi' },
             { id: 'annuaire', label: 'Annuaire' },
             { id: 'contacts', label: 'Contacts' },
           ].map((s) => (
@@ -85,7 +86,7 @@ export default function Reseau() {
 
       {netView === 'suggestions' && (
         <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar px-5 pb-6 pt-4">
-          {/* Bandeau « Pour toi » — ce que l'algorithme apprend de ton activité */}
+          {/* Bandeau « Pour toi » — trois rencontres proposées par semaine, expliquées */}
           <div className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-white shadow-float">
             <div className="absolute inset-0 bg-aurora" />
             <div className="relative flex items-start gap-3">
@@ -94,10 +95,10 @@ export default function Reseau() {
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/55">Pour toi · Match IA</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/55">Pour toi · trois rencontres par semaine</p>
                 </div>
                 <p className="mt-0.5 text-[14px] font-semibold leading-snug">{insights.headline}</p>
-                <p className="mt-0.5 text-[12px] leading-snug text-white/65">{insights.detail}</p>
+                <p className="mt-0.5 text-[12px] leading-snug text-white/65">On a remonté les profils qui répondent à ce que tu cherches et à ce que tu regardes.</p>
                 {insights.topTopics?.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {insights.topTopics.map((t) => (
@@ -112,7 +113,7 @@ export default function Reseau() {
           {visibleSuggestions.map((m) => {
             const sent = sentSuggestions[m.name]
             const arche = ARCHETYPES[m.archetype]
-            const action = ACTION_BY_ARCHE[m.archetype] || 'Entrer en contact'
+            const action = ACTION_BY_ARCHE[m.archetype] || 'Proposer une rencontre'
             return (
               <article key={m.name} className="overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
                 <div className="flex items-center gap-3 p-4 pb-3">
@@ -145,13 +146,13 @@ export default function Reseau() {
                       sent ? 'bg-success' : 'btn btn-impact shadow-brand hover:to-brand-700'
                     }`}
                   >
-                    {sent ? 'Demande envoyée' : action}
+                    {sent ? 'Rencontre proposée' : action}
                   </button>
                   <button
                     onClick={() => openMember(m.name)}
                     className="rounded-2xl border border-line-strong px-4 py-3 text-sm font-semibold text-fg-soft tap"
                   >
-                    Profil
+                    Le dossard
                   </button>
                 </div>
               </article>
@@ -160,7 +161,7 @@ export default function Reseau() {
 
           {bonusMatches(km) > 0 && (
             <p className="flex items-center justify-center gap-1.5 text-center text-[12px] font-semibold text-success-dark">
-              <Icon name="trophy" className="h-3.5 w-3.5" /> +{bonusMatches(km)} matchs débloqués par tes kilomètres
+              <Icon name="trophy" className="h-3.5 w-3.5" /> +{bonusMatches(km)} rencontre{bonusMatches(km) > 1 ? 's' : ''} par semaine, ouverte{bonusMatches(km) > 1 ? 's' : ''} par tes kilomètres
             </p>
           )}
 
@@ -175,15 +176,15 @@ export default function Reseau() {
                   <Icon name="lock" className="h-5 w-5" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-semibold">{hiddenMatches} autre{hiddenMatches > 1 ? 's' : ''} profil{hiddenMatches > 1 ? 's' : ''} te correspond{hiddenMatches > 1 ? 'ent' : ''}</div>
-                  <p className="text-[12px] text-white/60">Débloque les matchs illimités avec Pro.</p>
+                  <div className="text-sm font-semibold">{hiddenMatches} autre{hiddenMatches > 1 ? 's' : ''} rencontre{hiddenMatches > 1 ? 's' : ''} pour toi cette semaine</div>
+                  <p className="text-[12px] text-white/60">Trois rencontres proposées par semaine avec le Dossard. En Premium, sans limite — depuis ton espace.</p>
                 </div>
-                <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-fg">Pro</span>
+                <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-fg">Premium</span>
               </div>
             </button>
           )}
 
-          <p className="pt-1 text-center text-xs text-fg-faint">De nouveaux matchs chaque lundi matin</p>
+          <p className="pt-1 text-center text-xs text-fg-faint">Trois nouvelles propositions chaque lundi matin</p>
         </div>
       )}
 
@@ -195,7 +196,7 @@ export default function Reseau() {
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Rechercher un membre, un besoin…"
+                placeholder="Un nom, une fonction, ce qu'il cherche…"
                 className="flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-fg-faint"
               />
               {query && (
@@ -225,7 +226,7 @@ export default function Reseau() {
           </div>
 
           <div className="mt-2 flex-1 space-y-3 overflow-y-auto no-scrollbar px-5 pb-6 pt-2">
-            <p className="text-xs font-medium text-fg-faint">{list.length} membre{list.length > 1 ? 's' : ''}</p>
+            <p className="text-xs font-medium text-fg-faint">{list.length} dossard{list.length > 1 ? 's' : ''}</p>
             {list.map((m) => (
               <article key={m.id} className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
                 <button onClick={() => openMember(m.name)} className="flex w-full items-center gap-3 text-left tap">
@@ -247,7 +248,7 @@ export default function Reseau() {
                     contacted[m.name] ? 'bg-success text-white' : 'border border-brand-300 text-brand-700 hover:bg-brand-light'
                   }`}
                 >
-                  {contacted[m.name] ? 'Demande envoyée' : 'Entrer en contact'}
+                  {contacted[m.name] ? 'Rencontre proposée' : 'Proposer une rencontre'}
                 </button>
               </article>
             ))}
@@ -256,8 +257,8 @@ export default function Reseau() {
                 <span className="grid h-14 w-14 place-items-center rounded-2xl bg-surface-2 text-fg-faint">
                   <Icon name="search" className="h-6 w-6" />
                 </span>
-                <p className="mt-3 text-sm font-semibold text-fg-soft">Aucun résultat</p>
-                <p className="text-xs text-fg-faint">Essaie un autre filtre ou mot-clé.</p>
+                <p className="mt-3 text-sm font-semibold text-fg-soft">Personne ne répond à ça pour l'instant</p>
+                <p className="text-xs text-fg-faint">Essaie un autre verbe, ou un nom.</p>
               </div>
             )}
           </div>
@@ -266,7 +267,7 @@ export default function Reseau() {
 
       {netView === 'contacts' && (
         <div className="flex-1 space-y-5 overflow-y-auto no-scrollbar px-5 pb-6 pt-4">
-          {/* Qui veut me rencontrer (premium) */}
+          {/* Qui veut te rencontrer (Premium) */}
           {canSeeWhoWants ? (
             <section className="rounded-3xl border border-brand-200 bg-brand-light/50 p-3.5">
               <div className="flex items-center gap-1.5">
@@ -306,7 +307,7 @@ export default function Reseau() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-semibold">2 personnes veulent te rencontrer</div>
-                  <p className="text-[12px] text-white/60">Débloque-les avec Pro.</p>
+                  <p className="text-[12px] text-white/60">Voir qui veut te rencontrer : en Premium.</p>
                 </div>
                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/15 text-white">
                   <Icon name="lock" className="h-4 w-4" />
@@ -318,7 +319,7 @@ export default function Reseau() {
           {requests.length > 0 && (
             <section>
               <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">
-                Demandes reçues
+                Veulent te rencontrer
                 <span className="grid h-4 min-w-4 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-semibold text-white">{requests.length}</span>
               </div>
               <div className="space-y-2">
@@ -342,7 +343,7 @@ export default function Reseau() {
           )}
 
           <section>
-            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">Connexions · {connections.length}</div>
+            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">Tes contacts · {connections.length}</div>
             <div className="overflow-hidden rounded-3xl border border-line bg-surface shadow-soft">
               {connections.map((c, i) => (
                 <button
@@ -363,7 +364,7 @@ export default function Reseau() {
 
           {sentNames.length > 0 && (
             <section>
-              <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">Demandes envoyées · {sentNames.length}</div>
+              <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">En attente · {sentNames.length}</div>
               <div className="space-y-2">
                 {sentNames.map((name) => (
                   <div key={name} className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-2.5 shadow-soft">

@@ -1,14 +1,15 @@
-/* Gamification « Saison » (démo) : les kilomètres parcourus font monter un
-   niveau et débloquent des récompenses réseau (matchs, catégories, boosts).
-   On court → on débloque. */
+/* Les kilomètres investis (démo) : les kilomètres courus AVEC quelqu'un font
+   monter un palier, et chaque palier ouvre une porte du réseau — des
+   rencontres proposées en plus, une catégorie de l'annuaire, une présentation
+   prioritaire, ta place dans une vague plus tôt. On court ensemble → ça ouvre. */
 
-export const SEASON = { label: 'Saison de printemps', endsIn: '5 jours' }
+export const SEASON = { label: 'Kilomètres investis', endsIn: '5 jours' }
 
 export const TIERS = [
-  { km: 25, title: 'Régulier', reward: '+2 matchs chaque semaine', icon: 'activity', unlock: { matches: 2 } },
-  { km: 50, title: 'Connecteur', reward: 'Catégorie « Investit » débloquée', icon: 'users', unlock: { category: 'Investit' } },
-  { km: 100, title: 'Marathonien réseau', reward: 'Boost de profil + badge de saison', icon: 'trophy', unlock: { boost: true } },
-  { km: 150, title: 'Élite ROI', reward: 'Une intro prioritaire offerte', icon: 'crown', unlock: { priorityIntro: true } },
+  { km: 25, title: 'Première foulée', reward: '+2 rencontres proposées chaque semaine', icon: 'activity', unlock: { matches: 2 } },
+  { km: 50, title: 'Compagnon de route', reward: 'La catégorie « Lève » de l’annuaire s’ouvre', icon: 'users', unlock: { category: 'Lève' } },
+  { km: 100, title: 'Relais', reward: 'Présentation prioritaire : ton nom passe en premier', icon: 'trophy', unlock: { boost: true } },
+  { km: 150, title: 'Tête de peloton', reward: 'Ta place dans une vague plus tôt, à la prochaine édition', icon: 'crown', unlock: { priorityIntro: true } },
 ]
 
 /* Renvoie l'état de progression pour un total de km donné. */
@@ -23,17 +24,17 @@ export function seasonProgress(km) {
   return { unlocked, next, level, pct, remaining }
 }
 
-/* Bonus de matchs hebdo débloqué par les kilomètres. */
+/* Rencontres proposées en plus chaque semaine, ouvertes par les kilomètres. */
 export function bonusMatches(km) {
   return TIERS.filter((t) => km >= t.km).reduce((n, t) => n + (t.unlock.matches || 0), 0)
 }
 
-/* Le palier qui débloque une catégorie d'annuaire (ou null si libre). */
+/* Le palier qui ouvre une catégorie de l'annuaire (ou null si libre). */
 export function categoryTier(category) {
   return TIERS.find((t) => t.unlock.category === category) || null
 }
 
-/* Une catégorie est-elle encore verrouillée pour ce total de km ? */
+/* Une catégorie est-elle encore fermée pour ce total de km ? */
 export function isCategoryLocked(km, category) {
   const tier = categoryTier(category)
   return !!tier && km < tier.km

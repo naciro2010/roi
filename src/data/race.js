@@ -147,7 +147,7 @@ export const PROGRAMME = [
 /* Les quatre principes gardés de ceux qui courent déjà ensemble. */
 export const PRINCIPES = [
   { n: '01', titre: 'Zéro pitch en course', texte: 'On court d’abord. On parle pendant. On conclut après.' },
-  { n: '02', titre: 'Toutes les allures', texte: 'Du rythme de conversation au chrono. Aucun niveau requis.' },
+  { n: '02', titre: 'Toutes les allures', texte: 'Du rythme de conversation au chrono. Aucun niveau requis, pas de badge, pas de slide.' },
   { n: '03', titre: 'L’après compte autant', texte: 'L’essentiel du retour se fait une fois la ligne franchie.' },
   { n: '04', titre: 'Le réseau toute l’année', texte: 'Entre deux éditions, l’app garde la conversation ouverte.' },
 ]

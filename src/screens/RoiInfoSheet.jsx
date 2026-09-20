@@ -2,11 +2,12 @@ import Icon from '../components/Icon'
 import { ProgressRing, ProgressBar, PILL_TONES, Sparkline } from '../components/primitives'
 import { CURRENT_USER } from '../data/user'
 
+/* Ce que ton réseau te rapporte, en quatre lignes — les chiffres ne bougent pas. */
 const FACTORS = [
-  { icon: 'users', tone: 'indigo', label: 'Connexions actives', detail: 'Relations avec qui tu échanges vraiment', value: 78 },
-  { icon: 'calendar', tone: 'emerald', label: 'RDV & sorties', detail: 'Rencontres en vrai, en courant ou autour d’un café', value: 64 },
-  { icon: 'briefcase', tone: 'brand', label: 'Opportunités créées', detail: 'Intros, deals, missions nés de ton réseau', value: 52 },
-  { icon: 'activity', tone: 'amber', label: 'Régularité running', detail: 'Plus tu cours, plus tu croises du monde', value: 71 },
+  { icon: 'users', tone: 'indigo', label: 'Rencontres qui ont eu lieu', detail: 'À l’Arena, en courant, autour d’un café ou en visio', value: 78 },
+  { icon: 'link', tone: 'emerald', label: 'Présentations faites et reçues', detail: 'Les mises en relation, dans les deux sens', value: 64 },
+  { icon: 'briefcase', tone: 'brand', label: 'Ce que ça a produit', detail: 'Recrue, levée, contrat, association', value: 52 },
+  { icon: 'activity', tone: 'amber', label: 'Kilomètres courus avec quelqu’un', detail: 'Un kilomètre à deux vaut plus qu’un kilomètre seul', value: 71 },
 ]
 
 export default function RoiInfoSheet({ onClose }) {
@@ -25,9 +26,9 @@ export default function RoiInfoSheet({ onClose }) {
               <div className="text-xl font-semibold leading-none">{u.roi.score}</div>
             </ProgressRing>
             <div>
-              <h2 className="text-lg font-semibold">Ton score ROI réseau</h2>
+              <h2 className="text-lg font-semibold">Ton retour sur kilomètres investis</h2>
               <p className="mt-0.5 text-[13px] leading-snug text-white/65">
-                Une mesure de la valeur que ton réseau te rapporte — pas un compteur d’abonnés.
+                Ce que ton réseau te rapporte — pas un compteur d’abonnés.
               </p>
             </div>
           </div>
@@ -50,7 +51,7 @@ export default function RoiInfoSheet({ onClose }) {
             </div>
           </div>
 
-          <p className="text-xs font-semibold uppercase tracking-wide text-fg-faint">Ce qui fait monter ton score</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-fg-faint">Ce qui le fait monter</p>
           <div className="mt-3 space-y-3">
             {FACTORS.map((f) => (
               <div key={f.label} className="rounded-2xl border border-line bg-surface p-3.5 shadow-soft">
@@ -78,7 +79,7 @@ export default function RoiInfoSheet({ onClose }) {
             <div>
               <p className="text-[13px] font-semibold text-fg">+{u.roi.weekDelta} cette semaine</p>
               <p className="text-[12px] leading-snug text-fg-soft">
-                2 actions pour passer 80 : accepte une demande en attente et inscris-toi à une sortie.
+                Deux gestes pour passer 80 : dis oui à une rencontre en attente et inscris-toi à une sortie.
               </p>
             </div>
           </div>

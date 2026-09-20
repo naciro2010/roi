@@ -65,7 +65,7 @@ export default function GlobalSearch({ onClose }) {
             autoFocus
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Personnes, sorties, posts, groupes…"
+            placeholder="Un nom, une entreprise, ce que tu cherches…"
             className="flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-fg-faint"
           />
           {q && (
@@ -82,20 +82,20 @@ export default function GlobalSearch({ onClose }) {
             <span className="grid h-14 w-14 place-items-center rounded-2xl bg-surface-2 text-fg-faint">
               <Icon name="search" className="h-6 w-6" />
             </span>
-            <p className="mt-3 text-sm font-semibold text-fg-soft">Cherche dans tout ROI</p>
-            <p className="text-xs text-fg-faint">Membres, activités, sorties, posts et groupes.</p>
+            <p className="mt-3 text-sm font-semibold text-fg-soft">Cherche dans tout R.O.I</p>
+            <p className="text-xs text-fg-faint">Les dossards, les sorties, les cercles et le fil.</p>
           </div>
         )}
 
         {query && total === 0 && (
           <div className="grid place-items-center py-16 text-center">
-            <p className="text-sm font-semibold text-fg-soft">Aucun résultat pour « {q} »</p>
-            <p className="text-xs text-fg-faint">Essaie un autre mot-clé.</p>
+            <p className="text-sm font-semibold text-fg-soft">Rien pour « {q} »</p>
+            <p className="text-xs text-fg-faint">Essaie un nom, une entreprise ou l'un des quatre verbes.</p>
           </div>
         )}
 
         {people.length > 0 && (
-          <Group label="Personnes">
+          <Group label="Dossards">
             {people.map((n) => (
               <ResultRow key={n} avatar={n} title={n} subtitle={personFor(n).title} onClick={() => go(() => openMember(n))} />
             ))}
@@ -103,7 +103,7 @@ export default function GlobalSearch({ onClose }) {
         )}
 
         {activities.length > 0 && (
-          <Group label="Activités">
+          <Group label="Kilomètres courus">
             {activities.map((a) => (
               <ResultRow key={a.id} icon="activity" tone="bg-success-light text-success-dark" title={a.title} subtitle={`${a.athlete} · ${a.distance.toFixed(1)} km`} onClick={() => go(() => openActivity(a.id))} />
             ))}
@@ -119,7 +119,7 @@ export default function GlobalSearch({ onClose }) {
         )}
 
         {posts.length > 0 && (
-          <Group label="Posts">
+          <Group label="Le fil">
             {posts.map((p) => (
               <ResultRow key={p.id} icon={POST_TYPES[p.type].icon} tone="bg-brand-50 text-brand-700" title={p.author} subtitle={`${POST_TYPES[p.type].label} · ${p.text.replace(/\n/g, ' ').slice(0, 48)}…`} onClick={() => go(() => goTo('accueil'))} />
             ))}
@@ -127,7 +127,7 @@ export default function GlobalSearch({ onClose }) {
         )}
 
         {groups.length > 0 && (
-          <Group label="Groupes">
+          <Group label="Cercles">
             {groups.map((g) => (
               <ResultRow key={g.id} icon="users" title={g.name} subtitle={`${g.topic} · ${g.members} membres`} onClick={() => go(() => { goTo('messages'); setMsgView('groupes') })} />
             ))}

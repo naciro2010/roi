@@ -1,26 +1,20 @@
-import { useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { useSheetDrag } from '../lib/useSheetDrag'
-import { PLANS, planById } from '../data/plans'
+import { PLANS } from '../data/plans'
+import { siteUrl } from '../data/race'
 
-function PriceBlock({ plan, annual }) {
-  if (plan.priceMonthly === 0) {
-    return <div className="text-3xl font-semibold tabular-nums">Gratuit</div>
-  }
-  const price = annual ? plan.priceAnnual : plan.priceMonthly
-  return (
-    <div className="flex items-baseline gap-1">
-      <span className="text-3xl font-semibold tabular-nums">{price}€</span>
-      <span className="text-sm font-semibold opacity-60">/ mois{plan.perSeat ? ' / siège' : ''}</span>
-    </div>
-  )
-}
-
+/* Ta formule — Dossard · Premium · Cercle. Aucun prix dans l'app : la formule
+   se choisit et se confirme depuis l'espace du site ; ici, on la demande. */
 export default function PlansSheet({ onClose }) {
-  const { plan, upgradePlan } = useApp()
+  const { plan, upgradePlan, showToast } = useApp()
   const drag = useSheetDrag(onClose)
-  const [annual, setAnnual] = useState(true)
+  const espaceUrl = siteUrl('espace/#formule')
+
+  function demander(p) {
+    upgradePlan(p.id)
+    showToast(`Formule ${p.name} demandée — elle se confirme depuis ton espace sur le site`)
+  }
 
   return (
     <div className="absolute inset-0 z-40">
@@ -29,7 +23,7 @@ export default function PlansSheet({ onClose }) {
         style={drag.style}
         className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface-soft shadow-float"
       >
-        {/* En-tête premium sombre */}
+        {/* En-tête sombre */}
         <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-5 pt-3 text-white">
           <div className="absolute inset-0 bg-aurora" />
           <div {...drag.handleProps} className="relative mx-auto mb-3 h-1 w-10 rounded-full bg-white/30" aria-hidden="true" />
@@ -41,52 +35,33 @@ export default function PlansSheet({ onClose }) {
             <Icon name="x" className="h-5 w-5" />
           </button>
           <div className="relative">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-gold-300">
-              <Icon name="crown" className="h-3.5 w-3.5" filled /> Abonnement ROI
-            </span>
-            <h2 className="mt-3 text-2xl font-semibold leading-tight">Débloque tout ton réseau</h2>
-            <p className="mt-1 max-w-[300px] text-[13px] leading-relaxed text-white/65">
-              Matchs illimités, agenda & RDV, intros prioritaires et analytics ROI. Annule quand tu veux.
+            <span className="tmark text-craie/70"><b>T–</b> / TA FORMULE</span>
+            <h2 className="mt-3 text-2xl font-semibold leading-tight">La course est la même. Le réseau, non.</h2>
+            <p className="mt-1 max-w-[320px] text-[13px] leading-relaxed text-white/65">
+              Aucune formule n’achète une meilleure course : elle change quand le réseau commence, et combien de portes s’ouvrent après.
             </p>
-
-            {/* Bascule mensuel / annuel */}
-            <div className="mt-4 inline-flex items-center gap-1 rounded-full bg-white/10 p-1">
-              <button
-                onClick={() => setAnnual(false)}
-                className={`rounded-full px-3.5 py-1.5 text-[13px] font-semibold tap ${!annual ? 'bg-white text-fg' : 'text-white/70'}`}
-              >
-                Mensuel
-              </button>
-              <button
-                onClick={() => setAnnual(true)}
-                className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-semibold tap ${annual ? 'bg-white text-fg' : 'text-white/70'}`}
-              >
-                Annuel
-                <span className="rounded-full bg-gold/90 px-1.5 py-0.5 text-[10px] font-semibold text-fg">−25%</span>
-              </button>
-            </div>
           </div>
         </div>
 
-        {/* Cartes de plans */}
+        {/* Les trois formules */}
         <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           {PLANS.map((p) => {
             const current = plan === p.id
             const highlight = p.highlight
-            const business = p.id === 'business'
+            const cercle = p.id === 'business'
             return (
               <article
                 key={p.id}
                 className={`relative overflow-hidden rounded-3xl p-4 ${
                   highlight
                     ? 'surface-hero text-white shadow-float'
-                    : business
+                    : cercle
                       ? 'border-2 border-gold/40 bg-surface text-fg shadow-card'
                       : 'border border-line bg-surface text-fg shadow-soft'
                 }`}
               >
                 {highlight && <div className="absolute inset-0 bg-aurora" />}
-                {business && <div className="absolute inset-0 bg-gold-sheen" />}
+                {cercle && <div className="absolute inset-0 bg-gold-sheen" />}
                 <div className="relative">
                   <div className="flex items-start justify-between">
                     <div>
@@ -97,41 +72,42 @@ export default function PlansSheet({ onClose }) {
                             {p.badge}
                           </span>
                         )}
-                        {business && <Icon name="crown" className="h-4 w-4 text-gold" filled />}
+                        {cercle && <Icon name="crown" className="h-4 w-4 text-gold" filled />}
                       </div>
-                      <p className={`mt-0.5 text-[13px] ${highlight ? 'text-white/60' : 'text-fg-muted'}`}>{p.tagline}</p>
+                      {p.pour && <p className={`mt-0.5 text-[13px] ${highlight ? 'text-white/60' : 'text-fg-muted'}`}>{p.pour}</p>}
                     </div>
                     {current && (
                       <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${highlight ? 'bg-white/15 text-white' : 'bg-surface-2 text-fg-soft'}`}>
-                        Actuel
+                        Ta formule
                       </span>
                     )}
                   </div>
 
-                  <div className="mt-3">
-                    <PriceBlock plan={p} annual={annual} />
-                    {annual && p.priceMonthly > 0 && (
-                      <p className={`mt-0.5 text-[11px] ${highlight ? 'text-white/45' : 'text-fg-faint'}`}>
-                        Facturé {p.priceAnnual * 12}€ / an{p.perSeat ? ' / siège' : ''}
-                      </p>
-                    )}
-                  </div>
+                  {p.prix && (
+                    <div className={`mt-3 font-mono text-[10px] font-bold uppercase tracking-mono ${highlight ? 'text-white/70' : cercle ? 'text-gold-dark' : 'text-fg-muted'}`}>
+                      ■ {p.prix}
+                    </div>
+                  )}
 
                   <ul className="mt-3.5 space-y-2">
                     {p.features.map((f) => (
                       <li key={f} className="flex items-start gap-2 text-[13px]">
                         <Icon
                           name="check"
-                          className={`mt-0.5 h-4 w-4 shrink-0 ${highlight ? 'text-gold-300' : business ? 'text-gold-dark' : 'text-success'}`}
+                          className={`mt-0.5 h-4 w-4 shrink-0 ${highlight ? 'text-gold-300' : cercle ? 'text-gold-dark' : 'text-success'}`}
                         />
                         <span className={highlight ? 'text-white/85' : 'text-fg-soft'}>{f}</span>
                       </li>
                     ))}
                   </ul>
 
+                  {cercle && (
+                    <p className="mt-3 text-[12px] text-fg-muted">Quarante places, sur cooptation de deux membres.</p>
+                  )}
+
                   <button
                     disabled={current}
-                    onClick={() => upgradePlan(p.id)}
+                    onClick={() => demander(p)}
                     className={`mt-4 w-full rounded-full py-3.5 text-sm font-semibold tap disabled:opacity-60 ${
                       current
                         ? highlight
@@ -139,20 +115,31 @@ export default function PlansSheet({ onClose }) {
                           : 'bg-surface-2 text-fg-muted'
                         : highlight
                           ? 'bg-white text-fg'
-                          : business
+                          : cercle
                             ? 'bg-gradient-to-r from-gold-dark to-gold text-white shadow-brand'
                             : 'btn btn-impact'
                     }`}
                   >
-                    {current ? 'Ton plan actuel' : p.cta}
+                    {current ? 'Ta formule' : cercle ? 'Demander une place' : p.cta}
                   </button>
+
+                  {!current && (
+                    <a
+                      href={espaceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`mt-2.5 flex items-center justify-center gap-1 font-mono text-[10px] font-bold uppercase tracking-mono tap ${highlight ? 'text-white/70' : 'text-brand-600'}`}
+                    >
+                      Changer depuis mon espace <span aria-hidden>→</span>
+                    </a>
+                  )}
                 </div>
               </article>
             )
           })}
 
           <p className="flex items-center justify-center gap-1.5 px-4 pt-1 text-center text-[11px] text-fg-faint">
-            <Icon name="shield" className="h-3.5 w-3.5" /> Paiement sécurisé · sans engagement · annulable à tout moment
+            <Icon name="shield" className="h-3.5 w-3.5" /> La formule se règle sur le site, depuis ton espace · rien ne se paie dans l’app
           </p>
         </div>
       </div>

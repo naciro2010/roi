@@ -2,6 +2,7 @@ import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
 import { CONVERSATIONS, GROUP_SUGGESTIONS } from '../data/messages'
+import { personFor } from '../data/network'
 
 function ChatComposer({ placeholder, draft, setDraft, onSend }) {
   return (
@@ -49,7 +50,7 @@ export default function Messages() {
           <Avatar name={conv.name} size="sm" onClick={() => openMember(conv.name)} />
           <button onClick={() => openMember(conv.name)} className="min-w-0 text-left">
             <div className="truncate font-semibold text-fg">{conv.name}</div>
-            <div className="truncate text-[11px] text-success"> En ligne</div>
+            <div className="truncate text-[11px] text-fg-faint">{personFor(conv.name).title}</div>
           </button>
         </div>
 
@@ -67,12 +68,12 @@ export default function Messages() {
           ))}
         </div>
 
-        <ChatComposer placeholder="Écris un message…" draft={draft} setDraft={setDraft} onSend={sendMessage} />
+        <ChatComposer placeholder="Écrire…" draft={draft} setDraft={setDraft} onSend={sendMessage} />
       </div>
     )
   }
 
-  /* --- Chat de groupe --- */
+  /* --- Chat de cercle --- */
   if (openGroup) {
     const grp = groups.find((g) => g.id === openGroup)
     const msgs = groupThreads[openGroup] || []
@@ -92,7 +93,7 @@ export default function Messages() {
         </div>
 
         <div className="flex-1 space-y-2.5 overflow-y-auto no-scrollbar px-4 py-4">
-          {msgs.length === 0 && <p className="py-10 text-center text-sm text-fg-faint">Lance la discussion du groupe</p>}
+          {msgs.length === 0 && <p className="py-10 text-center text-sm text-fg-faint">Ouvre la conversation du cercle</p>}
           {msgs.map((m, i) => {
             const mine = m.from === 'me'
             const showName = !mine && msgs[i - 1]?.from !== m.from
@@ -118,20 +119,21 @@ export default function Messages() {
           })}
         </div>
 
-        <ChatComposer placeholder={`Message à ${grp.name}…`} draft={draft} setDraft={setDraft} onSend={sendMessage} />
+        <ChatComposer placeholder="Écrire…" draft={draft} setDraft={setDraft} onSend={sendMessage} />
       </div>
     )
   }
 
-  /* --- Liste : Discussions / Groupes --- */
+  /* --- Liste : Rencontres / Cercles --- */
   return (
     <div className="animate-screenIn flex h-full flex-col">
       <div className="px-5 pb-1 pt-4">
-        <h1 className="text-2xl font-semibold text-fg">Messages</h1>
+        <span className="tmark"><b>T+</b> / LA CONVERSATION CONTINUE</span>
+        <h1 className="mt-1 text-2xl font-semibold text-fg">Messages</h1>
         <div className="mt-4 flex divide-x divide-line border border-line">
           {[
-            { id: 'discussions', label: 'Discussions', n: unreadConv },
-            { id: 'groupes', label: 'Groupes', n: unreadGroups },
+            { id: 'discussions', label: 'Rencontres', n: unreadConv },
+            { id: 'groupes', label: 'Cercles', n: unreadGroups },
           ].map((s) => (
             <button
               key={s.id}
@@ -187,11 +189,11 @@ export default function Messages() {
                 value={newGroupName}
                 onChange={(e) => setNewGroupName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && createGroup()}
-                placeholder="Nom du groupe…"
+                placeholder="Le nom du cercle"
                 className="w-full rounded-xl border border-line-strong bg-surface px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-200"
               />
               <div className="mt-2 flex gap-2">
-                <button onClick={createGroup} className="flex-1 rounded-xl bg-brand-500 py-2 text-sm font-semibold text-white tap">Créer</button>
+                <button onClick={createGroup} className="flex-1 rounded-xl bg-brand-500 py-2 text-sm font-semibold text-white tap">Ouvrir</button>
                 <button onClick={() => { setCreatingGroup(false); setNewGroupName('') }} className="rounded-xl border border-line-strong bg-surface px-4 py-2 text-sm font-semibold text-fg-soft tap">Annuler</button>
               </div>
             </div>
@@ -201,13 +203,13 @@ export default function Messages() {
                 <Icon name="plus" className="h-5 w-5" />
               </span>
               <div>
-                <div className="text-sm font-semibold text-fg">Créer un groupe</div>
-                <div className="text-xs text-fg-faint">Rassemble ta team ou ton club</div>
+                <div className="text-sm font-semibold text-fg">Ouvrir un cercle</div>
+                <div className="text-xs text-fg-faint">Par entreprise, par secteur, par sortie.</div>
               </div>
             </button>
           )}
 
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-fg-faint">Mes groupes</p>
+          <p className="mb-1 font-mono text-[10px] font-bold uppercase tracking-mono text-fg-faint">Tes cercles</p>
           <div className="space-y-1">
             {groups.map((g) => {
               const thread = groupThreads[g.id] || []
@@ -243,7 +245,7 @@ export default function Messages() {
             })}
           </div>
 
-          <p className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wide text-fg-faint">À découvrir</p>
+          <p className="mb-2 mt-5 font-mono text-[10px] font-bold uppercase tracking-mono text-fg-faint">Cercles à rejoindre</p>
           <div className="space-y-2">
             {GROUP_SUGGESTIONS.map((g) => (
               <div key={g.id} className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3 shadow-soft">

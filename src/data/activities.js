@@ -1,6 +1,7 @@
-/* Activités réalisées (façon Strava).
+/* Les sorties courues. La valeur affichée est qui tu as rencontré, pas ton
+   chrono : chaque kilomètre couru avec quelqu'un est un kilomètre investi.
    `route` = liste de points [lat, lng] tracés sur une vraie carte (Leaflet/OSM).
-   Les tracés suivent grossièrement des parcours emblématiques de Paris. */
+   Les tracés suivent grossièrement des parcours connus de Paris. */
 
 export const ACTIVITIES = [
   {
@@ -17,12 +18,12 @@ export const ACTIVITIES = [
     hr: 148,
     calories: 842,
     achievements: [
-      { icon: 'medal', label: '2ᵉ meilleur temps · Bords de Seine' },
-      { icon: 'trophy', label: 'Plus longue sortie du mois' },
+      { icon: 'medal', label: '12 km avec Sarah et Marc' },
+      { icon: 'trophy', label: 'Ta plus longue sortie à plusieurs ce mois' },
     ],
     kudosBy: ['Sarah Khalil', 'Marc Dubois', 'Claire Moreau', 'Yanis Benali'],
     metContacts: ['Sarah Khalil', 'Marc Dubois'],
-    note: "Sortie matinale avec Sarah, on a pitché nos boîtes en courant. 12 km pile, jambes légères.",
+    note: "Sortie du matin avec Sarah et Marc. On a parlé pendant : sa levée, mon premier développeur. 12 km investis, café d’arrivée au pont.",
     splits: [5.4, 5.2, 5.3, 5.5, 5.6, 5.4, 5.3, 5.5, 5.7, 5.6, 5.4, 5.2],
     route: [
       [48.8638, 2.3009], [48.8625, 2.3072], [48.8609, 2.3135], [48.8597, 2.3198],
@@ -34,8 +35,8 @@ export const ACTIVITIES = [
   {
     id: 'r2',
     athlete: 'Sarah Khalil',
-    title: 'Fractionné · Canal Saint-Martin',
-    type: 'Fractionné',
+    title: 'Sortie rapide · Canal Saint-Martin',
+    type: 'Sortie rapide',
     date: 'Hier · 18:40',
     distance: 8.1,
     duration: '0:41:05',
@@ -45,12 +46,12 @@ export const ACTIVITIES = [
     hr: 162,
     calories: 598,
     achievements: [
-      { icon: 'trophy', label: 'Couronne du segment · 400 m Canal' },
-      { icon: 'medal', label: 'Record perso · 5 km' },
+      { icon: 'trophy', label: '8 km avec Claire' },
+      { icon: 'medal', label: 'Première sortie du jeudi' },
     ],
     kudosBy: ['Claire Moreau', 'Thomas Lefèvre', 'Nadia Cherif'],
     metContacts: ['Claire Moreau'],
-    note: "8 x 400m le long du canal. Objectif 10 km sous 50 min, ça avance",
+    note: "Huit fois 400 m le long du canal, Claire dans les récupérations. On a parlé recrutement entre deux efforts.",
     splits: [5.3, 4.6, 5.2, 4.5, 5.1, 4.4, 5.2, 4.6],
     route: [
       [48.8709, 2.3658], [48.8722, 2.3651], [48.8738, 2.3645], [48.8754, 2.3639],
@@ -62,8 +63,8 @@ export const ACTIVITIES = [
   {
     id: 'r3',
     athlete: 'Marc Dubois',
-    title: 'Trail · Bois de Vincennes',
-    type: 'Trail',
+    title: 'Sortie chemins · Bois de Vincennes',
+    type: 'Chemins',
     date: 'Sam. · 09:35',
     distance: 15.2,
     duration: '1:35:18',
@@ -73,11 +74,11 @@ export const ACTIVITIES = [
     hr: 151,
     calories: 1180,
     achievements: [
-      { icon: 'trophy', label: '3ᵉ · Montée du Fort de Vincennes' },
+      { icon: 'trophy', label: '15 km avec Nadia et Yanis' },
     ],
     kudosBy: ['Nadia Cherif', 'Yanis Benali', 'Thomas Lefèvre', 'Sarah Khalil', 'Claire Moreau'],
     metContacts: ['Nadia Cherif', 'Yanis Benali'],
-    note: "Boucle du lac Daumesnil + montée du fort. 15 km, du dénivelé, le pied après une semaine de board.",
+    note: "Boucle du lac Daumesnil et montée du fort avec Nadia et Yanis. 15 km investis, deux conversations qui avancent, et de l’air après une semaine de conseil d’administration.",
     splits: [6.1, 6.3, 6.0, 6.4, 6.5, 6.2, 6.1, 6.3, 6.6, 6.2, 6.0, 6.4, 6.3, 6.1, 6.2],
     route: [
       [48.8422, 2.4352], [48.8398, 2.4388], [48.8375, 2.4421], [48.8351, 2.4456],
@@ -89,8 +90,8 @@ export const ACTIVITIES = [
   {
     id: 'r4',
     athlete: 'Yanis Benali',
-    title: 'Récup easy · Buttes-Chaumont',
-    type: 'Récup',
+    title: 'Sortie douce · Buttes-Chaumont',
+    type: 'Sortie douce',
     date: 'Ven. · 07:05',
     distance: 5.3,
     duration: '0:33:50',
@@ -102,7 +103,7 @@ export const ACTIVITIES = [
     achievements: [],
     kudosBy: ['Marc Dubois'],
     metContacts: [],
-    note: "Footing tranquille avant une journée de code. Les côtes des Buttes réveillent",
+    note: "Petite sortie seul avant une journée de code. Les côtes des Buttes réveillent ; la prochaine, accompagné.",
     splits: [6.5, 6.2, 6.4, 6.3, 6.5],
     route: [
       [48.8799, 2.3812], [48.8806, 2.3835], [48.8815, 2.3856], [48.8808, 2.3878],
@@ -116,8 +117,8 @@ export function activityById(id) {
   return ACTIVITIES.find((a) => a.id === id)
 }
 
-/* Sorties courues avec une personne (rencontrée pendant l'activité de l'user,
-   ou activité de la personne où l'user figure parmi les contacts rencontrés). */
+/* Sorties courues avec une personne (rencontrée pendant ta sortie, ou sa
+   sortie où tu figures parmi les personnes rencontrées). */
 export function runsWith(me, name) {
   return ACTIVITIES.filter(
     (a) =>
@@ -126,7 +127,7 @@ export function runsWith(me, name) {
   )
 }
 
-/* Total des kilomètres « investis » avec une personne (pour le Pipeline ROI). */
+/* Total des kilomètres investis avec une personne (pour le pipeline). */
 export function kmWith(me, name) {
   return runsWith(me, name).reduce((s, a) => s + a.distance, 0)
 }

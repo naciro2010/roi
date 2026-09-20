@@ -11,7 +11,10 @@ export default function IntegrationsSheet({ onClose }) {
       <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
       <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[92%] flex-col overflow-hidden bg-surface shadow-float">
         <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-3.5">
-          <h2 className="text-base font-semibold text-fg">Comptes & appareils</h2>
+          <div className="min-w-0">
+            <span className="tmark"><b>T–</b> / STRAVA, LINKEDIN, TA MONTRE</span>
+            <h2 className="titre mt-1 text-[20px] text-fg">Tes sorties, importées</h2>
+          </div>
           <button onClick={onClose} className="grid h-9 w-9 place-items-center rounded-full bg-surface-2 text-fg-muted tap" aria-label="Fermer">
             <Icon name="x" className="h-5 w-5" />
           </button>
@@ -19,12 +22,12 @@ export default function IntegrationsSheet({ onClose }) {
 
         <div className="flex-1 overflow-y-auto no-scrollbar px-5 py-4">
           <p className="text-[13px] leading-relaxed text-fg-muted">
-            Connecte tes comptes et ta montre pour importer tes courses, enrichir ton profil et faire monter ton ROI réseau sans rien saisir à la main.
+            Connecte Strava ou ta montre : tes sorties arrivent seules, tu n’as plus qu’à dire avec qui tu as couru. LinkedIn remplit le verso du dossard.
           </p>
 
           {CATEGORIES.map((cat) => (
             <section key={cat.id} className="mt-5">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-faint">{cat.label}</p>
+              <p className="mb-2 font-mono text-[10px] font-bold uppercase tracking-mono text-fg-faint">{cat.label}</p>
               <div className="space-y-2">
                 {SERVICES.filter((s) => s.category === cat.id).map((s) => {
                   const connected = !!integrations[s.id]
@@ -41,7 +44,7 @@ export default function IntegrationsSheet({ onClose }) {
                           )}
                         </div>
                         <div className="truncate text-[12px] text-fg-faint">
-                          {connected ? 'Synchronisé · dernière sync à l’instant' : s.blurb}
+                          {connected ? 'Connecté · tes sorties arrivent seules' : s.blurb}
                         </div>
                       </div>
                       <button
@@ -60,7 +63,7 @@ export default function IntegrationsSheet({ onClose }) {
           ))}
 
           <p className="mt-5 flex items-center justify-center gap-1.5 text-center text-[11px] text-fg-faint">
-            <Icon name="shield" className="h-3.5 w-3.5" /> Connexion sécurisée · tu peux te déconnecter à tout moment
+            <Icon name="shield" className="h-3.5 w-3.5" /> Connexion sécurisée · tu déconnectes quand tu veux
           </p>
         </div>
       </div>

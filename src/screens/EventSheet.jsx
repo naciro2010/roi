@@ -6,6 +6,9 @@ import { EVENTS } from '../data/events'
 import { formatEventDate } from '../lib/dates'
 import { useSheetDrag } from '../lib/useSheetDrag'
 
+/* Les quatre principes d'une sortie — rappelés sur chaque fiche. */
+const PRINCIPES = ['Zéro pitch en course', 'Toutes les allures', "L'après compte autant", 'Le réseau toute l’année']
+
 export default function EventSheet({ id, onClose }) {
   const { joined, toggleJoin, eventKudos, toggleEventKudos, openMember, contacted, contactMember, showToast } = useApp()
   const drag = useSheetDrag(onClose)
@@ -15,6 +18,14 @@ export default function EventSheet({ id, onClose }) {
   const isJoined = joined[e.id]
   const others = e.attendees.filter((n) => n !== e.organizer)
   const d = formatEventDate(e.date)
+
+  const facts = [
+    { icon: 'calendar', text: d.full },
+    { icon: 'clock', text: e.time },
+    { icon: 'route', text: e.distance },
+    { icon: 'activity', text: `Allure de conversation · ${e.pace}` },
+    { icon: 'mapPin', text: e.place },
+  ]
 
   return (
     <div className="absolute inset-0 z-40">
@@ -36,38 +47,38 @@ export default function EventSheet({ id, onClose }) {
         </div>
 
         <div className="flex-1 overflow-y-auto no-scrollbar px-5 pb-4 pt-4">
-          <div className="flex items-center gap-3">
+          <span className="tmark"><b>T+</b> / UNE SORTIE</span>
+          <h2 className="titre mt-2 text-[20px] leading-tight text-fg">{e.title}</h2>
+
+          <div className="mt-3 flex items-center gap-3">
             <Avatar name={e.organizer} size="md" onClick={() => openMember(e.organizer)} />
             <div className="min-w-0 flex-1">
-              <div className="text-[12px] text-fg-faint">Organisé par</div>
-              <button onClick={() => openMember(e.organizer)} className="truncate font-semibold text-fg">{e.organizer}</button>
+              <button onClick={() => openMember(e.organizer)} className="block max-w-full truncate text-left font-semibold text-fg">Hôte · {e.organizer}</button>
+              <div className="truncate text-[12px] text-fg-muted">Mène l'allure, ouvre le café</div>
             </div>
             <button
               onClick={() => toggleEventKudos(e.id)}
+              aria-pressed={k.liked}
               className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold tap ${
-                k.liked ? 'bg-like-light text-like' : 'bg-surface-2 text-fg-muted'
+                k.liked ? 'bg-brand-500 text-white shadow-brand' : 'bg-surface-2 text-fg-muted'
               }`}
             >
-              <Icon name="heart" className="h-4 w-4" filled={k.liked} />
-              {k.count}
+              <Icon name="thumbsUp" className="h-4 w-4" filled={k.liked} />
+              Bien couru <span className="tabular-nums">{k.count}</span>
             </button>
           </div>
 
-          <h2 className="mt-3 text-lg font-semibold text-fg">{e.title}</h2>
-
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-[13px]">
-            <span className="inline-flex items-center gap-1.5 font-semibold text-fg">
-              <Icon name="calendar" className="h-4 w-4 text-brand-600" /> {d.full} · {e.time}
-            </span>
+          {/* Les faits : jour · heure · distance · allure de conversation · lieu */}
+          <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[13px] text-fg-soft">
+            {facts.map((f, i) => (
+              <span key={f.text} className="inline-flex items-center gap-1.5">
+                {i > 0 && <span className="mr-0.5 text-fg-faint">·</span>}
+                <Icon name={f.icon} className="h-4 w-4 text-brand-600" />
+                <span className="font-semibold text-fg">{f.text}</span>
+              </span>
+            ))}
             <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-semibold text-brand-700">{d.relative}</span>
-          </div>
-
-          <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[13px] text-fg-soft">
-            <span className="inline-flex items-center gap-1"><Icon name="route" className="h-4 w-4 text-fg-faint" /> {e.distance}</span>
-            <span className="text-fg-faint">·</span>
-            <span>{e.pace}</span>
-            <span className="text-fg-faint">·</span>
-            <span>{e.level}</span>
+            <span className="text-[12px] text-fg-muted">{e.level}</span>
           </div>
 
           <button
@@ -75,15 +86,32 @@ export default function EventSheet({ id, onClose }) {
             className="mt-3 flex w-full items-center gap-2 rounded-2xl bg-surface-soft px-3.5 py-3 text-left tap"
           >
             <Icon name="mapPin" className="h-5 w-5 shrink-0 text-brand-600" />
-            <span className="flex-1 text-sm font-semibold text-fg">{e.place}</span>
+            <span className="flex-1 text-sm font-semibold text-fg">Départ · {e.place}</span>
             <span className="text-xs font-semibold text-brand-600">Itinéraire</span>
           </button>
 
-          {e.description && <p className="mt-4 text-[14px] leading-relaxed text-fg-soft">{e.description}</p>}
+          {/* Les quatre principes */}
+          <p className="mt-3 font-mono text-[10px] uppercase leading-relaxed tracking-mono text-fg-muted">
+            {PRINCIPES.map((p, i) => (
+              <span key={p}>
+                {i > 0 && <span className="mx-1.5 text-brand-500">·</span>}
+                {p}
+              </span>
+            ))}
+          </p>
+
+          {e.description && (
+            <div className="mt-4">
+              <div className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-fg-muted">
+                <Icon name="coffee" className="h-3.5 w-3.5 text-brand-600" /> On parle pendant · café d'arrivée
+              </div>
+              <p className="text-[14px] leading-relaxed text-fg-soft">{e.description}</p>
+            </div>
+          )}
 
           <div className="mt-5">
             <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-fg-muted">
-              <Icon name="users" className="h-3.5 w-3.5" /> Participants · {e.participants}
+              <Icon name="users" className="h-3.5 w-3.5" /> Qui vient · {e.participants}
             </div>
             <div className="space-y-2">
               {others.map((name) => (
@@ -96,12 +124,12 @@ export default function EventSheet({ id, onClose }) {
                       contacted[name] ? 'bg-success-light text-success-dark' : 'btn btn-impact'
                     }`}
                   >
-                    {contacted[name] ? 'Demandé' : 'Connecter'}
+                    {contacted[name] ? 'Proposée' : 'Rencontrer'}
                   </button>
                 </div>
               ))}
               {e.participants > others.length && (
-                <p className="pt-1 text-center text-xs text-fg-muted">+ {e.participants - others.length} autres inscrits</p>
+                <p className="pt-1 text-center text-xs text-fg-muted">+ {e.participants - others.length} autres inscrit·es</p>
               )}
             </div>
           </div>
@@ -110,14 +138,14 @@ export default function EventSheet({ id, onClose }) {
         <div className="glass flex shrink-0 items-center gap-2 border-t border-line px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             onClick={() => toggleJoin(e.id)}
-            className={`flex-1 rounded-full py-3 text-sm font-semibold text-white tap ${isJoined ? 'bg-success' : 'btn btn-impact shadow-brand'}`}
+            className={`flex-1 ${isJoined ? 'btn btn-encre' : 'btn btn-impact'}`}
           >
-            {isJoined ? 'Inscrit' : 'Je participe'}
+            <span>{isJoined ? 'Inscrit·e' : "J'y serai"}</span><span className="arr">→</span>
           </button>
           <button
-            onClick={() => showToast(`Ajouté à ton agenda · ${d.full}`)}
+            onClick={() => showToast(`Dans ton agenda · ${d.full}`)}
             className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-line-strong text-fg-soft tap"
-            aria-label="Ajouter au calendrier"
+            aria-label="Ajouter à ton agenda"
           >
             <Icon name="calendar" className="h-5 w-5" />
           </button>

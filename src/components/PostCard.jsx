@@ -58,7 +58,7 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
         </span>
         {post.comments.length > 0 && (
           <button onClick={() => setShowComments((s) => !s)} className="tap">
-            {post.comments.length} commentaire{post.comments.length > 1 ? 's' : ''}
+            {post.comments.length} réponse{post.comments.length > 1 ? 's' : ''}
           </button>
         )}
       </div>
@@ -71,13 +71,13 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
             post.liked ? 'text-like' : 'text-fg-muted'
           }`}
         >
-          <Icon name="heart" className="h-[18px] w-[18px]" filled={post.liked} /> J'aime
+          <Icon name="heart" className="h-[18px] w-[18px]" filled={post.liked} /> Utile
         </button>
         <button
           onClick={() => setShowComments((s) => !s)}
           className="flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold text-fg-muted tap"
         >
-          <Icon name="comment" className="h-[18px] w-[18px]" /> Commenter
+          <Icon name="comment" className="h-[18px] w-[18px]" /> Répondre
         </button>
         <button
           onClick={onShare}
@@ -87,7 +87,7 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
         </button>
       </div>
 
-      {/* Commentaires */}
+      {/* Réponses */}
       {showComments && (
         <div className="border-t border-line bg-surface-2/60 px-4 py-3">
           <div className="space-y-2.5">
@@ -107,7 +107,7 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && submit()}
-              placeholder="Ajoute un commentaire…"
+              placeholder="Répondre…"
               className="flex-1 rounded-full border border-line-strong bg-surface px-3.5 py-2 text-[13px] outline-none focus:ring-2 focus:ring-brand-200"
             />
             <button onClick={submit} disabled={!draft.trim()} className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-500 text-white tap disabled:opacity-40">

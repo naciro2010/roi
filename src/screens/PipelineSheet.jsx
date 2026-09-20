@@ -15,8 +15,14 @@ export default function PipelineSheet({ onClose }) {
   const showAnalytics = hasFeature('analytics')
   const stats = pipelineStats(pipeline)
   const me = CURRENT_USER.name
-  // Kilomètres « investis » : somme des sorties courues avec les contacts du pipeline.
+  // Kilomètres investis : la somme des sorties courues avec les personnes du pipeline.
   const kmInvested = Math.round(pipeline.reduce((s, d) => s + kmWith(me, d.name), 0))
+
+  const headline = [
+    { value: stats.value, label: 'en jeu (k€)' },
+    { value: stats.active, label: 'relations actives' },
+    { value: stats.won, label: 'conclus' },
+  ]
 
   return (
     <div className="absolute inset-0 z-40">
@@ -36,48 +42,40 @@ export default function PipelineSheet({ onClose }) {
           >
             <Icon name="x" className="h-5 w-5" />
           </button>
-          <div className="relative flex items-center gap-3">
-            <span className="grid h-11 w-11 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/15 text-white">
-              <Icon name="briefcase" className="h-5 w-5" />
-            </span>
-            <div>
-              <h2 className="text-lg font-extrabold leading-tight">Pipeline ROI</h2>
-              <p className="text-[12.5px] text-white/65">
-                {stats.active} relation{stats.active > 1 ? 's' : ''} active{stats.active > 1 ? 's' : ''} · {stats.won} conclu{stats.won > 1 ? 's' : ''}
-              </p>
-            </div>
+          <div className="relative pr-10">
+            <span className="tmark text-craie/70"><b>T+</b> / LE PIPELINE</span>
+            <h2 className="titre mt-2 text-[22px] leading-tight text-craie">Ce que tes rencontres produisent</h2>
           </div>
 
           {showAnalytics ? (
-          <div className="relative mt-4 grid grid-cols-3 gap-2 border-t border-white/12 pt-3">
-            {[
-              { value: `${stats.value} k€`, label: 'En jeu' },
-              { value: `${kmInvested} km`, label: 'Investis en courant' },
-              { value: stats.total, label: 'Relations' },
-            ].map((s) => (
-              <div key={s.label}>
-                <div className="text-lg font-extrabold tabular-nums leading-none">{s.value}</div>
-                <div className="mt-1 text-[11px] text-white/60">{s.label}</div>
-              </div>
-            ))}
-          </div>
+            <div className="relative mt-4 grid grid-cols-3 gap-2 border-t border-white/12 pt-3">
+              {headline.map((s) => (
+                <div key={s.label}>
+                  <div className="display text-[26px] leading-none tabular-nums text-craie">{s.value}</div>
+                  <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-white/60">{s.label}</div>
+                </div>
+              ))}
+            </div>
           ) : (
             <button
               onClick={openPlans}
               className="relative mt-4 flex w-full items-center gap-3 border-t border-white/12 pt-3 text-left tap"
             >
-              <div className="grid flex-1 grid-cols-3 gap-2 blur-[5px]" aria-hidden="true">
-                {[`${stats.value} k€`, `${kmInvested} km`, stats.total].map((v, i) => (
-                  <div key={i}>
-                    <div className="text-lg font-extrabold tabular-nums leading-none">{v}</div>
-                    <div className="mt-1 h-2.5 w-12 rounded-full bg-white/20" />
+              <div className="grid flex-1 grid-cols-3 gap-2" aria-hidden="true">
+                {headline.map((s, i) => (
+                  <div key={s.label} className={i === 0 ? 'blur-[5px]' : ''}>
+                    <div className="display text-[26px] leading-none tabular-nums text-craie">{s.value}</div>
+                    <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-white/60">{s.label}</div>
                   </div>
                 ))}
               </div>
-              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-fg">
-                <Icon name="lock" className="h-3.5 w-3.5" /> Analytics Pro
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-fg">
+                <Icon name="lock" className="h-3.5 w-3.5" /> Premium
               </span>
             </button>
+          )}
+          {!showAnalytics && (
+            <p className="relative mt-2 text-[11px] text-white/55">La valeur en jeu se lit en Premium.</p>
           )}
         </div>
 
@@ -99,8 +97,8 @@ export default function PipelineSheet({ onClose }) {
 
                 <div className="flex-1 space-y-2.5 overflow-y-auto no-scrollbar pb-2">
                   {deals.length === 0 && (
-                    <div className="grid place-items-center rounded-2xl border border-dashed border-line-strong py-8 text-center">
-                      <span className="text-[12px] text-fg-faint">Aucune relation ici</span>
+                    <div className="grid place-items-center rounded-2xl border border-dashed border-line-strong px-4 py-8 text-center">
+                      <span className="text-[12px] leading-snug text-fg-faint">Rien ici pour l'instant. Une sortie ou une rencontre y mettra quelqu'un.</span>
                     </div>
                   )}
                   {deals.map((d) => {
@@ -123,11 +121,11 @@ export default function PipelineSheet({ onClose }) {
                         <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-fg-muted">
                           {runs > 0 && (
                             <span className="inline-flex items-center gap-1 font-semibold text-success-dark">
-                              <Icon name="activity" className="h-3.5 w-3.5" /> {km} km ensemble
+                              <Icon name="activity" className="h-3.5 w-3.5" /> {km} km investis
                             </span>
                           )}
                           <span className="inline-flex items-center gap-1">
-                            <Icon name="link" className="h-3.5 w-3.5 text-fg-faint" /> {d.via}
+                            <Icon name="link" className="h-3.5 w-3.5 text-fg-faint" /> Origine · {d.via}
                           </span>
                         </div>
 
@@ -135,7 +133,7 @@ export default function PipelineSheet({ onClose }) {
                           <div className="mt-2 flex items-start gap-1.5 rounded-2xl bg-surface-soft px-2.5 py-2 text-[12px] text-fg-soft">
                             <Icon name="arrowRight" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-600" />
                             <span className="min-w-0 flex-1">
-                              {d.next}
+                              <span className="font-semibold text-fg">Prochaine étape</span> · {d.next}
                               {d.nextDate && <span className="text-fg-faint"> · {formatEventDate(d.nextDate).relative}</span>}
                             </span>
                           </div>
@@ -146,7 +144,8 @@ export default function PipelineSheet({ onClose }) {
                             <button
                               onClick={() => advanceDeal(d.id, -1)}
                               className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-line-strong text-fg-faint tap"
-                              aria-label="Reculer l'étape"
+                              aria-label="Reculer"
+                              title="Reculer"
                             >
                               <Icon name="arrowLeft" className="h-4 w-4" />
                             </button>
@@ -158,10 +157,10 @@ export default function PipelineSheet({ onClose }) {
                           ) : (
                             <button
                               onClick={() => advanceDeal(d.id, 1)}
-                              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl btn btn-impact py-2 text-[13px] font-bold text-white shadow-brand tap"
+                              className="btn btn-impact btn-sm flex-1"
                             >
-                              {d.stage === 'deal' ? 'Marquer conclu' : 'Faire avancer'}
-                              <Icon name="arrowRight" className="h-4 w-4" />
+                              <span>{d.stage === 'deal' ? 'Conclure' : "Avancer d'une étape"}</span>
+                              <span className="arr">→</span>
                             </button>
                           )}
                         </div>
@@ -175,7 +174,8 @@ export default function PipelineSheet({ onClose }) {
         </div>
 
         <p className="flex shrink-0 items-center justify-center gap-1.5 border-t border-line bg-surface px-4 py-3 text-center text-[11px] text-fg-faint">
-          <Icon name="activity" className="h-3.5 w-3.5 text-success" /> Chaque sortie courue fait avancer une relation.
+          <Icon name="activity" className="h-3.5 w-3.5 text-success" />
+          {kmInvested > 0 ? `${kmInvested} km investis dans ces relations · chaque sortie en fait avancer une.` : 'Chaque sortie courue fait avancer une relation.'}
         </p>
       </div>
     </div>

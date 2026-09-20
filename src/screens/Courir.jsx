@@ -49,7 +49,7 @@ export default function Courir() {
     </button>
   )
 
-  const RunMatchBanner = () => (
+  const BinomeBanner = () => (
     <button
       onClick={openRunMatch}
       className="relative w-full border border-line p-4 text-left tap"
@@ -59,11 +59,11 @@ export default function Courir() {
           <Icon name="activity" className="h-5 w-5" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[9.5px] font-bold uppercase text-brand-600">■ RunMatch · binôme de course</p>
+          <p className="text-[9.5px] font-bold uppercase text-brand-600">■ Binôme · la sortie à deux</p>
           <p className="titre mt-0.5 text-[14px]">
-            {topRun ? `Cours avec ${topRun.name.split(' ')[0]} cette semaine` : 'Trouve ton binôme de run'}
+            {topRun ? `Cours avec ${topRun.name.split(' ')[0]} cette semaine` : 'Trouve ton binôme de sortie'}
           </p>
-          <p className="mt-0.5 text-[12px] leading-snug text-fg-muted">Même allure, et un vrai intérêt business. La sortie devient le RDV.</p>
+          <p className="mt-0.5 text-[12px] leading-snug text-fg-muted">Même allure, une vraie raison de se parler. La sortie devient le rendez-vous.</p>
         </div>
         <span className="font-mono text-fg-faint">→</span>
       </div>
@@ -122,8 +122,8 @@ export default function Courir() {
 
         <div className="mt-4 grid grid-cols-2 border border-line">
           {[
-            { id: 'activites', label: 'Activités' },
-            { id: 'sorties', label: 'Sorties' },
+            { id: 'activites', label: 'Mes sorties' },
+            { id: 'sorties', label: 'Sorties du réseau' },
           ].map((s) => (
             <button
               key={s.id}
@@ -142,10 +142,10 @@ export default function Courir() {
         <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar px-5 pb-6 pt-3">
           <WeekSummary />
           <OfficialRaceBanner />
-          <RunMatchBanner />
+          <BinomeBanner />
           {integrations.strava ? (
             <div className="flex items-center gap-2 rounded-2xl bg-success-light px-3.5 py-2.5 text-[12px] font-semibold text-success-dark">
-              <Icon name="check" className="h-4 w-4 shrink-0" /> Tes courses sont synchronisées via Strava
+              <Icon name="check" className="h-4 w-4 shrink-0" /> Tes sorties arrivent depuis Strava
             </div>
           ) : (
             <button
@@ -154,23 +154,23 @@ export default function Courir() {
             >
               <ServiceLogo service={serviceById('strava')} />
               <div className="min-w-0 flex-1">
-                <div className="text-sm font-semibold text-fg">Connecter Strava</div>
-                <div className="truncate text-xs text-fg-faint">Importe tes courses automatiquement</div>
+                <div className="text-sm font-semibold text-fg">Importer tes sorties</div>
+                <div className="truncate text-xs text-fg-faint">Depuis Strava, sans rien saisir</div>
               </div>
               <Icon name="chevronRight" className="h-5 w-5 shrink-0 text-fg-faint" />
             </button>
           )}
 
           <button
-            onClick={() => showToast('Enregistrement bientôt disponible')}
+            onClick={() => showToast('Bientôt : noter une sortie à la main')}
             className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-line-strong px-3 py-3 text-left tap hover:bg-black/[0.04]"
           >
             <span className="grid h-10 w-10 place-items-center rounded-full bg-brand-50 text-brand-600">
               <Icon name="activity" className="h-5 w-5" />
             </span>
             <div>
-              <div className="text-sm font-semibold text-fg">Enregistrer une activité</div>
-              <div className="text-xs text-fg-faint">Ta sortie devient un post partageable</div>
+              <div className="text-sm font-semibold text-fg">Noter une sortie</div>
+              <div className="text-xs text-fg-faint">Avec qui as-tu couru ? Ta sortie devient une rencontre</div>
             </div>
           </button>
 
@@ -188,8 +188,8 @@ export default function Courir() {
       ) : (
         <div className="flex-1 space-y-5 overflow-y-auto no-scrollbar px-5 pb-6 pt-3">
           <OfficialRaceBanner />
-          <RunMatchBanner />
-          {/* Défi + classement */}
+          <BinomeBanner />
+          {/* Kilomètres investis ce mois + qui court le plus avec les autres */}
           <section className="overflow-hidden rounded-3xl surface-hero text-white shadow-float">
             <div className="relative overflow-hidden p-5">
               <div className="absolute inset-0 bg-hero-glow" />
@@ -203,7 +203,7 @@ export default function Courir() {
                   </div>
                   <div className="text-2xl font-semibold">{CHALLENGE.subtitle}</div>
                   <div className="mt-1 text-[13px] text-white/65">
-                    {CHALLENGE.current} km · plus que {CHALLENGE.total - CHALLENGE.current} km en {CHALLENGE.daysLeft} jours
+                    {CHALLENGE.current} km investis · plus que {CHALLENGE.total - CHALLENGE.current} km en {CHALLENGE.daysLeft} jours
                   </div>
                 </div>
               </div>
@@ -211,7 +211,7 @@ export default function Courir() {
 
             <div className="border-t border-white/10 px-5 py-4">
               <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-white/55">
-                <Icon name="trophy" className="h-3.5 w-3.5" /> Classement
+                <Icon name="users" className="h-3.5 w-3.5" /> Qui court le plus avec les autres
               </div>
               <div className="space-y-1">
                 {LEADERBOARD.map((p, i) => (
@@ -231,19 +231,19 @@ export default function Courir() {
             </div>
           </section>
 
-          {/* Saison — cours, débloque */}
+          {/* Kilomètres investis — les km courus avec quelqu'un ouvrent des rencontres */}
           <section className="rounded-3xl border border-line bg-surface p-5 shadow-soft">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="grid h-9 w-9 place-items-center rounded-xl bg-gold/15 text-gold-dark ring-1 ring-gold/25">
-                  <Icon name="trophy" className="h-4 w-4" />
+                  <Icon name="users" className="h-4 w-4" />
                 </span>
                 <div>
                   <div className="text-sm font-semibold text-fg">{SEASON.label}</div>
-                  <div className="text-[11px] text-fg-muted">Cours, débloque · fin dans {SEASON.endsIn}</div>
+                  <div className="text-[11px] text-fg-muted">Les kilomètres courus avec quelqu'un ouvrent des rencontres.</div>
                 </div>
               </div>
-              <span className="bg-encre px-2 py-1 font-mono text-[9.5px] font-bold uppercase tracking-mono text-craie">Niveau {season.level}</span>
+              <span className="shrink-0 bg-encre px-2 py-1 font-mono text-[9.5px] font-bold uppercase tracking-mono text-craie">Palier {season.level}</span>
             </div>
 
             <div className="mt-3 flex items-center gap-3">
@@ -252,8 +252,8 @@ export default function Courir() {
             </div>
             <p className="mt-1.5 text-[12px] text-fg-muted">
               {season.next
-                ? <>Plus que <span className="font-semibold text-fg">{season.remaining} km</span> pour « {season.next.title} ».</>
-                : 'Tous les paliers débloqués'}
+                ? <>Plus que <span className="font-semibold text-fg">{season.remaining} km</span> avec quelqu'un pour « {season.next.title} ».</>
+                : `Tous les paliers sont ouverts · fin dans ${SEASON.endsIn}`}
             </p>
 
             <div className="mt-4 space-y-2">
@@ -275,16 +275,16 @@ export default function Courir() {
                         <span className={`text-sm font-semibold ${unlocked ? 'text-fg' : 'text-fg-soft'}`}>{t.title}</span>
                         <span className="text-[11px] font-semibold tabular-nums text-fg-faint">{t.km} km</span>
                       </div>
-                      <div className="truncate text-[12px] text-fg-muted">{t.reward}</div>
+                      <div className="truncate text-[12px] text-fg-muted">{unlocked ? 'Ouvert · ' : 'Ouvre · '}{t.reward}</div>
                     </div>
-                    {isNext && <span className="shrink-0 rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">À venir</span>}
+                    {isNext && <span className="shrink-0 rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">Prochain</span>}
                   </div>
                 )
               })}
             </div>
           </section>
 
-          <SectionTitle>Sorties à venir</SectionTitle>
+          <SectionTitle t="T+">LES SORTIES DU RÉSEAU</SectionTitle>
 
           <div className="space-y-3">
             {EVENTS.map((a) => {
@@ -315,15 +315,17 @@ export default function Courir() {
                         <Icon name="mapPin" className="h-3.5 w-3.5" /> {a.place}
                         {a.tag && <span className="ml-1 font-semibold text-brand-600">{a.tag}</span>}
                       </div>
+                      <div className="mt-0.5 text-[12px] text-fg-faint">Hôte · {a.organizer}</div>
                     </div>
                     <Icon name="chevronRight" className="mr-3 h-5 w-5 shrink-0 self-center text-fg-faint" />
                   </button>
 
                   <div className="flex items-center justify-between px-4 pb-3">
-                    <AvatarStack names={a.attendees} total={a.participants} onMore={() => showToast(`${a.participants} inscrits`)} />
+                    <AvatarStack names={a.attendees} total={a.participants} onMore={() => showToast(`${a.participants} inscrit·es`)} />
                     <button
                       onClick={() => toggleEventKudos(a.id)}
                       aria-pressed={k.liked}
+                      aria-label="Bien couru"
                       className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold tap ${
                         k.liked ? 'bg-brand-500 text-white shadow-brand' : 'bg-surface-2 text-fg-muted'
                       }`}
@@ -340,7 +342,7 @@ export default function Courir() {
                         isJoined ? 'btn btn-encre' : 'btn btn-impact'
                       }`}
                     >
-                      <span>{isJoined ? 'Inscrit·e' : 'Je participe'}</span><span className="arr">→</span>
+                      <span>{isJoined ? "Inscrit·e · on t'attend au café" : "J'y serai"}</span><span className="arr">→</span>
                     </button>
                   </div>
                 </article>

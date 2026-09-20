@@ -1,10 +1,9 @@
-/* Profiling comportemental — le carburant du moteur de matching « Pour toi ».
-   Chaque membre est décrit par des attributs structurés (ce qu'il cherche, ce
-   qu'il propose, ses sujets, son profil de course, son archétype). Le moteur
-   (lib/matching.js) croise ces attributs avec ceux de l'utilisateur ET avec son
-   comportement dans l'app (qui il regarde, like, contacte) pour re-classer les
-   profils en temps réel, à la façon d'un feed TikTok/Instagram — mais pour le
-   business.
+/* Ce que chaque dossard dit de son porteur — la matière des rencontres
+   proposées (« Pour toi »). Chaque membre est décrit par ce qu'il cherche, ce
+   qu'il apporte, ses sujets, sa façon de courir, son archétype. Le moteur
+   (lib/matching.js) croise ces attributs avec les tiens ET avec ce que tu fais
+   dans l'app (qui tu regardes, à qui tu écris) pour reclasser les fiches et
+   expliquer chaque proposition : pourquoi vous, pourquoi maintenant.
 
    Taxonomie
 
@@ -12,20 +11,20 @@
      capital · talent · cofounder · mentor · expertise · clients · intros
    topics            → centres de gravité (saas, fintech, growth, climat…)
    run               → { pace (min/km), window: 'am'|'pm'|'we', zone, distance }
-   events            → événements communs (Run & Pitch…)
-   archetype         → catégorie comportementale (clé du « Pour toi »)
+   events            → sorties communes (clés internes, jamais affichées)
+   archetype         → catégorie de la fiche (clé du « Pour toi »)
 */
 
 export const ARCHETYPES = {
-  investor: { label: 'Investisseurs', short: 'Investisseur', icon: 'trendingUp', tone: 'brand' },
+  investor: { label: 'Investisseurs', short: 'Investit', icon: 'trendingUp', tone: 'brand' },
   developer: { label: 'Profils tech', short: 'Tech', icon: 'cpu', tone: 'indigo' },
-  mentor: { label: 'Mentors', short: 'Mentor', icon: 'compass', tone: 'amber' },
+  mentor: { label: 'Dirigeants qui conseillent', short: 'Conseille', icon: 'compass', tone: 'amber' },
   founder: { label: 'Fondateurs comme toi', short: 'Fondateur', icon: 'rocket', tone: 'emerald' },
-  operator: { label: 'Opérateurs & scale-ups', short: 'Opérateur', icon: 'briefcase', tone: 'rose' },
+  operator: { label: 'Dirigeants qui recrutent', short: 'Recrute', icon: 'briefcase', tone: 'rose' },
 }
 
-/* Profil de l'utilisateur courant (dérivé de data/user.js, enrichi pour le
-   scoring). Sert de référentiel de complémentarité. */
+/* Ton profil (dérivé de data/user.js, enrichi pour le score) : ce que tu
+   cherches, ce que tu apportes, comment tu cours. */
 export const ME = {
   seeks: ['capital', 'talent', 'expertise'],
   provides: ['expertise', 'intros'],
@@ -34,7 +33,7 @@ export const ME = {
   events: ['Run & Pitch'],
 }
 
-/* Attributs de scoring par membre (clé = nom, aligné sur data/network.js). */
+/* Attributs par membre (clé = nom, aligné sur data/network.js). */
 export const PROFILES = {
   'Sarah Khalil': {
     archetype: 'founder',
@@ -123,7 +122,7 @@ export function profileFor(name) {
   )
 }
 
-/* Libellés FR des fenêtres de course (pour les explications). */
+/* Libellés des créneaux de course (pour expliquer une proposition). */
 export const RUN_WINDOWS = { am: 'le matin', pm: 'en soirée', we: 'le week-end' }
 export const RUN_ZONES = {
   seine: 'le long de la Seine',

@@ -1,9 +1,9 @@
-/* RunMatch — la sortie matchée à 2 (Happn × pitch).
+/* Le binôme — la sortie à deux.
 
-   À partir du profil de course d'un membre (créneau, allure, zone, distance),
-   on propose un créneau de sortie concret : un jour, une heure, un lieu, une
-   distance et une allure cible (la moyenne des deux allures, pour tenir la
-   conversation). La sortie devient le rendez-vous business. */
+   À partir de la façon de courir d'un membre (créneau, allure, zone, distance),
+   on propose une sortie concrète : un jour, une heure, un lieu, une distance
+   et une allure cible (la moyenne des deux allures, pour tenir la
+   conversation). La sortie devient le rendez-vous. */
 
 import { profileFor, ME } from '../data/profiling'
 
@@ -20,9 +20,9 @@ const ZONE_PLACE = {
 
 /* Format de sortie par type de distance. */
 const DISTANCE = {
-  tempo: { km: 8, label: '8 km tempo' },
-  long: { km: 12, label: '12 km easy' },
-  recovery: { km: 5, label: '5 km récup' },
+  tempo: { km: 8, label: '8 km à allure de conversation' },
+  long: { km: 12, label: '12 km, sortie longue à allure de conversation' },
+  recovery: { km: 5, label: '5 km, allure douce' },
 }
 
 function isoLocal(d) {
@@ -36,7 +36,7 @@ export function paceStr(p) {
   return `${m}:${String(s).padStart(2, '0')}`
 }
 
-/* Construit une proposition de sortie pour un binôme donné. */
+/* Construit la proposition de sortie pour un binôme donné. */
 export function suggestRun(name) {
   const them = profileFor(name)
   const r = them.run || {}
@@ -61,6 +61,6 @@ export function suggestRun(name) {
     km: dist.km,
     pace: paceLabel,
     window: r.window,
-    note: `RunMatch · ${dist.label} · allure ${paceStr(pace)}/km`,
+    note: `Binôme · ${dist.label} · allure ${paceStr(pace)}/km`,
   }
 }

@@ -30,19 +30,19 @@ export default function Profil() {
   const isPaid = plan !== 'free'
 
   const stats = [
-    { label: 'km ce mois', value: u.stats.km },
+    { label: 'km avec quelqu’un', value: u.stats.km },
     { label: 'sorties', value: u.stats.sorties },
-    { label: 'défis', value: u.stats.defis },
+    { label: 'rencontres', value: u.stats.defis },
   ]
   const roiCards = [
-    { label: 'Connexions', value: u.roi.connections, delta: u.roi.connectionsDelta },
-    { label: 'RDV pris', value: u.roi.meetings, delta: u.roi.meetingsDelta },
-    { label: 'Opportunités', value: u.roi.opportunities, delta: u.roi.opportunitiesDelta },
+    { label: 'Rencontres', value: u.roi.connections, delta: u.roi.connectionsDelta },
+    { label: 'Présentations', value: u.roi.meetings, delta: u.roi.meetingsDelta },
+    { label: 'En cours', value: u.roi.opportunities, delta: u.roi.opportunitiesDelta },
   ]
   const settings = [
-    { icon: 'crown', label: 'Mon abonnement', onClick: openPlans, hint: planMeta.name },
-    { icon: 'userPlus', label: 'Inviter des amis', onClick: openInvite },
-    { icon: 'bookmark', label: 'Mes favoris', onClick: () => showToast('Bientôt disponible') },
+    { icon: 'crown', label: 'Ma formule', onClick: openPlans, hint: planMeta.name },
+    { icon: 'userPlus', label: 'Coopter un dirigeant', onClick: openInvite },
+    { icon: 'bookmark', label: 'Dossards gardés', onClick: () => showToast('Bientôt disponible') },
     { icon: 'sparkles', label: 'Revoir l’introduction', onClick: replayOnboarding },
     { icon: 'shield', label: 'Confidentialité', onClick: () => showToast('Bientôt disponible') },
     { icon: 'sliders', label: 'Préférences', onClick: () => showToast('Bientôt disponible') },
@@ -52,10 +52,10 @@ export default function Profil() {
   function shareProfile() {
     const url = typeof window !== 'undefined' ? window.location.href : ''
     if (navigator.share) {
-      navigator.share({ title: `${u.name} · ROI`, text: `${u.name} — ${profile.title}`, url }).catch(() => {})
+      navigator.share({ title: `${u.name} · R.O.I`, text: `${u.name} — ${profile.title}`, url }).catch(() => {})
     } else {
       try { navigator.clipboard?.writeText(url) } catch { /* presse-papier indisponible */ }
-      showToast('Lien du profil copié')
+      showToast('Lien du dossard copié')
     }
   }
 
@@ -81,7 +81,7 @@ export default function Profil() {
         </div>
         <div className="mt-5 grid grid-cols-2 gap-2">
           <button onClick={openEditProfile} className="btn btn-encre btn-sm justify-between"><span>Éditer le verso</span><span className="arr">→</span></button>
-          <button onClick={shareProfile} aria-label="Partager mon profil" className="btn btn-ghost btn-sm justify-between text-craie"><span>Partager</span><span className="arr">→</span></button>
+          <button onClick={shareProfile} aria-label="Partager mon dossard" className="btn btn-ghost btn-sm justify-between text-craie"><span>Partager</span><span className="arr">→</span></button>
         </div>
       </div>
 
@@ -109,17 +109,17 @@ export default function Profil() {
           </div>
         </button>
         <div className="mt-3 space-y-3">
-          {/* À propos */}
+          {/* En deux lignes */}
           {profile.bio && (
             <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
-              <h2 className="tmark">À propos</h2>
+              <h2 className="tmark">En deux lignes</h2>
               <p className="mt-2 text-sm leading-relaxed text-fg-soft">{profile.bio}</p>
             </section>
           )}
 
-          {/* ROI */}
+          {/* Ce que ça rapporte */}
           <section>
-            <SectionTitle action="Comment ça marche ?" onAction={openRoiInfo}>Mon ROI réseau</SectionTitle>
+            <SectionTitle t="T+" action="Comment ça marche ?" onAction={openRoiInfo}>CE QUE ÇA RAPPORTE</SectionTitle>
             <button onClick={openRoiInfo} className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-left shadow-card tap">
               <div className="absolute inset-0 bg-hero-glow" />
               <div className="relative flex items-center gap-4">
@@ -129,10 +129,10 @@ export default function Profil() {
                 </ProgressRing>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
-                    <div className="text-sm font-semibold text-white">Score ROI</div>
+                    <div className="text-sm font-semibold text-white">Ton R.O.I</div>
                     <Sparkline data={u.roi.trend} width={84} height={30} />
                   </div>
-                  <p className="mt-0.5 text-[12px] leading-snug text-white/55">La valeur que ton réseau te rapporte ce mois-ci.</p>
+                  <p className="mt-0.5 text-[12px] leading-snug text-white/55">Ce que tes rencontres ont produit ce mois-ci.</p>
                   <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/18 px-2.5 py-1 text-[12px] font-bold text-white ring-1 ring-white/20">
                     <Icon name="trendingUp" className="h-3.5 w-3.5" /> +{u.roi.weekDelta} cette semaine
                   </span>
@@ -152,10 +152,11 @@ export default function Profil() {
             </button>
           </section>
 
-          {/* ADN réseau — ce que le moteur « Pour toi » a appris de ton activité */}
+          {/* Ce que tu regardes — ce que le « Pour toi » a compris de toi */}
           <section>
-            <SectionTitle action="Voir mes matchs" onAction={() => goTo('reseau')}>Mon ADN réseau</SectionTitle>
+            <SectionTitle action="Voir le « Pour toi »" onAction={() => goTo('reseau')}>Ce que tu regardes</SectionTitle>
             <div className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
+              <p className="mb-2.5 text-[12px] text-fg-muted">Ce que le « Pour toi » a compris de toi</p>
               <div className="flex items-center gap-2.5">
                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600">
                   <Icon name={insights?.learning ? insights.icon : 'wand'} className="h-4 w-4" filled />
@@ -176,7 +177,7 @@ export default function Profil() {
                 >
                   <Avatar name={topMatch.name} size="sm" />
                   <div className="min-w-0 flex-1">
-                    <div className="truncate text-[13px] font-bold text-fg">Top match · {topMatch.name}</div>
+                    <div className="truncate text-[13px] font-bold text-fg">Pour toi · {topMatch.name}</div>
                     <div className="truncate text-[12px] text-fg-muted">{topMatch.reasons?.[0]?.text}</div>
                   </div>
                   <span className="shrink-0 text-sm font-extrabold tabular-nums text-brand-600">{topMatch.score}</span>
@@ -185,7 +186,7 @@ export default function Profil() {
             </div>
           </section>
 
-          {/* Agenda & RDV */}
+          {/* Tes rencontres */}
           <button
             onClick={openAgenda}
             className="flex w-full items-center gap-3 rounded-3xl border border-line bg-surface p-4 text-left shadow-soft tap"
@@ -194,7 +195,7 @@ export default function Profil() {
               <Icon name="calendar" className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
-              <div className="text-sm font-semibold text-fg">Agenda & RDV</div>
+              <div className="text-sm font-semibold text-fg">Tes rencontres</div>
               <p className="truncate text-[12px] text-fg-muted">
                 {meetings.length} à venir
                 {nextMeeting && ` · ${MEETING_TYPES[nextMeeting.type].label} avec ${nextMeeting.with.split(' ')[0]} ${formatEventDate(nextMeeting.date).relative}`}
@@ -203,10 +204,10 @@ export default function Profil() {
             <Icon name="chevronRight" className="h-5 w-5 text-fg-faint" />
           </button>
 
-          {/* Saison — kilomètres → récompenses */}
+          {/* Kilomètres investis — les km avec quelqu’un font monter un palier */}
           <section className="overflow-hidden rounded-3xl border border-line bg-surface p-4 shadow-soft">
             <div className="flex items-center justify-between">
-              <h2 className="tmark">Saison · niveau {season.level}</h2>
+              <h2 className="tmark">Kilomètres investis · palier {season.level}</h2>
               <button onClick={() => goTo('courir')} className="flex items-center gap-0.5 text-xs font-semibold text-brand-600 tap">
                 Détails <Icon name="chevronRight" className="h-3.5 w-3.5" />
               </button>
@@ -217,12 +218,12 @@ export default function Profil() {
             </div>
             <p className="mt-2 text-[12px] text-fg-muted">
               {season.next
-                ? <>Plus que <span className="font-semibold text-fg">{season.remaining} km</span> pour débloquer « {season.next.title} » — {season.next.reward.toLowerCase()}.</>
-                : 'Tous les paliers de la saison sont débloqués'}
+                ? <>Plus que <span className="font-semibold text-fg">{season.remaining} km avec quelqu’un</span> pour atteindre « {season.next.title} » — {season.next.reward.toLowerCase()}.</>
+                : 'Tête de peloton : tous les paliers sont atteints'}
             </p>
           </section>
 
-          {/* Abonnement */}
+          {/* Ta formule */}
           {isPaid ? (
             <section className="relative overflow-hidden rounded-3xl border-2 border-gold/40 bg-surface p-4 shadow-card">
               <div className="absolute inset-0 bg-gold-sheen" />
@@ -232,12 +233,12 @@ export default function Profil() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-fg">Abonnement {planMeta.name}</span>
+                    <span className="text-sm font-semibold text-fg">Ta formule · {planMeta.name}</span>
                     <PlanBadge plan={plan} />
                   </div>
-                  <p className="text-[12px] text-fg-muted">Tu profites de toutes les fonctionnalités.</p>
+                  <p className="text-[12px] text-fg-muted">Elle se règle sur le site, depuis ton espace.</p>
                 </div>
-                <button onClick={openPlans} className="shrink-0 rounded-full bg-surface-2 px-3 py-1.5 text-xs font-semibold text-fg-soft tap">Gérer</button>
+                <button onClick={openPlans} className="shrink-0 rounded-full bg-surface-2 px-3 py-1.5 text-xs font-semibold text-fg-soft tap">Voir les formules</button>
               </div>
             </section>
           ) : (
@@ -249,20 +250,20 @@ export default function Profil() {
               <div className="relative">
                 <div className="flex items-center gap-2">
                   <Icon name="crown" className="h-5 w-5 text-white" filled />
-                  <span className="text-base font-semibold">Passe à Pro</span>
-                  <span className="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-white/70">dès 9€/mois</span>
+                  <span className="text-base font-semibold">Passer en Premium</span>
+                  <span className="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-white/70">Sur demande</span>
                 </div>
                 <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/65">
-                  Matchs illimités, « qui veut me rencontrer », agenda & RDV et intros prioritaires.
+                  L’annuaire dès validation, six rencontres réservées, sans limite de propositions.
                 </p>
                 <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-fg">
-                  Voir les offres <Icon name="arrowRight" className="h-4 w-4" />
+                  Voir les formules <Icon name="arrowRight" className="h-4 w-4" />
                 </span>
               </div>
             </button>
           )}
 
-          {/* Parrainage */}
+          {/* Cooptation */}
           <button
             onClick={openInvite}
             className="flex w-full items-center gap-3 rounded-3xl border border-line bg-surface p-4 text-left shadow-soft tap"
@@ -271,10 +272,10 @@ export default function Profil() {
               <Icon name="gift" className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
-              <div className="text-sm font-semibold text-fg">Invite & gagne 1 mois Pro</div>
+              <div className="text-sm font-semibold text-fg">Coopter un dirigeant</div>
               <div className="mt-1.5 flex items-center gap-2">
                 <ProgressBar value={referralJoined} total={REFERRAL.goal} className="bg-surface-2" barClassName="bg-gold" />
-                <span className="shrink-0 text-[11px] font-semibold tabular-nums text-fg-muted">{referralJoined}/{REFERRAL.goal}</span>
+                <span className="shrink-0 text-[11px] font-semibold tabular-nums text-fg-muted">{referralJoined}/{REFERRAL.goal} vers le Cercle</span>
               </div>
             </div>
             <Icon name="chevronRight" className="h-5 w-5 text-fg-faint" />
@@ -301,9 +302,9 @@ export default function Profil() {
             </ul>
           </section>
 
-          {/* Ce que je propose */}
+          {/* Ce que j’apporte */}
           <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
-            <h2 className="tmark">Ce que je propose</h2>
+            <h2 className="tmark">Ce que j’apporte</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {profile.offering.map((o) => (
                 <span key={o} className="rounded-full bg-success-light px-3 py-1.5 text-sm font-semibold text-success-dark">
@@ -323,10 +324,10 @@ export default function Profil() {
             ))}
           </section>
 
-          {/* Connexions & appareils */}
+          {/* Strava, LinkedIn, ta montre */}
           <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
             <div className="flex items-center justify-between">
-              <h2 className="tmark">Connexions & appareils</h2>
+              <h2 className="tmark">Strava, LinkedIn, ta montre</h2>
               <button onClick={openIntegrations} className="flex items-center gap-1 rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-fg-soft tap">
                 Gérer
               </button>
@@ -350,15 +351,15 @@ export default function Profil() {
             </div>
             <p className="mt-2.5 text-xs text-fg-faint">
               {connectedCount > 0
-                ? `${connectedCount} connecté${connectedCount > 1 ? 's' : ''} · Strava, LinkedIn, ta montre…`
-                : 'Connecte Strava, LinkedIn et ta montre pour tout synchroniser.'}
+                ? `${connectedCount} connecté${connectedCount > 1 ? 's' : ''} · tes sorties arrivent seules`
+                : 'Connecte Strava ou ta montre : tes sorties arrivent seules.'}
             </p>
           </section>
 
-          {/* Mes activités */}
+          {/* Mes sorties */}
           {myActivities.length > 0 && (
             <section>
-              <SectionTitle action="Tout voir" onAction={() => goTo('courir')}>Mes activités</SectionTitle>
+              <SectionTitle action="Tout voir" onAction={() => goTo('courir')}>Mes sorties</SectionTitle>
               <div className="overflow-hidden rounded-3xl border border-line bg-surface shadow-soft">
                 {myActivities.map((a, i) => (
                   <button
@@ -380,9 +381,9 @@ export default function Profil() {
             </section>
           )}
 
-          {/* Centres d'intérêt */}
+          {/* Sujets */}
           <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
-            <h2 className="tmark">Centres d’intérêt</h2>
+            <h2 className="tmark">Sujets</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {profile.interests.map((i) => (
                 <span key={i} className="rounded-full bg-surface-2 px-3 py-1.5 text-sm font-semibold text-fg-soft">
@@ -392,13 +393,13 @@ export default function Profil() {
             </div>
           </section>
 
-          {/* Communauté */}
+          {/* Édition */}
           <section className="flex items-center gap-3 rounded-3xl border border-line bg-surface p-4 shadow-soft">
             <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-brand-light text-brand-600">
               <Icon name="users" className="h-6 w-6" />
             </div>
             <div>
-              <div className="text-xs text-fg-faint">Membre de</div>
+              <div className="text-xs text-fg-faint">Édition</div>
               <div className="font-semibold text-fg">{u.community}</div>
             </div>
           </section>

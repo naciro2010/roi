@@ -15,7 +15,7 @@ const STEPS = [
   {
     t: 'T+', label: 'Un réseau toute l’année',
     titre: ['Un réseau', 'toute l’année.'],
-    texte: 'L’app est ce qui se passe entre deux lignes : l’annuaire de celles et ceux qui courent, des rencontres de huit minutes à réserver, des sorties à allure de conversation.',
+    texte: 'L’app est ce qui se passe entre deux lignes : l’annuaire de celles et ceux qui courent, trois rencontres proposées chaque semaine — recruter, lever, vendre, s’associer —, des sorties à allure de conversation.',
   },
   {
     t: '■', label: 'Un dossard, deux faces', dossard: true,
@@ -25,7 +25,7 @@ const STEPS = [
   {
     t: '04', label: 'Ce qu’on garde',
     titre: ['Zéro pitch', 'en course.'],
-    texte: 'On court d’abord, on parle pendant, on conclut après. Toutes les allures, aucun niveau requis. Et l’essentiel du retour se fait une fois la ligne franchie.',
+    texte: 'On court d’abord, on parle pendant, on conclut après. Toutes les allures, aucun niveau requis, pas de badge, pas de slide. L’essentiel du retour se fait une fois la ligne franchie.',
   },
 ]
 

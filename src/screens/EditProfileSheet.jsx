@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 
-function ChipListEditor({ label, values, onChange, placeholder }) {
+function ChipListEditor({ label, hint, values, onChange, placeholder }) {
   return (
     <div>
       <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">{label}</div>
+      {hint && <p className="-mt-1 mb-2 text-[12px] leading-snug text-fg-faint">{hint}</p>}
       <div className="space-y-2">
         {values.map((v, i) => (
           <div key={i} className="flex items-center gap-2">
@@ -53,7 +54,7 @@ export default function EditProfileSheet({ onClose }) {
       needs: clean(needs, ['—']),
       interests: clean(interests, []),
     })
-    showToast('Profil mis à jour')
+    showToast('Dossard mis à jour')
     onClose()
   }
 
@@ -63,15 +64,15 @@ export default function EditProfileSheet({ onClose }) {
       <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface shadow-float">
         <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-3.5">
           <button onClick={onClose} className="text-sm font-semibold text-fg-muted tap">Annuler</button>
-          <h2 className="text-base font-semibold text-fg">Éditer le profil</h2>
+          <h2 className="text-base font-semibold text-fg">Le verso de ton dossard</h2>
           <button onClick={save} className="rounded-full btn btn-impact px-4 py-1.5 text-sm font-semibold text-white shadow-brand tap">
-            Enregistrer
+            Enregistrer mon dossard
           </button>
         </div>
 
         <div className="flex-1 space-y-5 overflow-y-auto no-scrollbar px-5 py-4">
           <div>
-            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">Titre</div>
+            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">Fonction · entreprise</div>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -81,19 +82,25 @@ export default function EditProfileSheet({ onClose }) {
           </div>
 
           <div>
-            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">Bio</div>
+            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">En deux lignes</div>
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               rows={4}
-              placeholder="Présente-toi en quelques lignes…"
+              placeholder="Ce que tu construis, et pourquoi tu cours…"
               className="w-full resize-none rounded-xl border border-line-strong bg-surface px-3 py-2.5 text-sm leading-relaxed outline-none focus:ring-2 focus:ring-brand-200"
             />
           </div>
 
-          <ChipListEditor label="Ce que je cherche" values={needs} onChange={setNeeds} placeholder="Ton besoin…" />
-          <ChipListEditor label="Ce que je propose" values={offering} onChange={setOffering} placeholder="Ce que tu apportes…" />
-          <ChipListEditor label="Centres d’intérêt" values={interests} onChange={setInterests} placeholder="Un centre d’intérêt…" />
+          <ChipListEditor
+            label="Ce que je cherche"
+            hint="Recruter, lever, vendre, s'associer — une phrase chacun."
+            values={needs}
+            onChange={setNeeds}
+            placeholder="Ex. Lève une seed, cherche un associé produit"
+          />
+          <ChipListEditor label="Ce que j'apporte" values={offering} onChange={setOffering} placeholder="Ex. Des retours produit, des présentations SaaS B2B" />
+          <ChipListEditor label="Sujets" values={interests} onChange={setInterests} placeholder="Ex. Levée de fonds, product, trail" />
         </div>
       </div>
     </div>

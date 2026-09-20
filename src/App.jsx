@@ -271,7 +271,7 @@ export default function App() {
     setContacted((c) => ({ ...c, [name]: true }))
     track({ type: 'contact', name })
     addToPipeline(name, { via: 'Demande de contact envoyée' })
-    showToast('Demande envoyée · ajoutée au pipeline')
+    showToast(`Rencontre proposée à ${name.split(' ')[0]} · ajoutée au pipeline`)
   }
 
   function sendSuggestion(id, name) {
@@ -281,18 +281,18 @@ export default function App() {
       track({ type: 'contact', name })
       addToPipeline(name, { via: 'Match contacté' })
     }
-    showToast('Demande envoyée · ajoutée au pipeline')
+    showToast(name ? `Rencontre proposée à ${name.split(' ')[0]} · ajoutée au pipeline` : 'Rencontre proposée · ajoutée au pipeline')
   }
 
   function acceptRequest(name) {
     setRequests((rs) => rs.filter((r) => r.name !== name))
     setConnections((cs) => (cs.some((c) => c.name === name) ? cs : [{ name, context: 'Connexion acceptée' }, ...cs]))
-    showToast(`${name.split(' ')[0]} ajouté·e à ton réseau`)
+    showToast(`${name.split(' ')[0]} rejoint tes rencontres`)
   }
 
   function declineRequest(name) {
     setRequests((rs) => rs.filter((r) => r.name !== name))
-    showToast('Demande déclinée')
+    showToast('Rencontre déclinée')
   }
 
   function toggleEventKudos(id) {
@@ -312,7 +312,7 @@ export default function App() {
   function toggleJoin(id) {
     setJoined((prev) => {
       const next = !prev[id]
-      showToast(next ? 'Inscription confirmée' : 'Inscription annulée')
+      showToast(next ? 'Tu es de la sortie' : 'Tu ne cours plus cette sortie')
       return { ...prev, [id]: next }
     })
   }
@@ -338,7 +338,7 @@ export default function App() {
       ...prev,
     ])
     setComposerOpen(false)
-    showToast('Post publié')
+    showToast('Publié dans le fil')
   }
 
   function openChat(id) {
@@ -381,10 +381,10 @@ export default function App() {
       goTo('messages')
       openChat(conv.id)
       setDraft(text)
-      showToast('Brise-glace prêt — plus qu’à envoyer')
+      showToast('Première phrase prête — plus qu’à envoyer')
     } else {
       navigator?.clipboard?.writeText?.(text)
-      showToast('Brise-glace copié')
+      showToast('Première phrase copiée')
     }
   }
 
@@ -400,7 +400,7 @@ export default function App() {
     setJoinedGroups((j) => ({ ...j, [id]: true }))
     setNewGroupName('')
     setCreatingGroup(false)
-    showToast('Groupe créé')
+    showToast('Cercle ouvert')
     openGroupChat(id)
   }
 
@@ -409,7 +409,7 @@ export default function App() {
     setJoinedGroups((j) => ({ ...j, [g.id]: true }))
     setGroups((gs) => [...gs, { ...g, members: g.members + 1, time: 'maintenant', unread: 0 }])
     setGroupThreads((t) => ({ ...t, [g.id]: t[g.id] || [] }))
-    showToast('Groupe rejoint')
+    showToast('Tu as rejoint le cercle')
   }
 
   function messageMember(name) {
@@ -419,7 +419,7 @@ export default function App() {
       goTo('messages')
       openChat(conv.id)
     } else {
-      showToast('Conversation bientôt disponible')
+      showToast('La conversation s’ouvre quand vous avez dit oui tous les deux')
     }
   }
 
@@ -467,7 +467,7 @@ export default function App() {
     setPlan(id)
     setPlansOpen(false)
     const meta = planById(id)
-    showToast(id === 'free' ? 'Plan Découverte activé' : `Bienvenue dans ${meta.name}`)
+    showToast(id === 'free' ? 'Retour à la formule Dossard' : `Formule ${meta.name} demandée`)
   }
 
   function nameFromEmail(email) {
@@ -477,14 +477,14 @@ export default function App() {
 
   function sendInvite(email) {
     if (invites.some((i) => i.email === email)) {
-      showToast('Déjà invité·e')
+      showToast('Déjà coopté·e')
       return
     }
     setInvites((prev) => [
       { id: `inv-${Date.now()}`, name: nameFromEmail(email), email, status: 'pending', context: 'Invitation envoyée', date: 'à l’instant' },
       ...prev,
     ])
-    showToast('Invitation envoyée')
+    showToast(`Cooptation envoyée à ${nameFromEmail(email)}`)
   }
 
   function inviteTeammate(email) {
@@ -496,12 +496,12 @@ export default function App() {
       ...prev,
       { id: `t-${Date.now()}`, name: nameFromEmail(email), email, role: 'Invité·e', status: 'pending' },
     ])
-    showToast('Coéquipier invité')
+    showToast(`Dossard invité envoyé à ${nameFromEmail(email)}`)
   }
 
   function confirmMeeting(id) {
     setMeetingStatus((s) => ({ ...s, [id]: 'confirmed' }))
-    showToast('RDV confirmé')
+    showToast('Rencontre confirmée')
   }
 
   function proposeMeeting({ with: who, type = 'cafe', date, time, place, note }) {
@@ -518,7 +518,7 @@ export default function App() {
       ...prev,
     ])
     addToPipeline(who)
-    if (type !== 'run') showToast('Proposition de RDV envoyée')
+    if (type !== 'run') showToast(`Rencontre proposée à ${who.split(' ')[0]}`)
   }
 
   // RunMatch : proposer une sortie matchée → crée un RDV « run » daté, alimente
@@ -529,7 +529,7 @@ export default function App() {
     proposeMeeting({ with: name, type: 'run', date: plan.date, time: plan.time, place: plan.place, note: plan.note })
     track({ type: 'contact', name })
     setProposedRuns((p) => ({ ...p, [name]: true }))
-    showToast('Run proposé · agenda & pipeline mis à jour')
+    showToast(`Binôme proposé à ${name.split(' ')[0]} · rencontres & pipeline à jour`)
   }
 
   const ctx = {

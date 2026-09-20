@@ -227,7 +227,7 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
             <button onClick={() => { onClose(); goTo('reseau') }} className="btn btn-encre mt-3 w-full justify-between">
               <span>Voir l’annuaire</span><span className="arr">→</span>
             </button>
-            <p className="mt-2 text-[12.5px] text-fg-muted">L’annuaire complet s’ouvre le jour J. <b className="text-fg">En Premium, dès la validation</b> — des mois avant la ligne, avec six rencontres à réserver.</p>
+            <p className="mt-2 text-[12.5px] text-fg-muted">L’annuaire complet s’ouvre le jour J. <b className="text-fg">En Premium, dès la validation</b> — des mois avant la ligne, avec six rencontres de huit minutes à réserver : recruter, lever, vendre, s’associer.</p>
           </section>
 
           {/* ---------------------------------------------------- PRINCIPES */}

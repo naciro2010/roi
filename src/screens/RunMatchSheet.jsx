@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
@@ -9,14 +8,14 @@ import { suggestRun } from '../lib/runmatch'
 import { formatEventDate } from '../lib/dates'
 import { useSheetDrag } from '../lib/useSheetDrag'
 
-/* Bloc « créneau proposé » réutilisé (binôme principal + autres binômes). */
+/* Bloc « sortie proposée » réutilisé (binôme principal + autres binômes). */
 function RunPlan({ plan, compact = false }) {
   const d = formatEventDate(plan.date)
   const items = [
     { icon: 'calendar', text: `${d.full} · ${plan.time}` },
     { icon: 'mapPin', text: plan.place },
     { icon: 'route', text: plan.distance },
-    { icon: 'activity', text: plan.pace },
+    { icon: 'activity', text: `Allure cible ${plan.pace}` },
   ]
   return (
     <div className={`flex flex-wrap gap-x-3 gap-y-1.5 ${compact ? 'text-[12px]' : 'text-[12.5px]'}`}>
@@ -30,7 +29,7 @@ function RunPlan({ plan, compact = false }) {
 }
 
 export default function RunMatchSheet({ onClose }) {
-  const { runMatches, proposeRun, openMember, proposedRuns, hasFeature, openPlans } = useApp()
+  const { runMatches, proposeRun, openMember, proposedRuns, hasFeature, openPlans, planMeta } = useApp()
   const drag = useSheetDrag(onClose)
 
   const unlimited = hasFeature('unlimitedMatches')
@@ -44,12 +43,10 @@ export default function RunMatchSheet({ onClose }) {
       <button
         onClick={() => proposeRun(name)}
         disabled={done}
-        className={`flex items-center justify-center gap-1.5 rounded-full text-sm font-bold tap ${
-          done ? 'bg-success text-white' : 'btn btn-impact'
-        } ${className}`}
+        className={`btn ${done ? 'btn-encre' : 'btn-impact'} ${className}`}
       >
         <Icon name={done ? 'check' : 'activity'} className="h-4 w-4" />
-        {done ? 'Run proposé' : 'Proposer ce run'}
+        <span>{done ? 'Proposée · dans ton agenda et ton pipeline' : 'Proposer cette sortie'}</span>
       </button>
     )
   }
@@ -72,14 +69,13 @@ export default function RunMatchSheet({ onClose }) {
           >
             <Icon name="x" className="h-5 w-5" />
           </button>
-          <div className="relative flex items-center gap-3">
-            <span className="grid h-11 w-11 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/15 text-white">
-              <Icon name="activity" className="h-5 w-5" />
-            </span>
-            <div>
-              <h2 className="text-lg font-extrabold leading-tight">RunMatch</h2>
-              <p className="text-[12.5px] text-white/65">Ton binôme de course de la semaine · la sortie devient le RDV.</p>
-            </div>
+          <div className="relative">
+            <span className="tmark text-craie/70"><b>T–</b> / LA SORTIE À DEUX</span>
+            <h2 className="titre mt-2 text-[22px] leading-tight text-craie">Ton binôme de sortie</h2>
+            <p className="mt-2 text-[12.5px] leading-snug text-white/65">
+              À partir de vos deux allures, on propose un jour, une heure, un lieu, une distance et une allure cible :
+              la moyenne des deux, pour tenir la conversation. La sortie devient le rendez-vous.
+            </p>
           </div>
         </div>
 
@@ -100,32 +96,35 @@ export default function RunMatchSheet({ onClose }) {
                   </div>
                   <div className="text-center">
                     <MatchRing value={top.score} size={48} />
-                    <div className="mt-0.5 text-[9px] font-bold uppercase tracking-wide text-fg-faint">Compat.</div>
+                    <div className="mt-0.5 text-[9px] font-bold uppercase tracking-wide text-fg-faint">Accord</div>
                   </div>
                 </div>
 
                 <div className="mx-4 rounded-2xl bg-brand-light/50 p-3">
                   <div className="mb-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-brand-700">
-                    <Icon name="sparkles" className="h-3.5 w-3.5" filled /> Sortie proposée
+                    <Icon name="route" className="h-3.5 w-3.5" /> La sortie proposée
                   </div>
                   <RunPlan plan={plan} />
                 </div>
 
-                <div className="mx-4 mt-3 space-y-1.5">
-                  {top.reasons.map((r) => (
-                    <div key={r.text} className="flex items-center gap-2 text-[13px] text-fg-soft">
-                      <Icon name={r.icon} className="h-3.5 w-3.5 shrink-0 text-brand-600" /> {r.text}
-                    </div>
-                  ))}
+                <div className="mx-4 mt-3">
+                  <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-fg-faint">Pourquoi vous deux</div>
+                  <div className="space-y-1.5">
+                    {top.reasons.map((r) => (
+                      <div key={r.text} className="flex items-center gap-2 text-[13px] text-fg-soft">
+                        <Icon name={r.icon} className="h-3.5 w-3.5 shrink-0 text-brand-600" /> {r.text}
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="flex gap-2 p-4">
-                  <ProposeButton name={top.name} className="flex-1 py-3" />
+                <div className="flex flex-col gap-2 p-4">
+                  <ProposeButton name={top.name} className="w-full" />
                   <button
                     onClick={() => openMember(top.name)}
-                    className="rounded-full border border-line-strong px-4 py-3 text-sm font-semibold text-fg-soft tap"
+                    className="btn btn-ghost btn-sm w-full"
                   >
-                    Profil
+                    <span>Voir son dossard</span><span className="arr">→</span>
                   </button>
                 </div>
               </article>
@@ -134,7 +133,7 @@ export default function RunMatchSheet({ onClose }) {
 
           {rest.length > 0 && (
             <div>
-              <div className="mb-2 px-1 text-xs font-bold uppercase tracking-wide text-fg-muted">Autres binômes possibles</div>
+              <div className="mb-2 px-1 text-xs font-bold uppercase tracking-wide text-fg-muted">D'autres binômes possibles</div>
               <div className="space-y-2.5">
                 {rest.map((m) => {
                   const plan = suggestRun(m.name)
@@ -146,11 +145,11 @@ export default function RunMatchSheet({ onClose }) {
                         <button onClick={() => openMember(m.name)} className="min-w-0 flex-1 text-left">
                           <div className="truncate font-bold text-fg">{m.name}</div>
                           <div className="truncate text-[12px] text-fg-muted">
-                            {d.full} · {plan.distance} · {plan.pace}
+                            {d.full} · {plan.distance} · allure cible {plan.pace}
                           </div>
                         </button>
                       </div>
-                      <ProposeButton name={m.name} className="mt-3 w-full py-2.5" />
+                      <ProposeButton name={m.name} className="btn-sm mt-3 w-full" />
                     </article>
                   )
                 })}
@@ -170,15 +169,15 @@ export default function RunMatchSheet({ onClose }) {
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-extrabold">{lockedCount} autre{lockedCount > 1 ? 's' : ''} binôme{lockedCount > 1 ? 's' : ''} pour toi</div>
-                  <p className="text-[12px] text-white/60">RunMatch illimité avec Pro · 1 binôme / semaine en gratuit.</p>
+                  <p className="text-[12px] text-white/60">Un binôme par semaine avec ta formule {planMeta?.name ?? 'Dossard'} · tous tes binômes en Premium.</p>
                 </div>
-                <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-fg">Pro</span>
+                <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-fg">Premium</span>
               </div>
             </button>
           )}
 
-          <p className="flex items-center justify-center gap-1.5 pt-1 text-center text-[11px] text-fg-faint">
-            <Icon name="sparkles" className="h-3.5 w-3.5" filled /> Proposer un run l’ajoute à ton agenda et à ton pipeline.
+          <p className="pt-1 text-center text-[11px] text-fg-faint">
+            Classé par allure compatible, puis par ce que vous avez à vous dire.
           </p>
         </div>
       </div>

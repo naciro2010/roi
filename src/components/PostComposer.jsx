@@ -6,11 +6,14 @@ import { PILL_TONES } from './primitives'
 import { POST_TYPES } from '../data/feed'
 import { CURRENT_USER } from '../data/user'
 
-const ORDER = ['reflexion', 'rex', 'tip', 'milestone']
+/* Les types de post viennent des données (libellés du fil) ; « activity » se
+   crée depuis une course, pas depuis le composeur. */
+const ORDER = Object.keys(POST_TYPES).filter((t) => t !== 'activity')
+const DEFAULT_TYPE = ORDER[0]
 
 export default function PostComposer({ open, onClose, onPublish }) {
   const { profile } = useApp()
-  const [type, setType] = useState('reflexion')
+  const [type, setType] = useState(DEFAULT_TYPE)
   const [text, setText] = useState('')
   if (!open) return null
 
@@ -19,7 +22,7 @@ export default function PostComposer({ open, onClose, onPublish }) {
     if (!body) return
     onPublish({ type, text: body })
     setText('')
-    setType('reflexion')
+    setType(DEFAULT_TYPE)
   }
 
   return (
@@ -28,7 +31,7 @@ export default function PostComposer({ open, onClose, onPublish }) {
       <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[90%] flex-col overflow-hidden bg-surface shadow-float">
         <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-3.5">
           <button onClick={onClose} className="text-sm font-semibold text-fg-muted tap">Annuler</button>
-          <h2 className="text-base font-semibold text-fg">Nouveau post</h2>
+          <h2 className="text-base font-semibold text-fg">Écrire au réseau</h2>
           <button
             onClick={publish}
             disabled={!text.trim()}
@@ -71,7 +74,7 @@ export default function PostComposer({ open, onClose, onPublish }) {
             value={text}
             onChange={(e) => setText(e.target.value)}
             rows={7}
-            placeholder="Partage une réflexion, un REX de rencontre, un tip…"
+            placeholder="Une rencontre, une présentation faite, une sortie, un conseil…"
             className="mt-4 w-full resize-none rounded-2xl border border-line-strong bg-surface-soft px-4 py-3 text-[14px] leading-relaxed text-fg outline-none focus:ring-2 focus:ring-brand-200 placeholder:text-fg-faint"
           />
         </div>

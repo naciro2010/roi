@@ -4,7 +4,7 @@ import Icon from './Icon'
    les messages, le dossard (profil). */
 export const TABS = [
   { id: 'accueil', label: 'Fil', icon: 'home' },
-  { id: 'reseau', label: 'Réseau', icon: 'sparkles' },
+  { id: 'reseau', label: 'Annuaire', icon: 'sparkles' },
   { id: 'courir', label: 'Courir', icon: 'activity' },
   { id: 'messages', label: 'Messages', icon: 'chat' },
   { id: 'profil', label: 'Dossard', icon: 'user' },

@@ -4,7 +4,7 @@ L'app de **R.O.I — Run On Investment** : une course par an au cœur de Paris L
 
 > **R.O.I — L'impact après la ligne d'arrivée.**
 
-Application mobile-first (PWA), vrai layout web sur grand écran. Données fictives, aucun back-end propre : le seul appel réseau est la lecture du dossier sur le site (voir « Le pont avec le site »).
+Application mobile-first (PWA), vrai layout web sur grand écran. Données fictives, aucun back-end propre : le seul appel réseau est la lecture du dossier sur le site (voir « Le pont avec le site »). Le texte de l'app suit la bible de contenu `CONTENU.md`.
 
 ## Identité visuelle « La Ligne » — la même que le site
 
@@ -29,15 +29,18 @@ L'inscription (compte, distance, formule, vague gardée, justificatif, validatio
 
 ## Une course annuelle, un réseau toute l'année
 
-L'app joue le rendez-vous annuel et ce qu'il rend possible entre deux éditions :
+Le fond et le ton de tout le texte de l'app sont fixés dans **[`CONTENU.md`](CONTENU.md)** : la course est le prétexte, le réseau est le sujet. Les quatre verbes — **recruter · lever · vendre · s'associer** — structurent le profil, l'annuaire, les rencontres et le pipeline. On y documente aussi ce qu'on emprunte aux formats qui existent déjà (clubs de fondateurs qui courent puis prennent un café, sorties mensuelles de dirigeants « pas de badge, pas de slide, pas de chrono », rencontres flash de salon, matchmaking par intention des apps d'événement, intros 1:1 hebdomadaires) et comment R.O.I l'adapte.
 
-- **Accueil** — le bloc encre `T–` (jours avant la ligne, état du dossier ou vague ouverte), le score réseau en fiche, « Qui court cette année » (l'annuaire des dossards déjà pris : le réseau commence avant la ligne), Pipeline R.O.I et RunMatch, le fil.
-- **L'édition** (fiche, depuis l'accueil, Courir ou le profil) — ton dossier (ou : prendre un dossard / relier un dossier), la journée `T–` / `T+`, les trois distances avec le parcours, le programme de l'après-midi, les formules, les vagues, qui court, les quatre principes.
-- **Réseau · Match « Pour toi »** — moteur de matching comportemental (besoins ↔ offres, compatibilité running, sujets, comportement dans l'app), matchs expliqués, brise-glace, annuaire filtrable.
-- **RunMatch** — le binôme de course : une sortie concrète (jour, heure, lieu, allure cible) qui entre dans le pipeline.
-- **Pipeline R.O.I** — le CRM léger branché sur les kilomètres (*Rencontré → En discussion → Intro / pitch → Deal en cours → Conclu*).
-- **Courir** — activités avec tracé GPS (Leaflet, à la demande), sorties, défi, saison ; **Messages** — 1:1 et groupes ; **Dossard (profil)** — le verso du dossard est le profil, éditable ; le dossier lu sur le site juste en dessous.
-- **Copilot IA, abonnement (Découverte · Pro · Business), invitations & parrainage, agenda & RDV, connexions & appareils, onboarding en quatre temps** (une course par an · un réseau toute l'année · un dossard, deux faces · ce qu'on garde).
+- **Accueil** — le bloc encre `T–` (jours avant la ligne, état du dossier ou vague ouverte), ce que ton réseau rapporte, « Qui court cette année » (l'annuaire des dossards déjà pris : le réseau commence avant la ligne), le pipeline et le binôme, ce que le réseau raconte (le fil).
+- **L'édition** (fiche, depuis l'accueil, Courir ou le dossard) — ton dossier (ou : prendre un dossard / relier un dossier), la journée `T–` / `T+`, les trois distances avec le parcours, le programme de l'après-midi, les formules, les vagues, qui court, les quatre principes.
+- **L'annuaire · « Pour toi »** — qui court cette année, filtré par intention (*Recrute · Lève · Vend · S'associe · Conseille*), et trois rencontres proposées chaque semaine, expliquées (l'intention qui se répond, ce qu'on a en commun en course, ce que ton comportement dans l'app a montré), avec une première phrase toute prête. Une rencontre ne s'ouvre que si les deux disent oui.
+- **Les rencontres** — huit minutes, un sujet, un lieu : à l'Arena le jour J, en courant, autour d'un café, en visio. Six réservées à l'avance en Premium.
+- **Le binôme** — la sortie à deux : jour, heure, lieu, distance, allure cible (la moyenne des deux). La sortie devient le rendez-vous, et entre dans le pipeline.
+- **Le pipeline** — ce que chaque rencontre produit : *Rencontré·e → En conversation → Présenté·e → En cours → Conclu*, avec les kilomètres investis par relation.
+- **Courir** — tes sorties (importées de Strava ou de ta montre) avec qui tu as couru, les sorties du réseau avec un hôte, une allure de conversation et un café d'arrivée, les kilomètres investis qui ouvrent des rencontres.
+- **Messages** — les rencontres en cours et les cercles (par entreprise, par secteur, par sortie).
+- **Dossard (profil)** — le verso du dossard est le profil : ce que je cherche, ce que j'apporte ; le dossier lu sur le site ; ta formule (Dossard · Premium · Cercle, celles du site, sans prix dans l'app : changer de formule se fait depuis l'espace) ; la cooptation (l'une des trois voies d'accès au dossard, deux cooptations ouvrent le Cercle).
+- **Onboarding en quatre temps** — une course par an · un réseau toute l'année · un dossard, deux faces · ce qu'on garde.
 
 ## Architecture
 
@@ -46,6 +49,7 @@ src/
   App.jsx              orchestrateur : état partagé + contexte + layout + overlays (+ lien profond ?dossier=)
   AppContext.js        contexte applicatif (useApp)
   data/race.js         l'édition : faits du site, distances, vagues, formules, programme, SITE_URL
+  ../CONTENU.md        la bible de contenu : positionnement, ton, vocabulaire, emprunts aux formats existants
   data/                autres données fictives (user, network, profiling, events, messages, feed, activities…)
   lib/dossier.js       le pont : lecture du dossier sur le site, repli local
   lib/matching.js      moteur de matching comportemental « Pour toi »
