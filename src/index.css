@@ -432,7 +432,7 @@ body:has(.eco)::before {
     display: block;
     width: 100%;
     aspect-ratio: 5 / 4;
-    min-height: 168px;
+    min-height: 178px;
     container-type: inline-size;
     background: none;
     border: 0;
