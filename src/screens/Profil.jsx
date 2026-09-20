@@ -10,6 +10,8 @@ import { REFERRAL } from '../data/invites'
 import { MEETING_TYPES } from '../data/meetings'
 import { seasonProgress } from '../data/levels'
 import { formatEventDate } from '../lib/dates'
+import Dossard from '../components/Dossard'
+import { EDITION, daysToRace, distanceById, formuleById, siteUrl } from '../data/race'
 
 export default function Profil() {
   const {
@@ -17,7 +19,7 @@ export default function Profil() {
     openIntegrations, integrations, profile, resetDemo,
     plan, planMeta, openPlans, openInvite, referralJoined,
     meetings, openAgenda, insights, rankedMatches, openMember,
-    eco, toggleEco,
+    eco, toggleEco, dossier, openRace,
   } = useApp()
   const topMatch = rankedMatches?.[0]
   const u = CURRENT_USER
@@ -59,47 +61,58 @@ export default function Profil() {
 
   return (
     <div className="animate-screenIn overflow-y-auto no-scrollbar pb-6">
-      <div className="relative h-28 overflow-hidden surface-hero">
-        <div className="absolute inset-0 bg-hero-glow" />
+      {/* Le verso du dossard EST le profil : « un seul dossard, il te fait
+          passer la ligne, puis il devient ton profil ». */}
+      <div className="surface-hero px-5 pb-6 pt-[max(1rem,env(safe-area-inset-top))]">
+        <div className="flex items-center justify-between">
+          <span className="tmark"><b>T+</b> / TON DOSSARD</span>
+          <span className="font-mono text-[9.5px] uppercase tracking-mono text-craie/50">{EDITION.label} · T–{daysToRace()}</span>
+        </div>
+        <div className="mt-4 grid grid-cols-[1fr_168px] items-end gap-4">
+          <div className="min-w-0">
+            <h1 className="text-[28px] text-craie">{u.name.split(' ')[0]}<br /><span className="creuse">{u.name.split(' ').slice(1).join(' ')}</span></h1>
+            <div className="mt-2 flex items-center gap-2">
+              <p className="truncate text-[13px] text-craie/70">{profile.title}</p>
+              <PlanBadge plan={plan} />
+            </div>
+            <p className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-craie/50">{u.location} · {u.joined}</p>
+          </div>
+          <Dossard dossier={dossier} nom={u.name} fonction={profile.title} entreprise={u.company} />
+        </div>
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          <button onClick={openEditProfile} className="btn btn-encre btn-sm justify-between"><span>Éditer le verso</span><span className="arr">→</span></button>
+          <button onClick={shareProfile} aria-label="Partager mon profil" className="btn btn-ghost btn-sm justify-between text-craie"><span>Partager</span><span className="arr">→</span></button>
+        </div>
       </div>
 
-      <div className="px-5">
-        <div className="-mt-12 flex flex-col items-center text-center">
-          <div className="rounded-full p-1 ring-4 ring-canvas">
-            <Avatar name={u.name} size="2xl" />
+      <div className="px-5 pt-4">
+        {/* Le dossier : ce que le site sait, lu par l'app */}
+        <button onClick={openRace} className="block w-full border border-line p-3.5 text-left tap">
+          {dossier ? (
+            <>
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[9.5px] font-bold uppercase tracking-mono text-brand-600">■ Dossier {dossier.reference}</span>
+                <span className="font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">Vague {dossier.vague?.nom}</span>
+              </div>
+              <div className="titre mt-1.5 text-[15px]">{distanceById(dossier.distance).label} · {formuleById(dossier.formule).nom}</div>
+              <div className="mt-1 text-[12px] text-fg-muted">Ta place est gardée. Le suivi du dossier et la formule se règlent sur le site, depuis ton espace.</div>
+            </>
+          ) : (
+            <>
+              <span className="font-mono text-[9.5px] font-bold uppercase tracking-mono text-brand-600">■ Pas encore de dossard</span>
+              <div className="titre mt-1.5 text-[15px]">Prends ta place sur la ligne</div>
+              <div className="mt-1 text-[12px] text-fg-muted">Un compte, une distance, une formule : cinq minutes sur runoninvest.fr. Ou relie un dossier déjà ouvert.</div>
+            </>
+          )}
+          <div className="mt-2 flex items-center justify-between font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">
+            <span>{dossier ? 'Voir mon dossier' : 'Voir l’édition'}</span><span>→</span>
           </div>
-          <div className="mt-3 flex items-center gap-2">
-            <h1 className="text-xl font-semibold text-fg">{u.name}</h1>
-            <PlanBadge plan={plan} />
-          </div>
-          <p className="text-sm text-fg-muted">{profile.title}</p>
-          <div className="mt-1 flex items-center gap-1 text-xs text-fg-muted">
-            <Icon name="mapPin" className="h-3.5 w-3.5" /> {u.location}
-            <span className="text-fg-faint">·</span>
-            {u.joined}
-          </div>
-          <div className="mt-3 flex items-center gap-2">
-            <button
-              onClick={openEditProfile}
-              className="flex items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 py-2 text-sm font-semibold text-fg-soft shadow-soft tap"
-            >
-              <Icon name="pencil" className="h-4 w-4" /> Éditer le profil
-            </button>
-            <button
-              onClick={shareProfile}
-              aria-label="Partager mon profil"
-              className="flex items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 py-2 text-sm font-semibold text-fg-soft shadow-soft tap"
-            >
-              <Icon name="share" className="h-4 w-4" /> Partager
-            </button>
-          </div>
-        </div>
-
+        </button>
         <div className="mt-3 space-y-3">
           {/* À propos */}
           {profile.bio && (
             <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
-              <h2 className="text-base font-semibold text-fg">À propos</h2>
+              <h2 className="tmark">À propos</h2>
               <p className="mt-2 text-sm leading-relaxed text-fg-soft">{profile.bio}</p>
             </section>
           )}
@@ -110,7 +123,7 @@ export default function Profil() {
             <button onClick={openRoiInfo} className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-left shadow-card tap">
               <div className="absolute inset-0 bg-hero-glow" />
               <div className="relative flex items-center gap-4">
-                <ProgressRing value={u.roi.score} size={88} stroke={9} color="#FFFFFF" track="rgba(255,255,255,0.14)">
+                <ProgressRing value={u.roi.score} size={88} stroke={9} color="#FF4400" track="rgba(239,235,226,0.16)">
                   <div className="text-2xl font-semibold leading-none text-white tabular-nums">{u.roi.score}</div>
                   <div className="mt-0.5 text-[10px] font-semibold text-white/45">/ 100</div>
                 </ProgressRing>
@@ -193,15 +206,13 @@ export default function Profil() {
           {/* Saison — kilomètres → récompenses */}
           <section className="overflow-hidden rounded-3xl border border-line bg-surface p-4 shadow-soft">
             <div className="flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-base font-semibold text-fg">
-                <Icon name="trophy" className="h-5 w-5 text-gold-dark" /> Saison · niveau {season.level}
-              </h2>
+              <h2 className="tmark">Saison · niveau {season.level}</h2>
               <button onClick={() => goTo('courir')} className="flex items-center gap-0.5 text-xs font-semibold text-brand-600 tap">
                 Détails <Icon name="chevronRight" className="h-3.5 w-3.5" />
               </button>
             </div>
             <div className="mt-3 flex items-center gap-3">
-              <ProgressBar value={season.pct} total={100} className="bg-surface-2" barClassName="bg-gradient-to-r from-brand-500 to-gold" />
+              <ProgressBar value={season.pct} total={100} className="bg-surface-2" barClassName="bg-brand-500" />
               <span className="shrink-0 text-[11px] font-semibold tabular-nums text-fg-muted">{u.stats.km} km</span>
             </div>
             <p className="mt-2 text-[12px] text-fg-muted">
@@ -270,11 +281,9 @@ export default function Profil() {
           </button>
 
           {/* Ce que je cherche */}
-          <section className="rounded-3xl border-2 border-brand-200 bg-brand-light/50 p-4">
+          <section className="border border-fg p-4">
             <div className="flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-base font-semibold text-fg">
-                <Icon name="target" className="h-5 w-5 text-brand-600" /> Ce que je cherche
-              </h2>
+              <h2 className="tmark">Ce que je cherche</h2>
               <button
                 onClick={openEditProfile}
                 className="flex items-center gap-1 rounded-full bg-surface px-3 py-1 text-xs font-semibold text-brand-700 shadow-soft tap"
@@ -294,9 +303,7 @@ export default function Profil() {
 
           {/* Ce que je propose */}
           <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
-            <h2 className="flex items-center gap-2 text-base font-semibold text-fg">
-              <Icon name="link" className="h-5 w-5 text-success" /> Ce que je propose
-            </h2>
+            <h2 className="tmark">Ce que je propose</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {profile.offering.map((o) => (
                 <span key={o} className="rounded-full bg-success-light px-3 py-1.5 text-sm font-semibold text-success-dark">
@@ -310,8 +317,8 @@ export default function Profil() {
           <section className="grid grid-cols-3 gap-2.5">
             {stats.map((s) => (
               <div key={s.label} className="rounded-2xl border border-line bg-surface p-3 text-center shadow-soft">
-                <div className="text-xl font-semibold text-fg tabular-nums">{s.value}</div>
-                <div className="text-[11px] text-fg-muted">{s.label}</div>
+                <div className="display text-[26px] tabular-nums">{s.value}</div>
+                <div className="mt-1 font-mono text-[9px] uppercase tracking-label text-fg-faint">{s.label}</div>
               </div>
             ))}
           </section>
@@ -319,9 +326,7 @@ export default function Profil() {
           {/* Connexions & appareils */}
           <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
             <div className="flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-base font-semibold text-fg">
-                <Icon name="link" className="h-5 w-5 text-brand-600" /> Connexions & appareils
-              </h2>
+              <h2 className="tmark">Connexions & appareils</h2>
               <button onClick={openIntegrations} className="flex items-center gap-1 rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-fg-soft tap">
                 Gérer
               </button>
@@ -377,7 +382,7 @@ export default function Profil() {
 
           {/* Centres d'intérêt */}
           <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
-            <h2 className="text-base font-semibold text-fg">Centres d’intérêt</h2>
+            <h2 className="tmark">Centres d’intérêt</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {profile.interests.map((i) => (
                 <span key={i} className="rounded-full bg-surface-2 px-3 py-1.5 text-sm font-semibold text-fg-soft">
@@ -405,7 +410,7 @@ export default function Profil() {
                 <Icon name="leaf" className="h-5 w-5" />
               </span>
               <div className="min-w-0 flex-1">
-                <h2 className="text-base font-semibold text-fg">Numérique responsable</h2>
+                <h2 className="tmark">Numérique responsable</h2>
                 <p className="text-[12px] text-fg-muted">Conçu pour consommer moins, sans rien sacrifier.</p>
               </div>
             </div>

@@ -15,7 +15,7 @@ function ChatComposer({ placeholder, draft, setDraft, onSend }) {
       />
       <button
         onClick={onSend}
-        className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand tap disabled:opacity-40"
+        className="grid h-11 w-11 shrink-0 place-items-center rounded-full btn btn-impact tap disabled:opacity-40"
         disabled={!draft.trim()}
         aria-label="Envoyer"
       >
@@ -58,7 +58,7 @@ export default function Messages() {
             <div key={i} className={`flex ${m.from === 'me' ? 'justify-end' : 'justify-start'}`}>
               <div
                 className={`max-w-[78%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed shadow-soft ${
-                  m.from === 'me' ? 'rounded-br-md bg-gradient-to-b from-brand-500 to-brand-600 text-white' : 'rounded-bl-md border border-line bg-surface text-fg'
+                  m.from === 'me' ? 'rounded-br-md btn btn-impact' : 'rounded-bl-md border border-line bg-surface text-fg'
                 }`}
               >
                 {m.text}
@@ -107,7 +107,7 @@ export default function Messages() {
                   {showName && <div className="mb-0.5 ml-1 text-[11px] font-semibold text-fg-muted">{m.from.split(' ')[0]}</div>}
                   <div
                     className={`rounded-2xl px-3.5 py-2 text-sm leading-relaxed shadow-soft ${
-                      mine ? 'rounded-br-md bg-gradient-to-b from-brand-500 to-brand-600 text-white' : 'rounded-bl-md border border-line bg-surface text-fg'
+                      mine ? 'rounded-br-md btn btn-impact' : 'rounded-bl-md border border-line bg-surface text-fg'
                     }`}
                   >
                     {m.text}
@@ -128,7 +128,7 @@ export default function Messages() {
     <div className="animate-screenIn flex h-full flex-col">
       <div className="px-5 pb-1 pt-4">
         <h1 className="text-2xl font-semibold text-fg">Messages</h1>
-        <div className="mt-4 flex gap-1 rounded-2xl bg-surface-2 p-1">
+        <div className="mt-4 flex divide-x divide-line border border-line">
           {[
             { id: 'discussions', label: 'Discussions', n: unreadConv },
             { id: 'groupes', label: 'Groupes', n: unreadGroups },
@@ -136,8 +136,8 @@ export default function Messages() {
             <button
               key={s.id}
               onClick={() => setMsgView(s.id)}
-              className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 text-sm font-semibold transition tap ${
-                msgView === s.id ? 'bg-surface-3 text-fg shadow-card' : 'text-fg-muted'
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono transition tap ${
+                msgView === s.id ? 'bg-fg text-canvas' : 'text-fg-muted'
               }`}
             >
               {s.label}
@@ -257,7 +257,7 @@ export default function Messages() {
                 <button
                   onClick={() => joinGroup(g)}
                   className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold tap ${
-                    joinedGroups[g.id] ? 'bg-success-light text-success-dark' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand'
+                    joinedGroups[g.id] ? 'bg-success-light text-success-dark' : 'btn btn-impact'
                   }`}
                 >
                   {joinedGroups[g.id] ? 'Rejoint' : 'Rejoindre'}

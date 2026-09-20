@@ -3,18 +3,20 @@ import { Logo } from './primitives'
 import { TABS } from './BottomNav'
 import { Avatar } from './Avatar'
 import { CURRENT_USER } from '../data/user'
+import { EDITION, daysToRace } from '../data/race'
 
-/* Navigation latérale — affichée uniquement sur grand écran (lg+). Sur mobile
-   c'est la BottomNav qui prend le relais. Donne à l'app un vrai layout web
-   (sidebar + contenu) côté bureau, plutôt qu'une maquette « téléphone ». */
+/* Navigation latérale — grand écran seulement. C'est la nav du site à la
+   verticale : logotype, liens mono séparés par des filets, la ligne. */
 export default function Sidebar({ active, onChange, unread = 0, onSearch, onNotif, unreadNotif = 0 }) {
+  const item = 'flex items-center gap-3 border-b border-line px-4 py-3.5 font-mono text-[11.5px] font-medium uppercase tracking-mono tap'
   return (
-    <aside className="hidden w-[248px] shrink-0 flex-col border-r border-line bg-surface/50 px-3 py-5 lg:flex">
-      <div className="px-2">
-        <Logo />
+    <aside className="hidden w-[248px] shrink-0 flex-col border-r border-line bg-canvas lg:flex">
+      <div className="border-b border-line px-4 py-5">
+        <Logo size={24} />
+        <div className="mt-2 font-mono text-[10px] uppercase tracking-label text-fg-faint">Run On Investment</div>
       </div>
 
-      <nav className="mt-7 flex flex-1 flex-col gap-1">
+      <nav className="flex flex-1 flex-col">
         {TABS.map((t) => {
           const isActive = active === t.id
           return (
@@ -22,52 +24,45 @@ export default function Sidebar({ active, onChange, unread = 0, onSearch, onNoti
               key={t.id}
               onClick={() => onChange(t.id)}
               aria-current={isActive ? 'page' : undefined}
-              className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[15px] font-semibold tap ${
-                isActive ? 'bg-brand-light text-brand-700' : 'text-fg-muted hover:bg-black/[0.04]'
-              }`}
+              className={`${item} ${isActive ? 'text-brand-600' : 'text-fg hover:bg-fg hover:text-craie'}`}
             >
-              <span className="relative grid h-6 w-6 shrink-0 place-items-center">
-                <Icon name={t.icon} className="h-[22px] w-[22px]" filled={isActive && t.icon === 'sparkles'} />
+              <span className="relative grid h-5 w-5 shrink-0 place-items-center">
+                <Icon name={t.icon} className="h-[19px] w-[19px]" filled={isActive && t.icon === 'sparkles'} />
                 {t.id === 'messages' && unread > 0 && (
-                  <span className="absolute -right-2 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-semibold text-white">
+                  <span className="absolute -right-2 -top-1.5 grid h-4 min-w-4 place-items-center bg-brand-500 px-1 font-mono text-[9px] font-bold text-encre">
                     {unread}
                   </span>
                 )}
               </span>
               {t.label}
+              {isActive && <span className="ml-auto h-1.5 w-1.5 bg-brand-500" aria-hidden />}
             </button>
           )
         })}
       </nav>
 
-      <div className="mt-2 flex flex-col gap-1 border-t border-line pt-3">
-        <button
-          onClick={onSearch}
-          className="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[15px] font-semibold text-fg-muted tap hover:bg-black/[0.04]"
-        >
-          <span className="grid h-6 w-6 shrink-0 place-items-center"><Icon name="search" className="h-[21px] w-[21px]" /></span>
+      <div className="flex flex-col border-t border-fg">
+        <button onClick={onSearch} className={`${item} text-fg-muted hover:bg-fg hover:text-craie`}>
+          <span className="grid h-5 w-5 shrink-0 place-items-center"><Icon name="search" className="h-[19px] w-[19px]" /></span>
           Rechercher
         </button>
-        <button
-          onClick={onNotif}
-          className="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[15px] font-semibold text-fg-muted tap hover:bg-black/[0.04]"
-        >
-          <span className="relative grid h-6 w-6 shrink-0 place-items-center">
-            <Icon name="bell" className="h-[22px] w-[22px]" />
-            {unreadNotif > 0 && <span className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full bg-brand-500" />}
+        <button onClick={onNotif} className={`${item} text-fg-muted hover:bg-fg hover:text-craie`}>
+          <span className="relative grid h-5 w-5 shrink-0 place-items-center">
+            <Icon name="bell" className="h-[19px] w-[19px]" />
+            {unreadNotif > 0 && <span className="absolute right-0 top-0 h-2 w-2 bg-brand-500" />}
           </span>
           Notifications
         </button>
-        <button
-          onClick={() => onChange('profil')}
-          className="mt-1 flex items-center gap-3 rounded-2xl px-2 py-2 text-left tap hover:bg-black/[0.04]"
-        >
+        <button onClick={() => onChange('profil')} className="flex items-center gap-3 px-4 py-4 text-left tap hover:bg-surface-2">
           <Avatar name={CURRENT_USER.name} size="sm" />
           <div className="min-w-0">
-            <div className="truncate text-sm font-semibold text-fg">{CURRENT_USER.name}</div>
-            <div className="truncate text-[11px] text-fg-muted">Voir le profil</div>
+            <div className="truncate text-sm font-medium text-fg">{CURRENT_USER.name}</div>
+            <div className="truncate font-mono text-[10px] uppercase tracking-mono text-fg-faint">Mon dossard</div>
           </div>
         </button>
+        <div className="border-t border-line px-4 py-3 font-mono text-[9.5px] uppercase tracking-label text-fg-faint">
+          <b className="text-brand-600">T–{daysToRace()}</b> · {EDITION.label} · {EDITION.moisCourt}
+        </div>
       </div>
     </aside>
   )

@@ -81,7 +81,7 @@ export default function ActivitySheet({ id, onClose }) {
   return (
     <div className="absolute inset-0 z-40">
       <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
-      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-surface shadow-float">
+      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface shadow-float">
         {/* Carte interactive */}
         <div className="relative h-56 shrink-0 bg-surface-2">
           <RouteMap route={a.route} interactive className="h-full w-full" />
@@ -200,7 +200,7 @@ export default function ActivitySheet({ id, onClose }) {
                     <button
                       onClick={() => contactMember(name)}
                       className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold tap ${
-                        contacted[name] ? 'bg-success-light text-success-dark' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand'
+                        contacted[name] ? 'bg-success-light text-success-dark' : 'btn btn-impact'
                       }`}
                     >
                       {contacted[name] ? 'Demandé' : 'Connecter'}

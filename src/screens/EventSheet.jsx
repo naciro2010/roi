@@ -19,7 +19,7 @@ export default function EventSheet({ id, onClose }) {
   return (
     <div className="absolute inset-0 z-40">
       <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
-      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-surface shadow-float">
+      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface shadow-float">
         {/* Carte du parcours */}
         <div className="relative h-48 shrink-0 bg-surface-2">
           {e.route ? <RouteMap route={e.route} className="h-full w-full" /> : <div className="absolute inset-0 bg-hero-glow surface-hero" />}
@@ -93,7 +93,7 @@ export default function EventSheet({ id, onClose }) {
                   <button
                     onClick={() => contactMember(name)}
                     className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold tap ${
-                      contacted[name] ? 'bg-success-light text-success-dark' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand'
+                      contacted[name] ? 'bg-success-light text-success-dark' : 'btn btn-impact'
                     }`}
                   >
                     {contacted[name] ? 'Demandé' : 'Connecter'}
@@ -110,7 +110,7 @@ export default function EventSheet({ id, onClose }) {
         <div className="glass flex shrink-0 items-center gap-2 border-t border-line px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             onClick={() => toggleJoin(e.id)}
-            className={`flex-1 rounded-full py-3 text-sm font-semibold text-white tap ${isJoined ? 'bg-success' : 'bg-gradient-to-b from-brand-500 to-brand-600 shadow-brand'}`}
+            className={`flex-1 rounded-full py-3 text-sm font-semibold text-white tap ${isJoined ? 'bg-success' : 'btn btn-impact shadow-brand'}`}
           >
             {isJoined ? 'Inscrit' : 'Je participe'}
           </button>

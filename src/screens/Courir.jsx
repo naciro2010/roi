@@ -11,42 +11,39 @@ import { serviceById } from '../data/integrations'
 import { formatEventDate } from '../lib/dates'
 import { CURRENT_USER } from '../data/user'
 import { SEASON, TIERS, seasonProgress } from '../data/levels'
+import { EDITION, daysToRace, distanceById, vagueCourante } from '../data/race'
 
 export default function Courir() {
   const {
     actKudos, toggleActKudos, openActivity, openMember, showToast,
     eventKudos, toggleEventKudos, joined, toggleJoin, openEvent,
     integrations, openIntegrations, openRunMatch, runMatches,
-    openRace, raceRegistration,
+    openRace, dossier,
   } = useApp()
   const [view, setView] = useState('activites')
   const topRun = runMatches?.[0]
-  const raceIn = raceRegistration?.confirmed
+  const jours = daysToRace()
 
   const OfficialRaceBanner = () => (
-    <button
-      onClick={openRace}
-      className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-left text-white shadow-float tap"
-    >
-      <div className="absolute inset-0 bg-aurora" />
-      <div className="relative">
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-gold/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-fg">
-            <Icon name="flag" className="h-3 w-3" /> Course officielle
-          </span>
-          <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">17 sept. · La Défense</span>
+    <button onClick={openRace} className="surface-hero relative w-full p-4 text-left tap">
+      <span className="tmark"><b>{EDITION.label}</b> {EDITION.lieu} · {EDITION.moisCourt}</span>
+      <div className="mt-3 flex items-end justify-between gap-3">
+        <div className="shrink-0">
+          <div className="display whitespace-nowrap text-[40px] leading-[.85] text-craie">T–{jours}</div>
+          <div className="mt-1.5 font-mono text-[9.5px] uppercase tracking-label text-craie/55">Jours avant la ligne</div>
         </div>
-        <p className="mt-2 text-[17px] font-extrabold leading-tight">ROI Business Run</p>
-        <p className="mt-0.5 text-[12.5px] leading-snug text-white/70">
-          10 000 dirigeants · 5 km, 10 km & semi au pied de l’Arena. La course où le business se court en tête.
-        </p>
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-[12px] font-semibold text-white/80">
-            {raceIn ? `Inscrit·e · dossard ${raceRegistration.dossard}` : 'Dès 500 € HT · solo ou équipe'}
-          </span>
-          <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[12px] font-bold ${raceIn ? 'bg-white/15 text-white' : 'bg-white text-fg'}`}>
-            {raceIn ? 'Voir mon dossard' : 'S’inscrire'} <Icon name="arrowRight" className="h-3.5 w-3.5" />
-          </span>
+        <div className="text-right">
+          {dossier ? (
+            <>
+              <div className="titre text-[14px] text-craie">{distanceById(dossier.distance).label} · {distanceById(dossier.distance).nom}</div>
+              <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-brand-500">■ Dossier {dossier.reference}</div>
+            </>
+          ) : (
+            <>
+              <div className="titre text-[14px] text-craie">5 · 10 · 21,1 km</div>
+              <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-brand-500">Vague {vagueCourante().nom} ouverte →</div>
+            </>
+          )}
         </div>
       </div>
     </button>
@@ -55,21 +52,20 @@ export default function Courir() {
   const RunMatchBanner = () => (
     <button
       onClick={openRunMatch}
-      className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-left text-white shadow-float tap"
+      className="relative w-full border border-line p-4 text-left tap"
     >
-      <div className="absolute inset-0 bg-aurora" />
       <div className="relative flex items-center gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/15 text-white ring-1 ring-white/20">
+        <span className="grid h-10 w-10 shrink-0 place-items-center bg-encre text-craie">
           <Icon name="activity" className="h-5 w-5" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">RunMatch · binôme de course</p>
-          <p className="mt-0.5 text-[14px] font-extrabold leading-snug">
+          <p className="text-[9.5px] font-bold uppercase text-brand-600">■ RunMatch · binôme de course</p>
+          <p className="titre mt-0.5 text-[14px]">
             {topRun ? `Cours avec ${topRun.name.split(' ')[0]} cette semaine` : 'Trouve ton binôme de run'}
           </p>
-          <p className="mt-0.5 text-[12px] leading-snug text-white/65">Même allure, et un vrai intérêt business. La sortie devient le RDV.</p>
+          <p className="mt-0.5 text-[12px] leading-snug text-fg-muted">Même allure, et un vrai intérêt business. La sortie devient le RDV.</p>
         </div>
-        <Icon name="chevronRight" className="h-5 w-5 shrink-0 text-white/60" />
+        <span className="font-mono text-fg-faint">→</span>
       </div>
     </button>
   )
@@ -86,7 +82,7 @@ export default function Courir() {
         <div>
           <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-fg-faint">Cette semaine</div>
           <div className="mt-0.5 flex items-baseline gap-1">
-            <span className="text-[26px] font-bold leading-none tracking-tight text-fg tabular-nums">{weekKm.toFixed(1)}</span>
+            <span className="display text-[30px] leading-none text-fg tabular-nums">{weekKm.toFixed(1)}</span>
             <span className="text-sm font-semibold text-fg-muted">km</span>
           </div>
         </div>
@@ -101,12 +97,12 @@ export default function Courir() {
           </div>
         </div>
       </div>
-      <div className="mt-3 flex items-end justify-between gap-1.5" style={{ height: 66 }}>
+      <div className="mt-3 flex items-stretch justify-between gap-1.5" style={{ height: 66 }}>
         {week.km.map((k, i) => (
           <div key={i} className="flex flex-1 flex-col items-center gap-1">
             <div className="flex w-full flex-1 items-end">
               <div
-                className={`w-full rounded-md transition-all ${k > 0 ? 'bg-brand-500' : 'bg-surface-2'}`}
+                className={`w-full transition-all ${k > 0 ? 'bg-fg' : 'bg-surface-2'}`}
                 style={{ height: k > 0 ? `${22 + (k / weekMax) * 78}%` : '6px' }}
                 title={k > 0 ? `${week.days[i]} · ${k.toFixed(1)} km` : 'Repos'}
               />
@@ -121,10 +117,10 @@ export default function Courir() {
   return (
     <div className="animate-screenIn flex h-full flex-col">
       <div className="px-5 pb-1 pt-4">
-        <h1 className="text-2xl font-semibold text-fg">Courir</h1>
-        <p className="mt-0.5 text-sm text-fg-muted">Cours, rencontre, avance.</p>
+        <span className="tmark"><b>T–</b> / AVANT LA LIGNE</span>
+        <h1 className="mt-2 text-[30px]">Courir, <span className="creuse">rencontrer.</span></h1>
 
-        <div className="mt-4 flex gap-1 rounded-2xl bg-surface-2 p-1">
+        <div className="mt-4 grid grid-cols-2 border border-line">
           {[
             { id: 'activites', label: 'Activités' },
             { id: 'sorties', label: 'Sorties' },
@@ -132,8 +128,8 @@ export default function Courir() {
             <button
               key={s.id}
               onClick={() => setView(s.id)}
-              className={`flex-1 rounded-xl py-2 text-sm font-semibold transition tap ${
-                view === s.id ? 'bg-surface-3 text-fg shadow-card' : 'text-fg-muted'
+              className={`py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono transition tap ${
+                view === s.id ? 'bg-fg text-canvas' : 'text-fg-muted'
               }`}
             >
               {s.label}
@@ -198,7 +194,7 @@ export default function Courir() {
             <div className="relative overflow-hidden p-5">
               <div className="absolute inset-0 bg-hero-glow" />
               <div className="relative flex items-center gap-4">
-                <ProgressRing value={pct} size={84} stroke={9} color="#FFFFFF" track="rgba(255,255,255,0.14)">
+                <ProgressRing value={pct} size={84} stroke={9} color="#FF4400" track="rgba(239,235,226,0.16)">
                   <div className="text-xl font-semibold leading-none">{pct}%</div>
                 </ProgressRing>
                 <div className="flex-1">
@@ -247,11 +243,11 @@ export default function Courir() {
                   <div className="text-[11px] text-fg-muted">Cours, débloque · fin dans {SEASON.endsIn}</div>
                 </div>
               </div>
-              <span className="rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">Niveau {season.level}</span>
+              <span className="bg-encre px-2 py-1 font-mono text-[9.5px] font-bold uppercase tracking-mono text-craie">Niveau {season.level}</span>
             </div>
 
             <div className="mt-3 flex items-center gap-3">
-              <ProgressBar value={season.pct} total={100} className="bg-surface-2" barClassName="bg-gradient-to-r from-brand-500 to-gold" />
+              <ProgressBar value={season.pct} total={100} className="bg-surface-2" barClassName="bg-brand-500" />
               <span className="shrink-0 text-[12px] font-semibold tabular-nums text-fg">{km} km</span>
             </div>
             <p className="mt-1.5 text-[12px] text-fg-muted">
@@ -340,11 +336,11 @@ export default function Courir() {
                   <div className="px-4 pb-4">
                     <button
                       onClick={() => toggleJoin(a.id)}
-                      className={`w-full rounded-full py-3 text-sm font-semibold tap ${
-                        isJoined ? 'bg-success text-white' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand hover:to-brand-700'
+                      className={`w-full ${
+                        isJoined ? 'btn btn-encre' : 'btn btn-impact'
                       }`}
                     >
-                      {isJoined ? 'Inscrit' : 'Je participe'}
+                      <span>{isJoined ? 'Inscrit·e' : 'Je participe'}</span><span className="arr">→</span>
                     </button>
                   </div>
                 </article>

@@ -18,7 +18,7 @@ export default function AgendaSheet({ onClose }) {
       <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
       <div
         style={drag.style}
-        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-surface-soft shadow-float"
+        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface-soft shadow-float"
       >
         {/* En-tête */}
         <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-5 pt-3 text-white">
@@ -84,7 +84,7 @@ export default function AgendaSheet({ onClose }) {
                   ) : (
                     <button
                       onClick={() => confirmMeeting(m.id)}
-                      className="flex-1 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 py-2.5 text-sm font-semibold text-white shadow-brand tap"
+                      className="flex-1 rounded-full btn btn-impact py-2.5 text-sm font-semibold text-white shadow-brand tap"
                     >
                       Confirmer le RDV
                     </button>

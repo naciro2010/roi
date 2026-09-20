@@ -25,14 +25,14 @@ export default function PostComposer({ open, onClose, onPublish }) {
   return (
     <div className="absolute inset-0 z-40">
       <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
-      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[90%] flex-col overflow-hidden rounded-t-[28px] bg-surface shadow-float">
+      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[90%] flex-col overflow-hidden bg-surface shadow-float">
         <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-3.5">
           <button onClick={onClose} className="text-sm font-semibold text-fg-muted tap">Annuler</button>
           <h2 className="text-base font-semibold text-fg">Nouveau post</h2>
           <button
             onClick={publish}
             disabled={!text.trim()}
-            className="rounded-full bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-1.5 text-sm font-semibold text-white shadow-brand tap disabled:opacity-40"
+            className="rounded-full btn btn-impact px-4 py-1.5 text-sm font-semibold text-white shadow-brand tap disabled:opacity-40"
           >
             Publier
           </button>

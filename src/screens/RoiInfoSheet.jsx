@@ -14,14 +14,14 @@ export default function RoiInfoSheet({ onClose }) {
   return (
     <div className="absolute inset-0 z-40">
       <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
-      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[92%] flex-col overflow-hidden rounded-t-[28px] bg-surface shadow-float">
+      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[92%] flex-col overflow-hidden bg-surface shadow-float">
         <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-5 pt-6 text-white">
           <div className="absolute inset-0 bg-hero-glow" />
           <button onClick={onClose} className="glass-dark absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full text-white tap" aria-label="Fermer">
             <Icon name="x" className="h-5 w-5" />
           </button>
           <div className="relative flex items-center gap-4">
-            <ProgressRing value={u.roi.score} size={76} stroke={8} color="#FFFFFF" track="rgba(255,255,255,0.14)">
+            <ProgressRing value={u.roi.score} size={76} stroke={8} color="#FF4400" track="rgba(239,235,226,0.16)">
               <div className="text-xl font-semibold leading-none">{u.roi.score}</div>
             </ProgressRing>
             <div>
@@ -46,7 +46,7 @@ export default function RoiInfoSheet({ onClose }) {
                   </span>
                 </div>
               </div>
-              <Sparkline data={u.roi.trend} width={140} height={48} stroke="#18181B" strokeWidth={2.5} />
+              <Sparkline data={u.roi.trend} width={140} height={48} stroke="#070707" strokeWidth={2.5} />
             </div>
           </div>
 

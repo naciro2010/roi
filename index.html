@@ -3,33 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <meta name="theme-color" content="#F4F4F5" />
+    <meta name="theme-color" content="#070707" />
     <meta name="color-scheme" content="light" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    <meta name="description" content="ROI — le réseau d'affaires des dirigeants, fondateurs et top managers qui courent. Matchs ciblés, RDV et opportunités au plus haut niveau. Application sobre et éco-conçue : polices système, zéro pisteur, cartes chargées à la demande." />
+    <meta name="description" content="R.O.I — Run On Investment · L'app. Une course par an à Paris La Défense, un réseau toute l'année : l'annuaire de celles et ceux qui courent, des rencontres de huit minutes à réserver, des sorties à allure de conversation. Ton dossard s'y retrouve dès ton inscription." />
 
     <!-- App mobile installable (PWA) -->
     <link rel="manifest" href="/manifest.webmanifest" />
-    <meta name="application-name" content="ROI" />
+    <meta name="application-name" content="R.O.I" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="ROI" />
+    <meta name="apple-mobile-web-app-title" content="R.O.I" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="apple-touch-icon" href="/icon.svg" />
 
     <!-- Partage -->
-    <meta property="og:title" content="ROI · Le réseau d'affaires des dirigeants qui courent" />
-    <meta property="og:description" content="Dirigeants, fondateurs et top managers : matchs ciblés, RDV et opportunités, à la foulée." />
+    <meta property="og:title" content="R.O.I — Run On Investment · L'app" />
+    <meta property="og:description" content="Une course par an. Un réseau toute l'année. Le même dossard, dans ta poche." />
     <meta property="og:type" content="website" />
 
-    <title>ROI · Le réseau qui rapporte</title>
+    <title>R.O.I — Run On Investment · L'app</title>
     <!--
-      Éco-conception : aucune police web n'est téléchargée. L'interface utilise
-      la police déjà installée sur l'appareil (San Francisco, Segoe UI, Roboto…),
-      ce qui évite plusieurs requêtes réseau, ~100 ko de données et toute
-      connexion à un service tiers (meilleure sobriété et confidentialité).
+      Identité « La Ligne », partagée avec le site runoninvest.fr : Archivo
+      variable (titres fins, chasse étendue) et JetBrains Mono (labels, data),
+      toutes deux auto-hébergées dans /fonts — aucun service tiers, aucun
+      pisteur. Les deux fichiers ci-dessous sont les seuls chargés au départ.
     -->
+    <link rel="preload" href="/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jetbrains-mono-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
     <div id="root"></div>

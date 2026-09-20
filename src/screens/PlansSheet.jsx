@@ -27,7 +27,7 @@ export default function PlansSheet({ onClose }) {
       <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
       <div
         style={drag.style}
-        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-surface-soft shadow-float"
+        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface-soft shadow-float"
       >
         {/* En-tête premium sombre */}
         <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-5 pt-3 text-white">
@@ -141,7 +141,7 @@ export default function PlansSheet({ onClose }) {
                           ? 'bg-white text-fg'
                           : business
                             ? 'bg-gradient-to-r from-gold-dark to-gold text-white shadow-brand'
-                            : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand'
+                            : 'btn btn-impact'
                     }`}
                   >
                     {current ? 'Ton plan actuel' : p.cta}

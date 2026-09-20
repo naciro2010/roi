@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import { AppContext } from './AppContext'
 import { usePersistentState, clearPersistedState } from './lib/usePersistentState'
 import {
@@ -51,6 +51,7 @@ import { suggestRun } from './lib/runmatch'
 import { SERVICES } from './data/integrations'
 import { planById, hasFeature } from './data/plans'
 import { INITIAL_INVITES, INITIAL_TEAMMATES } from './data/invites'
+import { dossierDepuisUrl, lierDossier } from './lib/dossier'
 
 /* Contexte de matching (constant) : sorties & connexions en commun */
 const MATCH_NAMES = Object.keys(PROFILES)
@@ -86,7 +87,7 @@ function detectEcoDefault() {
 function ScreenFallback() {
   return (
     <div className="flex flex-1 items-center justify-center" aria-busy="true">
-      <span className="h-7 w-7 animate-spin rounded-full border-2 border-line-strong border-t-transparent" />
+      <span className="h-1 w-24 bg-line-strong"><span className="block h-full w-1/3 animate-pulse bg-brand-500" /></span>
       <span className="sr-only">Chargement…</span>
     </div>
   )
@@ -185,9 +186,29 @@ export default function App() {
   const [runMatchOpen, setRunMatchOpen] = useState(false)
   const [proposedRuns, setProposedRuns] = usePersistentState('proposedRuns', {})
 
-  // Course officielle ROI Business Run · La Défense — annonce & inscription B2B
+  // L'édition — la course annuelle. Le dossier vit sur le site (runoninvest.fr),
+  // l'app le relie : par lien profond depuis l'espace (?dossier=&email=) ou à
+  // la main (référence + e-mail). `dossier` = ce que le site a répondu.
   const [raceOpen, setRaceOpen] = useState(false)
-  const [raceRegistration, setRaceRegistration] = usePersistentState('raceRegistration', null)
+  const [dossier, setDossier] = usePersistentState('dossier', null)
+  useEffect(() => {
+    const q = dossierDepuisUrl()
+    if (!q) return
+    let vivant = true
+    lierDossier(q).then((r) => {
+      if (!vivant) return
+      if (r.dossier) {
+        setDossier(r.dossier)
+        showToast(`Dossier ${r.dossier.reference} relié`)
+      } else {
+        showToast(r.erreur || 'Dossier introuvable')
+      }
+      setRaceOpen(true)
+    })
+    try { window.history.replaceState(null, '', window.location.pathname) } catch { /* sans historique */ }
+    return () => { vivant = false }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const planMeta = planById(plan)
   const referralJoined = invites.filter((i) => i.status === 'joined').length
@@ -411,9 +432,12 @@ export default function App() {
     setOnboarding(false)
   }
 
-  function registerRace(reg) {
-    setRaceRegistration(reg)
-    showToast(`Inscription confirmée · dossard ${reg.dossard}`)
+  function lierDossierApp(d) {
+    setDossier(d)
+  }
+  function delierDossier() {
+    setDossier(null)
+    showToast('Dossier délié — le site le garde')
   }
 
   function resetDemo() {
@@ -538,9 +562,9 @@ export default function App() {
     openPipeline: () => setPipelineOpen(true),
     runMatches, proposeRun, proposedRuns,
     openRunMatch: () => setRunMatchOpen(true),
-    // Course officielle ROI Business Run
+    // L'édition — la course annuelle, et le dossier lu sur le site
     openRace: () => setRaceOpen(true),
-    raceRegistration, registerRace,
+    dossier, lierDossierApp, delierDossier,
     contacted, contactMember,
     sentSuggestions, sendSuggestion,
     connections, requests, acceptRequest, declineRequest,
@@ -584,7 +608,7 @@ export default function App() {
         <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={() => setNotifOpen(false)} />
         <div className="animate-drawerIn absolute inset-y-0 right-0 flex w-[86%] max-w-[340px] flex-col bg-surface shadow-float">
           <div className="flex shrink-0 items-center justify-between border-b border-line px-4 py-4">
-            <h2 className="text-lg font-semibold text-fg">Notifications</h2>
+            <h2 className="tmark">Notifications</h2>
             <button onClick={() => setNotifOpen(false)} className="grid h-9 w-9 place-items-center rounded-full bg-surface-2 text-fg-muted tap" aria-label="Fermer">
               <Icon name="x" className="h-5 w-5" />
             </button>
@@ -592,14 +616,14 @@ export default function App() {
           {unreadNotif > 0 && (
             <button
               onClick={() => setNotifs((ns) => ns.map((n) => ({ ...n, unread: false })))}
-              className="shrink-0 border-b border-line px-4 py-2.5 text-left text-xs font-semibold text-brand-600 tap"
+              className="shrink-0 border-b border-line px-4 py-2.5 text-left font-mono text-[10px] font-bold uppercase tracking-mono text-brand-600 tap"
             >
               Tout marquer comme lu
             </button>
           )}
           <div className="flex-1 overflow-y-auto no-scrollbar">
             {notifs.map((n) => (
-              <div key={n.id} className={`flex gap-3 border-b border-line px-4 py-3.5 ${n.unread ? 'bg-brand-light/30' : ''}`}>
+              <div key={n.id} className={`flex gap-3 border-b border-line px-4 py-3.5 ${n.unread ? 'bg-surface-2' : ''}`}>
                 <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${PILL_TONES[n.tone]}`}>
                   <Icon name={n.icon} className="h-4 w-4" filled={n.icon === 'heart' || n.icon === 'sparkles'} />
                 </span>
@@ -634,23 +658,23 @@ export default function App() {
         <div className="relative flex h-full w-full max-w-[480px] flex-col overflow-hidden bg-canvas lg:max-w-[640px] lg:border-x lg:border-line">
 
           {showHeader && (
-            <header className="glass z-20 flex shrink-0 items-center justify-between border-b border-line px-5 pb-3 pt-[max(1rem,env(safe-area-inset-top))] lg:hidden">
+            <header className="glass z-20 flex shrink-0 items-center justify-between border-b border-fg px-5 pb-2.5 pt-[max(0.9rem,env(safe-area-inset-top))] lg:hidden">
               <Logo />
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setSearchOpen(true)}
-                  className="grid h-10 w-10 place-items-center rounded-full text-fg-soft tap hover:bg-black/[0.05]"
+                  className="grid h-10 w-10 place-items-center text-fg tap hover:bg-fg hover:text-craie"
                   aria-label="Rechercher"
                 >
                   <Icon name="search" className="h-[21px] w-[21px]" />
                 </button>
                 <button
                   onClick={() => setNotifOpen(true)}
-                  className="relative grid h-10 w-10 place-items-center rounded-full text-fg-soft tap hover:bg-black/[0.05]"
+                  className="relative grid h-10 w-10 place-items-center text-fg tap hover:bg-fg hover:text-craie"
                   aria-label="Notifications"
                 >
                   <Icon name="bell" className="h-[22px] w-[22px]" />
-                  {unreadNotif > 0 && <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-brand-500 ring-2 ring-canvas" />}
+                  {unreadNotif > 0 && <span className="absolute right-2 top-2 h-2 w-2 bg-brand-500" />}
                 </button>
                 <Avatar name={CURRENT_USER.name} size="sm" onClick={() => goTo('profil')} />
               </div>
@@ -664,7 +688,7 @@ export default function App() {
           {toast && (
             <div
               key={toast.key}
-              className="animate-toastIn glass-dark pointer-events-none absolute bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-float"
+              className="animate-toastIn glass-dark pointer-events-none absolute bottom-24 left-1/2 z-50 -translate-x-1/2 border-l-[3px] border-brand-500 px-4 py-2.5 font-mono text-[11px] font-bold uppercase tracking-mono text-craie"
             >
               {toast.msg}
             </div>

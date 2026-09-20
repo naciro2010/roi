@@ -45,7 +45,7 @@ export default function RunMatchSheet({ onClose }) {
         onClick={() => proposeRun(name)}
         disabled={done}
         className={`flex items-center justify-center gap-1.5 rounded-full text-sm font-bold tap ${
-          done ? 'bg-success text-white' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand hover:to-brand-700'
+          done ? 'bg-success text-white' : 'btn btn-impact'
         } ${className}`}
       >
         <Icon name={done ? 'check' : 'activity'} className="h-4 w-4" />
@@ -59,7 +59,7 @@ export default function RunMatchSheet({ onClose }) {
       <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
       <div
         style={drag.style}
-        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-surface-soft shadow-float"
+        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface-soft shadow-float"
       >
         {/* En-tête */}
         <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-5 pt-3 text-white">

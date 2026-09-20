@@ -54,22 +54,22 @@ export default function InviteSheet({ onClose }) {
       <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
       <div
         style={drag.style}
-        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-surface-soft shadow-float"
+        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface-soft shadow-float"
       >
         <div className="relative shrink-0 border-b border-line bg-surface px-5 pb-3 pt-3">
-          <div {...drag.handleProps} className="mx-auto mb-3 h-1 w-10 rounded-full bg-surface-3" aria-hidden="true" />
+          <div {...drag.handleProps} className="mx-auto mb-3 h-1 w-10 bg-line-strong" aria-hidden="true" />
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold text-fg">Inviter sur ROI</h2>
             <button onClick={onClose} className="grid h-9 w-9 place-items-center rounded-full bg-surface-2 text-fg-muted tap" aria-label="Fermer">
               <Icon name="x" className="h-5 w-5" />
             </button>
           </div>
-          <div className="mt-3 flex gap-1 rounded-2xl bg-surface-2 p-1">
+          <div className="mt-3 flex divide-x divide-line border border-line">
             {[{ id: 'amis', label: 'Amis & contacts' }, { id: 'equipe', label: 'Mon équipe' }].map((t) => (
               <button
                 key={t.id}
                 onClick={() => setView(t.id)}
-                className={`flex-1 rounded-xl py-2 text-sm font-semibold transition tap ${view === t.id ? 'bg-surface-3 text-fg shadow-card' : 'text-fg-muted'}`}
+                className={`flex-1 rounded-xl py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono transition tap ${view === t.id ? 'bg-fg text-canvas' : 'text-fg-muted'}`}
               >
                 {t.label}
               </button>
@@ -107,7 +107,7 @@ export default function InviteSheet({ onClose }) {
                     <Icon name="copy" className="h-3.5 w-3.5" />
                   </button>
                 </div>
-                <button onClick={shareLink} className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 py-3 text-sm font-semibold text-white shadow-brand tap">
+                <button onClick={shareLink} className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-full btn btn-impact py-3 text-sm font-semibold text-white shadow-brand tap">
                   <Icon name="share" className="h-4 w-4" /> Partager mon lien
                 </button>
               </section>
@@ -127,7 +127,7 @@ export default function InviteSheet({ onClose }) {
                       className="min-w-0 flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-fg-faint"
                     />
                   </div>
-                  <button type="submit" className="shrink-0 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-brand tap">Inviter</button>
+                  <button type="submit" className="shrink-0 rounded-full btn btn-impact px-4 py-2.5 text-sm font-semibold text-white shadow-brand tap">Inviter</button>
                 </form>
               </section>
 
@@ -205,7 +205,7 @@ export default function InviteSheet({ onClose }) {
                           className="min-w-0 flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-fg-faint"
                         />
                       </div>
-                      <button type="submit" className="shrink-0 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-brand tap">
+                      <button type="submit" className="shrink-0 rounded-full btn btn-impact px-4 py-2.5 text-sm font-semibold text-white shadow-brand tap">
                         <Icon name="userPlus" className="h-4 w-4" />
                       </button>
                     </form>

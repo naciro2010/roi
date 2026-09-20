@@ -1,13 +1,14 @@
-// Teintes d'avatar claires et désaturées : tuile pastel + initiales profondes.
+// Avatars « La Ligne » : des carrés de craie ou d'encre, initiales en Archivo
+// étendu. Une seule variante orange pour rythmer les listes.
 export const AVATAR_TINTS = [
-  'bg-[#DDE3F1] text-[#3C455B]',
-  'bg-[#E2DBE6] text-[#574A60]',
-  'bg-[#D9E2E6] text-[#3F5560]',
-  'bg-[#DCE6DD] text-[#3F5A45]',
-  'bg-[#E7DDD4] text-[#6B5544]',
-  'bg-[#EFE5E6] text-[#7A4B53]',
-  'bg-[#E5E1EE] text-[#473E66]',
-  'bg-[#E0E6EC] text-[#3F4756]',
+  'bg-craie-2 text-fg',
+  'bg-encre text-craie',
+  'bg-craie-3 text-fg',
+  'bg-encre-2 text-craie',
+  'bg-craie-2 text-fg',
+  'bg-brand-500 text-encre',
+  'bg-craie-3 text-fg',
+  'bg-encre text-craie',
 ]
 
 export const AVATAR_SIZES = {

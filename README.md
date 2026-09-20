@@ -1,129 +1,75 @@
-# ROI — Le réseau qui rapporte
+# R.O.I — Run On Investment · L'app
 
-Application mobile-first de networking d'affaires pour **dirigeants, fondateurs
-et top managers qui courent**. Un mélange de **LinkedIn**, **Strava** et **Happn**
-avec les codes d'usage de **Strava** — gros chiffres de stats, kudos au pouce
-levé et tracés GPS — habillés d'une **identité monochrome minimaliste**
-(graphite/blanc, façon Vercel/Linear) : on partage ses sorties et ses
-analyses, on participe à des courses pour rencontrer les bonnes personnes, on se
-fait matcher au plus haut niveau, et on crée des cercles pour échanger.
+L'app de **R.O.I — Run On Investment** : une course par an au cœur de Paris La Défense (5 / 10 / 21,1 km, puis un après-midi entier dans l'Arena), et **un réseau toute l'année** entre deux lignes. Le site ([runoninvest.fr](https://runoninvest.fr), repo `Site-roi`) porte l'événement et l'inscription ; l'app est ce qui se passe avant et après : l'annuaire de celles et ceux qui courent, des rencontres de huit minutes, des sorties à allure de conversation, un pipeline de relations branché sur les kilomètres.
 
-## Fonctionnalités
+> **R.O.I — L'impact après la ligne d'arrivée.**
 
-- **Copilot IA** — assistant de networking accessible partout via le bouton
-  flottant : insights proactifs (qui rencontrer, qui relancer), rédaction
-  d'intros, résumé de la semaine réseau, et chat avec prompts suggérés. Mis en
-  avant aussi sur le Fil et le Réseau (badges « IA »). Rédaction de posts assistée
-  par l'IA dans le composer.
-- **Abonnement** — 3 plans (Découverte gratuit · Pro · Business), bascule
-  mensuel/annuel, et déblocage progressif des fonctionnalités premium (matchs
-  illimités, Copilot illimité, « qui veut me rencontrer », filtres avancés,
-  sièges d'équipe…). Les surfaces verrouillées invitent à passer à l'offre
-  supérieure.
-- **Invitations & parrainage** — invite des contacts externes par e-mail ou lien
-  partageable, suivi du statut, récompense de parrainage (3 invité·es → 1 mois
-  Pro), et gestion des sièges d'équipe pour le plan Business. L'onboarding détecte
-  une invitation (`?invite=Prénom`) et accueille la personne par son parrain.
-- **Fil** — feed social façon LinkedIn : posts (réflexion, REX de rencontre, tip,
-  étape, partage d'activité), like / commentaire / partage, composer de post, et
-  carte ROI compacte (score réseau).
-- **Réseau · Match IA « Pour toi »** — moteur de matching **comportemental**
-  (façon algorithme TikTok/Instagram, mais pour le business). Le score n'est plus
-  figé : il combine la complémentarité besoins ↔ offres, la compatibilité running
-  (créneau, allure, zone, sorties communes), les sujets et le réseau, **avec ton
-  comportement dans l'app** — qui tu regardes, likes, contactes, filtres. Plus tu
-  explores un type de profil (investisseurs, tech, mentors…), plus il remonte.
-  Chaque match est **expliqué** (pourquoi vous matchez + décomposition Besoin /
-  Running / Affinité) et le bandeau « Pour toi » montre ce que l'algorithme
-  apprend de toi. Annuaire des membres avec recherche et filtres. **Brise-glace
-  IA** : message d'intro pré-rédigé à partir de vos points communs.
-- **RunMatch · binôme de course** — la sortie matchée à 2 (Happn × pitch). À partir
-  du profil de course d'un membre (créneau, allure, zone, distance), ROI propose une
-  **sortie concrète** : un jour, une heure, un lieu, une distance et une **allure cible**
-  (la moyenne des deux allures, pour tenir la conversation). Le classement privilégie la
-  **compatibilité running** puis l'intérêt business — la sortie devient le rendez-vous.
-  « Proposer ce run » crée un RDV daté dans l'agenda **et** alimente le Pipeline ROI.
-  Accessible depuis l'accueil et l'onglet *Courir*.
-- **Pipeline ROI** — le CRM léger branché sur les kilomètres. Chaque relation suit un
-  cycle visible (*Rencontré → En discussion → Intro / pitch → Deal en cours → Conclu*)
-  dans un **kanban** horizontal. On voit le **retour sur les km investis** (qui on a
-  rencontré en courant, les km partagés par relation, la valeur en jeu en k€). Contacter
-  un membre ou proposer un run **fait entrer la relation dans le pipeline** ; un bouton
-  « Faire avancer » la pousse d'étape en étape. La carte d'accueil affiche la valeur en
-  jeu et le nombre de relations actives.
-- **ROI Business Run · La Défense** — la **course officielle** de l'app, en
-  bottom-sheet : une annonce ultra-détaillée (parcours cartographié au pied de
-  *Paris La Défense Arena*, trois distances — 5 km *petite boucle*, 10 km *une
-  boucle*, semi *deux boucles* —, arguments business, programme de la matinée,
-  ce que comprend le dossard à 500 € HT, témoignages, FAQ) **suivie d'un tunnel
-  d'inscription B2B** en 6 étapes : distance → solo ou groupe (tarif dégressif
-  dès 3 dossards) → coordonnées → entreprise → sas de départ → **paiement
-  professionnel** (bon de commande / facture à 30 j, carte, PayPal, Google Pay),
-  code promo, récapitulatif HT/TVA/TTC et confirmation avec dossard. Accessible
-  depuis l'accueil et l'onglet *Courir*.
-- **Courir** — façon Strava :
-  - *Activités* : sorties réalisées avec **tracé GPS sur carte** (Leaflet + OpenStreetMap/CARTO),
-    distance / temps / allure / dénivelé, splits par km, kudos, et lien réseau
-    (« rencontré X & Y sur cette sortie » → mise en relation directe).
-  - *Sorties* : défi du mois, classement, et sorties à venir (distance, allure, niveau, lieu).
-- **Messages** — discussions 1:1 et **groupes** (création, découverte, chat de groupe).
-- **Profil** — besoins éditables, ce que je propose, stats running, mes activités,
-  centres d'intérêt, communauté.
-- **Connexions & appareils** — connexion (mock) à Strava, LinkedIn et aux montres
-  (Apple Santé, Garmin, COROS, Polar) pour importer courses et profil.
-- **Onboarding, recherche globale, explication du score ROI, profil éditable.**
-- **Fiches** — fiche membre, fiche activité et fiche événement en bottom-sheet.
+Application mobile-first (PWA), vrai layout web sur grand écran. Données fictives, aucun back-end propre : le seul appel réseau est la lecture du dossier sur le site (voir « Le pont avec le site »).
+
+## Identité visuelle « La Ligne » — la même que le site
+
+L'app reprend **exactement** le design system du site (`assets/roi.css` côté site) : deux fonds grainés — encre `#070707` et craie `#EFEBE2` —, un seul accent, l'orange impact `#FF4400`, et deux fontes auto-hébergées dans `public/fonts/` : **Archivo variable** en graisse fine (250) et chasse étendue (125 %) pour les titres, **JetBrains Mono** pour les labels, la nav, les boutons et toute la data. Aucun arrondi, aucune ombre portée, aucun dégradé : des filets, des aplats, de l'air.
+
+- **`tailwind.config.js`** — les jetons. Les noms historiques de l'app (`canvas`, `surface`, `fg`, `brand`, `gold`, `success`…) sont conservés mais pointent tous dans la palette du site ; `white` et `black` eux-mêmes sont la craie et l'encre (le site n'a ni blanc ni noir purs). Toute l'échelle `borderRadius` vaut `0`, les ombres sont des filets d'un pixel, les fonds décoratifs (`aurora`, `mesh`…) sont `none`.
+- **`src/index.css`** — les gestes du site, portés en classes : `.tmark` (l'étiquette chrono `T+01 / NOM`), `.display` / `.titre` / `.mono`, `.creuse` (la typo évidée), `.bar` et `.laligne` (la barre d'impact, le filet + damier d'arrivée), `.btn` (`-impact` / `-encre` / `-ghost`), `.cadre` (la grille bordée), `.champ` (champs sur filet), et **le dossard** recto/verso (`.dossard`, `.d-recto`, `.d-verso`). Le grain film est posé en `body::before`, comme sur le site, et coupé en Mode sobriété.
+- **Règles de base** : `h1` est en Archivo 125 % / 250, `h2`/`h3` en 110 % / 400, toujours en capitales — les utilitaires de graisse posés par les écrans sont neutralisés, un titre R.O.I n'est jamais gras. Tout texte en capitales qui n'est pas un titre passe en mono (`.uppercase`). Les petits titres de section sont des `.tmark`.
+- **Convention T– / T+** : avant la ligne = la course, après la ligne = le réseau. Elle rythme l'accueil (`T–342` jours avant la ligne), l'onglet Courir, le profil (« T+ / TON DOSSARD ») et la fiche de l'édition.
+- **Accessibilité** : l'orange sur fond clair est sous le AA, donc les boutons orange portent du texte **encre** (5,83:1) et l'orange des liens/labels sur craie est l'orange assombri `#C63500` (4,51:1). L'anneau de focus est l'encre, pas l'orange.
+
+Le composant `src/components/Dossard.jsx` est l'objet central : « un seul dossard, il te fait franchir la ligne, puis il devient ton profil ». Recto la course (numéro = les trois derniers caractères de la référence du dossier, distance, édition), verso le réseau (nom, fonction, entreprise, formule). Retournable au clic et au clavier (`aria-pressed`).
+
+## Le pont avec le site : l'inscription là-bas, le dossard ici
+
+L'inscription (compte, distance, formule, vague gardée, justificatif, validation, paiement) vit **sur le site**. L'app ne la refait pas : elle y envoie, puis elle **lit** le dossier.
+
+- **Site → app** : depuis l'espace personnel du site, « Ouvrir mon dossard dans l'app » ouvre `https://roi-mvp.up.railway.app/?dossier=E01-000123&email=…`. Au chargement, l'app appelle `GET https://runoninvest.fr/api/dossier?reference&email` (lecture publique, CORS ouvert, limitée à dix essais par minute), enregistre le dossier (`localStorage`, clé `roi1.dossier`), ouvre la fiche de l'édition et nettoie l'URL. Depuis l'app, on peut aussi relier un dossier à la main (référence + e-mail) dans la fiche de l'édition.
+- **App → site** : « Prendre un dossard » envoie sur `/inscription/?distance=10&formule=premium` avec la distance et la formule choisies dans l'app ; « Ouvrir mon espace » et « Changer de formule » renvoient sur `/espace/`. Le site garde la vérité du dossier ; l'app affiche la référence, la vague et son tarif, la distance, la formule, et les quatre étapes (`demande → justificatif → valide → paye`).
+- **Sans site joignable** (aperçu, hors ligne) : `src/lib/dossier.js` bascule en mode local, comme le site le fait sans serveur — la référence est acceptée telle quelle et le dossier est reconstruit depuis le profil, avec un bandeau « aperçu hors ligne ».
+- Les faits de l'édition (`src/data/race.js`) sont ceux du site : Édition 01, Paris La Défense, septembre 2027, trois distances (Le Sprint · La Référence · Le Grand Format), trois vagues (Early Bird 350 € → Régulier 400 € → Last Call 500 €, dates alignées sur `server.js` du site), trois formules (Dossard · Premium · Cercle), le programme de l'après-midi `T+00…T+04`. `SITE_URL` et `APP_URL` y sont définis.
+
+## Une course annuelle, un réseau toute l'année
+
+L'app joue le rendez-vous annuel et ce qu'il rend possible entre deux éditions :
+
+- **Accueil** — le bloc encre `T–` (jours avant la ligne, état du dossier ou vague ouverte), le score réseau en fiche, « Qui court cette année » (l'annuaire des dossards déjà pris : le réseau commence avant la ligne), Pipeline R.O.I et RunMatch, le fil.
+- **L'édition** (fiche, depuis l'accueil, Courir ou le profil) — ton dossier (ou : prendre un dossard / relier un dossier), la journée `T–` / `T+`, les trois distances avec le parcours, le programme de l'après-midi, les formules, les vagues, qui court, les quatre principes.
+- **Réseau · Match « Pour toi »** — moteur de matching comportemental (besoins ↔ offres, compatibilité running, sujets, comportement dans l'app), matchs expliqués, brise-glace, annuaire filtrable.
+- **RunMatch** — le binôme de course : une sortie concrète (jour, heure, lieu, allure cible) qui entre dans le pipeline.
+- **Pipeline R.O.I** — le CRM léger branché sur les kilomètres (*Rencontré → En discussion → Intro / pitch → Deal en cours → Conclu*).
+- **Courir** — activités avec tracé GPS (Leaflet, à la demande), sorties, défi, saison ; **Messages** — 1:1 et groupes ; **Dossard (profil)** — le verso du dossard est le profil, éditable ; le dossier lu sur le site juste en dessous.
+- **Copilot IA, abonnement (Découverte · Pro · Business), invitations & parrainage, agenda & RDV, connexions & appareils, onboarding en quatre temps** (une course par an · un réseau toute l'année · un dossard, deux faces · ce qu'on garde).
 
 ## Architecture
 
 ```
 src/
-  App.jsx            orchestrateur : état partagé + contexte + layout + overlays
-  AppContext.js      contexte applicatif (useApp)
-  data/              données fictives (user, network, profiling, events, messages, feed, activities, notifications)
-  lib/matching.js    moteur de matching comportemental « Pour toi » (scoring, signaux, insights, brise-glace)
-  lib/               helpers (avatars)
-  components/        UI réutilisable (Icon, Avatar, primitives, BottomNav, RouteMap, PostCard, ActivityCard…)
-  screens/           écrans (Accueil/Fil, Reseau, Courir, Messages, Profil) + overlays (MemberSheet, ActivitySheet)
+  App.jsx              orchestrateur : état partagé + contexte + layout + overlays (+ lien profond ?dossier=)
+  AppContext.js        contexte applicatif (useApp)
+  data/race.js         l'édition : faits du site, distances, vagues, formules, programme, SITE_URL
+  data/                autres données fictives (user, network, profiling, events, messages, feed, activities…)
+  lib/dossier.js       le pont : lecture du dossier sur le site, repli local
+  lib/matching.js      moteur de matching comportemental « Pour toi »
+  components/          Dossard, Logo/primitives, Icon, Avatar, BottomNav, Sidebar, RouteMap, PostCard…
+  screens/             Accueil, Reseau, Courir, Messages, Profil + fiches et sheets (RaceSheet = l'édition)
+  index.css            les gestes « La Ligne » (fontes, tmark, dossard, boutons, cadre, champs)
+public/fonts/          Archivo variable + JetBrains Mono, les mêmes fichiers que le site
 ```
 
-## Numérique responsable (éco-conception)
+## Numérique responsable
 
-L'app est conçue selon les principes de **sobriété numérique** — consommer le
-moins de données, d'énergie et de requêtes possible, sans rogner sur l'expérience :
-
-- **Zéro police web** — l'interface utilise la police déjà installée sur
-  l'appareil (San Francisco, Segoe UI, Roboto…). Aucun téléchargement, aucune
-  connexion à un service tiers (Google Fonts retiré), meilleure confidentialité.
-- **Chargement à la demande** — seul l'écran d'accueil est dans le bundle
-  initial ; les autres écrans, les fiches, les réglages et la lib de cartes
-  (Leaflet) sont chargés au moment où on les ouvre. Le JS de départ est ~2,5×
-  plus léger.
-- **Mode sobriété** (réglable dans le profil, activé d'office si l'appareil
-  signale « économiseur de données ») — les cartes n'appellent **aucune tuile
-  réseau** (seul le tracé GPS s'affiche) et les effets coûteux en GPU (flou
-  « verre dépoli », reflets animés, dégradés décoratifs) sont coupés.
-- **Animations réduites** — `prefers-reduced-motion` est respecté : les
-  mouvements sont désactivés, ce qui ménage le confort, le CPU et la batterie.
-- **Aucun pisteur, aucun cookie publicitaire**, build moderne minifié
-  (`console`/`debugger` retirés en prod), React isolé dans un chunk mis en cache.
+- **Deux fontes, auto-hébergées, ~4 fichiers chargés** (Archivo latin + JetBrains Mono 500 préchargés, les autres en `font-display: swap`). Aucun service tiers, aucun pisteur.
+- **Chargement à la demande** — seul l'accueil est dans le bundle initial ; écrans, fiches et Leaflet sont chargés à l'ouverture.
+- **Mode sobriété** (dans le profil, activé d'office si l'appareil signale « économiseur de données ») — pas de tuiles réseau sur les cartes, pas de flou, et le **grain film est coupé** (c'est un filtre SVG plein écran).
+- `prefers-reduced-motion` respecté (le dossard ne s'anime plus, il bascule).
 
 ## Stack
 
-React 18 · Vite · Tailwind CSS · Leaflet (cartes). Données fictives, aucune dépendance back-end.
-PWA installable (manifest + icône, `display: standalone`). **Responsive de bout en bout** :
-plein écran mobile-first sur téléphone (barre de navigation basse), et véritable
-layout web sur ordinateur (navigation latérale + colonne de contenu centrée),
-sans maquette « téléphone ».
-
-> Hors Mode sobriété, les cartes chargent leurs tuiles depuis OpenStreetMap/CARTO :
-> un accès réseau sortant est alors nécessaire au fond de carte (le tracé GPS,
-> lui, s'affiche toujours).
-
-## Démarrer
+React 18 · Vite · Tailwind CSS · Leaflet (cartes). PWA installable (`manifest.webmanifest`, icône = le signe du site : encre, un filet craie, le point carré orange).
 
 ```bash
 npm install
 npm run dev      # serveur de développement
 npm run build    # build de production
 ```
+
+> Déployée sur Railway : https://roi-mvp.up.railway.app — c'est l'adresse que le site utilise pour « Ouvrir mon dossard dans l'app » (surchargeable côté site avec `data-app` sur `<body>`).

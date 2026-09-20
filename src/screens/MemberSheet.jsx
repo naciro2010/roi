@@ -34,7 +34,7 @@ export default function MemberSheet({ name, onClose }) {
   return (
     <div className="absolute inset-0 z-40">
       <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
-      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[90%] flex-col overflow-hidden rounded-t-[28px] bg-surface shadow-float">
+      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[90%] flex-col overflow-hidden bg-surface shadow-float">
         <div className="relative h-24 shrink-0 overflow-hidden surface-hero">
           <div className="absolute inset-0 bg-hero-glow" />
           <button onClick={onClose} className="glass-dark absolute right-3 top-3 z-10 grid h-9 w-9 place-items-center rounded-full text-white tap" aria-label="Fermer">
@@ -217,7 +217,7 @@ export default function MemberSheet({ name, onClose }) {
         <div className="glass flex shrink-0 items-center gap-2 border-t border-line px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             onClick={() => contactMember(name)}
-            className={`flex-1 rounded-full py-3 text-sm font-semibold text-white tap ${isContacted ? 'bg-success' : 'bg-gradient-to-b from-brand-500 to-brand-600 shadow-brand'}`}
+            className={`flex-1 rounded-full py-3 text-sm font-semibold text-white tap ${isContacted ? 'bg-success' : 'btn btn-impact shadow-brand'}`}
           >
             {isContacted ? 'Demande envoyée' : 'Entrer en contact'}
           </button>

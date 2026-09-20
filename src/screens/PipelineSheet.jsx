@@ -23,7 +23,7 @@ export default function PipelineSheet({ onClose }) {
       <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
       <div
         style={drag.style}
-        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden rounded-t-[28px] bg-surface-soft shadow-float"
+        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface-soft shadow-float"
       >
         {/* En-tête */}
         <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-4 pt-3 text-white">
@@ -158,7 +158,7 @@ export default function PipelineSheet({ onClose }) {
                           ) : (
                             <button
                               onClick={() => advanceDeal(d.id, 1)}
-                              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-b from-brand-500 to-brand-600 py-2 text-[13px] font-bold text-white shadow-brand tap"
+                              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl btn btn-impact py-2 text-[13px] font-bold text-white shadow-brand tap"
                             >
                               {d.stage === 'deal' ? 'Marquer conclu' : 'Faire avancer'}
                               <Icon name="arrowRight" className="h-4 w-4" />

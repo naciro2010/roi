@@ -64,7 +64,7 @@ export default function Reseau() {
         <h1 className="text-2xl font-semibold text-fg">Réseau</h1>
         <p className="mt-0.5 text-sm text-fg-muted">Les bonnes personnes, au bon moment.</p>
 
-        <div className="mt-4 flex gap-1 rounded-2xl bg-surface-2 p-1">
+        <div className="mt-4 flex divide-x divide-line border border-line">
           {[
             { id: 'suggestions', label: 'Matchs' },
             { id: 'annuaire', label: 'Annuaire' },
@@ -73,8 +73,8 @@ export default function Reseau() {
             <button
               key={s.id}
               onClick={() => setNetView(s.id)}
-              className={`flex-1 rounded-xl py-2 text-sm font-semibold transition tap ${
-                netView === s.id ? 'bg-surface-3 text-fg shadow-card' : 'text-fg-muted'
+              className={`flex-1 rounded-xl py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono transition tap ${
+                netView === s.id ? 'bg-fg text-canvas' : 'text-fg-muted'
               }`}
             >
               {s.label}
@@ -142,7 +142,7 @@ export default function Reseau() {
                   <button
                     onClick={() => sendSuggestion(m.name, m.name)}
                     className={`flex-1 rounded-2xl py-3 text-sm font-semibold text-white tap ${
-                      sent ? 'bg-success' : 'bg-gradient-to-b from-brand-500 to-brand-600 shadow-brand hover:to-brand-700'
+                      sent ? 'bg-success' : 'btn btn-impact shadow-brand hover:to-brand-700'
                     }`}
                   >
                     {sent ? 'Demande envoyée' : action}
@@ -214,7 +214,7 @@ export default function Reseau() {
                   key={f}
                   onClick={() => pickFilter(f)}
                   className={`flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-sm font-semibold transition tap ${
-                    filter === f ? 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand' : locked ? 'bg-surface-2 text-fg-faint' : 'bg-surface-2 text-fg-soft'
+                    filter === f ? 'btn btn-impact' : locked ? 'bg-surface-2 text-fg-faint' : 'bg-surface-2 text-fg-soft'
                   }`}
                 >
                   {locked && <Icon name="lock" className="h-3 w-3" />}
@@ -332,7 +332,7 @@ export default function Reseau() {
                       </button>
                     </div>
                     <div className="mt-3 flex gap-2">
-                      <button onClick={() => acceptRequest(r.name)} className="flex-1 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 py-2.5 text-sm font-semibold text-white shadow-brand tap">Accepter</button>
+                      <button onClick={() => acceptRequest(r.name)} className="flex-1 rounded-full btn btn-impact py-2.5 text-sm font-semibold text-white shadow-brand tap">Accepter</button>
                       <button onClick={() => declineRequest(r.name)} className="rounded-2xl border border-line-strong px-4 py-2.5 text-sm font-semibold text-fg-soft tap">Décliner</button>
                     </div>
                   </article>
