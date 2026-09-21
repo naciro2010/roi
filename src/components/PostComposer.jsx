@@ -29,7 +29,7 @@ export default function PostComposer({ open, onClose, onPublish }) {
       <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[90%] flex-col overflow-hidden bg-canvas">
         <div className="flex shrink-0 items-center justify-between border-b border-fg px-5 py-3.5">
           <button onClick={onClose} className="font-mono text-[10px] font-bold uppercase tracking-mono text-fg-muted tap">Annuler</button>
-          <h2 className="tmark"><b>T+</b> / ÉCRIRE AU RÉSEAU</h2>
+          <h2 className="titre-section">Écrire dans le fil</h2>
           <button onClick={publish} disabled={!text.trim()} className="btn btn-impact btn-sm">
             <span>Publier</span>
           </button>

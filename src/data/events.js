@@ -1,4 +1,7 @@
 /* Les kilomètres investis ce mois : ceux courus avec quelqu'un. */
+/* Défi mensuel — conservé comme donnée, mais plus affiché : l'onglet Courir
+   ne montre plus qu'une seule progression (les kilomètres partagés), pour
+   qu'il n'y ait qu'un compteur à comprendre. */
 export const CHALLENGE = { title: 'Kilomètres investis ce mois', subtitle: '50 km avec les autres, en mai', current: 42, total: 50, daysLeft: 5 }
 
 /* Qui court le plus avec les autres, ce mois. */

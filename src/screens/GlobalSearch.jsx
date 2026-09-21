@@ -22,7 +22,7 @@ function ResultRow({ icon, tone = 'ico', avatar, title, subtitle, onClick }) {
       )}
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-semibold text-fg">{title}</div>
-        <div className="truncate text-[12px] text-fg-faint">{subtitle}</div>
+        <div className="mt-0.5 truncate text-[13px] text-fg-muted">{subtitle}</div>
       </div>
       <Icon name="chevronRight" className="h-4 w-4 shrink-0 text-fg-faint" />
     </button>
@@ -32,7 +32,7 @@ function ResultRow({ icon, tone = 'ico', avatar, title, subtitle, onClick }) {
 function Group({ label, children }) {
   return (
     <section>
-      <p className="mb-1 px-2 tmark sans">{label}</p>
+      <p className="titre-section mb-1.5 px-2">{label}</p>
       <div>{children}</div>
     </section>
   )
@@ -65,8 +65,8 @@ export default function GlobalSearch({ onClose }) {
             autoFocus
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Un nom, une entreprise, ce que tu cherches…"
-            className="input-ligne text-sm"
+            placeholder="Cherche un nom, une entreprise, une sortie…"
+            className="input-ligne text-[14.5px]"
           />
           {q && (
             <button onClick={() => setQ('')} className="text-fg-faint tap" aria-label="Effacer">

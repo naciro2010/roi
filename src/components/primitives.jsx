@@ -1,29 +1,13 @@
 import Icon from './Icon'
 
-/* Tons des étiquettes : dans « La Ligne » il n'y a qu'un accent. Les tons
-   historiques restent comme clés (les données les utilisent) mais tous
-   rendent une étiquette craie/encre, à l'exception de `brand` (orange). */
-export const PILL_TONES = {
-  brand: 'bg-brand-500 text-craie',
-  emerald: 'bg-surface-2 text-fg',
-  indigo: 'bg-surface-2 text-fg',
-  amber: 'bg-surface-2 text-fg',
-  rose: 'bg-surface-2 text-fg',
-  ink: 'bg-encre text-craie',
-}
-
-export const DOT_TONES = {
-  brand: 'bg-brand-500',
-  emerald: 'bg-fg',
-  indigo: 'bg-fg',
-  amber: 'bg-brand-500',
-  rose: 'bg-brand-500',
-  ink: 'bg-fg-faint',
-}
+/* Les briques partagées de l'interface. Règle de l'app : tout ce qui est ici
+   se lit sans mode d'emploi. Pas de score en anneau, pas de mini-graphe de
+   compatibilité, pas de jauge dont personne ne connaît l'échelle — un
+   chiffre est accompagné de ce qu'il veut dire, ou il n'est pas affiché. */
 
 /* Étiquette mono bordée, la puce carrée ■ orange devant : le `.tag` du site
    (les notes des cellules, la data des formats). */
-export function Badge({ tone = 'brand', dot = true, on = false, className = '', children }) {
+export function Badge({ dot = true, on = false, className = '', children }) {
   return (
     <span className={`tag ${on ? 'on' : ''} ${className}`}>
       {dot && <b>■</b>}
@@ -32,91 +16,14 @@ export function Badge({ tone = 'brand', dot = true, on = false, className = '', 
   )
 }
 
-/* Jauge : un filet qui se remplit d'orange — la ligne de progression du site. */
+/* Jauge : un filet qui se remplit d'orange. Toujours accompagnée d'une
+   phrase qui dit ce qui reste à faire — jamais seule. */
 export function ProgressBar({ value, total, className = 'bg-craie/15', barClassName = 'bg-brand-500' }) {
   const pct = Math.min(100, Math.round((value / total) * 100))
   return (
     <div className={`h-1 w-full overflow-hidden ${className}`}>
       <div className={`h-full ${barClassName} transition-all duration-700`} style={{ width: `${pct}%` }} />
     </div>
-  )
-}
-
-export function ProgressRing({ value, size = 76, stroke = 8, track = 'rgba(239,235,226,0.18)', color = '#EFEBE2', children }) {
-  const r = (size - stroke) / 2
-  const c = 2 * Math.PI * r
-  const pct = Math.min(100, Math.max(0, value))
-  const offset = c - (pct / 100) * c
-  return (
-    <div className="relative grid place-items-center" style={{ width: size, height: size }}>
-      <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={track} strokeWidth={stroke} />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          fill="none"
-          stroke={color}
-          strokeWidth={stroke}
-          strokeLinecap="butt"
-          strokeDasharray={c}
-          strokeDashoffset={offset}
-          style={{ transition: 'stroke-dashoffset 0.9s cubic-bezier(0.22,1,0.36,1)' }}
-        />
-      </svg>
-      <div className="absolute inset-0 grid place-items-center text-center">{children}</div>
-    </div>
-  )
-}
-
-// Décomposition de la proposition (Intention · Course · Affinité) — 3 mini-jauges.
-const COMPAT_BARS = [
-  { key: 'need', label: 'Intention', bar: 'bg-brand-500' },
-  { key: 'run', label: 'Course', bar: 'bg-fg' },
-  { key: 'behavior', label: 'Affinité', bar: 'bg-fg-faint' },
-]
-export function CompatBars({ parts, className = '' }) {
-  return (
-    <div className={`flex gap-2.5 ${className}`}>
-      {COMPAT_BARS.map(({ key, label, bar }) => (
-        <div key={key} className="min-w-0 flex-1">
-          <div className="flex items-center justify-between">
-            <span className="font-mono text-[9px] font-bold uppercase tracking-mono text-fg-faint">{label}</span>
-            <span className="font-mono text-[10px] font-bold tabular-nums text-fg-muted">{Math.round((parts[key] || 0) * 100)}</span>
-          </div>
-          <div className="mt-1 h-1 w-full overflow-hidden bg-surface-2">
-            <div className={`h-full ${bar} transition-all duration-700`} style={{ width: `${Math.round((parts[key] || 0) * 100)}%` }} />
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-export function MatchRing({ value, size = 44 }) {
-  return (
-    <ProgressRing value={value} size={size} stroke={3} track="rgba(14,13,12,0.14)" color="#FF4400">
-      <div className="font-mono text-[11px] font-bold text-fg">{value}</div>
-    </ProgressRing>
-  )
-}
-
-// Mini-courbe de tendance : un trait, pas d'aire — la ligne, encore.
-export function Sparkline({ data, width = 92, height = 34, stroke = '#EFEBE2', strokeWidth = 1.5, className = '' }) {
-  if (!data || data.length < 2) return null
-  const max = Math.max(...data)
-  const min = Math.min(...data)
-  const range = max - min || 1
-  const step = width / (data.length - 1)
-  const y = (v) => height - 3 - ((v - min) / range) * (height - 6)
-  const pts = data.map((v, i) => [i * step, y(v)])
-  const line = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ')
-  const last = pts[pts.length - 1]
-  return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className={className} fill="none" aria-hidden>
-      <path d={line} stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="square" strokeLinejoin="miter" />
-      <rect x={last[0] - 3} y={last[1] - 3} width="6" height="6" fill="#FF4400" />
-    </svg>
   )
 }
 
@@ -135,8 +42,7 @@ export function Logo({ light = false, size = 22 }) {
   )
 }
 
-/* La formule, près du nom (rien pour le Dossard) : la pastille du verso du
-   dossard, « ■ Premium » / « ■ Cercle ». */
+/* La formule, près du nom (rien pour le Dossard). */
 export function PlanBadge({ plan, className = '' }) {
   if (!plan || plan === 'free') return null
   return (
@@ -146,29 +52,50 @@ export function PlanBadge({ plan, className = '' }) {
   )
 }
 
-// Puce « fermé » : ce qui s'ouvre avec une autre formule.
-export function LockChip({ label = 'Premium', className = '' }) {
+/* Titre de section. Un titre dit ce qu'il y a dessous, en français, et
+   `help` explique en une phrase à quoi ça sert : c'est la règle de lecture
+   de l'app — jamais un libellé seul qu'il faut deviner. */
+export function SectionTitle({ children, action, onAction, help }) {
   return (
-    <span className={`inline-flex items-center gap-1 bg-encre px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-mono text-craie ${className}`}>
-      <Icon name="lock" className="h-2.5 w-2.5" />
-      {label}
-    </span>
+    <div className="mb-3">
+      <div className="flex items-end justify-between gap-3">
+        <h2 className="titre-section">{children}</h2>
+        {action && (
+          <button onClick={onAction} className="flex shrink-0 items-center gap-1 font-mono text-[11px] font-bold uppercase tracking-mono text-brand-500 tap">
+            {action} <span aria-hidden>→</span>
+          </button>
+        )}
+      </div>
+      {help && <p className="aide mt-1">{help}</p>}
+    </div>
   )
 }
 
-/* Titre de section : l'étiquette chrono du site (« T+03 / LE RÉSEAU »). */
-export function SectionTitle({ children, action, onAction, t }) {
+/* Une action mise en avant : un libellé lisible, une phrase qui dit ce qui
+   se passe si on appuie, une flèche. Le motif de base de toute l'app. */
+export function Action({ icon, label, detail, onClick, plein = false, marque, className = '' }) {
   return (
-    <div className="mb-2.5 flex items-end justify-between gap-3">
-      <h2 className="tmark">
-        {t && <b>{t}</b>}
-        {t ? ' / ' : ''}{children}
-      </h2>
-      {action && (
-        <button onClick={onAction} className="flex shrink-0 items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-mono text-brand-500 tap">
-          {action} <span aria-hidden>→</span>
-        </button>
-      )}
+    <button onClick={onClick} className={`lien-bloc tap hover:bg-surface-2 ${className}`}>
+      {icon && <span className={`ico ${plein ? 'plein' : ''}`}><Icon name={icon} className="h-4 w-4" /></span>}
+      <span className="min-w-0 flex-1">
+        {marque && <span className="mb-1 block font-mono text-[10.5px] font-bold uppercase tracking-mono text-brand-500">{marque}</span>}
+        <span className="block text-[15px] font-medium leading-snug text-fg">{label}</span>
+        {detail && <span className="mt-0.5 block text-[13px] leading-snug text-fg-muted">{detail}</span>}
+      </span>
+      <span className="shrink-0 font-mono text-fg-faint" aria-hidden>→</span>
+    </button>
+  )
+}
+
+/* Un chiffre et ce qu'il veut dire. Le label est une phrase, pas une
+   abréviation : « personnes rencontrées », pas « RDV ». */
+export function Chiffre({ value, label, suffix }) {
+  return (
+    <div>
+      <div className="display text-[26px] leading-none tabular-nums">
+        {value}{suffix && <small className="ml-1 align-top font-mono text-[11px] tracking-mono">{suffix}</small>}
+      </div>
+      <div className="mt-1.5 text-[12.5px] leading-snug text-fg-muted">{label}</div>
     </div>
   )
 }

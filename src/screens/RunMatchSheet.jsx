@@ -1,7 +1,7 @@
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
-import { Badge, MatchRing } from '../components/primitives'
+import { Badge } from '../components/primitives'
 import { personFor } from '../data/network'
 import { ARCHETYPES } from '../data/profiling'
 import { suggestRun } from '../lib/runmatch'
@@ -69,11 +69,11 @@ export default function RunMatchSheet({ onClose }) {
             <Icon name="x" className="h-5 w-5" />
           </button>
           <div className="relative">
-            <span className="tmark text-craie/70"><b>T–</b> / LA SORTIE À DEUX</span>
+            <span className="titre-section text-craie">Courir à deux</span>
             <h2 className="titre mt-2 text-[22px] leading-tight text-craie">Ton binôme de sortie</h2>
-            <p className="mt-2 text-[12.5px] leading-snug text-craie/65">
-              À partir de vos deux allures, on propose un jour, une heure, un lieu, une distance et une allure cible :
-              la moyenne des deux, pour tenir la conversation. La sortie devient le rendez-vous.
+            <p className="mt-2 max-w-[38ch] text-[14px] leading-relaxed text-craie/70">
+              On te propose quelqu’un qui court à peu près à ton allure, avec un jour, une heure et un lieu.
+              Vous courez ensemble : la sortie tient lieu de rendez-vous.
             </p>
           </div>
         </div>
@@ -93,24 +93,20 @@ export default function RunMatchSheet({ onClose }) {
                     </div>
                     <div className="truncate text-sm text-fg-muted">{personFor(top.name).title}</div>
                   </div>
-                  <div className="text-center">
-                    <MatchRing value={top.score} size={48} />
-                    <div className="mt-0.5 font-mono text-[9px] font-bold uppercase tracking-mono text-fg-faint">Accord</div>
-                  </div>
                 </div>
 
                 <div className="mx-4 bg-surface-2 p-3">
-                  <div className="mb-2 flex items-center gap-1.5 font-mono text-[9.5px] font-bold uppercase tracking-mono text-brand-500">
-                    <Icon name="route" className="h-3.5 w-3.5" /> La sortie proposée
+                  <div className="titre-section mb-2 flex items-center gap-1.5">
+                    <Icon name="route" className="h-3.5 w-3.5 text-brand-500" /> La sortie proposée
                   </div>
                   <RunPlan plan={plan} />
                 </div>
 
                 <div className="mx-4 mt-3">
-                  <div className="mb-1 font-mono text-[9px] uppercase tracking-label text-fg-faint">Pourquoi vous deux</div>
-                  <div className="space-y-1.5">
+                  <div className="titre-section mb-1.5">Pourquoi vous deux</div>
+                  <div className="space-y-2">
                     {top.reasons.map((r) => (
-                      <div key={r.text} className="flex items-center gap-2 text-[13px] text-fg-soft">
+                      <div key={r.text} className="flex items-center gap-2 text-[14px] leading-snug text-fg-soft">
                         <Icon name={r.icon} className="h-3.5 w-3.5 shrink-0 text-brand-500" /> {r.text}
                       </div>
                     ))}
@@ -123,7 +119,7 @@ export default function RunMatchSheet({ onClose }) {
                     onClick={() => openMember(top.name)}
                     className="btn btn-ghost btn-sm w-full"
                   >
-                    <span>Voir son dossard</span><span className="arr">→</span>
+                    <span>Voir son profil</span><span className="arr">→</span>
                   </button>
                 </div>
               </article>
@@ -132,7 +128,7 @@ export default function RunMatchSheet({ onClose }) {
 
           {rest.length > 0 && (
             <div>
-              <div className="mb-2 px-1 tmark sans">D'autres binômes possibles</div>
+              <div className="titre-section mb-2 px-1">D’autres personnes qui courent à ton allure</div>
               <div className="space-y-2.5">
                 {rest.map((m) => {
                   const plan = suggestRun(m.name)

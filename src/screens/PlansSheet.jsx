@@ -27,10 +27,11 @@ export default function PlansSheet({ onClose }) {
           <button onClick={onClose} className="absolute right-4 top-4 grid h-9 w-9 place-items-center border border-craie/30 text-craie tap" aria-label="Fermer">
             <Icon name="x" className="h-4 w-4" />
           </button>
-          <span className="tmark"><b>T–</b> / TA FORMULE</span>
+          <span className="titre-section text-craie">Ta formule</span>
           <h2 className="mt-3 text-[24px] text-craie">La course est la même.<br /><span className="creuse">Le réseau, non.</span></h2>
-          <p className="mt-3 max-w-[40ch] text-[13px] leading-snug t-muted">
-            Aucune formule n’achète une meilleure course : elle change quand le réseau commence, et combien de portes s’ouvrent après.
+          <p className="mt-3 max-w-[40ch] text-[14px] leading-relaxed t-muted">
+            Aucune formule n’achète une meilleure course. Ce qui change, c’est le moment où ton réseau démarre,
+            et le nombre de rencontres qu’on te propose ensuite.
           </p>
         </div>
 
@@ -55,8 +56,8 @@ export default function PlansSheet({ onClose }) {
                     <h3 className="display text-[28px]">{p.name}</h3>
                     {current && <span className="tag on">Ta formule</span>}
                   </div>
-                  <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono t-beton">{p.pour}</div>
-                  <div className="mt-2 font-mono text-[10px] font-bold uppercase tracking-mono t-texte">■ {p.prix}</div>
+                  <div className="mt-1.5 text-[13px] leading-snug t-muted">{p.pour}</div>
+                  <div className="mt-2 font-mono text-[11px] font-bold uppercase tracking-mono t-texte">■ {p.prix}</div>
 
                   <ul className="mt-3 border-t b-ligne">
                     {p.herite && (

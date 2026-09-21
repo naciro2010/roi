@@ -12,7 +12,7 @@ export default function IntegrationsSheet({ onClose }) {
       <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[92%] flex-col overflow-hidden bg-surface">
         <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-3.5">
           <div className="min-w-0">
-            <span className="tmark"><b>T–</b> / STRAVA, LINKEDIN, TA MONTRE</span>
+            <span className="titre-section">Tes applis connectées</span>
             <h2 className="titre mt-1 text-[20px] text-fg">Tes sorties, importées</h2>
           </div>
           <button onClick={onClose} className="ico tap" aria-label="Fermer">

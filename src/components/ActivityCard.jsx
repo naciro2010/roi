@@ -15,7 +15,7 @@ export function couruAvec(names = []) {
 function Stat({ value, label }) {
   return (
     <div className="min-w-0 flex-1">
-      <div className="font-mono text-[9px] font-medium uppercase tracking-label text-fg-faint">{label}</div>
+      <div className="text-[12px] text-fg-muted">{label}</div>
       <div className="display mt-1 text-[20px] leading-none text-fg tabular-nums">{value}</div>
     </div>
   )
@@ -60,8 +60,8 @@ export function ActivityCard({ activity, kudo, onKudo, onOpen, onOpenAthlete }) 
       <div className="flex items-center gap-3 p-3.5 pb-2.5">
         <Avatar name={activity.athlete} size="md" onClick={onOpenAthlete} />
         <div className="min-w-0 flex-1">
-          <button onClick={onOpenAthlete} className="block max-w-full truncate text-left text-sm font-medium text-fg tap">{activity.athlete}</button>
-          <div className="truncate font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">{activity.date}</div>
+          <button onClick={onOpenAthlete} className="block max-w-full truncate text-left text-[15px] font-medium text-fg tap">{activity.athlete}</button>
+          <div className="truncate text-[12.5px] text-fg-muted">{activity.date}</div>
         </div>
       </div>
 
@@ -69,7 +69,7 @@ export function ActivityCard({ activity, kudo, onKudo, onOpen, onOpenAthlete }) 
 
       {/* La première chose sous le titre : avec qui. La valeur d'une sortie,
           c'est qui on a rencontré, pas le chrono. */}
-      <div className="mt-1 flex items-center gap-1.5 px-3.5 pb-2.5 font-mono text-[10px] font-bold uppercase tracking-mono">
+      <div className="mt-1 flex items-center gap-1.5 px-3.5 pb-2.5 font-mono text-[11px] font-bold uppercase tracking-mono">
         <span className={`h-1.5 w-1.5 shrink-0 ${avec ? 'bg-brand-500' : 'bg-fg-faint'}`} />
         <span className={`truncate ${avec ? 'text-fg' : 'text-fg-faint'}`}>{couruAvec(activity.metContacts)}</span>
       </div>
@@ -83,13 +83,13 @@ export function ActivityCard({ activity, kudo, onKudo, onOpen, onOpenAthlete }) 
         <button
           onClick={onKudo}
           aria-pressed={liked}
-          className={`flex items-center gap-2 px-3.5 py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono tap ${liked ? 'text-brand-500' : 'text-fg-muted hover:text-fg'}`}
+          className={`flex items-center gap-2 px-3.5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-mono tap ${liked ? 'text-brand-500' : 'text-fg-muted hover:text-fg'}`}
         >
           <Icon name="thumbsUp" className="h-4 w-4" filled={liked} />
           <span>Bien couru</span>
           <span className="tabular-nums">{kudo?.count ?? activity.kudos}</span>
         </button>
-        <button onClick={onOpen} className="ml-auto flex items-center gap-1.5 px-3.5 py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono text-fg tap">
+        <button onClick={onOpen} className="ml-auto flex items-center gap-1.5 px-3.5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-mono text-fg tap">
           La sortie <span aria-hidden>→</span>
         </button>
       </div>

@@ -9,7 +9,7 @@ import { EDITION, daysToRace } from '../data/race'
    verticale : fond encre, logotype, liens mono séparés par des filets craie,
    le lien courant en orange, le survol craie sur encre. */
 export default function Sidebar({ active, onChange, unread = 0, onSearch, onNotif, unreadNotif = 0 }) {
-  const item = 'flex items-center gap-3 border-b border-line-craie px-4 py-3.5 font-mono text-[11.5px] font-medium uppercase tracking-mono tap'
+  const item = 'flex items-center gap-3 border-b border-line-craie px-4 py-3.5 text-left font-mono text-[11.5px] font-medium uppercase tracking-mono tap'
   return (
     <aside className="surface-hero hidden w-[248px] shrink-0 flex-col border-r border-line-craie lg:flex">
       <div className="border-b border-line-craie px-4 py-5">
@@ -25,18 +25,21 @@ export default function Sidebar({ active, onChange, unread = 0, onSearch, onNoti
               key={t.id}
               onClick={() => onChange(t.id)}
               aria-current={isActive ? 'page' : undefined}
-              className={`${item} ${isActive ? 'text-brand-500' : 'text-craie hover:bg-craie hover:text-encre'}`}
+              className={`${item} items-start ${isActive ? 'text-brand-500' : 'text-craie hover:bg-craie hover:text-encre'}`}
             >
-              <span className="relative grid h-5 w-5 shrink-0 place-items-center">
-                <Icon name={t.icon} className="h-[19px] w-[19px]" filled={isActive && t.icon === 'sparkles'} />
+              <span className="relative mt-0.5 grid h-5 w-5 shrink-0 place-items-center">
+                <Icon name={t.icon} className="h-[19px] w-[19px]" />
                 {t.id === 'messages' && unread > 0 && (
                   <span className="absolute -right-2 -top-1.5 grid h-4 min-w-4 place-items-center bg-brand-500 px-1 font-mono text-[9px] font-bold text-craie">
                     {unread}
                   </span>
                 )}
               </span>
-              {t.label}
-              {isActive && <span className="ml-auto h-1.5 w-1.5 bg-brand-500" aria-hidden />}
+              <span className="min-w-0 flex-1">
+                <span className="block">{t.label}</span>
+                <span className="mt-1 block font-sans text-[11.5px] normal-case tracking-normal opacity-55">{t.aide}</span>
+              </span>
+              {isActive && <span className="h-1.5 w-1.5 shrink-0 bg-brand-500" aria-hidden />}
             </button>
           )
         })}
@@ -58,11 +61,11 @@ export default function Sidebar({ active, onChange, unread = 0, onSearch, onNoti
           <Avatar name={CURRENT_USER.name} size="sm" />
           <div className="min-w-0">
             <div className="truncate text-sm font-medium">{CURRENT_USER.name}</div>
-            <div className="truncate font-mono text-[10px] uppercase tracking-mono opacity-60">Mon dossard</div>
+            <div className="truncate text-[12px] opacity-60">Voir mon profil</div>
           </div>
         </button>
-        <div className="border-t border-line-craie px-4 py-3 font-mono text-[9.5px] uppercase tracking-label t-beton">
-          <b className="text-brand-500">T–{daysToRace()}</b> · {EDITION.label} · {EDITION.moisCourt}
+        <div className="border-t border-line-craie px-4 py-3 text-[12px] t-beton">
+          <b className="text-brand-500">{daysToRace()} jours</b> avant la course · {EDITION.label}, {EDITION.moisCourt}
         </div>
       </div>
     </aside>

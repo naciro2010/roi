@@ -96,6 +96,10 @@ function ScreenFallback() {
 export default function App() {
   const [tab, setTab] = useState('accueil')
   const [toast, setToast] = useState(null)
+  // Onglet courant de l'écran Rencontres : partagé, pour qu'une action de
+  // l'accueil (« 2 personnes veulent te rencontrer ») ouvre directement la
+  // bonne liste au lieu de laisser chercher.
+  const [reseauView, setReseauView] = useState('suggestions')
 
   // Mode sobriété (numérique responsable) : allège les cartes (pas de tuiles
   // réseau, le tracé GPS reste), coupe les effets gourmands en GPU/énergie.
@@ -199,9 +203,9 @@ export default function App() {
       if (!vivant) return
       if (r.dossier) {
         setDossier(r.dossier)
-        showToast(`Dossier ${r.dossier.reference} relié`)
+        showToast(`C’est bon : ton inscription ${r.dossier.reference} est reliée`)
       } else {
-        showToast(r.erreur || 'Dossier introuvable')
+        showToast(r.erreur || 'On n’a pas trouvé cette inscription')
       }
       setRaceOpen(true)
     })
@@ -230,6 +234,12 @@ export default function App() {
     setTab(t)
     setOpenConv(null)
     setOpenGroup(null)
+  }
+
+  /* Ouvre l'écran Rencontres sur une liste précise. */
+  function openReseau(view = 'suggestions') {
+    setReseauView(view)
+    goTo('reseau')
   }
 
   function openMember(name) {
@@ -264,14 +274,14 @@ export default function App() {
         return { ...d, stage }
       }),
     )
-    if (dir > 0) showToast(`Relation avancée → ${label}`)
+    if (dir > 0) showToast(`Où vous en êtes : ${label.toLowerCase()}`)
   }
 
   function contactMember(name) {
     setContacted((c) => ({ ...c, [name]: true }))
     track({ type: 'contact', name })
     addToPipeline(name, { via: 'Rencontre proposée depuis l’annuaire' })
-    showToast(`Rencontre proposée à ${name.split(' ')[0]} · ajoutée au pipeline`)
+    showToast(`Demande envoyée à ${name.split(' ')[0]}`)
   }
 
   function sendSuggestion(id, name) {
@@ -281,18 +291,18 @@ export default function App() {
       track({ type: 'contact', name })
       addToPipeline(name, { via: 'Rencontre proposée depuis « Pour toi »' })
     }
-    showToast(name ? `Rencontre proposée à ${name.split(' ')[0]} · ajoutée au pipeline` : 'Rencontre proposée · ajoutée au pipeline')
+    showToast(name ? `Demande envoyée à ${name.split(' ')[0]}` : 'Demande envoyée')
   }
 
   function acceptRequest(name) {
     setRequests((rs) => rs.filter((r) => r.name !== name))
     setConnections((cs) => (cs.some((c) => c.name === name) ? cs : [{ name, context: 'Connexion acceptée' }, ...cs]))
-    showToast(`${name.split(' ')[0]} rejoint tes rencontres`)
+    showToast(`C’est oui — tu peux écrire à ${name.split(' ')[0]}`)
   }
 
   function declineRequest(name) {
     setRequests((rs) => rs.filter((r) => r.name !== name))
-    showToast('Rencontre déclinée')
+    showToast('Demande déclinée')
   }
 
   function toggleEventKudos(id) {
@@ -312,7 +322,7 @@ export default function App() {
   function toggleJoin(id) {
     setJoined((prev) => {
       const next = !prev[id]
-      showToast(next ? 'Tu es de la sortie' : 'Tu ne cours plus cette sortie')
+      showToast(next ? 'Tu es inscrit·e à cette sortie' : 'Tu n’es plus inscrit·e')
       return { ...prev, [id]: next }
     })
   }
@@ -381,10 +391,10 @@ export default function App() {
       goTo('messages')
       openChat(conv.id)
       setDraft(text)
-      showToast('Première phrase prête — plus qu’à envoyer')
+      showToast('La phrase est prête — il ne reste qu’à envoyer')
     } else {
       navigator?.clipboard?.writeText?.(text)
-      showToast('Première phrase copiée')
+      showToast('Phrase copiée — tu peux la coller où tu veux')
     }
   }
 
@@ -400,7 +410,7 @@ export default function App() {
     setJoinedGroups((j) => ({ ...j, [id]: true }))
     setNewGroupName('')
     setCreatingGroup(false)
-    showToast('Cercle ouvert')
+    showToast('Groupe créé')
     openGroupChat(id)
   }
 
@@ -409,7 +419,7 @@ export default function App() {
     setJoinedGroups((j) => ({ ...j, [g.id]: true }))
     setGroups((gs) => [...gs, { ...g, members: g.members + 1, time: 'maintenant', unread: 0 }])
     setGroupThreads((t) => ({ ...t, [g.id]: t[g.id] || [] }))
-    showToast('Tu as rejoint le cercle')
+    showToast('Tu as rejoint le groupe')
   }
 
   function messageMember(name) {
@@ -419,7 +429,7 @@ export default function App() {
       goTo('messages')
       openChat(conv.id)
     } else {
-      showToast('La conversation s’ouvre quand vous avez dit oui tous les deux')
+      showToast('Vous devez d’abord dire oui tous les deux')
     }
   }
 
@@ -437,7 +447,7 @@ export default function App() {
   }
   function delierDossier() {
     setDossier(null)
-    showToast('Dossier délié — le site le garde')
+    showToast('Inscription détachée de l’app — le site la garde')
   }
 
   function resetDemo() {
@@ -467,7 +477,7 @@ export default function App() {
     setPlan(id)
     setPlansOpen(false)
     const meta = planById(id)
-    showToast(id === 'free' ? 'Retour à la formule Dossard' : `Formule ${meta.name} demandée`)
+    showToast(id === 'free' ? 'Tu es revenu à la formule Dossard' : `Formule ${meta.name} demandée`)
   }
 
   function nameFromEmail(email) {
@@ -477,31 +487,31 @@ export default function App() {
 
   function sendInvite(email) {
     if (invites.some((i) => i.email === email)) {
-      showToast('Déjà coopté·e')
+      showToast('Tu as déjà invité cette personne')
       return
     }
     setInvites((prev) => [
       { id: `inv-${Date.now()}`, name: nameFromEmail(email), email, status: 'pending', context: 'Invitation envoyée', date: 'à l’instant' },
       ...prev,
     ])
-    showToast(`Cooptation envoyée à ${nameFromEmail(email)}`)
+    showToast(`Invitation envoyée à ${nameFromEmail(email)}`)
   }
 
   function inviteTeammate(email) {
     if (teammates.some((t) => t.email === email)) {
-      showToast('Déjà dans l’équipe')
+      showToast('Cette personne est déjà dans ton équipe')
       return
     }
     setTeammates((prev) => [
       ...prev,
       { id: `t-${Date.now()}`, name: nameFromEmail(email), email, role: 'Invité·e', status: 'pending' },
     ])
-    showToast(`Dossard invité envoyé à ${nameFromEmail(email)}`)
+    showToast(`Invitation envoyée à ${nameFromEmail(email)}`)
   }
 
   function confirmMeeting(id) {
     setMeetingStatus((s) => ({ ...s, [id]: 'confirmed' }))
-    showToast('Rencontre confirmée')
+    showToast('Rendez-vous confirmé')
   }
 
   function proposeMeeting({ with: who, type = 'cafe', date, time, place, note }) {
@@ -518,7 +528,7 @@ export default function App() {
       ...prev,
     ])
     addToPipeline(who)
-    if (type !== 'run') showToast(`Rencontre proposée à ${who.split(' ')[0]}`)
+    if (type !== 'run') showToast(`Demande envoyée à ${who.split(' ')[0]}`)
   }
 
   // RunMatch : proposer une sortie matchée → crée un RDV « run » daté, alimente
@@ -529,11 +539,12 @@ export default function App() {
     proposeMeeting({ with: name, type: 'run', date: plan.date, time: plan.time, place: plan.place, note: plan.note })
     track({ type: 'contact', name })
     setProposedRuns((p) => ({ ...p, [name]: true }))
-    showToast(`Binôme proposé à ${name.split(' ')[0]} · rencontres & pipeline à jour`)
+    showToast(`Sortie proposée à ${name.split(' ')[0]}`)
   }
 
   const ctx = {
     tab, goTo, showToast,
+    reseauView, setReseauView, openReseau,
     openMember,
     openActivity: setActivityId,
     // Matching comportemental « Pour toi »
@@ -608,7 +619,7 @@ export default function App() {
         <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={() => setNotifOpen(false)} />
         <div className="animate-drawerIn absolute inset-y-0 right-0 flex w-[86%] max-w-[340px] flex-col border-l border-line bg-canvas">
           <div className="flex shrink-0 items-center justify-between border-b border-fg px-4 py-4">
-            <h2 className="tmark"><b>T+</b> / CE QUE LE RÉSEAU TE DIT</h2>
+            <h2 className="titre-section">Notifications</h2>
             <button onClick={() => setNotifOpen(false)} className="ico tap" aria-label="Fermer">
               <Icon name="x" className="h-4 w-4" />
             </button>
@@ -616,7 +627,7 @@ export default function App() {
           {unreadNotif > 0 && (
             <button
               onClick={() => setNotifs((ns) => ns.map((n) => ({ ...n, unread: false })))}
-              className="shrink-0 border-b border-line px-4 py-2.5 text-left font-mono text-[10px] font-bold uppercase tracking-mono text-brand-500 tap"
+              className="shrink-0 border-b border-line px-4 py-3 text-left font-mono text-[11px] font-bold uppercase tracking-mono text-brand-500 tap"
             >
               Tout marquer comme lu
             </button>
@@ -628,8 +639,8 @@ export default function App() {
                   <Icon name={n.icon} className="h-4 w-4" filled={n.icon === 'heart' || n.icon === 'sparkles'} />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[13px] leading-snug text-fg">{n.text}</p>
-                  <p className="mt-0.5 font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">{n.time}</p>
+                  <p className="text-[14px] leading-snug text-fg">{n.text}</p>
+                  <p className="mt-1 text-[12px] text-fg-faint">{n.time}</p>
                 </div>
                 {n.unread && <span className="mt-1.5 h-2 w-2 shrink-0 bg-brand-500" />}
               </div>

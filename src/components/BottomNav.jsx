@@ -1,13 +1,15 @@
 import Icon from './Icon'
 
-/* Les cinq onglets. L'ordre raconte l'année : le fil, le réseau, la course,
-   les messages, le dossard (profil). */
+/* Les cinq onglets. Chaque libellé dit ce qu'on y trouve, en français
+   courant : on doit savoir où l'on va sans avoir appris le vocabulaire
+   de la marque. Le dossard reste au cœur de l'app, mais l'onglet s'appelle
+   « Profil » — c'est ce qu'on y cherche. */
 export const TABS = [
-  { id: 'accueil', label: 'Fil', icon: 'home' },
-  { id: 'reseau', label: 'Annuaire', icon: 'sparkles' },
-  { id: 'courir', label: 'Courir', icon: 'activity' },
-  { id: 'messages', label: 'Messages', icon: 'chat' },
-  { id: 'profil', label: 'Dossard', icon: 'user' },
+  { id: 'accueil', label: 'Accueil', icon: 'home', aide: 'Ce qui compte aujourd’hui' },
+  { id: 'reseau', label: 'Rencontres', icon: 'users', aide: 'Qui rencontrer, et pourquoi' },
+  { id: 'courir', label: 'Courir', icon: 'activity', aide: 'Tes sorties et celles du réseau' },
+  { id: 'messages', label: 'Messages', icon: 'chat', aide: 'Tes conversations' },
+  { id: 'profil', label: 'Profil', icon: 'user', aide: 'Ton dossard et tes réglages' },
 ]
 
 /* La nav du site, posée en bas : encre à 88 % et flou léger, labels mono,
@@ -36,7 +38,7 @@ export default function BottomNav({ active, onChange, unread }) {
                   </span>
                 )}
               </span>
-              <span className="font-mono text-[9.5px] font-bold uppercase tracking-mono">{tab.label}</span>
+              <span className="font-mono text-[10px] font-bold uppercase tracking-mono">{tab.label}</span>
             </button>
           )
         })}

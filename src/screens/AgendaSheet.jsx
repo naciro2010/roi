@@ -132,13 +132,13 @@ export default function AgendaSheet({ onClose }) {
             <Icon name="x" className="h-5 w-5" />
           </button>
           <div className="relative pr-10">
-            <span className="tmark text-craie/70"><b>T+</b> / L'AGENDA</span>
-            <h2 className="titre mt-2 text-[22px] leading-tight text-craie">Tes rencontres</h2>
-            <p className="mt-2 text-[12.5px] leading-snug text-craie/65">
-              Huit minutes, un sujet : recruter, lever, vendre, s'associer. À l'Arena le jour J, en courant, autour d'un café ou en visio.
+            <span className="titre-section text-craie">Tes rendez-vous</span>
+            <h2 className="mt-2 text-[22px] leading-tight text-craie">Ce qui est prévu</h2>
+            <p className="mt-2 max-w-[38ch] text-[14px] leading-relaxed text-craie/70">
+              Huit minutes avec quelqu’un : en courant, autour d’un café, en visio, ou à l’Arena le jour de la course.
             </p>
-            <p className="mt-2 font-mono text-[9.5px] uppercase tracking-mono text-craie/55">
-              {meetings.length} à venir · {confirmedCount} confirmée{confirmedCount > 1 ? 's' : ''}
+            <p className="mt-3 text-[13px] text-craie/60">
+              {meetings.length} à venir, dont {confirmedCount} confirmée{confirmedCount > 1 ? 's' : ''}.
             </p>
           </div>
         </div>
@@ -161,16 +161,16 @@ export default function AgendaSheet({ onClose }) {
               <span className="grid h-9 w-9 shrink-0 place-items-center bg-surface-2 text-fg">
                 <Icon name="lock" className="h-4 w-4" />
               </span>
-              <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-fg-soft">
-                Six rencontres réservées à l'avance en Premium, depuis ton espace.
+              <span className="min-w-0 flex-1 text-[13.5px] leading-snug text-fg-soft">
+                Avec la formule Premium, tu peux réserver six rencontres à l’avance.
               </span>
               <span className="shrink-0 font-mono text-[10px] font-bold uppercase tracking-mono text-brand-500">Premium →</span>
             </button>
           )}
 
           {sorted.length === 0 && (
-            <p className="border border-dashed border-line-strong px-4 py-8 text-center text-[12px] text-fg-faint">
-              Aucune rencontre à venir. Propose-en une, ou laisse une sortie s'en charger.
+            <p className="border border-dashed border-line-strong px-4 py-10 text-center text-[13.5px] leading-relaxed text-fg-muted">
+              Rien de prévu pour l’instant.<br />Propose une rencontre : ça prend une minute.
             </p>
           )}
 

@@ -5,7 +5,7 @@ import Icon from '../components/Icon'
 function ChipListEditor({ label, hint, values, onChange, placeholder }) {
   return (
     <div>
-      <div className="mb-2 tmark sans">{label}</div>
+      <div className="titre-section mb-2">{label}</div>
       {hint && <p className="-mt-1 mb-2 text-[12px] leading-snug text-fg-faint">{hint}</p>}
       <div className="space-y-2">
         {values.map((v, i) => (
@@ -63,44 +63,48 @@ export default function EditProfileSheet({ onClose }) {
       <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
       <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface">
         <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-3.5">
-          <button onClick={onClose} className="text-sm font-semibold text-fg-muted tap">Annuler</button>
-          <h2 className="text-base font-semibold text-fg">Le verso de ton dossard</h2>
-          <button onClick={save} className="btn btn-impact px-4 py-1.5 text-sm font-semibold text-craie tap">
-            Enregistrer mon dossard
+          <button onClick={onClose} className="text-[14px] font-medium text-fg-muted tap">Annuler</button>
+          <h2 className="text-[15px] font-medium text-fg">Mon profil</h2>
+          <button onClick={save} className="btn btn-impact px-4 py-1.5 text-[13px] font-semibold text-craie tap">
+            Enregistrer
           </button>
         </div>
 
-        <div className="flex-1 space-y-5 overflow-y-auto no-scrollbar px-5 py-4">
+        <div className="flex-1 space-y-6 overflow-y-auto no-scrollbar px-5 py-4">
+          <p className="aide">
+            C’est ce que les autres voient de toi, et ce sur quoi on te propose des rencontres. Tout est modifiable plus tard.
+          </p>
+
           <div>
-            <div className="mb-2 tmark sans">Fonction · entreprise</div>
+            <div className="titre-section mb-2">Ce que tu fais</div>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ex. Fondateur · SaaS B2B"
-              className="input-ligne text-sm"
+              className="input-ligne text-[14.5px]"
             />
           </div>
 
           <div>
-            <div className="mb-2 tmark sans">En deux lignes</div>
+            <div className="titre-section mb-2">Toi, en deux lignes</div>
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               rows={4}
               placeholder="Ce que tu construis, et pourquoi tu cours…"
-              className="input-ligne w-full resize-none text-sm leading-relaxed"
+              className="input-ligne w-full resize-none text-[14.5px] leading-relaxed"
             />
           </div>
 
           <ChipListEditor
-            label="Ce que je cherche"
-            hint="Recruter, lever, vendre, s'associer — une phrase chacun."
+            label="Ce que tu cherches"
+            hint="Recruter, lever un tour, vendre, trouver un associé… Une phrase par besoin."
             values={needs}
             onChange={setNeeds}
             placeholder="Ex. Lève une seed, cherche un associé produit"
           />
-          <ChipListEditor label="Ce que j'apporte" values={offering} onChange={setOffering} placeholder="Ex. Des retours produit, des présentations SaaS B2B" />
-          <ChipListEditor label="Sujets" values={interests} onChange={setInterests} placeholder="Ex. Levée de fonds, product, trail" />
+          <ChipListEditor label="Ce que tu apportes" values={offering} onChange={setOffering} placeholder="Ex. Des retours produit, des présentations SaaS B2B" />
+          <ChipListEditor label="Tes sujets" values={interests} onChange={setInterests} placeholder="Ex. Levée de fonds, product, trail" />
         </div>
       </div>
     </div>

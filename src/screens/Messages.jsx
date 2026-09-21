@@ -66,7 +66,7 @@ export default function Messages() {
           ))}
         </div>
 
-        <ChatComposer placeholder="Écrire…" draft={draft} setDraft={setDraft} onSend={sendMessage} />
+        <ChatComposer placeholder="Écris ton message…" draft={draft} setDraft={setDraft} onSend={sendMessage} />
       </div>
     )
   }
@@ -101,7 +101,7 @@ export default function Messages() {
                   </div>
                 )}
                 <div className="max-w-[76%]">
-                  {showName && <div className="mb-0.5 ml-1 font-mono text-[9.5px] font-bold uppercase tracking-mono text-fg-muted">{m.from.split(' ')[0]}</div>}
+                  {showName && <div className="mb-1 ml-1 text-[12.5px] font-medium text-fg-muted">{m.from.split(' ')[0]}</div>}
                   <Bulle mine={mine}>{m.text}</Bulle>
                 </div>
               </div>
@@ -109,7 +109,7 @@ export default function Messages() {
           })}
         </div>
 
-        <ChatComposer placeholder="Écrire…" draft={draft} setDraft={setDraft} onSend={sendMessage} />
+        <ChatComposer placeholder="Écris ton message…" draft={draft} setDraft={setDraft} onSend={sendMessage} />
       </div>
     )
   }
@@ -118,17 +118,18 @@ export default function Messages() {
   return (
     <div className="animate-screenIn flex h-full flex-col">
       <div className="px-5 pb-1 pt-4">
-        <span className="tmark"><b>T+</b> / LA CONVERSATION CONTINUE</span>
-        <h1 className="mt-2 text-[30px]">Rencontres, <span className="creuse">cercles.</span></h1>
+        <h1 className="text-[28px]">Messages</h1>
+        <p className="aide mt-1">Tes conversations en tête à tête, et les groupes que tu as rejoints.</p>
         <div className="mt-4 flex divide-x divide-line border border-line">
           {[
-            { id: 'discussions', label: 'Rencontres', n: unreadConv },
-            { id: 'groupes', label: 'Cercles', n: unreadGroups },
+            { id: 'discussions', label: 'Conversations', n: unreadConv },
+            { id: 'groupes', label: 'Groupes', n: unreadGroups },
           ].map((s) => (
             <button
               key={s.id}
               onClick={() => setMsgView(s.id)}
-              className={`flex flex-1 items-center justify-center gap-1.5 py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono transition tap ${msgView === s.id ? 'bg-fg text-canvas' : 'text-fg-muted'}`}
+              aria-current={msgView === s.id ? 'page' : undefined}
+              className={`flex flex-1 items-center justify-center gap-1.5 py-3 font-mono text-[11px] font-bold uppercase tracking-mono transition tap ${msgView === s.id ? 'bg-fg text-canvas' : 'text-fg-muted'}`}
             >
               {s.label}
               {s.n > 0 && (
@@ -150,11 +151,11 @@ export default function Messages() {
                   <Avatar name={c.name} size="md" />
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center justify-between gap-2">
-                      <span className="truncate text-sm font-medium text-fg">{c.name}</span>
-                      <span className={`shrink-0 font-mono text-[9.5px] uppercase tracking-mono ${unread ? 'font-bold text-brand-500' : 'text-fg-faint'}`}>{c.time}</span>
+                      <span className="truncate text-[15px] font-medium text-fg">{c.name}</span>
+                      <span className={`shrink-0 text-[12.5px] ${unread ? 'font-medium text-brand-500' : 'text-fg-faint'}`}>{c.time}</span>
                     </span>
                     <span className="mt-0.5 flex items-center justify-between gap-2">
-                      <span className={`truncate text-[13px] ${unread ? 'font-medium text-fg-soft' : 'text-fg-faint'}`}>
+                      <span className={`truncate text-[13.5px] ${unread ? 'font-medium text-fg-soft' : 'text-fg-faint'}`}>
                         {last.from === 'me' ? 'Toi : ' : ''}
                         {last.text}
                       </span>
@@ -171,7 +172,7 @@ export default function Messages() {
           {creatingGroup ? (
             <div className="mb-4 border border-fg p-3.5">
               <div className="champ">
-                <label htmlFor="cercle-nom">Le nom du cercle</label>
+                <label htmlFor="cercle-nom">Le nom du groupe</label>
                 <input
                   id="cercle-nom"
                   autoFocus
@@ -190,13 +191,13 @@ export default function Messages() {
             <button onClick={() => setCreatingGroup(true)} className="mb-4 flex w-full items-center gap-3 border border-dashed border-line-strong px-3 py-3 text-left tap hover:bg-surface-2">
               <span className="ico"><Icon name="plus" className="h-4 w-4" /></span>
               <div>
-                <div className="text-sm font-medium text-fg">Ouvrir un cercle</div>
-                <div className="text-xs text-fg-faint">Par entreprise, par secteur, par sortie.</div>
+                <div className="text-[14.5px] font-medium text-fg">Créer un groupe</div>
+                <div className="mt-0.5 text-[13px] text-fg-muted">Par entreprise, par secteur, ou autour d’une sortie.</div>
               </div>
             </button>
           )}
 
-          <h2 className="tmark"><b>{groups.length}</b> / TES CERCLES</h2>
+          <h2 className="titre-section">Tes groupes · {groups.length}</h2>
           <div className="mt-1 border-b border-line">
             {groups.map((g) => {
               const thread = groupThreads[g.id] || []
@@ -207,17 +208,17 @@ export default function Messages() {
                   <span className="ico plein"><Icon name="users" className="h-4 w-4" /></span>
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center justify-between gap-2">
-                      <span className="truncate text-sm font-medium text-fg">{g.name}</span>
-                      <span className={`shrink-0 font-mono text-[9.5px] uppercase tracking-mono ${unread ? 'font-bold text-brand-500' : 'text-fg-faint'}`}>{g.time}</span>
+                      <span className="truncate text-[15px] font-medium text-fg">{g.name}</span>
+                      <span className={`shrink-0 text-[12.5px] ${unread ? 'font-medium text-brand-500' : 'text-fg-faint'}`}>{g.time}</span>
                     </span>
                     <span className="mt-0.5 flex items-center justify-between gap-2">
-                      <span className={`truncate text-[13px] ${unread ? 'font-medium text-fg-soft' : 'text-fg-faint'}`}>
+                      <span className={`truncate text-[13.5px] ${unread ? 'font-medium text-fg-soft' : 'text-fg-faint'}`}>
                         {last ? `${last.from === 'me' ? 'Toi' : last.from.split(' ')[0]} : ${last.text}` : g.topic}
                       </span>
                       {unread ? (
                         <span className="grid h-4 min-w-4 shrink-0 place-items-center bg-brand-500 px-1 font-mono text-[9px] font-bold text-craie">{g.unread}</span>
                       ) : (
-                        <span className="shrink-0 font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">{g.members} membres</span>
+                        <span className="shrink-0 text-[12.5px] text-fg-faint">{g.members} membres</span>
                       )}
                     </span>
                   </span>
@@ -226,14 +227,14 @@ export default function Messages() {
             })}
           </div>
 
-          <h2 className="tmark mt-5">Cercles à rejoindre</h2>
+          <h2 className="titre-section mt-6">Des groupes à rejoindre</h2>
           <div className="mt-1 border-b border-line">
             {GROUP_SUGGESTIONS.map((g) => (
               <div key={g.id} className="rangee">
                 <span className="ico"><Icon name="users" className="h-4 w-4" /></span>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-medium text-fg">{g.name}</div>
-                  <div className="truncate text-xs text-fg-faint">{g.topic} · {g.members} membres</div>
+                  <div className="truncate text-[14.5px] font-medium text-fg">{g.name}</div>
+                  <div className="mt-0.5 truncate text-[13px] text-fg-muted">{g.topic} · {g.members} membres</div>
                 </div>
                 <button onClick={() => joinGroup(g)} disabled={!!joinedGroups[g.id]} className={`btn btn-sm shrink-0 ${joinedGroups[g.id] ? 'btn-encre' : 'btn-ghost'}`}>
                   <span>{joinedGroups[g.id] ? 'Rejoint' : 'Rejoindre'}</span>

@@ -42,14 +42,14 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
           <button onClick={onClose} className="absolute right-4 top-4 grid h-9 w-9 place-items-center border border-craie/30 text-craie tap" aria-label="Fermer">
             <Icon name="x" className="h-4 w-4" />
           </button>
-          <span className="tmark"><b>{EDITION.label}</b> — {EDITION.lieu}</span>
+          <span className="titre-section text-craie">{EDITION.label} — {EDITION.lieu}</span>
           <h1 className="display mt-3 text-[24px] text-craie">L’impact après<br /><span className="creuse">la ligne d’arrivée.</span></h1>
           <div className="mt-4 flex items-end justify-between gap-4 border-t border-craie/20 pt-3">
             <div className="shrink-0">
-              <div className="display whitespace-nowrap text-[44px] leading-[.85] text-craie">T–<span className="tabular-nums">{jours}</span></div>
-              <div className="mt-2 font-mono text-[9.5px] uppercase tracking-label text-craie/60">Jours avant la ligne</div>
+              <div className="display whitespace-nowrap text-[44px] leading-[.85] text-craie tabular-nums">{jours}</div>
+              <div className="mt-2 text-[13px] leading-snug text-craie/60">jours avant<br />la course</div>
             </div>
-            <div className="min-w-0 text-right font-mono text-[9.5px] uppercase leading-[1.9] tracking-mono text-craie/60">
+            <div className="min-w-0 text-right font-mono text-[10.5px] uppercase leading-[1.9] tracking-mono text-craie/60">
               {EDITION.mois} · 5 / 10 / 21,1 km<br />{EDITION.jauge}<br /><b className="text-brand-500">■ Vague {vague.nom} ouverte</b>
             </div>
           </div>
@@ -65,7 +65,7 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
                 distance={distance} formule={formule} urlInscription={urlInscription}
                 onLier={async (champs) => {
                   const r = await lierDossier(champs)
-                  if (r.dossier) { lierDossierApp(r.dossier); showToast(`Dossier ${r.dossier.reference} relié`) }
+                  if (r.dossier) { lierDossierApp(r.dossier); showToast(`C’est bon : ton inscription ${r.dossier.reference} est reliée`) }
                   return r
                 }}
               />
@@ -74,17 +74,17 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
 
           {/* ---------------------------------------------------- LA JOURNÉE */}
           <section className="border-t border-line px-5 py-6">
-            <span className="tmark"><b>T–</b> / T+ — LA JOURNÉE</span>
+            <span className="titre-section">Le déroulé de la journée</span>
             <h2 className="titre mt-3 text-[22px]">La course le matin,<br />le réseau l’après-midi.</h2>
             <div className="cadre mt-4 grid-cols-2">
-              {[{ t: 'T–', ...AVANT }, { t: 'T+', ...APRES }].map((b) => (
+              {[{ t: 'Le matin', ...AVANT }, { t: 'L’après-midi', ...APRES }].map((b) => (
                 <div key={b.t} className="p-3.5">
-                  <div className="display text-[34px] leading-none text-brand-500">{b.t}</div>
-                  <h3 className="titre mt-2 text-[15px]">{b.titre}</h3>
-                  <p className="mt-1.5 text-[12.5px] leading-snug text-fg-muted">{b.lead}</p>
+                  <div className="titre-section text-brand-500">{b.t}</div>
+                  <h3 className="mt-2 text-[15px] font-medium leading-snug">{b.titre}</h3>
+                  <p className="mt-1.5 text-[13px] leading-snug text-fg-muted">{b.lead}</p>
                   <ul className="mt-2.5 space-y-1.5">
                     {b.points.slice(0, 3).map((p, i) => (
-                      <li key={i} className="flex gap-2 text-[12px] leading-snug text-fg-soft">
+                      <li key={i} className="flex gap-2 text-[12.5px] leading-snug text-fg-soft">
                         <span className="mt-[5px] h-1.5 w-1.5 shrink-0 bg-brand-500" />{p}
                       </li>
                     ))}
@@ -96,7 +96,7 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
 
           {/* ---------------------------------------------------- LES DISTANCES */}
           <section className="border-t border-line px-5 py-6">
-            <span className="tmark"><b>T–01</b> / LES DOSSARDS</span>
+            <span className="titre-section">Les trois distances</span>
             <h2 className="titre mt-3 text-[22px]">Trois distances,<br />un seul dossard.</h2>
             <p className="mt-2 text-[13.5px] text-fg-muted">Même prix, même accès, même après-midi. Choisis la tienne : elle sera pré-remplie sur le site.</p>
             <div className="cadre mt-4 grid-cols-3" role="radiogroup" aria-label="Distance">
@@ -129,7 +129,7 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
 
           {/* ---------------------------------------------------- LE PROGRAMME T+ */}
           <section className="border-t border-line px-5 py-6">
-            <span className="tmark"><b>T+</b> / APRÈS LA LIGNE</span>
+            <span className="titre-section">L’après-midi, après la course</span>
             <h2 className="titre mt-3 text-[22px]">Le programme de l’après-midi.</h2>
             <p className="mt-2 text-[13.5px] text-fg-muted">On court d’abord, on parle pendant, on prolonge après. Pas de stand, pas de slide, pas de pitch imposé.</p>
             <div className="mt-4 border-t border-fg">
@@ -149,7 +149,7 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
 
           {/* ---------------------------------------------------- LES FORMULES */}
           <section className="border-t border-line px-5 py-6">
-            <span className="tmark"><b>T–02</b> / LES FORMULES</span>
+            <span className="titre-section">Les trois formules</span>
             <h2 className="titre mt-3 text-[22px]">La course est la même.<br />Le réseau, non.</h2>
             <p className="mt-2 text-[13.5px] text-fg-muted">Aucune formule n’achète une meilleure course. Ce qui change, c’est quand le réseau commence, et combien de portes s’ouvrent après.</p>
             <div className="mt-4 border-t border-fg" role="radiogroup" aria-label="Formule">
@@ -190,7 +190,7 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
 
           {/* ---------------------------------------------------- LES VAGUES */}
           <section className="border-t border-line px-5 py-6">
-            <span className="tmark"><b>T–03</b> / LES VAGUES</span>
+            <span className="titre-section">Les prix, par période</span>
             <h2 className="titre mt-3 text-[22px]">Trois vagues, un tarif qui monte.</h2>
             <div className="mt-4 border-t border-fg">
               {VAGUES.map((v, i) => {
@@ -220,7 +220,7 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
 
           {/* ---------------------------------------------------- LE LIEU */}
           <section className="border-t border-line px-5 py-6">
-            <span className="tmark"><b>T+05</b> / LE LIEU</span>
+            <span className="titre-section">Où ça se passe</span>
             <h2 className="titre mt-3 text-[22px]">Paris<br />La Défense.</h2>
             <p className="mt-2 text-[13.5px] text-fg-muted"><b className="text-fg">Le plus grand quartier d’affaires d’Europe.</b> On court entre les tours où ces conversations se poursuivront le reste de l’année.</p>
             <dl className="fiche mt-4">
@@ -232,7 +232,7 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
 
           {/* ---------------------------------------------------- QUI COURT */}
           <section className="border-t border-line px-5 py-6">
-            <span className="tmark"><b>T+</b> / QUI COURT CETTE ANNÉE</span>
+            <span className="titre-section">Qui court cette année</span>
             <h2 className="titre mt-3 text-[22px]">Tu sais déjà qui sera<br />sur la ligne.</h2>
             <div className="mt-4 flex items-center gap-3 border border-line p-3.5">
               <AvatarStack names={QUI_COURT.slice(0, 4)} total={INSCRITS} onMore={() => goTo('reseau')} />
@@ -249,7 +249,7 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
 
           {/* ---------------------------------------------------- PRINCIPES */}
           <section className="border-t border-line px-5 pb-10 pt-6">
-            <span className="tmark"><b>T+</b> / CE QU’ON GARDE</span>
+            <span className="titre-section">Les règles de la course</span>
             <div className="cadre mt-4 grid-cols-2">
               {PRINCIPES.map((p) => (
                 <div key={p.n} className="p-3.5">
@@ -277,7 +277,7 @@ function DossierLie({ dossier, onDelier, onEspace }) {
   const f = formuleById(dossier.formule)
   return (
     <div>
-      <span className="tmark"><b>T–</b> / TON DOSSIER</span>
+      <span className="titre-section">Ton inscription</span>
       <h2 className="display mt-3 text-[28px]">Bonjour <span className="creuse">{dossier.prenom}</span>.</h2>
       <p className="mt-2 font-mono text-[10px] uppercase leading-[1.9] tracking-mono text-fg-faint">
         Dossier <b className="text-brand-500">{dossier.reference}</b> · Vague <b className="text-brand-500">{dossier.vague?.nom}</b> · Édition {dossier.edition || '01'}
@@ -347,7 +347,7 @@ function PrendreOuLier({ distance, formule, urlInscription, onLier }) {
 
   return (
     <div>
-      <span className="tmark"><b>T–</b> / TON DOSSARD</span>
+      <span className="titre-section">Ton dossard</span>
       <h2 className="display mt-3 text-[28px]">Un seul dossard.<br /><span className="creuse">Deux faces.</span></h2>
       <p className="mt-2 text-[13.5px] text-fg-muted">Recto, il te fait passer la ligne. Verso, il devient ton profil — ici, toute l’année. <b className="text-fg">L’inscription se fait sur le site</b>, ton dossier se relie ensuite en deux champs.</p>
 

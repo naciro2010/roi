@@ -1,13 +1,17 @@
 /* Les kilomètres investis (démo) : les kilomètres courus AVEC quelqu'un font
-   monter un palier, et chaque palier ouvre une porte du réseau — des
-   rencontres proposées en plus, une catégorie de l'annuaire, une présentation
-   prioritaire, ta place dans une vague plus tôt. On court ensemble → ça ouvre. */
+   monter un palier, et chaque palier ajoute quelque chose — des rencontres
+   proposées en plus, une présentation prioritaire, ta place dans une vague
+   plus tôt. On court ensemble → ça s'ajoute.
+
+   Règle de lisibilité : un palier ne ferme jamais une partie de l'app. Tout
+   ce qui sert à comprendre et à se servir de l'app (chercher, filtrer, lire
+   une fiche) est ouvert dès le premier jour ; les paliers ne font qu'ajouter. */
 
 export const SEASON = { label: 'Kilomètres investis', endsIn: '5 jours' }
 
 export const TIERS = [
   { km: 25, title: 'Première foulée', reward: '+2 rencontres proposées chaque semaine', icon: 'activity', unlock: { matches: 2 } },
-  { km: 50, title: 'Compagnon de route', reward: 'La catégorie « Lève » de l’annuaire s’ouvre', icon: 'users', unlock: { category: 'Lève' } },
+  { km: 50, title: 'Compagnon de route', reward: '+1 rencontre proposée chaque semaine', icon: 'users', unlock: { matches: 1 } },
   { km: 100, title: 'Relais', reward: 'Présentation prioritaire : ton nom passe en premier', icon: 'trophy', unlock: { boost: true } },
   { km: 150, title: 'Tête de peloton', reward: 'Ta place dans une vague plus tôt, à la prochaine édition', icon: 'crown', unlock: { priorityIntro: true } },
 ]
@@ -29,14 +33,4 @@ export function bonusMatches(km) {
   return TIERS.filter((t) => km >= t.km).reduce((n, t) => n + (t.unlock.matches || 0), 0)
 }
 
-/* Le palier qui ouvre une catégorie de l'annuaire (ou null si libre). */
-export function categoryTier(category) {
-  return TIERS.find((t) => t.unlock.category === category) || null
-}
-
-/* Une catégorie est-elle encore fermée pour ce total de km ? */
-export function isCategoryLocked(km, category) {
-  const tier = categoryTier(category)
-  return !!tier && km < tier.km
-}
 

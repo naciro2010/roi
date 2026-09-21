@@ -29,8 +29,8 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
       <div className="flex items-center gap-3 p-4 pb-3">
         <Avatar name={post.author} size="md" onClick={onOpenAuthor} />
         <button onClick={onOpenAuthor} className="min-w-0 flex-1 text-left">
-          <div className="truncate text-sm font-medium text-fg">{post.author}</div>
-          <div className="truncate text-[12px] text-fg-faint">{subtitleFor(post.author)} · {post.time}</div>
+          <div className="truncate text-[15px] font-medium text-fg">{post.author}</div>
+          <div className="mt-0.5 truncate text-[13px] text-fg-muted">{subtitleFor(post.author)} · {post.time}</div>
         </button>
         <Badge tone={meta.tone}>{meta.label}</Badge>
       </div>
@@ -46,7 +46,7 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
       )}
 
       {/* Compteurs */}
-      <div className="flex items-center justify-between px-4 pt-3 font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">
+      <div className="flex items-center justify-between px-4 pt-3 text-[12.5px] text-fg-muted">
         <span className="inline-flex items-center gap-1.5">
           <span className="h-1.5 w-1.5 bg-brand-500" />
           {post.likes} utile{post.likes > 1 ? 's' : ''}
@@ -62,19 +62,19 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
       <div className="mt-2 flex items-center divide-x divide-line border-t border-line">
         <button
           onClick={onLike}
-          className={`flex flex-1 items-center justify-center gap-1.5 py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono tap ${post.liked ? 'text-brand-500' : 'text-fg-muted'}`}
+          className={`flex flex-1 items-center justify-center gap-1.5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-mono tap ${post.liked ? 'text-brand-500' : 'text-fg-muted'}`}
         >
           <Icon name="heart" className="h-4 w-4" filled={post.liked} /> Utile
         </button>
         <button
           onClick={() => setShowComments((s) => !s)}
-          className="flex flex-1 items-center justify-center gap-1.5 py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono text-fg-muted tap"
+          className="flex flex-1 items-center justify-center gap-1.5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-mono text-fg-muted tap"
         >
           <Icon name="comment" className="h-4 w-4" /> Répondre
         </button>
         <button
           onClick={onShare}
-          className="flex flex-1 items-center justify-center gap-1.5 py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono text-fg-muted tap"
+          className="flex flex-1 items-center justify-center gap-1.5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-mono text-fg-muted tap"
         >
           <Icon name="share" className="h-4 w-4" /> Partager
         </button>
@@ -88,7 +88,7 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
               <div key={i} className="flex items-start gap-2.5">
                 <Avatar name={c.author} size="xs" onClick={() => onOpenAuthor?.(c.author)} />
                 <div className="min-w-0 flex-1 border-l-2 border-line pl-3">
-                  <div className="font-mono text-[9.5px] font-bold uppercase tracking-mono text-fg">{c.author}</div>
+                  <div className="text-[13px] font-medium text-fg">{c.author}</div>
                   <div className="text-[13px] leading-snug text-fg-soft">{c.text}</div>
                 </div>
               </div>
