@@ -1,15 +1,15 @@
 {
-  "name": "ROI · Le réseau qui rapporte",
-  "short_name": "ROI",
-  "description": "Networking entre entrepreneurs qui courent : matchs ciblés, sorties, RDV et opportunités.",
+  "name": "R.O.I — Run On Investment · L'app",
+  "short_name": "R.O.I",
+  "description": "Une course par an à Paris La Défense, un réseau toute l'année : l'annuaire de qui court, trois rencontres proposées par semaine, des sorties à allure de conversation.",
   "lang": "fr",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#F4F4F5",
-  "theme_color": "#F4F4F5",
-  "categories": ["business", "social", "productivity", "lifestyle"],
+  "background_color": "#EFEBE2",
+  "theme_color": "#070707",
+  "categories": ["business", "social", "sports", "lifestyle"],
   "icons": [
     {
       "src": "/icon.svg",

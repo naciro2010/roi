@@ -1,18 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="ROI">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#27272A"/>
-      <stop offset="1" stop-color="#18181B"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.82" cy="0.1" r="0.7">
-      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.16"/>
-      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <rect width="512" height="512" rx="112" fill="url(#glow)"/>
-  <g transform="translate(256 256)">
-    <path d="M22 -150 L-78 18 H4 L-18 150 L88 -34 H6 L22 -150 Z"
-          fill="#FAFAFA" stroke="#FFFFFF" stroke-width="6" stroke-linejoin="round"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="R.O.I">
+  <!-- La Ligne : encre, un filet craie, le point carré orange. Le même signe que le favicon du site. -->
+  <rect width="512" height="512" fill="#070707"/>
+  <rect y="240" width="512" height="32" fill="#EFEBE2" opacity=".45"/>
+  <rect x="160" y="160" width="192" height="192" fill="#FF4400"/>
 </svg>

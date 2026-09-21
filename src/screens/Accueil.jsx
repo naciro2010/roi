@@ -1,40 +1,43 @@
 import { useEffect, useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
-import { Avatar } from '../components/Avatar'
-import { Sparkline } from '../components/primitives'
+import { Avatar, AvatarStack } from '../components/Avatar'
+import { Sparkline, SectionTitle } from '../components/primitives'
 import PostCard from '../components/PostCard'
 import { CURRENT_USER } from '../data/user'
 import { activityById } from '../data/activities'
 import { pipelineStats } from '../data/pipeline'
+import { EDITION, daysToRace, vagueCourante, distanceById, QUI_COURT, INSCRITS } from '../data/race'
 
 function PostSkeleton() {
   return (
-    <div className="overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
+    <div className="border border-line">
       <div className="flex items-center gap-3 p-4">
-        <div className="shimmer h-11 w-11 rounded-full bg-surface-2" />
+        <div className="shimmer h-11 w-11 bg-surface-2" />
         <div className="flex-1 space-y-2">
-          <div className="shimmer h-3 w-1/3 rounded bg-surface-2" />
-          <div className="shimmer h-2.5 w-1/2 rounded bg-surface-2" />
+          <div className="shimmer h-3 w-1/3 bg-surface-2" />
+          <div className="shimmer h-2.5 w-1/2 bg-surface-2" />
         </div>
       </div>
       <div className="space-y-2 px-4 pb-4">
-        <div className="shimmer h-2.5 w-full rounded bg-surface-2" />
-        <div className="shimmer h-2.5 w-5/6 rounded bg-surface-2" />
-        <div className="shimmer mt-2 h-32 w-full rounded-2xl bg-surface-2" />
+        <div className="shimmer h-2.5 w-full bg-surface-2" />
+        <div className="shimmer h-2.5 w-5/6 bg-surface-2" />
+        <div className="shimmer mt-2 h-32 w-full bg-surface-2" />
       </div>
     </div>
   )
 }
 
 export default function Accueil() {
-  const { goTo, openRoiInfo, openComposer, openMember, openActivity, openAgenda, openInvite, openPipeline, openRunMatch, openRace, raceRegistration, runMatches, pipeline, hasFeature, meetings, posts, togglePostLike, addComment, showToast } = useApp()
+  const { goTo, openRoiInfo, openComposer, openMember, openActivity, openAgenda, openInvite, openPipeline, openRunMatch, openRace, dossier, runMatches, pipeline, hasFeature, meetings, posts, togglePostLike, addComment, showToast } = useApp()
   const u = CURRENT_USER
   const pstats = pipelineStats(pipeline)
   const showPipelineValue = hasFeature('analytics')
   const topRun = runMatches?.[0]
   const hour = new Date().getHours()
   const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir'
+  const jours = daysToRace()
+  const vague = vagueCourante()
 
   const [loading, setLoading] = useState(true)
   useEffect(() => {
@@ -43,158 +46,150 @@ export default function Accueil() {
   }, [])
 
   return (
-    <div className="animate-screenIn space-y-3 overflow-y-auto no-scrollbar px-4 pb-6 pt-3">
-      {/* Hero « balance card » — score ROI mis en avant, façon Revolut */}
-      <button
-        onClick={openRoiInfo}
-        className="relative block w-full overflow-hidden rounded-3xl surface-hero p-5 text-left text-white shadow-float tap"
-      >
-        <div className="absolute inset-0 bg-aurora" />
-        <div className="relative">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-[13px] font-medium text-white/70">{greet}, {u.name.split(' ')[0]}</p>
-              <div className="mt-1 flex items-end gap-1.5">
-                <span className="text-[44px] font-bold leading-none tracking-tight tabular-nums">{u.roi.score}</span>
-                <span className="mb-1 text-sm font-semibold text-white/55">/100</span>
-              </div>
-              <p className="mt-1.5 text-[12px] font-semibold text-white/65">Score réseau ROI</p>
+    <div className="animate-screenIn overflow-y-auto no-scrollbar pb-6">
+      {/* ---- T– : la ligne approche. Le bloc encre de l'affiche. ---- */}
+      <button onClick={openRace} className="surface-hero block w-full px-5 pb-5 pt-4 text-left tap">
+        <span className="tmark"><b>{EDITION.label}</b> {EDITION.lieu} — {EDITION.moisCourt}</span>
+        <div className="mt-3 flex items-end justify-between gap-3">
+          <div className="shrink-0">
+            <div className="display whitespace-nowrap text-[56px] leading-[.82] text-craie">T–<span className="tabular-nums">{jours}</span></div>
+            <div className="mt-2 font-mono text-[9.5px] uppercase tracking-label text-craie/60">Jours avant la ligne</div>
+          </div>
+          <div className="min-w-0 text-right">
+            {dossier ? (
+              <>
+                <div className="font-mono text-[9.5px] uppercase tracking-mono text-craie/60">Dossier <b className="text-brand-500">{dossier.reference}</b></div>
+                <div className="titre mt-1 text-[15px] text-craie">{distanceById(dossier.distance).label} · {dossier.vague?.nom}</div>
+                <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-brand-500">■ Place gardée</div>
+              </>
+            ) : (
+              <>
+                <div className="font-mono text-[9.5px] uppercase tracking-mono text-craie/60">Vague <b className="text-brand-500">{vague.nom}</b> ouverte</div>
+                <div className="titre mt-1 text-[15px] text-craie">Prends ta place sur la ligne</div>
+                <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-brand-500">{vague.prix} € · 5 / 10 / 21,1 km →</div>
+              </>
+            )}
+          </div>
+        </div>
+        <div className="laligne mt-4 text-craie" style={{ background: 'rgba(239,235,226,.2)' }} />
+      </button>
+
+      <div className="space-y-5 px-5 pt-5">
+        {/* ---- Le score réseau : une fiche, pas une carte bancaire ---- */}
+        <button onClick={openRoiInfo} className="block w-full text-left tap">
+          <span className="tmark"><b>T+</b> / CE QUE TON RÉSEAU RAPPORTE</span>
+          <div className="mt-2 flex items-end justify-between gap-3 border-b border-fg pb-3">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-[26px]">{greet}<br /><span className="creuse">{u.name.split(' ')[0]}</span>.</h1>
             </div>
-            <div className="flex flex-col items-end gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/18 px-2 py-1 text-[11px] font-bold text-white ring-1 ring-white/20">
-                <Icon name="trendingUp" className="h-3 w-3" /> +{u.roi.weekDelta} cette sem.
-              </span>
-              <Sparkline data={u.roi.trend} width={96} height={36} />
+            <div className="shrink-0 text-right">
+              <div className="display text-[40px] leading-none">{u.roi.score}<small className="ml-1 align-top font-mono text-[10px] font-bold tracking-mono text-fg-faint">/100</small></div>
+              <div className="mt-1 flex items-center justify-end gap-2">
+                <Sparkline data={u.roi.trend} width={72} height={22} stroke="#070707" />
+                <span className="font-mono text-[9.5px] font-bold uppercase tracking-mono text-brand-500">+{u.roi.weekDelta} cette sem.</span>
+              </div>
             </div>
           </div>
-
-          <div className="mt-4 grid grid-cols-3 gap-2 border-t border-white/12 pt-3">
+          <div className="grid grid-cols-3 divide-x divide-line border-b border-line">
             {[
-              { value: u.roi.connections, label: 'Connexions' },
-              { value: meetings.length, label: 'RDV' },
+              { value: u.roi.connections, label: 'Contacts' },
+              { value: meetings.length, label: 'Rencontres' },
               { value: pstats.active, label: 'Pipeline' },
             ].map((s) => (
-              <div key={s.label}>
-                <div className="text-lg font-semibold tabular-nums leading-none">{s.value}</div>
-                <div className="mt-1 text-[11px] text-white/60">{s.label}</div>
+              <div key={s.label} className="py-2.5 pl-3 first:pl-0">
+                <div className="display text-[22px] leading-none tabular-nums">{s.value}</div>
+                <div className="mt-1 font-mono text-[9px] uppercase tracking-label text-fg-faint">{s.label}</div>
               </div>
             ))}
           </div>
-        </div>
-      </button>
-
-      {/* Actions rapides — pastilles circulaires façon Revolut */}
-      <div className="grid grid-cols-4 gap-1">
-        {[
-          { icon: 'sparkles', label: 'Réseau', onClick: () => goTo('reseau') },
-          { icon: 'activity', label: 'Courir', onClick: () => goTo('courir') },
-          { icon: 'calendar', label: 'RDV', onClick: openAgenda },
-          { icon: 'gift', label: 'Inviter', onClick: openInvite },
-        ].map((a) => (
-          <button key={a.label} onClick={a.onClick} className="flex flex-col items-center gap-1.5 py-1 tap">
-            <span className="grid h-14 w-14 place-items-center rounded-full bg-brand-50 text-brand-600 ring-1 ring-brand-100">
-              <Icon name={a.icon} className="h-[22px] w-[22px]" />
-            </span>
-            <span className="text-[11px] font-semibold text-fg-soft">{a.label}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Course officielle ROI Business Run · La Défense */}
-      <button onClick={openRace} className="relative block w-full overflow-hidden rounded-3xl border border-gold/30 bg-surface p-3.5 text-left shadow-card tap">
-        <div className="absolute inset-0 bg-gold-sheen" />
-        <div className="relative flex items-center gap-3">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gold-light text-gold-dark">
-            <Icon name="flag" className="h-[22px] w-[22px]" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5">
-              <span className="rounded-full bg-gold px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">Officiel</span>
-              <span className="text-[11px] font-semibold text-fg-muted">17 sept. · La Défense</span>
-            </div>
-            <div className="mt-0.5 text-[14px] font-extrabold leading-tight text-fg">ROI Business Run</div>
-            <div className="truncate text-[11.5px] text-fg-muted">
-              {raceRegistration?.confirmed ? `Inscrit·e · dossard ${raceRegistration.dossard}` : '10 000 dirigeants · 5 · 10 · 21 km'}
-            </div>
-          </div>
-          <Icon name="chevronRight" className="h-5 w-5 shrink-0 text-fg-faint" />
-        </div>
-      </button>
-
-      {/* Pipeline ROI & RunMatch — la boucle business × sport */}
-      <div className="grid grid-cols-2 gap-3">
-        <button onClick={openPipeline} className="rounded-3xl border border-line bg-surface p-3.5 text-left shadow-soft tap">
-          <div className="flex items-center justify-between">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-gold-light text-gold-dark">
-              <Icon name="briefcase" className="h-[18px] w-[18px]" />
-            </span>
-            <Icon name="chevronRight" className="h-4 w-4 text-fg-faint" />
-          </div>
-          <div className="mt-2.5 text-xl font-extrabold tabular-nums leading-none text-fg">
-            {showPipelineValue ? `${pstats.value} k€` : pstats.active}
-          </div>
-          <div className="mt-1 text-[12px] font-semibold text-fg-soft">Pipeline ROI</div>
-          <div className="text-[11px] text-fg-faint">
-            {showPipelineValue
-              ? `${pstats.active} relation${pstats.active > 1 ? 's' : ''} active${pstats.active > 1 ? 's' : ''}`
-              : 'Suivi des relations · Analytics Pro'}
-          </div>
         </button>
 
-        <button onClick={openRunMatch} className="relative overflow-hidden rounded-3xl surface-hero p-3.5 text-left text-white shadow-float tap">
-          <div className="absolute inset-0 bg-aurora" />
-          <div className="relative">
-            <div className="flex items-center justify-between">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-white/15 text-white ring-1 ring-white/15">
-                <Icon name="activity" className="h-[18px] w-[18px]" />
-              </span>
-              <Icon name="chevronRight" className="h-4 w-4 text-white/60" />
-            </div>
-            <div className="mt-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">RunMatch</div>
-            <div className="text-base font-extrabold leading-tight">{topRun ? `Cours avec ${topRun.name.split(' ')[0]}` : 'Ton binôme de run'}</div>
-            <div className="text-[11px] text-white/65">Propose un run cette semaine</div>
-          </div>
-        </button>
-      </div>
-
-      {/* Composer */}
-      <div className="flex items-center gap-3 rounded-3xl border border-line bg-surface p-3 shadow-soft">
-        <Avatar name={u.name} size="md" onClick={() => goTo('profil')} />
-        <button
-          onClick={openComposer}
-          className="flex-1 rounded-full bg-surface-2 px-4 py-2.5 text-left text-sm text-fg-faint tap"
-        >
-          Partage une analyse, un retour d’expérience, une opportunité…
-        </button>
-        <button onClick={openComposer} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand tap" aria-label="Nouveau post">
-          <Icon name="pencil" className="h-4 w-4" />
-        </button>
-      </div>
-
-      {/* Feed */}
-      {loading ? (
-        <>
-          <PostSkeleton />
-          <PostSkeleton />
-        </>
-      ) : (
-        <>
-          {posts.map((p, i) => (
-            <div key={p.id} className="animate-cardIn" style={{ animationDelay: `${Math.min(i, 6) * 70}ms` }}>
-              <PostCard
-                post={p}
-                activity={activityById(p.activityId)}
-                onLike={() => togglePostLike(p.id)}
-                onAddComment={(text) => addComment(p.id, text)}
-                onShare={() => showToast('Partage bientôt disponible')}
-                onOpenActivity={() => openActivity(p.activityId)}
-                onOpenAuthor={(name) => openMember(name || p.author)}
-              />
-            </div>
+        {/* ---- Actions : quatre cellules du cadre ---- */}
+        <div className="cadre grid-cols-4">
+          {[
+            { icon: 'sparkles', label: 'Annuaire', onClick: () => goTo('reseau') },
+            { icon: 'activity', label: 'Courir', onClick: () => goTo('courir') },
+            { icon: 'calendar', label: 'Rencontres', onClick: openAgenda },
+            { icon: 'gift', label: 'Coopter', onClick: openInvite },
+          ].map((a) => (
+            <button key={a.label} onClick={a.onClick} className="flex flex-col items-center gap-1.5 py-3 text-fg tap hover:bg-fg hover:text-craie">
+              <Icon name={a.icon} className="h-5 w-5" />
+              <span className="font-mono text-[9px] font-bold uppercase tracking-mono">{a.label}</span>
+            </button>
           ))}
-          <p className="pt-1 text-center text-xs text-fg-faint">Tu es à jour</p>
-        </>
-      )}
+        </div>
+
+        {/* ---- Qui court cette année : le réseau commence avant la ligne ---- */}
+        <div className="border border-line p-3.5">
+          <div className="flex items-center justify-between gap-3">
+            <span className="font-mono text-[9.5px] font-bold uppercase tracking-mono text-brand-500">■ Qui court cette année</span>
+            <AvatarStack names={QUI_COURT.slice(0, 4)} total={INSCRITS} onMore={() => goTo('reseau')} />
+          </div>
+          <button onClick={openRace} className="mt-3 flex w-full items-center gap-3 text-left tap">
+            <div className="min-w-0 flex-1">
+              <div className="titre text-[15px]">{INSCRITS.toLocaleString('fr-FR')} dossards déjà pris</div>
+              <div className="mt-0.5 text-[12px] text-fg-muted">Fondateurs, dirigeants, investisseurs. Tu sais déjà qui sera sur la ligne : le réseau commence avant.</div>
+            </div>
+            <span className="font-mono text-fg-faint">→</span>
+          </button>
+        </div>
+
+        {/* ---- Pipeline & RunMatch : la boucle business × course ---- */}
+        <div className="cadre grid-cols-2">
+          <button onClick={openPipeline} className="p-3.5 text-left tap">
+            <div className="font-mono text-[9px] font-bold uppercase tracking-label text-fg-faint">Le pipeline</div>
+            <div className="display mt-2 text-[30px] leading-none tabular-nums">
+              {showPipelineValue ? <>{pstats.value}<small className="ml-1 align-top font-mono text-[10px] tracking-mono">k€</small></> : pstats.active}
+            </div>
+            <div className="mt-1.5 text-[11.5px] text-fg-muted">
+              {showPipelineValue ? `${pstats.active} relation${pstats.active > 1 ? 's' : ''} en cours` : 'Ce que tes rencontres produisent'}
+            </div>
+          </button>
+          <button onClick={openRunMatch} className="surface-hero p-3.5 text-left tap">
+            <div className="font-mono text-[9px] font-bold uppercase tracking-label text-craie/55">Binôme</div>
+            <div className="titre mt-2 text-[15px] text-craie">{topRun ? `Cours avec ${topRun.name.split(' ')[0]}` : 'Ta sortie à deux'}</div>
+            <div className="mt-1.5 text-[11.5px] text-craie/60">Même allure, une vraie raison de se parler. La sortie devient le rendez-vous.</div>
+          </button>
+        </div>
+
+        {/* ---- Le fil ---- */}
+        <div>
+          <SectionTitle t="T+" action="Écrire" onAction={openComposer}>Ce que le réseau raconte</SectionTitle>
+          <div className="flex items-center gap-3 border border-line p-3">
+            <Avatar name={u.name} size="md" onClick={() => goTo('profil')} />
+            <button onClick={openComposer} className="input-ligne flex-1 text-left text-[13px] text-fg-faint tap" style={{ padding: '6px 0' }}>
+              Une rencontre, une présentation faite, une sortie, un conseil…
+            </button>
+            <button onClick={openComposer} className="grid h-9 w-9 shrink-0 place-items-center bg-brand-500 text-encre tap" aria-label="Nouveau post">
+              <Icon name="pencil" className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        {loading ? (
+          <>
+            <PostSkeleton />
+            <PostSkeleton />
+          </>
+        ) : (
+          <>
+            {posts.map((p, i) => (
+              <div key={p.id} className="animate-cardIn" style={{ animationDelay: `${Math.min(i, 6) * 70}ms` }}>
+                <PostCard
+                  post={p}
+                  activity={activityById(p.activityId)}
+                  onLike={() => togglePostLike(p.id)}
+                  onAddComment={(text) => addComment(p.id, text)}
+                  onShare={() => showToast('Partage bientôt disponible')}
+                  onOpenActivity={() => openActivity(p.activityId)}
+                  onOpenAuthor={(name) => openMember(name || p.author)}
+                />
+              </div>
+            ))}
+            <p className="pt-1 text-center font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">— Tu es à jour —</p>
+          </>
+        )}
+      </div>
     </div>
   )
 }

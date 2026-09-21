@@ -11,68 +11,60 @@ import { serviceById } from '../data/integrations'
 import { formatEventDate } from '../lib/dates'
 import { CURRENT_USER } from '../data/user'
 import { SEASON, TIERS, seasonProgress } from '../data/levels'
+import { EDITION, daysToRace, distanceById, vagueCourante } from '../data/race'
 
 export default function Courir() {
   const {
     actKudos, toggleActKudos, openActivity, openMember, showToast,
     eventKudos, toggleEventKudos, joined, toggleJoin, openEvent,
     integrations, openIntegrations, openRunMatch, runMatches,
-    openRace, raceRegistration,
+    openRace, dossier,
   } = useApp()
   const [view, setView] = useState('activites')
   const topRun = runMatches?.[0]
-  const raceIn = raceRegistration?.confirmed
+  const jours = daysToRace()
 
+  /* L'édition : le bloc encre T–, le même qu'à l'accueil. */
   const OfficialRaceBanner = () => (
-    <button
-      onClick={openRace}
-      className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-left text-white shadow-float tap"
-    >
-      <div className="absolute inset-0 bg-aurora" />
-      <div className="relative">
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-gold/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-fg">
-            <Icon name="flag" className="h-3 w-3" /> Course officielle
-          </span>
-          <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">17 sept. · La Défense</span>
+    <button onClick={openRace} className="surface-hero relative w-full p-4 text-left tap">
+      <span className="tmark"><b>{EDITION.label}</b> {EDITION.lieu} · {EDITION.moisCourt}</span>
+      <div className="mt-3 flex items-end justify-between gap-3">
+        <div className="shrink-0">
+          <div className="display whitespace-nowrap text-[40px] leading-[.85] text-craie">T–{jours}</div>
+          <div className="mt-1.5 font-mono text-[9.5px] uppercase tracking-label t-beton">Jours avant la ligne</div>
         </div>
-        <p className="mt-2 text-[17px] font-extrabold leading-tight">ROI Business Run</p>
-        <p className="mt-0.5 text-[12.5px] leading-snug text-white/70">
-          10 000 dirigeants · 5 km, 10 km & semi au pied de l’Arena. La course où le business se court en tête.
-        </p>
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-[12px] font-semibold text-white/80">
-            {raceIn ? `Inscrit·e · dossard ${raceRegistration.dossard}` : 'Dès 500 € HT · solo ou équipe'}
-          </span>
-          <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[12px] font-bold ${raceIn ? 'bg-white/15 text-white' : 'bg-white text-fg'}`}>
-            {raceIn ? 'Voir mon dossard' : 'S’inscrire'} <Icon name="arrowRight" className="h-3.5 w-3.5" />
-          </span>
+        <div className="text-right">
+          {dossier ? (
+            <>
+              <div className="titre text-[14px] text-craie">{distanceById(dossier.distance).label} · {distanceById(dossier.distance).nom}</div>
+              <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-brand-500">■ Dossier {dossier.reference}</div>
+            </>
+          ) : (
+            <>
+              <div className="titre text-[14px] text-craie">5 · 10 · 21,1 km</div>
+              <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-brand-500">Vague {vagueCourante().nom} ouverte →</div>
+            </>
+          )}
         </div>
       </div>
     </button>
   )
 
-  const RunMatchBanner = () => (
-    <button
-      onClick={openRunMatch}
-      className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-left text-white shadow-float tap"
-    >
-      <div className="absolute inset-0 bg-aurora" />
-      <div className="relative flex items-center gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/15 text-white ring-1 ring-white/20">
-          <Icon name="activity" className="h-5 w-5" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">RunMatch · binôme de course</p>
-          <p className="mt-0.5 text-[14px] font-extrabold leading-snug">
-            {topRun ? `Cours avec ${topRun.name.split(' ')[0]} cette semaine` : 'Trouve ton binôme de run'}
-          </p>
-          <p className="mt-0.5 text-[12px] leading-snug text-white/65">Même allure, et un vrai intérêt business. La sortie devient le RDV.</p>
-        </div>
-        <Icon name="chevronRight" className="h-5 w-5 shrink-0 text-white/60" />
+  /* Le binôme : la sortie à deux. */
+  const BinomeBanner = () => (
+    <button onClick={openRunMatch} className="flex w-full items-center gap-3 border border-line p-4 text-left tap">
+      <span className="ico plein"><Icon name="activity" className="h-4 w-4" /></span>
+      <div className="min-w-0 flex-1">
+        <p className="font-mono text-[9.5px] font-bold uppercase tracking-mono text-brand-500">■ Binôme · la sortie à deux</p>
+        <p className="titre mt-0.5 text-[14px]">
+          {topRun ? `Cours avec ${topRun.name.split(' ')[0]} cette semaine` : 'Trouve ton binôme de sortie'}
+        </p>
+        <p className="mt-0.5 text-[12px] leading-snug text-fg-muted">Même allure, une vraie raison de se parler. La sortie devient le rendez-vous.</p>
       </div>
+      <span className="font-mono text-fg-faint" aria-hidden>→</span>
     </button>
   )
+
   const pct = Math.round((CHALLENGE.current / CHALLENGE.total) * 100)
   const km = CURRENT_USER.stats.km
   const season = seasonProgress(km)
@@ -80,38 +72,39 @@ export default function Courir() {
   const weekKm = week.km.reduce((t, k) => t + k, 0)
   const weekMax = Math.max(...week.km, 1)
 
+  /* Cette semaine : gros chiffre fin, labels mono, sept barres encre. */
   const WeekSummary = () => (
-    <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
+    <section className="border border-line p-4">
       <div className="flex items-end justify-between">
         <div>
-          <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-fg-faint">Cette semaine</div>
-          <div className="mt-0.5 flex items-baseline gap-1">
-            <span className="text-[26px] font-bold leading-none tracking-tight text-fg tabular-nums">{weekKm.toFixed(1)}</span>
-            <span className="text-sm font-semibold text-fg-muted">km</span>
+          <div className="font-mono text-[9px] uppercase tracking-label text-fg-faint">Cette semaine</div>
+          <div className="mt-1 flex items-baseline gap-1">
+            <span className="display text-[30px] leading-none text-fg tabular-nums">{weekKm.toFixed(1)}</span>
+            <span className="font-mono text-[10px] font-bold uppercase tracking-mono text-fg-muted">km</span>
           </div>
         </div>
         <div className="flex gap-5 text-right">
           <div>
-            <div className="text-[15px] font-bold leading-none text-fg tabular-nums">{week.runs}</div>
-            <div className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-fg-faint">sorties</div>
+            <div className="display text-[18px] leading-none text-fg tabular-nums">{week.runs}</div>
+            <div className="mt-1 font-mono text-[9px] uppercase tracking-label text-fg-faint">sorties</div>
           </div>
           <div>
-            <div className="text-[15px] font-bold leading-none text-fg tabular-nums">{week.time.slice(0, 4)}</div>
-            <div className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-fg-faint">temps</div>
+            <div className="display text-[18px] leading-none text-fg tabular-nums">{week.time.slice(0, 4)}</div>
+            <div className="mt-1 font-mono text-[9px] uppercase tracking-label text-fg-faint">temps</div>
           </div>
         </div>
       </div>
-      <div className="mt-3 flex items-end justify-between gap-1.5" style={{ height: 66 }}>
+      <div className="mt-3 flex items-stretch justify-between gap-1.5 border-t border-line pt-3" style={{ height: 78 }}>
         {week.km.map((k, i) => (
           <div key={i} className="flex flex-1 flex-col items-center gap-1">
             <div className="flex w-full flex-1 items-end">
               <div
-                className={`w-full rounded-md transition-all ${k > 0 ? 'bg-brand-500' : 'bg-surface-2'}`}
-                style={{ height: k > 0 ? `${22 + (k / weekMax) * 78}%` : '6px' }}
+                className={`w-full transition-all ${k > 0 ? 'bg-fg' : 'bg-surface-2'}`}
+                style={{ height: k > 0 ? `${22 + (k / weekMax) * 78}%` : '4px' }}
                 title={k > 0 ? `${week.days[i]} · ${k.toFixed(1)} km` : 'Repos'}
               />
             </div>
-            <span className="text-[10px] font-semibold text-fg-faint">{week.days[i]}</span>
+            <span className="font-mono text-[9px] font-bold text-fg-faint">{week.days[i]}</span>
           </div>
         ))}
       </div>
@@ -121,20 +114,18 @@ export default function Courir() {
   return (
     <div className="animate-screenIn flex h-full flex-col">
       <div className="px-5 pb-1 pt-4">
-        <h1 className="text-2xl font-semibold text-fg">Courir</h1>
-        <p className="mt-0.5 text-sm text-fg-muted">Cours, rencontre, avance.</p>
+        <span className="tmark"><b>T–</b> / AVANT LA LIGNE</span>
+        <h1 className="mt-2 text-[30px]">Courir, <span className="creuse">rencontrer.</span></h1>
 
-        <div className="mt-4 flex gap-1 rounded-2xl bg-surface-2 p-1">
+        <div className="mt-4 grid grid-cols-2 border border-line">
           {[
-            { id: 'activites', label: 'Activités' },
-            { id: 'sorties', label: 'Sorties' },
+            { id: 'activites', label: 'Mes sorties' },
+            { id: 'sorties', label: 'Sorties du réseau' },
           ].map((s) => (
             <button
               key={s.id}
               onClick={() => setView(s.id)}
-              className={`flex-1 rounded-xl py-2 text-sm font-semibold transition tap ${
-                view === s.id ? 'bg-surface-3 text-fg shadow-card' : 'text-fg-muted'
-              }`}
+              className={`py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono transition tap ${view === s.id ? 'bg-fg text-canvas' : 'text-fg-muted'}`}
             >
               {s.label}
             </button>
@@ -146,35 +137,27 @@ export default function Courir() {
         <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar px-5 pb-6 pt-3">
           <WeekSummary />
           <OfficialRaceBanner />
-          <RunMatchBanner />
+          <BinomeBanner />
           {integrations.strava ? (
-            <div className="flex items-center gap-2 rounded-2xl bg-success-light px-3.5 py-2.5 text-[12px] font-semibold text-success-dark">
-              <Icon name="check" className="h-4 w-4 shrink-0" /> Tes courses sont synchronisées via Strava
+            <div className="flex items-center gap-2.5 border border-line px-3.5 py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono text-fg">
+              <span className="h-1.5 w-1.5 bg-brand-500" /> Tes sorties arrivent depuis Strava
             </div>
           ) : (
-            <button
-              onClick={openIntegrations}
-              className="flex w-full items-center gap-3 rounded-2xl border border-line bg-surface p-3 text-left shadow-soft tap"
-            >
+            <button onClick={openIntegrations} className="flex w-full items-center gap-3 border border-line p-3 text-left tap">
               <ServiceLogo service={serviceById('strava')} />
               <div className="min-w-0 flex-1">
-                <div className="text-sm font-semibold text-fg">Connecter Strava</div>
-                <div className="truncate text-xs text-fg-faint">Importe tes courses automatiquement</div>
+                <div className="text-sm font-medium text-fg">Importer tes sorties</div>
+                <div className="truncate text-xs text-fg-faint">Depuis Strava, sans rien saisir</div>
               </div>
-              <Icon name="chevronRight" className="h-5 w-5 shrink-0 text-fg-faint" />
+              <span className="font-mono text-fg-faint" aria-hidden>→</span>
             </button>
           )}
 
-          <button
-            onClick={() => showToast('Enregistrement bientôt disponible')}
-            className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-line-strong px-3 py-3 text-left tap hover:bg-black/[0.04]"
-          >
-            <span className="grid h-10 w-10 place-items-center rounded-full bg-brand-50 text-brand-600">
-              <Icon name="activity" className="h-5 w-5" />
-            </span>
+          <button onClick={() => showToast('Bientôt : noter une sortie à la main')} className="flex w-full items-center gap-3 border border-dashed border-line-strong px-3 py-3 text-left tap hover:bg-surface-2">
+            <span className="ico"><Icon name="activity" className="h-4 w-4" /></span>
             <div>
-              <div className="text-sm font-semibold text-fg">Enregistrer une activité</div>
-              <div className="text-xs text-fg-faint">Ta sortie devient un post partageable</div>
+              <div className="text-sm font-medium text-fg">Noter une sortie</div>
+              <div className="text-xs text-fg-faint">Avec qui as-tu couru ? Ta sortie devient une rencontre</div>
             </div>
           </button>
 
@@ -192,103 +175,84 @@ export default function Courir() {
       ) : (
         <div className="flex-1 space-y-5 overflow-y-auto no-scrollbar px-5 pb-6 pt-3">
           <OfficialRaceBanner />
-          <RunMatchBanner />
-          {/* Défi + classement */}
-          <section className="overflow-hidden rounded-3xl surface-hero text-white shadow-float">
-            <div className="relative overflow-hidden p-5">
-              <div className="absolute inset-0 bg-hero-glow" />
-              <div className="relative flex items-center gap-4">
-                <ProgressRing value={pct} size={84} stroke={9} color="#FFFFFF" track="rgba(255,255,255,0.14)">
-                  <div className="text-xl font-semibold leading-none">{pct}%</div>
-                </ProgressRing>
-                <div className="flex-1">
-                  <div className="flex items-center gap-1.5 text-sm font-semibold">
-                    <Icon name="flame" className="h-4 w-4 text-white" filled /> {CHALLENGE.title}
-                  </div>
-                  <div className="text-2xl font-semibold">{CHALLENGE.subtitle}</div>
-                  <div className="mt-1 text-[13px] text-white/65">
-                    {CHALLENGE.current} km · plus que {CHALLENGE.total - CHALLENGE.current} km en {CHALLENGE.daysLeft} jours
-                  </div>
+          <BinomeBanner />
+
+          {/* Kilomètres investis ce mois + qui court le plus avec les autres */}
+          <section className="surface-hero">
+            <div className="flex items-center gap-4 p-5">
+              <ProgressRing value={pct} size={84} stroke={8} color="#FF4400" track="rgba(239,235,226,0.16)">
+                <div className="display text-[22px] leading-none text-craie">{pct}%</div>
+              </ProgressRing>
+              <div className="min-w-0 flex-1">
+                <span className="tmark"><b>T+</b> / {CHALLENGE.title}</span>
+                <div className="titre mt-1.5 text-[16px] text-craie">{CHALLENGE.subtitle}</div>
+                <div className="mt-1 text-[12.5px] t-muted">
+                  {CHALLENGE.current} km investis · plus que {CHALLENGE.total - CHALLENGE.current} km en {CHALLENGE.daysLeft} jours
                 </div>
               </div>
             </div>
 
-            <div className="border-t border-white/10 px-5 py-4">
-              <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-white/55">
-                <Icon name="trophy" className="h-3.5 w-3.5" /> Classement
-              </div>
-              <div className="space-y-1">
+            <div className="border-t border-line-craie px-5 py-4">
+              <div className="mb-2 font-mono text-[9.5px] uppercase tracking-label t-beton">Qui court le plus avec les autres</div>
+              <div className="border-t border-line-craie">
                 {LEADERBOARD.map((p, i) => (
-                  <div
-                    key={p.name}
-                    className={`flex items-center gap-3 rounded-xl px-2 py-1.5 ${p.me ? 'bg-white/15 ring-1 ring-white/25' : ''}`}
-                  >
-                    <span className={`w-5 text-center text-sm font-bold ${i < 3 ? 'text-white' : 'text-white/45'}`}>{i + 1}</span>
+                  <div key={p.name} className={`flex items-center gap-3 border-b border-line-craie px-1 py-2 ${p.me ? 'bg-craie/10' : ''}`}>
+                    <span className={`w-6 font-mono text-[11px] font-bold tabular-nums ${i < 3 ? 'text-brand-500' : 't-beton'}`}>0{i + 1}</span>
                     <Avatar name={p.name} size="xs" />
-                    <span className={`flex-1 truncate text-sm ${p.me ? 'font-semibold text-white' : 'text-white/80'}`}>
-                      {p.name} {p.me && <span className="font-bold text-white">· toi</span>}
+                    <span className={`flex-1 truncate text-sm ${p.me ? 'font-medium text-craie' : 't-muted'}`}>
+                      {p.name} {p.me && <span className="font-mono text-[9.5px] uppercase tracking-mono text-brand-500">· toi</span>}
                     </span>
-                    <span className="text-sm font-semibold text-white/90">{p.km} km</span>
+                    <span className="font-mono text-[11px] font-bold text-craie tabular-nums">{p.km} km</span>
                   </div>
                 ))}
               </div>
             </div>
           </section>
 
-          {/* Saison — cours, débloque */}
-          <section className="rounded-3xl border border-line bg-surface p-5 shadow-soft">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="grid h-9 w-9 place-items-center rounded-xl bg-gold/15 text-gold-dark ring-1 ring-gold/25">
-                  <Icon name="trophy" className="h-4 w-4" />
-                </span>
-                <div>
-                  <div className="text-sm font-semibold text-fg">{SEASON.label}</div>
-                  <div className="text-[11px] text-fg-muted">Cours, débloque · fin dans {SEASON.endsIn}</div>
-                </div>
+          {/* Kilomètres investis — les km courus avec quelqu'un ouvrent des rencontres */}
+          <section className="border border-line p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="tmark">{SEASON.label}</h2>
+                <div className="mt-1 text-[12px] text-fg-muted">Les kilomètres courus avec quelqu'un ouvrent des rencontres.</div>
               </div>
-              <span className="rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">Niveau {season.level}</span>
+              <span className="tag on shrink-0">Palier {season.level}</span>
             </div>
 
             <div className="mt-3 flex items-center gap-3">
-              <ProgressBar value={season.pct} total={100} className="bg-surface-2" barClassName="bg-gradient-to-r from-brand-500 to-gold" />
-              <span className="shrink-0 text-[12px] font-semibold tabular-nums text-fg">{km} km</span>
+              <ProgressBar value={season.pct} total={100} className="bg-surface-2" barClassName="bg-brand-500" />
+              <span className="shrink-0 font-mono text-[11px] font-bold tabular-nums text-fg">{km} km</span>
             </div>
             <p className="mt-1.5 text-[12px] text-fg-muted">
               {season.next
-                ? <>Plus que <span className="font-semibold text-fg">{season.remaining} km</span> pour « {season.next.title} ».</>
-                : 'Tous les paliers débloqués'}
+                ? <>Plus que <b className="font-medium text-fg">{season.remaining} km</b> avec quelqu'un pour « {season.next.title} ».</>
+                : `Tous les paliers sont ouverts · fin dans ${SEASON.endsIn}`}
             </p>
 
-            <div className="mt-4 space-y-2">
+            <div className="mt-4 border-t border-line">
               {TIERS.map((t) => {
                 const unlocked = km >= t.km
                 const isNext = season.next?.km === t.km
                 return (
-                  <div
-                    key={t.km}
-                    className={`flex items-center gap-3 rounded-2xl p-2.5 ${
-                      isNext ? 'bg-brand-light/50 ring-1 ring-brand-200' : unlocked ? 'bg-surface-soft' : ''
-                    }`}
-                  >
-                    <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${unlocked ? 'bg-success-light text-success-dark' : 'bg-surface-2 text-fg-faint'}`}>
+                  <div key={t.km} className={`flex items-center gap-3 border-b border-line py-2.5 ${isNext ? 'bg-surface-2 px-2' : ''}`}>
+                    <span className={`ico ${unlocked ? 'plein' : ''}`}>
                       <Icon name={unlocked ? 'checkCircle' : 'lock'} className="h-4 w-4" />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className={`text-sm font-semibold ${unlocked ? 'text-fg' : 'text-fg-soft'}`}>{t.title}</span>
-                        <span className="text-[11px] font-semibold tabular-nums text-fg-faint">{t.km} km</span>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-sm font-medium ${unlocked ? 'text-fg' : 'text-fg-soft'}`}>{t.title}</span>
+                        <span className="font-mono text-[9.5px] font-bold tabular-nums text-fg-faint">{t.km} KM</span>
                       </div>
-                      <div className="truncate text-[12px] text-fg-muted">{t.reward}</div>
+                      <div className="truncate text-[12px] text-fg-muted">{unlocked ? 'Ouvert · ' : 'Ouvre · '}{t.reward}</div>
                     </div>
-                    {isNext && <span className="shrink-0 rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">À venir</span>}
+                    {isNext && <span className="tag impact shrink-0">Prochain</span>}
                   </div>
                 )
               })}
             </div>
           </section>
 
-          <SectionTitle>Sorties à venir</SectionTitle>
+          <SectionTitle t="T+">LES SORTIES DU RÉSEAU</SectionTitle>
 
           <div className="space-y-3">
             {EVENTS.map((a) => {
@@ -296,41 +260,36 @@ export default function Courir() {
               const isJoined = joined[a.id]
               const d = formatEventDate(a.date)
               return (
-                <article key={a.id} className="overflow-hidden rounded-3xl border border-line bg-surface shadow-soft">
+                <article key={a.id} className="border border-line">
                   <button onClick={() => openEvent(a.id)} className="flex w-full items-stretch text-left tap">
-                    <div className="flex w-16 shrink-0 flex-col items-center justify-center bg-surface-soft py-3 text-center">
-                      <span className="text-[11px] font-semibold uppercase text-brand-600">{a.day.slice(0, 3)}</span>
-                      <span className="text-lg font-semibold leading-none text-fg">{a.time.slice(0, 2)}</span>
-                      <span className="text-[11px] text-fg-faint">{a.time.slice(2)}</span>
+                    <div className="flex w-16 shrink-0 flex-col items-center justify-center border-r border-line bg-surface-2 py-3 text-center">
+                      <span className="font-mono text-[9.5px] font-bold uppercase tracking-mono text-brand-500">{a.day.slice(0, 3)}</span>
+                      <span className="display mt-0.5 text-[22px] leading-none text-fg">{a.time.slice(0, 2)}</span>
+                      <span className="font-mono text-[9.5px] text-fg-faint">{a.time.slice(2)}</span>
                     </div>
                     <div className="min-w-0 flex-1 p-4">
                       <div className="flex items-start justify-between gap-2">
-                        <h3 className="font-semibold leading-tight text-fg">{a.title}</h3>
-                        <span className="mt-0.5 shrink-0 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-semibold text-brand-700">{d.relative}</span>
+                        <h3 className="titre text-[14px] text-fg">{a.title}</h3>
+                        <span className="tag shrink-0">{d.relative}</span>
                       </div>
-                      <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[12px] text-fg-muted">
-                        <span className="inline-flex items-center gap-1"><Icon name="route" className="h-3.5 w-3.5" /> {a.distance}</span>
-                        <span className="text-fg-faint">·</span>
-                        <span>{a.pace}</span>
-                        <span className="text-fg-faint">·</span>
-                        <span>{a.level}</span>
+                      <div className="mt-1.5 font-mono text-[9.5px] uppercase tracking-mono text-fg-muted">
+                        {a.distance} · {a.pace} · {a.level}
                       </div>
-                      <div className="mt-0.5 flex items-center gap-1 text-[12px] text-fg-muted">
-                        <Icon name="mapPin" className="h-3.5 w-3.5" /> {a.place}
-                        {a.tag && <span className="ml-1 font-semibold text-brand-600">{a.tag}</span>}
+                      <div className="mt-1 text-[12.5px] text-fg-muted">
+                        {a.place}
+                        {a.tag && <span className="ml-1 font-mono text-[9.5px] font-bold uppercase tracking-mono text-brand-500">{a.tag}</span>}
                       </div>
+                      <div className="mt-0.5 text-[12px] text-fg-faint">Hôte · {a.organizer}</div>
                     </div>
-                    <Icon name="chevronRight" className="mr-3 h-5 w-5 shrink-0 self-center text-fg-faint" />
                   </button>
 
-                  <div className="flex items-center justify-between px-4 pb-3">
-                    <AvatarStack names={a.attendees} total={a.participants} onMore={() => showToast(`${a.participants} inscrits`)} />
+                  <div className="flex items-center justify-between border-t border-line px-4 py-2.5">
+                    <AvatarStack names={a.attendees} total={a.participants} onMore={() => showToast(`${a.participants} inscrit·es`)} />
                     <button
                       onClick={() => toggleEventKudos(a.id)}
                       aria-pressed={k.liked}
-                      className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold tap ${
-                        k.liked ? 'bg-brand-500 text-white shadow-brand' : 'bg-surface-2 text-fg-muted'
-                      }`}
+                      aria-label="Bien couru"
+                      className={`flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-mono tap ${k.liked ? 'text-brand-500' : 'text-fg-muted'}`}
                     >
                       <Icon name="thumbsUp" className="h-4 w-4" filled={k.liked} />
                       <span className="tabular-nums">{k.count}</span>
@@ -338,13 +297,8 @@ export default function Courir() {
                   </div>
 
                   <div className="px-4 pb-4">
-                    <button
-                      onClick={() => toggleJoin(a.id)}
-                      className={`w-full rounded-full py-3 text-sm font-semibold tap ${
-                        isJoined ? 'bg-success text-white' : 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-brand hover:to-brand-700'
-                      }`}
-                    >
-                      {isJoined ? 'Inscrit' : 'Je participe'}
+                    <button onClick={() => toggleJoin(a.id)} className={`w-full justify-between ${isJoined ? 'btn btn-encre' : 'btn btn-impact'}`}>
+                      <span>{isJoined ? "Inscrit·e · on t'attend au café" : "J'y serai"}</span><span className="arr">→</span>
                     </button>
                   </div>
                 </article>

@@ -1,288 +1,199 @@
-/* La course officielle ROI — « ROI Business Run · La Défense ».
-   L'évènement signature de l'app : une course de networking haut de gamme, au
-   pied de Paris La Défense Arena, exclusivement pour les dirigeant·es, fondateur·rices
-   et top managers (du CAC 40 à la TPE). Données fictives — aucun paiement réel. */
+/* ==========================================================================
+   R.O.I — RUN ON INVESTMENT · L'édition
+   La course annuelle : Édition 01, Paris La Défense, septembre 2027. Une
+   course le matin (5, 10 ou 21,1 km), un après-midi entier dans l'Arena.
+   Ces données sont celles du site (runoninvest.fr) : distances, vagues,
+   formules, programme. L'inscription se fait SUR LE SITE — l'app lit le
+   dossier, elle ne le crée jamais (voir lib/dossier.js).
+   ========================================================================== */
+
+/* Le site : la source de vérité de l'inscription. */
+export const SITE_URL = 'https://runoninvest.fr'
+export const APP_URL = 'https://roi-mvp.up.railway.app'
+
+export function siteUrl(path = '', params) {
+  const u = new URL(path.replace(/^\//, ''), SITE_URL + '/')
+  if (params) Object.entries(params).forEach(([k, v]) => v != null && v !== '' && u.searchParams.set(k, v))
+  return u.toString()
+}
+
+export const EDITION = {
+  numero: '01',
+  label: 'Édition 01',
+  nom: 'R.O.I — Run On Investment',
+  lieu: 'Paris La Défense',
+  arrivee: 'Paris La Défense Arena',
+  depart: 'Grande Arche',
+  // Le site annonce « septembre 2027 » sans jour ferme : on compte les jours
+  // jusqu'au premier du mois, et on l'affiche comme un mois, pas une date.
+  mois: 'Septembre 2027',
+  moisCourt: 'Sept. 2027',
+  date: '2027-09-01',
+  jauge: '10 000 décideurs attendus',
+  accroche: "L'impact après la ligne d'arrivée.",
+  manifeste: 'On ne se rencontre jamais aussi bien qu’essoufflé.',
+}
+
+/* Jours avant la ligne (T–). */
+export function daysToRace(now = new Date()) {
+  const d = new Date(`${EDITION.date}T00:00:00`)
+  const today = new Date(now)
+  today.setHours(0, 0, 0, 0)
+  return Math.max(0, Math.round((d - today) / 86400000))
+}
 
 /* ---------------------------------------------------------------- parcours
-   Boucles tracées autour de Paris La Défense Arena (départ & arrivée).
-   Coordonnées plausibles le long de l'Esplanade, de la Grande Arche, du
-   boulevard circulaire et des quais de Seine (Courbevoie / Neuilly). */
+   Boucles tracées autour de Paris La Défense Arena (départ & arrivée). */
 export const LOOP_10K = [
-  [48.8957, 2.2286], // Paris La Défense Arena — départ / arrivée
-  [48.8946, 2.2320],
-  [48.8932, 2.2352], // Grande Arche
-  [48.8922, 2.2388], // CNIT · La Coupole
-  [48.8908, 2.2425],
-  [48.8896, 2.2458], // Pont de Neuilly
-  [48.8924, 2.2486],
-  [48.8958, 2.2492], // Quais de Seine · Courbevoie
-  [48.8988, 2.2470],
-  [48.9004, 2.2418],
-  [48.9006, 2.2360], // Boulevard circulaire nord
-  [48.8996, 2.2308],
-  [48.8978, 2.2278],
-  [48.8964, 2.2272],
-  [48.8957, 2.2286], // retour Arena
+  [48.8957, 2.2286], [48.8946, 2.2320], [48.8932, 2.2352], [48.8922, 2.2388],
+  [48.8908, 2.2425], [48.8896, 2.2458], [48.8924, 2.2486], [48.8958, 2.2492],
+  [48.8988, 2.2470], [48.9004, 2.2418], [48.9006, 2.2360], [48.8996, 2.2308],
+  [48.8978, 2.2278], [48.8964, 2.2272], [48.8957, 2.2286],
 ]
-
 export const LOOP_5K = [
-  [48.8957, 2.2286], // Arena — départ / arrivée
-  [48.8948, 2.2316],
-  [48.8936, 2.2346], // Esplanade
-  [48.8926, 2.2372], // Grande Arche
-  [48.8938, 2.2388],
-  [48.8954, 2.2356],
-  [48.8966, 2.2316],
-  [48.8957, 2.2286], // retour Arena
+  [48.8957, 2.2286], [48.8948, 2.2316], [48.8936, 2.2346], [48.8926, 2.2372],
+  [48.8938, 2.2388], [48.8954, 2.2356], [48.8966, 2.2316], [48.8957, 2.2286],
 ]
 
-/* ----------------------------------------------------------------- formats
-   Trois distances, toutes au départ et à l'arrivée de l'Arena. */
+/* ----------------------------------------------------------------- distances
+   Trois distances, un seul dossard : même prix, même accès. Les clés sont
+   celles du site ('5' · '10' · '21'), les mots aussi (section T+04 et
+   formulaire d'inscription). Le site n'annonce ni dénivelé ni temps : on
+   n'en invente pas. Le tracé sur la carte est indicatif. */
 export const DISTANCES = [
   {
-    id: '5k',
-    label: '5 km',
-    name: 'Le Sprint des décideurs',
-    loops: 'Une petite boucle',
-    loopsShort: '1 petite boucle',
-    route: LOOP_5K,
-    elevation: '+18 m',
-    duration: '20 à 35 min',
-    tone: 'emerald',
-    spots: 3000,
-    taken: 2120,
-    tagline: 'Court, intense, redoutablement efficace pour briser la glace.',
-    description:
-      "La petite boucle de l'Esplanade : un format vif et accessible, idéal pour une première fois ou pour pitcher l'esprit léger. On part de l'Arena, on file vers la Grande Arche et on revient — 5 km pour rencontrer sans s'épuiser.",
+    id: '5', km: '5', label: '5 km', nom: 'Le Sprint',
+    pourquoi: 'Pour se lancer, ou garder du souffle pour l’après-midi.',
+    trace: 'Boucle Esplanade', route: LOOP_5K,
   },
   {
-    id: '10k',
-    label: '10 km',
-    name: 'La distance reine',
-    loops: 'Une grande boucle',
-    loopsShort: '1 grande boucle',
-    route: LOOP_10K,
-    elevation: '+42 m',
-    duration: '40 min à 1 h 10',
-    tone: 'brand',
-    popular: true,
-    spots: 5000,
-    taken: 4380,
-    tagline: 'Le format networking par excellence : assez long pour conclure.',
-    description:
-      "La grande boucle : Esplanade, Grande Arche, CNIT, pont de Neuilly puis les quais de Seine avant de remonter par le boulevard circulaire jusqu'à l'Arena. 10 km à l'allure conversation — le temps idéal pour faire connaissance, pitcher et caler un prochain rendez-vous.",
+    id: '10', km: '10', label: '10 km', nom: 'La Référence', central: true,
+    pourquoi: 'Un vrai effort, de l’énergie pour la suite.',
+    trace: 'Entre les tours', route: LOOP_10K,
   },
   {
-    id: 'semi',
-    label: 'Semi · 21,1 km',
-    name: 'Le défi des dirigeants',
-    loops: 'Deux grandes boucles',
-    loopsShort: '2 grandes boucles',
-    route: LOOP_10K,
-    elevation: '+84 m',
-    duration: '1 h 25 à 2 h 15',
-    tone: 'gold',
-    spots: 2000,
-    taken: 1290,
-    tagline: 'Le terrain des relations qui comptent vraiment.',
-    description:
-      "Deux fois la grande boucle, soit 21,1 km au cœur de La Défense. Le format des dirigeant·es qui veulent aller au bout — et créer, sur la durée de l'effort, le genre de lien qu'aucun déjeuner d'affaires ne reproduit. Ravitaillements premium à chaque passage à l'Arena.",
+    id: '21', km: '21,1', label: '21,1 km', nom: 'Le Grand Format',
+    pourquoi: 'Le semi de La Défense, mesuré.',
+    trace: '21,0975 km · distance officielle', route: LOOP_10K,
   },
 ]
+/* Ce que dit chaque ligne de distance sur le site, en pied. */
+export const ACCES_RESEAU = 'Accès réseau ■ total'
+export const distanceById = (id) => DISTANCES.find((d) => d.id === String(id)) || DISTANCES[1]
 
-/* Places & jauge de remplissage (scarcité). */
-export const TOTAL_SPOTS = DISTANCES.reduce((t, d) => t + d.spots, 0)
-export const TOTAL_TAKEN = DISTANCES.reduce((t, d) => t + d.taken, 0)
-export function spotsInfo(d) {
-  const left = d.spots - d.taken
-  const pct = Math.round((d.taken / d.spots) * 100)
-  return { left, pct, almostFull: pct >= 85, full: left <= 0 }
+/* -------------------------------------------------------------------- vagues
+   Trois vagues, un tarif qui monte. Les dates vivent aussi dans server.js et
+   index.html côté site — à garder alignées. */
+export const VAGUES = [
+  { code: 'early', nom: 'Early Bird', prix: 350, fin: '2026-11-30T23:59:59+01:00', periode: 'Jusqu’au 30 novembre 2026' },
+  { code: 'regulier', nom: 'Régulier', prix: 400, fin: '2027-01-31T23:59:59+01:00', periode: 'Décembre 2026 → fin janvier 2027' },
+  { code: 'last', nom: 'Last Call', prix: 500, fin: null, periode: 'Février 2027 → jour J' },
+]
+export function vagueCourante(now = Date.now()) {
+  return VAGUES.find((v) => !v.fin || now <= Date.parse(v.fin)) || VAGUES[VAGUES.length - 1]
 }
 
-/* Coureur·ses déjà engagé·es mis en avant (preuve sociale). */
-export const FEATURED_RUNNERS = ['Sarah Khalil', 'Marc Dubois', 'Nadia Cherif', 'Léa Fontaine', 'Yanis Benali']
-
-export const distanceById = (id) => DISTANCES.find((d) => d.id === id) || DISTANCES[1]
-
-/* -------------------------------------------------------------------- SAS
-   Sas de départ par objectif d'allure — du plus rapide au plus « networking ». */
-export const SAS = [
+/* ------------------------------------------------------------------ formules
+   Aucune formule n'achète une meilleure course : elle change quand le réseau
+   commence, et combien de portes s'ouvrent après. */
+export const FORMULES = [
   {
-    id: 'elite',
-    label: 'SAS Élite',
-    pace: '< 4:00 /km',
-    color: 'gold',
-    note: 'Sub-élite & compétiteurs. Départ en tête de peloton.',
+    id: 'dossard', n: '01', nom: 'Dossard', pour: 'La journée entière', prix: 'Tarif de la vague', etat: 'Inclus',
+    base: 'Early Bird, Régulier ou Last Call : les trois vagues. Même prix quelle que soit la distance.',
+    points: ['Course chronométrée, t-shirt R.O.I, médaille finisher', 'L’arrivée dans l’Arena et le déjeuner des finishers', 'Tout l’après-midi : rencontres de huit minutes, conversations debout, soirée', 'Ton profil dans l’annuaire des participants, le jour J'],
   },
   {
-    id: 'perf',
-    label: 'SAS Performance',
-    pace: '4:00 – 5:00 /km',
-    color: 'brand',
-    note: 'Coureur·ses réguliers qui visent un chrono.',
+    id: 'premium', n: '02', nom: 'Premium', pour: 'Le réseau commence avant la ligne', prix: 'Sur demande', etat: 'Sur demande', mise: true,
+    base: 'Se demande depuis ton espace, à tout moment jusqu’au jour J. Les conditions te sont précisées à la validation.',
+    herite: 'Tout le Dossard, et',
+    points: ['L’annuaire ouvert dès validation : tu sais qui court, des mois avant le départ', 'Six rencontres réservées à l’avance', 'Le Salon de l’Arena, vestiaire et douches sans attente, sas de départ dédié', 'Le dîner des fondateurs, le soir'],
   },
   {
-    id: 'tempo',
-    label: 'SAS Tempo',
-    pace: '5:00 – 6:00 /km',
-    color: 'emerald',
-    note: 'Le bon équilibre effort / conversation.',
-  },
-  {
-    id: 'business',
-    label: 'SAS Business',
-    pace: '> 6:00 /km',
-    color: 'indigo',
-    popular: true,
-    note: 'Allure conversation assumée — le sas où l’on pitche en courant.',
+    id: 'cercle', n: '03', nom: 'Cercle', pour: 'Quarante places', prix: 'Sur cooptation', etat: 'Sur cooptation',
+    base: 'Sur demande depuis ton espace, ou sur cooptation de deux membres. Les conditions te sont précisées à la validation.',
+    herite: 'Tout le Premium, et',
+    points: ['La table des investisseurs au déjeuner, un rendez-vous garanti avec les fonds présents', 'Trois dossards invités pour ton équipe ou tes associés', 'Ta place au Cercle, reconduite les éditions suivantes'],
   },
 ]
+export const formuleById = (id) => FORMULES.find((f) => f.id === id) || FORMULES[0]
 
-export const sasById = (id) => SAS.find((s) => s.id === id)
-
-/* ------------------------------------------------------------------- prix
-   Ticket d'entrée à 500 € HT. Tarif dégressif pour les inscriptions de groupe
-   (équipes & comités de direction). */
-export const PRICE_HT = 500
-export const VAT_RATE = 0.2
-
-export const GROUP_TIERS = [
-  { min: 10, off: 0.15, label: '10 dossards et +' },
-  { min: 5, off: 0.1, label: '5 à 9 dossards' },
-  { min: 3, off: 0.05, label: '3 à 4 dossards' },
-]
-
-export function tierFor(qty) {
-  return GROUP_TIERS.find((t) => qty >= t.min) || null
+/* Étiquette du verso du dossard selon la formule (comme sur le site). */
+export function dossardActif(formule) {
+  return formule === 'premium' ? '■ Premium' : formule === 'cercle' ? '■ Cercle' : '■ Accès réseau actif'
 }
 
-/* Bons de réduction (vouchers) acceptés — codes partenaires / parrainage. */
-export const VOUCHERS = {
-  ROI100: { off: 100, label: '−100 € · code partenaire' },
-  TPE2026: { off: 75, label: '−75 € · offre TPE & indépendants' },
-  RUNCEO: { off: 50, label: '−50 € · parrainage dirigeant' },
+/* -------------------------------------------------- les étapes du dossier
+   demande → justificatif → valide → paye — l'état vit sur le site. */
+export const ETAPES = [
+  { id: 'demande', n: '01', titre: 'Demande reçue', texte: 'Ton compte est créé, ta vague et ta distance sont notées. Le tarif est gardé.' },
+  { id: 'justificatif', n: '02', titre: 'Justificatif', texte: 'Kbis, avis SIRENE ou cooptation : envoie ta pièce en un mail, depuis ton espace.' },
+  { id: 'valide', n: '03', titre: 'Validation', texte: 'Réponse sous 48 h ouvrées. S’il manque quelque chose, on te dit précisément quoi.' },
+  { id: 'paye', n: '04', titre: 'Paiement', texte: 'Après validation seulement. Le lien de paiement arrive par mail, ton dossard devient définitif.' },
+]
+export const ETAT_INDEX = { demande: 1, justificatif: 2, valide: 3, paye: 4 }
+
+/* ---------------------------------------------------- la journée : T– / T+ */
+export const AVANT = {
+  titre: 'La course',
+  lead: 'Village au pied de la Grande Arche, départs par vagues d’allure, parcours fermé entre les tours.',
+  points: ['5, 10 ou 21,1 km — départs par vagues d’allure, du rythme de conversation au chrono', 'Dossard à puce, chronométrage et classements officiels', 'Ravitaillements, signaleurs et secours sur tout le tracé', 'Village : retrait des dossards, consignes, échauffement'],
+}
+export const APRES = {
+  titre: 'Le réseau',
+  lead: 'La ligne est dans Paris La Défense Arena. On reprend son souffle, et la journée continue, jusqu’au soir.',
+  points: ['Arrivée scénarisée dans l’Arena, café des finishers', 'Ton dossard porte ton nom, ta fonction, ton entreprise', 'Déjeuner par tables, rencontres courtes, conversations debout', 'Dîner des fondateurs et soirée, jusqu’au soir'],
 }
 
-/* Calcule le récapitulatif tarifaire (en € HT puis TTC). `voucherOff` en €. */
-export function priceBreakdown(qty = 1, voucherOff = 0) {
-  const tier = tierFor(qty)
-  const unit = PRICE_HT
-  const gross = unit * qty
-  const tierOff = tier ? Math.round(gross * tier.off) : 0
-  const subHt = Math.max(0, gross - tierOff - voucherOff)
-  const vat = Math.round(subHt * VAT_RATE)
-  return { unit, qty, gross, tier, tierOff, voucherOff, subHt, vat, ttc: subHt + vat }
+/* Le programme de l'après-midi : T+ en tête de ligne. Indicatif. */
+export const PROGRAMME = [
+  { t: 'T+00', h: 'Dès 11 h', quoi: 'L’arrivée', texte: 'La ligne est dans l’Arena. On reprend son souffle, on prend un café, et les premières conversations commencent là : en sueur, sans carte de visite.' },
+  { t: 'T+01', h: '12 h 30', quoi: 'Le déjeuner des finishers', texte: 'Tables par distance d’abord : on s’assoit avec ceux qui ont couru la même chose. Puis par secteur, si tu préfères. Personne ne déjeune seul.' },
+  { t: 'T+02', h: '14 h', quoi: 'Les rencontres', texte: 'Des rendez-vous de huit minutes, proposés depuis ton profil : recruter, lever, vendre, s’associer. Tu choisis qui, on s’occupe du où. En Premium, tu les réserves des semaines à l’avance.' },
+  { t: 'T+03', h: '16 h', quoi: 'Les conversations debout', texte: 'Trois prises de parole de quinze minutes, par des fondateurs qui ont couru le matin. Zéro slide. Puis on repart marcher, on repart parler.' },
+  { t: 'T+04', h: '18 h', quoi: 'La soirée', texte: 'Le dîner des fondateurs pour les formules Premium et Cercle, la soirée pour tout le monde. Jusqu’au soir, et un peu après.' },
+]
+
+/* Les quatre principes du site (T+03 / LE RÉSEAU), gardés de ceux qui
+   courent déjà ensemble. Mêmes titres, mêmes mots. */
+export const PRINCIPES = [
+  { n: '01', titre: 'Zéro pitch en course', texte: 'On court, on parle si on veut, on ne vend rien. Ça vient après — et ça vient mieux.' },
+  { n: '02', titre: 'Zéro slide l’après-midi', texte: 'Des tables, des rendez-vous courts, des conversations debout. Pas de stand, pas d’écran.' },
+  { n: '03', titre: 'Toutes les allures', texte: 'Aucun temps à tenir. Le 5 km existe pour ça, et personne ne regarde les classements en salle.' },
+  { n: '04', titre: 'L’après compte autant', texte: 'Le café d’arrivée, le déjeuner, la soirée : c’est là que se fait l’essentiel du retour sur investissement.' },
+]
+
+/* Les quatre publics du site (le registre de T+03). */
+export const PUBLICS = [
+  { n: '01', qui: 'Indépendants & entrepreneurs', quoi: 'Rompre l’isolement, élargir son cercle, et retrouver l’énergie de ceux qui entreprennent au même moment que toi.' },
+  { n: '02', qui: 'Intrapreneurs & cadres', quoi: 'Se challenger, rencontrer des profils qu’on ne croise jamais en interne, et nourrir sa capacité d’initiative.' },
+  { n: '03', qui: 'Dirigeants & décideurs', quoi: 'Rencontrer ses homologues sans salon ni intermédiaire, incarner une culture de l’effort, tisser des relations de confiance.' },
+  { n: '04', qui: 'Entreprises & équipes', quoi: 'Mobiliser ses équipes autour d’une expérience qui a du sens, et courir aux couleurs de l’entreprise. Dossards groupés et packs : entreprises@runoninvest.fr.' },
+]
+
+/* Les trois voies d'accès au dossard (T+03.1 / L'ACCÈS). */
+export const ACCES = [
+  { voie: 'Extrait Kbis', texte: 'Tu diriges ou tu détiens une société. Un extrait de moins de trois mois.' },
+  { voie: 'Avis SIRENE', texte: 'Tu es indépendant·e. L’avis de situation s’obtient en ligne, gratuitement.' },
+  { voie: 'Cooptation', texte: 'Tu es salarié·e. Une attestation de ton employeur, ou la cooptation d’un participant déjà inscrit.' },
+]
+
+/* Le lieu, en fiche clé / valeur (T+05). */
+export const LIEU = [
+  ['Départ', 'Village et sas de départ au pied de la Grande Arche.'],
+  ['Parcours', 'Un tracé fermé entre les tours : esplanade, parvis et dalles. Une ou plusieurs boucles selon la distance.'],
+  ['Arrivée', 'En salle, dans Paris La Défense Arena. La ligne est à l’intérieur.'],
+  ['Après la ligne', 'Déjeuner, rencontres et soirée dans l’Arena, jusqu’au soir.'],
+  ['Venir', 'Métro ligne 1, RER A, Transilien L, station La Défense Grande Arche.'],
+]
+
+/* Les adresses du site. */
+export const CONTACTS = {
+  contact: 'contact@runoninvest.fr',
+  dossiers: 'dossiers@runoninvest.fr',
+  entreprises: 'entreprises@runoninvest.fr',
+  partenariats: 'partenariats@runoninvest.fr',
 }
 
-/* --------------------------------------------------------------- l'évènement */
-export const RACE = {
-  id: 'roi-defense-2026',
-  name: 'ROI Business Run',
-  place: 'Paris La Défense',
-  edition: '1ʳᵉ édition',
-  date: '2026-09-17',
-  gunTime: '07:30',
-  venue: 'Paris La Défense Arena',
-  address: '99 Jardin de l’Arche, 92000 Nanterre',
-  tagline: 'La course officielle où le business se court en tête.',
-  intro:
-    "Une matinée. 10 000 décideur·ses. Un seul peloton. Le ROI Business Run réunit la plus grande communauté de dirigeant·es-coureur·ses d’Europe au pied de Paris La Défense Arena — la seule course pensée de bout en bout pour faire des affaires. Départ et arrivée à l’Arena, parcours fermé au cœur du premier quartier d’affaires d’Europe.",
-  audience:
-    'Ouvert aux dirigeant·es, fondateur·rices, top managers, cadres et entrepreneur·ses — du CAC 40 à la TPE.',
-}
-
-/* Chiffres clés affichés en bandeau. */
-export const RACE_STATS = [
-  { value: '10 000', label: 'Coureurs visés' },
-  { value: '500+', label: 'Entreprises' },
-  { value: '60', label: 'Nationalités' },
-  { value: '90 min', label: 'Pour tout changer' },
-]
-
-/* Pourquoi courir — l'argumentaire business. */
-export const WHY = [
-  {
-    icon: 'users',
-    title: 'Le plus grand rassemblement business d’Europe',
-    text: '10 000 décideur·ses et 500+ entreprises au même endroit, au même moment. En 90 minutes de course, vous croisez plus de profils qualifiés qu’en six mois de salons.',
-  },
-  {
-    icon: 'activity',
-    title: 'Pitcher en courant, sans la barrière du costume',
-    text: 'L’allure conversation fait tomber les armures. On se parle vraiment, d’égal à égal — l’effort partagé crée en une sortie ce qu’un déjeuner d’affaires met des mois à bâtir.',
-  },
-  {
-    icon: 'briefcase',
-    title: 'Des rencontres qui se transforment en deals',
-    text: 'Chaque dossard est connecté à l’app ROI : profils, besoins et offres pré-matchés avant le départ. Vous arrivez en sachant déjà qui rencontrer — et repartez avec un pipeline.',
-  },
-  {
-    icon: 'trendingUp',
-    title: 'Une visibilité de dirigeant',
-    text: 'Village business premium, dossard nominatif, lounge partenaires et soirée de gala : votre marque et la vôtre s’affichent au cœur de La Défense.',
-  },
-]
-
-/* Ce que comprend le dossard à 500 €. */
-export const INCLUDED = [
-  { icon: 'medal', text: 'Dossard nominatif + puce chrono électronique' },
-  { icon: 'crown', text: 'Accès au Village Business & lounge networking premium' },
-  { icon: 'coffee', text: 'Petit-déjeuner d’affaires + ravitaillements gastronomiques' },
-  { icon: 'shield', text: 'Vestiaire, douches & consigne sécurisée' },
-  { icon: 'gift', text: 'Tee-shirt technique + médaille finisher gravée' },
-  { icon: 'sparkles', text: 'Photos officielles offertes & certificat de course' },
-  { icon: 'video', text: 'Accès à l’afterwork & à la soirée de gala networking' },
-  { icon: 'rocket', text: '1 mois ROI Pro offert + mise en relation pré-course dans l’app' },
-]
-
-/* Déroulé de la matinée. */
-export const PROGRAM = [
-  { time: '06:30', title: 'Ouverture du village', text: 'Retrait des dossards, café d’accueil, échauffement coaché.' },
-  { time: '07:30', title: 'Départ Élite & Performance', text: 'Coup d’envoi depuis l’Arena, par sas successifs.' },
-  { time: '07:45', title: 'Départ Tempo & Business', text: 'Les sas allure conversation s’élancent.' },
-  { time: '09:00', title: 'Remise des médailles', text: 'Podiums par distance et challenge inter-entreprises.' },
-  { time: '09:30', title: 'Petit-déjeuner d’affaires', text: 'Speed-networking guidé par l’app + stands partenaires.' },
-  { time: '11:00', title: 'Afterwork de clôture', text: 'On prolonge les conversations, on cale les rendez-vous.' },
-]
-
-/* Témoignages. */
-export const TESTIMONIALS = [
-  {
-    name: 'Sarah Khalil',
-    title: 'CEO · Fintech',
-    text: 'J’ai signé mon premier client grand compte sur les 3 derniers kilomètres. Aucun salon ne m’a jamais donné ça.',
-  },
-  {
-    name: 'Marc Dubois',
-    title: 'Fondateur · Industrie',
-    text: 'On y vient en short, on en repart avec un board. Le seul évènement où mon comex et mes prospects courent côte à côte.',
-  },
-]
-
-/* FAQ. */
-export const FAQ = [
-  {
-    q: 'Faut-il un bon niveau pour participer ?',
-    a: 'Non. Le SAS Business est pensé pour l’allure conversation — on peut marcher, pitcher, reprendre. L’objectif est la rencontre, pas le chrono.',
-  },
-  {
-    q: 'Le dossard est-il facturable à mon entreprise ?',
-    a: 'Oui. Choisissez le paiement par bon de commande à l’inscription : vous recevez une facture acquittée au nom de votre société, payable à 30 jours.',
-  },
-  {
-    q: 'Peut-on inscrire toute une équipe ?',
-    a: 'Oui, en inscription de groupe — tarif dégressif dès 3 dossards. Un classement inter-entreprises récompense les meilleures équipes.',
-  },
-  {
-    q: 'Et si je dois annuler ?',
-    a: 'Remboursement intégral jusqu’à 30 jours avant la course, ou transfert du dossard à un·e collaborateur·rice sans frais.',
-  },
-]
-
-/* Moyens de paiement B2B. */
-export const PAY_METHODS = [
-  { id: 'voucher', label: 'Bon de commande', sub: 'Facture entreprise · paiement à 30 j', icon: 'briefcase' },
-  { id: 'card', label: 'Carte bancaire', sub: 'Visa · Mastercard · Amex', icon: 'creditCard' },
-  { id: 'paypal', label: 'PayPal', sub: 'Paiement en un clic', icon: 'wallet' },
-  { id: 'gpay', label: 'Google Pay', sub: 'Paiement express', icon: 'wallet' },
-]
+/* Celles et ceux qui courent cette année (aperçu de l'annuaire). */
+export const QUI_COURT = ['Sarah Khalil', 'Marc Dubois', 'Nadia Cherif', 'Léa Fontaine', 'Yanis Benali', 'Claire Moreau']
+export const INSCRITS = 2412

@@ -1,6 +1,52 @@
+/* ==========================================================================
+   R.O.I — RUN ON INVESTMENT · L'app · Identité « LA LIGNE »
+   Papier craie · Encre · Orange impact
+   Archivo variable (62–125 % de chasse) · JetBrains Mono (chrono)
+   Convention de marque : T– = avant la ligne, T+ = après la ligne.
+
+   Cette feuille est le pendant, côté app, de assets/roi.css sur le site :
+   mêmes fontes, mêmes jetons, mêmes gestes (l'étiquette chrono, la barre
+   d'impact, le dossard recto/verso, la typo évidée). Les jetons de couleur
+   vivent dans tailwind.config.js.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Archivo VF';
+  src: url('/fonts/archivo-latin-wdth-normal.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Archivo VF';
+  src: url('/fonts/archivo-latin-ext-wdth-normal.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face { font-family: 'JetBrains Mono'; src: url('/fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'JetBrains Mono'; src: url('/fonts/jetbrains-mono-latin-500-normal.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'JetBrains Mono'; src: url('/fonts/jetbrains-mono-latin-700-normal.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --craie: #EFEBE2;
+  --craie-2: #E7E1D4;
+  --encre: #070707;
+  --encre-2: #101010;
+  --impact: #FF4400;
+  --beton: #6B6558;
+  --muted: #57534A;
+  --texte: #070707;
+  --ligne: rgba(14, 13, 12, 0.16);
+}
 
 html,
 body,
@@ -10,34 +56,100 @@ body,
 
 body {
   @apply bg-canvas text-fg;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', Inter, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Archivo VF', Archivo, system-ui, sans-serif;
+  font-stretch: 100%;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
+/* ---- Grain film (texture signature de l'affiche) ----
+   La même couche de bruit que le site, posée au-dessus de tout. Coupée en
+   Mode sobriété : c'est un filtre SVG plein écran, donc du GPU. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.55;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0.62  0 0 0 0 0.62  0 0 0 0 0.62  0.8 0 0 0 -0.3'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+body:has(.eco)::before {
+  display: none;
+}
+
 @layer base {
-  h1,
-  h2,
-  h3 {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter Tight', Inter, 'Segoe UI', sans-serif;
-    letter-spacing: -0.022em;
+  ::selection {
+    background: var(--impact);
+    color: var(--craie);
   }
 
-  /* Visible focus ring for keyboard users only (no ring on tap/click). */
+  /* ---- Types de marque ----
+     Titres : Archivo étendu (125 %) en graisse FINE — le style affiche.
+     Les utilitaires de graisse posés sur les titres par les écrans sont
+     neutralisés : un titre R.O.I n'est jamais gras. */
+  h1 {
+    font-stretch: 125%;
+    font-weight: 250 !important;
+    text-transform: uppercase;
+    line-height: 1.05;
+    letter-spacing: 0.005em;
+    overflow-wrap: break-word;
+  }
+  h2,
+  h3 {
+    font-stretch: 110%;
+    font-weight: 400 !important;
+    text-transform: uppercase;
+    line-height: 1.12;
+    letter-spacing: 0.02em;
+  }
+  /* Les petits titres de section deviennent des étiquettes chrono (mono). */
+  h2.tmark,
+  h3.tmark {
+    font-stretch: 100%;
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+
+  /* Tout ce qui est en capitales et n'est pas un titre est de la data :
+     on le compose en mono, comme la nav, les labels et les chiffres du site. */
+  .uppercase:not(h1):not(h2):not(h3) {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+  }
+
+  /* ---- Focus clavier ----
+     L'anneau est l'encre, pas l'orange : l'orange ne fait que 2,9:1 sur
+     la craie, sous le seuil de 3:1 exigé pour un indicateur de focus. */
   a:focus-visible,
   button:focus-visible,
   input:focus-visible,
   textarea:focus-visible,
+  select:focus-visible,
   [role='button']:focus-visible,
   [tabindex]:focus-visible {
-    outline: 2px solid #18181b;
+    outline: 3px solid var(--texte);
     outline-offset: 2px;
   }
+  .surface-hero a:focus-visible,
+  .surface-hero button:focus-visible,
+  .surface-hero [tabindex]:focus-visible {
+    outline-color: var(--craie);
+  }
 
-  ::selection {
-    background: rgba(0, 0, 0, 0.12);
-    color: #18181b;
+  input,
+  textarea,
+  select {
+    border-radius: 0;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--beton);
+    opacity: 0.7;
   }
 }
 
@@ -50,32 +162,711 @@ body {
     scrollbar-width: none;
   }
 
-  /* Frosted-glass surfaces (claires). */
+  /* ---- Les deux fonds de l'affiche ----
+     `surface-hero` : le bloc encre — l'ancien dégradé graphite est un aplat.
+     `glass` : la barre de nav du site, craie à 88 % et un flou léger. */
+  .surface-hero {
+    background: var(--encre);
+    color: var(--craie);
+    --texte: #EFEBE2;
+    --muted: #B0A99C;
+    --beton: #8F897B;
+    --ligne: rgba(239, 235, 226, 0.14);
+  }
   .glass {
-    background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: saturate(180%) blur(16px);
-    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    background: color-mix(in srgb, var(--craie) 88%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
   .glass-dark {
-    background: rgba(24, 24, 28, 0.62);
-    backdrop-filter: saturate(160%) blur(14px);
-    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    background: color-mix(in srgb, var(--encre) 88%, transparent);
+    color: var(--craie);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
-  /* Surface « héros » : dégradé graphite, clair puis quasi-noir vers le bas pour
-     garder un texte blanc lisible. Fin trait lumineux en haut. */
-  .surface-hero {
-    background: linear-gradient(155deg, #3f3f46 0%, #27272a 46%, #18181b 100%);
-    box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.14),
-      0 18px 40px -20px rgba(0, 0, 0, 0.45);
+  /* ---- Types ---- */
+  .display {
+    font-family: 'Archivo VF', Archivo, system-ui, sans-serif;
+    font-stretch: 125%;
+    font-weight: 250 !important;
+    text-transform: uppercase;
+    line-height: 1.05;
+    letter-spacing: 0.005em;
+  }
+  .titre {
+    font-family: 'Archivo VF', Archivo, system-ui, sans-serif;
+    font-stretch: 110%;
+    font-weight: 400 !important;
+    text-transform: uppercase;
+    line-height: 1.12;
+    letter-spacing: 0.02em;
+  }
+  .mono {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+
+  /* ---- Typo évidée : le second temps du titre est tracé, pas rempli.
+     Même épaisseur que le site (.022em) et même repli : en dessous de
+     620 px de large, le corps est trop petit pour qu'un contour reste
+     lisible, on revient au plein — sur téléphone, le site fait pareil. ---- */
+  @supports (-webkit-text-stroke: 1px currentColor) {
+    .creuse {
+      color: transparent;
+      -webkit-text-stroke: 0.022em var(--texte);
+      paint-order: stroke fill;
+    }
+    .text-craie .creuse,
+    .surface-hero .creuse {
+      -webkit-text-stroke-color: #EFEBE2;
+    }
+    @media (max-width: 620px) {
+      .creuse {
+        color: inherit;
+        -webkit-text-stroke: 0;
+      }
+    }
+  }
+
+  /* ---- Étiquette chrono de section : T+01 / NOM ---- */
+  .tmark {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  @media (min-width: 1024px) {
+    .tmark {
+      font-size: 12px;
+    }
+  }
+  .tmark::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--impact);
+    flex: none;
+  }
+  .tmark b {
+    color: var(--impact);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .tmark.sans::before {
+    display: none;
+  }
+
+  /* ---- Barre d'impact et la ligne (filet + damier d'arrivée) ---- */
+  .bar {
+    height: 4px;
+    width: 96px;
+    background: var(--impact);
+  }
+  .laligne {
+    position: relative;
+    height: 1px;
+    background: var(--ligne);
+  }
+  .laligne::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -5px;
+    height: 12px;
+    width: 72px;
+    background: repeating-conic-gradient(currentColor 0% 25%, transparent 0% 50%) 0 0/12px 12px;
+    opacity: 0.8;
+  }
+
+  /* ---- Boutons (labels mono, bordure fine) ---- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 12px;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 14px 20px;
+    border: 1px solid currentColor;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+  }
+  .btn .arr {
+    font-weight: 700;
+    transition: transform 0.15s ease;
+  }
+  .btn:hover .arr {
+    transform: translateX(4px);
+  }
+  .btn:active {
+    transform: scale(0.98);
+  }
+  .btn[disabled],
+  .btn[aria-busy='true'] {
+    opacity: 0.55;
+    cursor: default;
+  }
+  /* Les couleurs du site : craie sur orange. Le survol reprend la finale
+     du site sur fond clair (encre) et la nav sur fond sombre (craie). */
+  .btn-impact {
+    background: var(--impact);
+    border-color: var(--impact);
+    color: var(--craie);
+  }
+  .btn-impact:hover {
+    background: var(--encre);
+    border-color: var(--encre);
+    color: var(--craie);
+  }
+  .surface-hero .btn-impact:hover {
+    background: var(--craie);
+    border-color: var(--craie);
+    color: var(--encre);
+  }
+  .btn-encre {
+    background: var(--encre);
+    border-color: var(--encre);
+    color: var(--craie);
+  }
+  .btn-encre:hover {
+    background: var(--impact);
+    border-color: var(--impact);
+    color: var(--craie);
+  }
+  .surface-hero .btn-encre {
+    background: var(--craie);
+    border-color: var(--craie);
+    color: var(--encre);
+  }
+  .surface-hero .btn-encre:hover {
+    background: var(--impact);
+    border-color: var(--impact);
+    color: var(--craie);
+  }
+  /* La formule courante (site : .formule-choix .btn[disabled]) : bord et texte orange, rien d'autre. */
+  .btn-courante,
+  .btn-courante[disabled] {
+    background: transparent;
+    border-color: var(--impact);
+    color: var(--impact);
+    opacity: 1;
+    cursor: default;
+  }
+  .btn-ghost {
+    background: transparent;
+    color: inherit;
+  }
+  .btn-ghost:hover {
+    background: var(--encre);
+    color: var(--craie);
+  }
+  .surface-hero .btn-ghost:hover {
+    background: var(--craie);
+    color: var(--encre);
+  }
+  .btn-sm {
+    padding: 10px 14px;
+    font-size: 11px;
+    gap: 8px;
+  }
+
+  /* ---- Couleurs contextuelles : elles basculent avec le fond (comme
+     --muted / --beton / --texte sur le site), donc valables dans un bloc
+     encre comme sur la craie. ---- */
+  .t-texte { color: var(--texte); }
+  .t-muted { color: var(--muted); }
+  .t-beton { color: var(--beton); }
+  .b-ligne { border-color: var(--ligne); }
+
+  /* ---- Fiche clé / valeur : la <dl class="fiche"> du site (accès, lieu, espace). ---- */
+  .fiche {
+    border-top: 1px solid var(--texte);
+  }
+  .fiche > div {
+    display: grid;
+    grid-template-columns: minmax(88px, 0.42fr) 1fr;
+    gap: 6px 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--ligne);
+  }
+  .fiche dt {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--impact);
+    padding-top: 0.25em;
+  }
+  .fiche dd {
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--texte);
+    min-width: 0;
+  }
+  .fiche dd small {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ---- Tag : la petite étiquette mono du site (.cell .note, .f-data). Un
+     ■ orange devant quand elle porte un état. ---- */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 9px;
+    border: 1px solid var(--ligne);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    color: var(--texte);
+    white-space: nowrap;
+    max-width: 100%;
+  }
+  .tag b {
+    color: var(--impact);
+    font-weight: 700;
+  }
+  .tag.on {
+    background: var(--encre);
+    border-color: var(--encre);
+    color: var(--craie);
+  }
+  .surface-hero .tag {
+    border-color: rgba(239, 235, 226, 0.28);
+  }
+  .surface-hero .tag.on {
+    background: var(--craie);
+    border-color: var(--craie);
+    color: var(--encre);
+  }
+  .tag.impact {
+    background: var(--impact);
+    border-color: var(--impact);
+    color: var(--encre);
+  }
+
+  /* ---- Rangée de liste : un filet au-dessus, comme .rg-row / .fiche > div. ---- */
+  .rangee {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+    border-top: 1px solid var(--ligne);
+    text-align: left;
+    width: 100%;
+  }
+
+  /* ---- Icône carrée : le pictogramme posé dans un carré bordé. ---- */
+  .ico {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex: none;
+    border: 1px solid var(--ligne);
+    color: var(--texte);
+  }
+  .ico.plein {
+    background: var(--encre);
+    border-color: var(--encre);
+    color: var(--craie);
+  }
+  .surface-hero .ico.plein {
+    background: var(--craie);
+    border-color: var(--craie);
+    color: var(--encre);
+  }
+  .ico.impact {
+    background: var(--impact);
+    border-color: var(--impact);
+    color: var(--craie);
+  }
+
+  /* ---- Interrupteur : carré, encre quand il est ouvert (pas de pastille ronde). ---- */
+  .inter {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex: none;
+    border: 1px solid var(--ligne-forte, rgba(14, 13, 12, 0.32));
+    background: transparent;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .inter::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    background: var(--texte);
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .inter.on {
+    background: var(--encre);
+    border-color: var(--encre);
+  }
+  .inter.on::after {
+    background: var(--impact);
+    transform: translateX(20px);
+  }
+
+  /* ---- Cadre : la grille bordée du site (bords haut+gauche sur le
+     conteneur, droite+bas sur chaque cellule). ---- */
+  .cadre {
+    display: grid;
+    border-top: 1px solid var(--ligne);
+    border-left: 1px solid var(--ligne);
+  }
+  .cadre > * {
+    border-right: 1px solid var(--ligne);
+    border-bottom: 1px solid var(--ligne);
+  }
+
+  /* ---- Champs : fond nu, filet en bas, libellé mono au-dessus ---- */
+  .champ > label,
+  .champ > .lbl {
+    display: block;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--beton);
+    margin-bottom: 4px;
+  }
+  .champ input,
+  .champ select,
+  .champ textarea,
+  .input-ligne,
+  textarea.input-ligne {
+    font: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--texte);
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid rgba(14, 13, 12, 0.3);
+    padding: 9px 0;
+    width: 100%;
+    min-width: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: border-color 0.15s ease;
+  }
+  .surface-hero .champ input,
+  .surface-hero .input-ligne {
+    border-bottom-color: rgba(239, 235, 226, 0.3);
+  }
+  .champ select,
+  select.input-ligne {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z' fill='%23FF4400'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 2px center;
+    padding-right: 22px;
+    cursor: pointer;
+  }
+  .champ select option,
+  select.input-ligne option {
+    color: #070707;
+    background: #EFEBE2;
+  }
+  .champ input:focus,
+  .champ select:focus,
+  .champ textarea:focus,
+  .input-ligne:focus {
+    outline: none;
+    border-bottom-color: var(--impact);
+    border-bottom-width: 2px;
+    margin-bottom: -1px;
+  }
+  .champ-err {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--impact);
+  }
+  .form-msg {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+    padding: 10px 14px;
+    border-left: 3px solid var(--impact);
+    color: var(--texte);
+  }
+  .form-msg.ok {
+    border-left-color: #3E8E5C;
+  }
+
+  /* ---- LE DOSSARD ----
+     « Un seul dossard : il te fait franchir la ligne, puis il devient ton
+     profil. » Recto = la course, verso = le réseau. On le retourne. ---- */
+  .dossard {
+    display: block;
+    width: 100%;
+    aspect-ratio: 5 / 4;
+    min-height: 178px;
+    container-type: inline-size;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    perspective: 1400px;
+    text-align: left;
+  }
+  .dossard:focus-visible {
+    outline: 3px solid var(--craie);
+    outline-offset: 6px;
+  }
+  .d-inner {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .dossard[aria-pressed='true'] .d-inner {
+    transform: rotateY(180deg);
+  }
+  .d-face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 14px 16px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: var(--craie);
+    color: var(--encre);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  }
+  /* Recto — le papier du dossard, œillets d'épingle aux quatre coins. */
+  .d-recto::before,
+  .d-recto::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    height: 7px;
+    background:
+      radial-gradient(circle 3.5px at 3.5px 3.5px, rgba(7, 7, 7, 0.28) 99%, transparent 100%) left center/50% 100% no-repeat,
+      radial-gradient(circle 3.5px at calc(100% - 3.5px) 3.5px, rgba(7, 7, 7, 0.28) 99%, transparent 100%) right center/50% 100% no-repeat;
+  }
+  .d-recto::before {
+    top: 10px;
+  }
+  .d-recto::after {
+    bottom: 10px;
+  }
+  .d-verso {
+    transform: rotateY(180deg);
+  }
+  .d-verso .d-head {
+    border-bottom: 2px solid var(--impact);
+    padding-bottom: 8px;
+  }
+  .d-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .d-logo {
+    font-family: 'Archivo VF', Archivo, system-ui, sans-serif;
+    font-stretch: 118%;
+    font-weight: 300;
+    font-size: 17px;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+  }
+  .d-logo i {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    background: var(--impact);
+    margin: 0 4px;
+    align-self: flex-end;
+    margin-bottom: 2px;
+  }
+  .d-ed,
+  .d-foot span {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 700;
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .d-ed {
+    color: var(--impact);
+  }
+  .d-num {
+    font-family: 'Archivo VF', Archivo, system-ui, sans-serif;
+    font-stretch: 125%;
+    font-weight: 250;
+    line-height: 0.82;
+    font-size: clamp(64px, 24vw, 104px);
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+  .d-foot {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    border-top: 1px solid rgba(7, 7, 7, 0.2);
+    padding-top: 8px;
+  }
+  .d-foot span {
+    color: #57534A;
+  }
+  .d-champs {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    flex: 1;
+    justify-content: center;
+    min-height: 0;
+    overflow: hidden;
+  }
+  /* Petit format (colonne de fiche) : on resserre tout, rien ne déborde. */
+  @container (max-width: 190px) {
+    .d-face { padding: 10px 11px; }
+    .d-champs { gap: 3px; }
+    .d-champ { padding-bottom: 2px; }
+    .d-champ b { font-size: 6.5px; margin-bottom: 0; line-height: 1.4; }
+    .d-champ span { font-size: 10px; line-height: 1.3; }
+    .d-logo { font-size: 13px; }
+    .d-ed, .d-foot span { font-size: 8px; }
+    .d-actif { font-size: 7.5px; letter-spacing: 0.1em; padding: 3px 6px; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+    .d-champs { justify-content: flex-start; padding-top: 2px; }
+    .d-verso .d-head { padding-bottom: 4px; }
+    .d-num { font-size: 48px; }
+    .d-foot { padding-top: 5px; }
+  }
+  .d-champ {
+    border-bottom: 1px dashed rgba(7, 7, 7, 0.28);
+    padding-bottom: 5px;
+  }
+  .d-champ b {
+    display: block;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 500;
+    font-size: 8.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #6B6558;
+    margin-bottom: 2px;
+  }
+  .d-champ span {
+    display: block;
+    font-stretch: 105%;
+    font-weight: 500;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #57534A;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* Pastille orange, texte encre : 5,83:1 — l'inverse ne passerait pas. */
+  .d-actif {
+    align-self: flex-start;
+    background: var(--impact);
+    color: var(--encre);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 700;
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+  }
+
+  /* ---- Les étapes du dossier (demande → justificatif → validé → payé) ---- */
+  .etape-suivi {
+    position: relative;
+    padding: 12px 12px 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .etape-suivi .e-n {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--beton);
+  }
+  .etape-suivi h4 {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .etape-suivi p {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .etape-suivi.fait .e-n {
+    color: var(--texte);
+  }
+  .etape-suivi.fait .e-n::after {
+    content: ' ✓';
+    color: var(--impact);
+  }
+  .etape-suivi.cours {
+    background: var(--encre);
+    color: #EFEBE2;
+    --muted: #B0A99C;
+    --texte: #EFEBE2;
+    --beton: #8F897B;
+  }
+  .etape-suivi.cours .e-n {
+    color: var(--impact);
+  }
+  .etape-suivi.cours::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 3px;
+    background: var(--impact);
   }
 
   .tap {
     transition: transform 0.12s ease;
   }
   .tap:active {
-    transform: scale(0.96);
+    transform: scale(0.98);
   }
 
   /* Subtle skeleton shimmer */
@@ -88,12 +879,7 @@ body {
     position: absolute;
     inset: 0;
     transform: translateX(-100%);
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.55),
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba(239, 235, 226, 0.7), transparent);
     animation: shimmer 1.6s infinite;
   }
 }
@@ -109,8 +895,6 @@ input::-webkit-inner-spin-button {
    Sobriété & accessibilité (numérique responsable)
    ------------------------------------------------------------------------ */
 
-/* Respecte la préférence système « animations réduites » : on coupe les
-   mouvements (confort vestibulaire) ET on économise du calcul / de la batterie. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -123,27 +907,22 @@ input::-webkit-inner-spin-button {
   .shimmer::after {
     animation: none;
   }
+  .d-inner {
+    transition: none;
+  }
 }
 
-/* Mode sobriété (activable dans le profil) : on remplace les effets coûteux en
-   GPU/énergie — flou « verre dépoli », reflets animés, dégradés décoratifs — par
-   des aplats nets. L'interface reste lisible et agréable, mais consomme moins. */
+/* Mode sobriété : plus de flou ni de grain, des aplats nets. */
 .eco .glass {
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--craie);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 .eco .glass-dark {
-  background: rgba(24, 24, 28, 0.96);
+  background: var(--encre);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 .eco .shimmer::after {
   display: none;
-}
-.eco.bg-mesh,
-.eco .bg-aurora,
-.eco .bg-hero-glow,
-.eco .bg-gold-sheen {
-  background-image: none !important;
 }

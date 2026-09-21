@@ -1,898 +1,403 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
-import { Avatar, AvatarStack } from '../components/Avatar'
+import { AvatarStack } from '../components/Avatar'
 import RouteMap from '../components/RouteMap'
+import Dossard from '../components/Dossard'
 import { useSheetDrag } from '../lib/useSheetDrag'
-import { formatEventDate } from '../lib/dates'
-import { CURRENT_USER } from '../data/user'
+import { lierDossier } from '../lib/dossier'
 import {
-  RACE, RACE_STATS, WHY, INCLUDED, PROGRAM, TESTIMONIALS, FAQ,
-  DISTANCES, distanceById, SAS, sasById, PAY_METHODS,
-  GROUP_TIERS, VOUCHERS, priceBreakdown, tierFor,
-  TOTAL_TAKEN, spotsInfo, FEATURED_RUNNERS,
+  EDITION, daysToRace, siteUrl,
+  DISTANCES, ACCES_RESEAU, distanceById, VAGUES, vagueCourante, FORMULES, formuleById,
+  ETAPES, ETAT_INDEX, AVANT, APRES, PROGRAMME, PRINCIPES, LIEU, QUI_COURT, INSCRITS,
 } from '../data/race'
 
-/* Formate un grand nombre à la française (10 000). */
 const fmt = (n) => n.toLocaleString('fr-FR')
 
-/* Accents par tonalité (les distances/SAS utilisent emerald/brand/gold/indigo). */
-const ACCENT = {
-  brand: { bg: 'bg-brand-50', text: 'text-brand-700', dot: 'bg-brand-500', solid: 'bg-brand-500', ring: 'ring-brand-300', soft: 'bg-brand-light' },
-  emerald: { bg: 'bg-success-light', text: 'text-success-dark', dot: 'bg-success', solid: 'bg-success', ring: 'ring-success/40', soft: 'bg-success-light' },
-  gold: { bg: 'bg-gold-light', text: 'text-gold-dark', dot: 'bg-gold', solid: 'bg-gold', ring: 'ring-gold/50', soft: 'bg-gold-light' },
-  indigo: { bg: 'bg-[#EAE7F5]', text: 'text-[#403881]', dot: 'bg-[#5E63B8]', solid: 'bg-[#5E63B8]', ring: 'ring-[#5E63B8]/40', soft: 'bg-[#EAE7F5]' },
-}
-
-const STEPS = ['Distance', 'Format', 'Profil', 'Entreprise', 'Sas', 'Paiement']
-
-/* ----------------------------------------------------------------- champs */
-function Field({ label, hint, children }) {
-  return (
-    <label className="block">
-      <span className="mb-1 flex items-center justify-between text-[12px] font-semibold text-fg-soft">
-        {label}
-        {hint && <span className="font-medium text-fg-faint">{hint}</span>}
-      </span>
-      {children}
-    </label>
-  )
-}
-
-function TextInput(props) {
-  return (
-    <input
-      {...props}
-      className="w-full rounded-2xl border border-line bg-surface px-3.5 py-3 text-[14px] text-fg shadow-soft outline-none transition placeholder:text-fg-faint focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
-    />
-  )
-}
-
-export default function RaceSheet({ onClose }) {
-  const { registerRace, raceRegistration, showToast } = useApp()
+/* ==========================================================================
+   L'ÉDITION — la course annuelle, vue depuis l'app.
+   Une fiche de course, pas une plaquette : la ligne (T– / T+), les trois
+   distances, les formules, les vagues, et — en tête — ton dossier, lu sur
+   le site. L'inscription se fait sur runoninvest.fr : ici on y va, ou on
+   relie un dossier déjà ouvert.
+   ========================================================================== */
+export default function RaceSheet({ onClose, onglet = 'edition' }) {
+  const { dossier, lierDossierApp, delierDossier, goTo, showToast } = useApp()
   const drag = useSheetDrag(onClose)
-  const alreadyIn = raceRegistration?.confirmed
+  const [distance, setDistance] = useState(dossier?.distance || '10')
+  const [formule, setFormule] = useState(dossier?.formule || 'dossard')
+  const dist = distanceById(distance)
+  const jours = daysToRace()
+  const vague = vagueCourante()
 
-  // 0 = annonce (landing) · 1→6 = tunnel d'inscription · 7 = confirmation
-  const [step, setStep] = useState(0)
-
-  const [first, ...rest] = CURRENT_USER.name.split(' ')
-  const [form, setForm] = useState({
-    distance: '10k',
-    type: 'solo',
-    qty: 1,
-    firstName: first,
-    lastName: rest.join(' '),
-    email: '',
-    phone: '',
-    company: CURRENT_USER.company,
-    role: CURRENT_USER.role,
-    siren: '',
-    size: '',
-    teamName: '',
-    sas: 'business',
-    voucher: '',
-    voucherOk: null, // null | {off,label} | false
-    pay: 'voucher',
-    poNumber: '',
-    cardNumber: '',
-    cardExp: '',
-    cardCvc: '',
-    consent: false,
-  })
-  const set = (patch) => setForm((f) => ({ ...f, ...patch }))
-
-  const dist = distanceById(form.distance)
-  const d = formatEventDate(RACE.date)
-  const daysLeft = Math.max(0, Math.round((new Date(`${RACE.date}T00:00:00`) - new Date()) / 86400000))
-  const voucherOff = form.voucherOk ? form.voucherOk.off : 0
-  const bill = useMemo(
-    () => priceBreakdown(form.type === 'group' ? form.qty : 1, voucherOff),
-    [form.type, form.qty, voucherOff],
-  )
-
-  function applyVoucher() {
-    const code = form.voucher.trim().toUpperCase()
-    if (!code) return set({ voucherOk: null })
-    const v = VOUCHERS[code]
-    set({ voucherOk: v || false })
-    showToast(v ? `Code appliqué · ${v.label}` : 'Code invalide')
-  }
-
-  const emailOk = /^\S+@\S+\.\S+$/.test(form.email)
-  function canContinue() {
-    switch (step) {
-      case 1: return !!form.distance
-      case 2: return form.type === 'solo' || form.qty >= 2
-      case 3: return form.firstName.trim() && form.lastName.trim() && emailOk
-      case 4: return form.company.trim().length > 0
-      case 5: return !!form.sas
-      case 6:
-        if (!form.consent) return false
-        if (form.pay === 'voucher') return form.poNumber.trim().length > 0
-        if (form.pay === 'card') return form.cardNumber.replace(/\s/g, '').length >= 12 && form.cardExp && form.cardCvc.length >= 3
-        return true // paypal / gpay : flux externe simulé
-      default: return true
-    }
-  }
-
-  function next() { setStep((s) => Math.min(7, s + 1)) }
-  function back() { setStep((s) => Math.max(0, s - 1)) }
-
-  function confirm() {
-    const dossard = `RUN-${Math.floor(1000 + Math.random() * 9000)}`
-    registerRace({
-      confirmed: true,
-      dossard,
-      distance: form.distance,
-      type: form.type,
-      qty: form.type === 'group' ? form.qty : 1,
-      sas: form.sas,
-      pay: form.pay,
-      ttc: bill.ttc,
-    })
-    setStep(7)
-  }
-
-  /* ----------------------------------------------------------- rendu étapes */
-  const renderIntro = () => (
-    <div className="flex-1 overflow-y-auto no-scrollbar">
-      {/* Carte du parcours en bandeau */}
-      <div className="relative h-56 shrink-0 bg-surface-2">
-        <RouteMap route={dist.route} className="h-full w-full" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/65 via-black/25 to-transparent" />
-        <div className="pointer-events-none absolute left-4 right-4 top-3 z-[500] flex items-center justify-between">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold text-brand-700 shadow-soft backdrop-blur">
-            <Icon name="flag" className="h-3.5 w-3.5" /> Départ & arrivée · {RACE.venue}
-          </span>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-gold px-2.5 py-1 text-[11px] font-extrabold tabular-nums text-fg shadow-soft">
-            <Icon name="flame" className="h-3.5 w-3.5" filled /> J−{daysLeft}
-          </span>
-        </div>
-        <div className="pointer-events-none absolute bottom-3 left-4 right-4 z-[500] text-white">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/85">{RACE.edition} · {d.full} · {RACE.gunTime}</div>
-          <div className="text-[24px] font-extrabold leading-tight drop-shadow">{RACE.name}</div>
-        </div>
-      </div>
-
-      <div className="px-5 pb-5 pt-4">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-brand-700">
-          <Icon name="sparkles" className="h-3.5 w-3.5" filled /> Course officielle ROI
-        </span>
-        <h2 className="mt-2.5 text-[22px] font-extrabold leading-tight text-fg">{RACE.tagline}</h2>
-        <p className="mt-2 text-[14px] leading-relaxed text-fg-soft">{RACE.intro}</p>
-
-        {/* Preuve sociale + remplissage global */}
-        <div className="mt-3.5 flex items-center gap-3 rounded-3xl border border-line bg-surface p-3.5 shadow-soft">
-          <AvatarStack names={FEATURED_RUNNERS} total={TOTAL_TAKEN} onMore={() => {}} />
-          <div className="min-w-0 flex-1">
-            <p className="text-[12.5px] font-semibold leading-snug text-fg">
-              <span className="tabular-nums">{fmt(TOTAL_TAKEN)}</span> dirigeant·es déjà inscrit·es
-            </p>
-            <p className="text-[11px] text-fg-muted">Rejoins-les avant que les sas se remplissent.</p>
-          </div>
-          <Icon name="trendingUp" className="h-5 w-5 shrink-0 text-success" />
-        </div>
-
-        <div className="mt-3 flex items-start gap-2 rounded-2xl border border-brand-100 bg-brand-light/50 px-3.5 py-3">
-          <Icon name="crown" className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" filled />
-          <p className="text-[12.5px] font-semibold leading-snug text-brand-800">{RACE.audience}</p>
-        </div>
-
-        {/* Chiffres clés */}
-        <div className="mt-4 grid grid-cols-4 gap-2">
-          {RACE_STATS.map((s) => (
-            <div key={s.label} className="rounded-2xl border border-line bg-surface px-2 py-2.5 text-center shadow-soft">
-              <div className="text-[17px] font-extrabold leading-none tabular-nums text-fg">{s.value}</div>
-              <div className="mt-1 text-[10px] font-semibold leading-tight text-fg-muted">{s.label}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Distances */}
-        <h3 className="mt-6 text-[15px] font-bold text-fg">Trois distances, un seul peloton</h3>
-        <p className="mt-0.5 text-[12.5px] text-fg-muted">Toutes au départ et à l’arrivée de l’Arena.</p>
-        <div className="mt-3 space-y-2.5">
-          {DISTANCES.map((x) => {
-            const a = ACCENT[x.tone]
-            return (
-              <div key={x.id} className="overflow-hidden rounded-3xl border border-line bg-surface shadow-soft">
-                <div className="flex items-center gap-3 p-3.5">
-                  <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${a.bg} ${a.text} text-center text-[13px] font-extrabold leading-none`}>
-                    {distBadge(x)}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <h4 className="truncate text-[14px] font-bold text-fg">{x.name}</h4>
-                      {x.popular && <span className="rounded-full bg-brand-500 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">Top</span>}
-                    </div>
-                    <p className="truncate text-[12px] text-fg-muted">{x.label} · {x.loops} · {x.elevation} · {x.duration}</p>
-                  </div>
-                </div>
-                <p className="px-3.5 text-[12.5px] leading-relaxed text-fg-soft">{x.tagline}</p>
-                <div className="px-3.5 pb-3.5 pt-3"><Gauge info={spotsInfo(x)} /></div>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Pourquoi business */}
-        <h3 className="mt-6 text-[15px] font-bold text-fg">Pourquoi courir le ROI Business Run</h3>
-        <div className="mt-3 space-y-2.5">
-          {WHY.map((w) => (
-            <div key={w.title} className="flex gap-3 rounded-3xl border border-line bg-surface p-3.5 shadow-soft">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-brand-50 text-brand-600">
-                <Icon name={w.icon} className="h-5 w-5" />
-              </span>
-              <div className="min-w-0">
-                <h4 className="text-[13.5px] font-bold text-fg">{w.title}</h4>
-                <p className="mt-0.5 text-[12.5px] leading-relaxed text-fg-soft">{w.text}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Inclus */}
-        <div className="mt-6 overflow-hidden rounded-3xl surface-hero text-white shadow-float">
-          <div className="relative p-5">
-            <div className="absolute inset-0 bg-aurora" />
-            <div className="relative">
-              <div className="flex items-baseline justify-between">
-                <h3 className="text-[15px] font-bold">Votre dossard tout compris</h3>
-                <div className="text-right">
-                  <div className="text-[24px] font-extrabold leading-none tabular-nums">500 €<span className="ml-1 text-[12px] font-semibold text-white/55">HT</span></div>
-                  <div className="text-[11px] text-white/60">soit 600 € TTC</div>
-                </div>
-              </div>
-              <ul className="mt-3.5 grid gap-2">
-                {INCLUDED.map((i) => (
-                  <li key={i.text} className="flex items-start gap-2.5 text-[12.5px]">
-                    <Icon name={i.icon} className="mt-0.5 h-4 w-4 shrink-0 text-gold-300" />
-                    <span className="text-white/90">{i.text}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-3 flex items-center gap-1.5 text-[11px] text-white/55">
-                <Icon name="users" className="h-3.5 w-3.5" /> Tarif dégressif dès 3 dossards pour les équipes.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Programme */}
-        <h3 className="mt-6 text-[15px] font-bold text-fg">Le déroulé de la matinée</h3>
-        <div className="mt-3 space-y-0">
-          {PROGRAM.map((p, i) => (
-            <div key={p.time} className="flex gap-3">
-              <div className="flex flex-col items-center">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-50 text-[11px] font-bold text-brand-700">{p.time}</span>
-                {i < PROGRAM.length - 1 && <span className="my-0.5 w-px flex-1 bg-line-strong" />}
-              </div>
-              <div className="pb-4">
-                <h4 className="text-[13.5px] font-bold text-fg">{p.title}</h4>
-                <p className="text-[12px] text-fg-muted">{p.text}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Témoignages */}
-        <div className="mt-2 space-y-2.5">
-          {TESTIMONIALS.map((t) => (
-            <figure key={t.name} className="rounded-3xl border border-line bg-surface-soft p-4 shadow-soft">
-              <blockquote className="text-[13px] italic leading-relaxed text-fg-soft">« {t.text} »</blockquote>
-              <figcaption className="mt-3 flex items-center gap-2.5">
-                <Avatar name={t.name} size="sm" />
-                <div>
-                  <div className="text-[12.5px] font-bold text-fg">{t.name}</div>
-                  <div className="text-[11px] text-fg-muted">{t.title}</div>
-                </div>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-
-        {/* FAQ */}
-        <h3 className="mt-6 text-[15px] font-bold text-fg">Questions fréquentes</h3>
-        <div className="mt-3 space-y-2">
-          {FAQ.map((f) => (
-            <details key={f.q} className="group rounded-2xl border border-line bg-surface px-3.5 py-3 shadow-soft">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-[13px] font-semibold text-fg">
-                {f.q}
-                <Icon name="chevronRight" className="h-4 w-4 shrink-0 text-fg-faint transition group-open:rotate-90" />
-              </summary>
-              <p className="mt-2 text-[12.5px] leading-relaxed text-fg-soft">{f.a}</p>
-            </details>
-          ))}
-        </div>
-
-        <div className="mt-5 flex items-center justify-center gap-1.5 text-center text-[11px] text-fg-faint">
-          <Icon name="mapPin" className="h-3.5 w-3.5" /> {RACE.venue} · {RACE.address}
-        </div>
-      </div>
-    </div>
-  )
-
-  const renderStep = () => {
-    switch (step) {
-      /* 1 — Distance */
-      case 1:
-        return (
-          <StepBody title="Choisis ta distance" sub="Toutes au départ et à l’arrivée de l’Arena.">
-            <div className="overflow-hidden rounded-3xl border border-line shadow-soft">
-              <RouteMap route={dist.route} className="h-40 w-full" />
-            </div>
-            <div className="mt-3 space-y-2.5">
-              {DISTANCES.map((x) => {
-                const a = ACCENT[x.tone]
-                const on = form.distance === x.id
-                return (
-                  <button
-                    key={x.id}
-                    onClick={() => set({ distance: x.id })}
-                    className={`flex w-full items-center gap-3 rounded-3xl border p-3.5 text-left tap ${
-                      on ? `border-transparent ring-2 ${a.ring} ${a.soft}` : 'border-line bg-surface shadow-soft'
-                    }`}
-                  >
-                    <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl ${a.bg} ${a.text} text-[12px] font-extrabold`}>
-                      {distBadge(x)}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className="truncate text-[14px] font-bold text-fg">{x.label}</span>
-                        {x.popular && <span className="rounded-full bg-brand-500 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">Top</span>}
-                      </div>
-                      <div className="truncate text-[12px] text-fg-muted">{x.loopsShort} · {x.elevation} · {x.duration}</div>
-                      <div className="mt-2"><Gauge info={spotsInfo(x)} /></div>
-                    </div>
-                    <span className={`grid h-6 w-6 shrink-0 place-items-center self-start rounded-full border-2 ${on ? `${a.solid} border-transparent text-white` : 'border-line-strong text-transparent'}`}>
-                      <Icon name="check" className="h-3.5 w-3.5" />
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-            <p className="mt-3 rounded-2xl bg-surface-soft px-3.5 py-3 text-[12.5px] leading-relaxed text-fg-soft">{dist.description}</p>
-          </StepBody>
-        )
-
-      /* 2 — Solo / Groupe */
-      case 2:
-        return (
-          <StepBody title="Solo ou en équipe ?" sub="Inscris-toi seul·e ou engage toute ta boîte.">
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { id: 'solo', icon: 'user', label: 'En solo', sub: 'Un dossard nominatif' },
-                { id: 'group', icon: 'users', label: 'En groupe', sub: 'Tarif dégressif dès 3' },
-              ].map((o) => {
-                const on = form.type === o.id
-                return (
-                  <button
-                    key={o.id}
-                    onClick={() => set({ type: o.id, qty: o.id === 'group' ? Math.max(2, form.qty) : 1 })}
-                    className={`rounded-3xl border p-4 text-left tap ${on ? 'border-transparent bg-brand-light ring-2 ring-brand-300' : 'border-line bg-surface shadow-soft'}`}
-                  >
-                    <span className={`grid h-10 w-10 place-items-center rounded-2xl ${on ? 'bg-brand-500 text-white' : 'bg-brand-50 text-brand-600'}`}>
-                      <Icon name={o.icon} className="h-5 w-5" />
-                    </span>
-                    <div className="mt-2.5 text-[14px] font-bold text-fg">{o.label}</div>
-                    <div className="text-[12px] text-fg-muted">{o.sub}</div>
-                  </button>
-                )
-              })}
-            </div>
-
-            {form.type === 'group' && (
-              <div className="mt-4 space-y-3">
-                <Field label="Nom de l’équipe / délégation">
-                  <TextInput value={form.teamName} onChange={(e) => set({ teamName: e.target.value })} placeholder="Ex. Comex Acme, Team Sales…" />
-                </Field>
-                <div className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-[13px] font-bold text-fg">Nombre de dossards</div>
-                      <div className="text-[12px] text-fg-muted">Coureur·ses de ton équipe</div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Stepper value={form.qty} min={2} onChange={(q) => set({ qty: q })} />
-                    </div>
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {[3, 5, 10, 20].map((n) => (
-                      <button
-                        key={n}
-                        onClick={() => set({ qty: n })}
-                        className={`rounded-full px-3 py-1 text-[12px] font-semibold tap ${form.qty === n ? 'bg-brand-500 text-white shadow-brand' : 'bg-surface-2 text-fg-soft'}`}
-                      >
-                        {n}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="mt-2.5 flex flex-wrap gap-1.5">
-                    {GROUP_TIERS.slice().reverse().map((t) => {
-                      const on = tierFor(form.qty)?.min === t.min
-                      return (
-                        <span key={t.min} className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${on ? 'bg-success-light text-success-dark' : 'bg-surface-2 text-fg-muted'}`}>
-                          {t.label} · −{Math.round(t.off * 100)}%
-                        </span>
-                      )
-                    })}
-                  </div>
-                </div>
-                <p className="flex items-center gap-1.5 text-[12px] text-fg-muted">
-                  <Icon name="trophy" className="h-3.5 w-3.5 text-gold-dark" /> Les équipes concourent au challenge inter-entreprises.
-                </p>
-              </div>
-            )}
-          </StepBody>
-        )
-
-      /* 3 — Coordonnées */
-      case 3:
-        return (
-          <StepBody title={form.type === 'group' ? 'Le·la responsable d’inscription' : 'Tes coordonnées'} sub={form.type === 'group' ? 'Contact principal pour l’équipe.' : 'Pour ton dossard et ta confirmation.'}>
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Prénom"><TextInput value={form.firstName} onChange={(e) => set({ firstName: e.target.value })} placeholder="Prénom" /></Field>
-                <Field label="Nom"><TextInput value={form.lastName} onChange={(e) => set({ lastName: e.target.value })} placeholder="Nom" /></Field>
-              </div>
-              <Field label="E-mail professionnel" hint={emailOk ? '✓' : ''}>
-                <TextInput type="email" inputMode="email" value={form.email} onChange={(e) => set({ email: e.target.value })} placeholder="prenom@entreprise.com" />
-              </Field>
-              <Field label="Téléphone" hint="optionnel">
-                <TextInput type="tel" inputMode="tel" value={form.phone} onChange={(e) => set({ phone: e.target.value })} placeholder="06 12 34 56 78" />
-              </Field>
-              <Field label="Fonction">
-                <TextInput value={form.role} onChange={(e) => set({ role: e.target.value })} placeholder="Fondateur·rice, CEO, DG…" />
-              </Field>
-            </div>
-          </StepBody>
-        )
-
-      /* 4 — Entreprise */
-      case 4:
-        return (
-          <StepBody title="Ton entreprise" sub="Affichée sur ton dossard et utilisée pour la facturation.">
-            <div className="space-y-3">
-              <Field label="Raison sociale">
-                <TextInput value={form.company} onChange={(e) => set({ company: e.target.value })} placeholder="Nom de la société" />
-              </Field>
-              <Field label="SIREN / N° TVA" hint="pour la facture">
-                <TextInput value={form.siren} onChange={(e) => set({ siren: e.target.value })} placeholder="FR.. ou 9 chiffres" />
-              </Field>
-              <Field label="Taille de l’entreprise">
-                <div className="grid grid-cols-2 gap-2">
-                  {['TPE / Indépendant', 'PME', 'ETI', 'Grand groupe'].map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => set({ size: s })}
-                      className={`rounded-2xl border px-3 py-2.5 text-[13px] font-semibold tap ${form.size === s ? 'border-transparent bg-brand-500 text-white shadow-brand' : 'border-line bg-surface text-fg-soft shadow-soft'}`}
-                    >
-                      {s}
-                    </button>
-                  ))}
-                </div>
-              </Field>
-            </div>
-            <div className="mt-4 flex items-start gap-2 rounded-2xl bg-brand-light/60 px-3.5 py-3">
-              <Icon name="cpu" className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" />
-              <p className="text-[12px] leading-snug text-brand-800">Ton profil entreprise alimente le matching ROI : tu sauras qui rencontrer avant même le coup de feu.</p>
-            </div>
-          </StepBody>
-        )
-
-      /* 5 — Sas */
-      case 5:
-        return (
-          <StepBody title="Choisis ton sas de départ" sub="On t’aligne selon ton allure et ton objectif.">
-            <div className="space-y-2.5">
-              {SAS.map((s) => {
-                const a = ACCENT[s.color]
-                const on = form.sas === s.id
-                return (
-                  <button
-                    key={s.id}
-                    onClick={() => set({ sas: s.id })}
-                    className={`flex w-full items-center gap-3 rounded-3xl border p-3.5 text-left tap ${on ? `border-transparent ring-2 ${a.ring} ${a.soft}` : 'border-line bg-surface shadow-soft'}`}
-                  >
-                    <span className={`h-9 w-1.5 shrink-0 rounded-full ${a.solid}`} />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[14px] font-bold text-fg">{s.label}</span>
-                        <span className={`rounded-full ${a.bg} ${a.text} px-2 py-0.5 text-[11px] font-bold tabular-nums`}>{s.pace}</span>
-                        {s.popular && <span className="rounded-full bg-brand-500 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">Conseillé</span>}
-                      </div>
-                      <div className="mt-0.5 text-[12px] text-fg-muted">{s.note}</div>
-                    </div>
-                    <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 ${on ? `${a.solid} border-transparent text-white` : 'border-line-strong text-transparent'}`}>
-                      <Icon name="check" className="h-3.5 w-3.5" />
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-          </StepBody>
-        )
-
-      /* 6 — Paiement B2B */
-      case 6:
-        return (
-          <StepBody title="Récapitulatif & paiement" sub="Paiement sécurisé · facture entreprise disponible.">
-            {/* Récap */}
-            <div className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
-              <Row label={dist.label} value={dist.name} />
-              <Row label="Format" value={form.type === 'group' ? `Équipe · ${form.qty} dossards` : 'Solo · 1 dossard'} />
-              <Row label="Sas" value={sasById(form.sas)?.label} />
-              <Row label={form.type === 'group' ? `Coordinateur·rice` : 'Coureur·se'} value={`${form.firstName} ${form.lastName}`} />
-              <Row label="Entreprise" value={form.company} last />
-            </div>
-
-            {/* Code promo / voucher */}
-            <div className="mt-3 flex items-end gap-2">
-              <div className="flex-1">
-                <Field label="Code promo / parrainage" hint="optionnel">
-                  <TextInput
-                    value={form.voucher}
-                    onChange={(e) => set({ voucher: e.target.value, voucherOk: null })}
-                    placeholder="Ex. ROI100"
-                  />
-                </Field>
-              </div>
-              <button onClick={applyVoucher} className="mb-px shrink-0 rounded-2xl bg-fg px-4 py-3 text-[13px] font-semibold text-white tap">Appliquer</button>
-            </div>
-            {form.voucherOk === false && <p className="mt-1.5 text-[12px] font-semibold text-like">Code invalide.</p>}
-            {form.voucherOk && <p className="mt-1.5 flex items-center gap-1 text-[12px] font-semibold text-success-dark"><Icon name="checkCircle" className="h-3.5 w-3.5" /> {form.voucherOk.label}</p>}
-
-            {/* Détail prix */}
-            <div className="mt-3 rounded-3xl border border-line bg-surface-soft p-4">
-              <PriceRow label={`Dossard${bill.qty > 1 ? `s × ${bill.qty}` : ''}`} value={`${bill.gross} €`} />
-              {bill.tierOff > 0 && <PriceRow label={`Remise groupe (−${Math.round(bill.tier.off * 100)}%)`} value={`−${bill.tierOff} €`} good />}
-              {bill.voucherOff > 0 && <PriceRow label="Code promo" value={`−${bill.voucherOff} €`} good />}
-              <PriceRow label="Total HT" value={`${bill.subHt} €`} />
-              <PriceRow label="TVA 20 %" value={`${bill.vat} €`} muted />
-              <div className="mt-2 flex items-center justify-between border-t border-line pt-2.5">
-                <span className="text-[14px] font-bold text-fg">Total TTC</span>
-                <span className="text-[20px] font-extrabold tabular-nums text-fg">{bill.ttc} €</span>
-              </div>
-            </div>
-
-            {/* Moyens de paiement */}
-            <h4 className="mt-5 text-[13px] font-bold text-fg">Moyen de paiement</h4>
-            <div className="mt-2 grid grid-cols-2 gap-2.5">
-              {PAY_METHODS.map((m) => {
-                const on = form.pay === m.id
-                return (
-                  <button
-                    key={m.id}
-                    onClick={() => set({ pay: m.id })}
-                    className={`rounded-2xl border p-3 text-left tap ${on ? 'border-transparent bg-brand-light ring-2 ring-brand-300' : 'border-line bg-surface shadow-soft'}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <PayMark id={m.id} active={on} />
-                      <span className={`grid h-5 w-5 place-items-center rounded-full border-2 ${on ? 'border-transparent bg-brand-500 text-white' : 'border-line-strong text-transparent'}`}>
-                        <Icon name="check" className="h-3 w-3" />
-                      </span>
-                    </div>
-                    <div className="mt-2 text-[13px] font-bold text-fg">{m.label}</div>
-                    <div className="text-[11px] text-fg-muted">{m.sub}</div>
-                  </button>
-                )
-              })}
-            </div>
-
-            {/* Panneau spécifique au moyen choisi */}
-            <div className="mt-3">
-              {form.pay === 'voucher' && (
-                <div className="space-y-3 rounded-3xl border border-line bg-surface p-4 shadow-soft">
-                  <Field label="N° de bon de commande (PO)">
-                    <TextInput value={form.poNumber} onChange={(e) => set({ poNumber: e.target.value })} placeholder="PO-2026-..." />
-                  </Field>
-                  <p className="flex items-start gap-2 text-[12px] leading-snug text-fg-muted">
-                    <Icon name="briefcase" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-600" />
-                    Une facture acquittée est émise au nom de {form.company || 'votre société'}, payable à 30 jours. Aucun débit immédiat.
-                  </p>
-                </div>
-              )}
-              {form.pay === 'card' && (
-                <div className="space-y-3 rounded-3xl border border-line bg-surface p-4 shadow-soft">
-                  <Field label="Numéro de carte">
-                    <TextInput inputMode="numeric" value={form.cardNumber} onChange={(e) => set({ cardNumber: formatCard(e.target.value) })} placeholder="4242 4242 4242 4242" maxLength={19} />
-                  </Field>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Field label="Expiration"><TextInput inputMode="numeric" value={form.cardExp} onChange={(e) => set({ cardExp: formatExp(e.target.value) })} placeholder="MM/AA" maxLength={5} /></Field>
-                    <Field label="CVC"><TextInput inputMode="numeric" value={form.cardCvc} onChange={(e) => set({ cardCvc: e.target.value.replace(/\D/g, '').slice(0, 4) })} placeholder="123" /></Field>
-                  </div>
-                </div>
-              )}
-              {(form.pay === 'paypal' || form.pay === 'gpay') && (
-                <div className="flex items-center gap-2.5 rounded-3xl border border-line bg-surface p-4 text-[12.5px] text-fg-muted shadow-soft">
-                  <Icon name="shield" className="h-4 w-4 shrink-0 text-brand-600" />
-                  Tu seras redirigé·e vers {form.pay === 'paypal' ? 'PayPal' : 'Google Pay'} pour valider en un clic. Tu peux demander la facture entreprise ensuite.
-                </div>
-              )}
-            </div>
-
-            {/* Consentement */}
-            <button onClick={() => set({ consent: !form.consent })} className="mt-4 flex w-full items-start gap-2.5 text-left">
-              <span className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-md border-2 ${form.consent ? 'border-transparent bg-brand-500 text-white' : 'border-line-strong text-transparent'}`}>
-                <Icon name="check" className="h-3 w-3" />
-              </span>
-              <span className="text-[12px] leading-snug text-fg-soft">J’accepte le règlement de la course, les CGV et atteste être apte à courir (certificat médical à fournir avant l’épreuve).</span>
-            </button>
-          </StepBody>
-        )
-
-      /* 7 — Confirmation */
-      case 7:
-        return (
-          <div className="flex-1 overflow-y-auto no-scrollbar px-5 pb-6 pt-10">
-            <div className="flex flex-col items-center text-center">
-              <span className="grid h-16 w-16 place-items-center rounded-full bg-success-light text-success">
-                <Icon name="checkCircle" className="h-9 w-9" />
-              </span>
-              <h2 className="mt-4 text-[22px] font-extrabold text-fg">Inscription confirmée</h2>
-              <p className="mt-1.5 max-w-[300px] text-[13.5px] leading-relaxed text-fg-soft">
-                Rendez-vous le {d.full} à {RACE.gunTime} à {RACE.venue}. Ta confirmation et ta facture partent par e-mail.
-              </p>
-            </div>
-
-            {/* Billet / dossard — style ticket perforé */}
-            <div className="mt-6 overflow-hidden rounded-3xl surface-hero text-white shadow-float">
-              <div className="relative p-5 pb-4">
-                <div className="absolute inset-0 bg-aurora" />
-                <div className="relative">
-                  <div className="flex items-center justify-between">
-                    <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/60">{RACE.name} · {RACE.edition}</div>
-                    <Icon name="flag" className="h-5 w-5 text-white/70" />
-                  </div>
-                  <div className="mt-3 flex items-end justify-between">
-                    <div>
-                      <div className="text-[11px] text-white/55">Dossard</div>
-                      <div className="text-[26px] font-extrabold leading-none tabular-nums">{raceRegistration?.dossard}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-[11px] text-white/55">Distance</div>
-                      <div className="text-[18px] font-extrabold">{dist.label}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* Perforation */}
-              <div className="relative">
-                <div className="absolute -left-2.5 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-surface-soft" />
-                <div className="absolute -right-2.5 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-surface-soft" />
-                <div className="mx-5 border-t border-dashed border-white/30" />
-              </div>
-              <div className="relative grid grid-cols-3 gap-2 p-5 pt-4 text-[12px]">
-                <div><div className="text-white/55">Sas</div><div className="font-bold">{sasById(form.sas)?.label.replace('SAS ', '')}</div></div>
-                <div><div className="text-white/55">Format</div><div className="font-bold">{form.type === 'group' ? `Équipe ×${form.qty}` : 'Solo'}</div></div>
-                <div><div className="text-white/55">Réglé</div><div className="font-bold tabular-nums">{bill.ttc} € TTC</div></div>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="mt-4 grid grid-cols-2 gap-2.5">
-              <button
-                onClick={() => showToast(`Ajouté à ton agenda · ${d.full}`)}
-                className="flex items-center justify-center gap-2 rounded-2xl border border-line-strong bg-surface py-3 text-[13px] font-semibold text-fg-soft shadow-soft tap"
-              >
-                <Icon name="calendar" className="h-4 w-4" /> Agenda
-              </button>
-              <button
-                onClick={() => { navigator?.clipboard?.writeText?.(`${RACE.name} · ${d.full} — ${RACE.venue}`); showToast('Lien copié') }}
-                className="flex items-center justify-center gap-2 rounded-2xl border border-line-strong bg-surface py-3 text-[13px] font-semibold text-fg-soft shadow-soft tap"
-              >
-                <Icon name="share" className="h-4 w-4" /> Inviter ma boîte
-              </button>
-            </div>
-
-            <div className="mt-5 space-y-2.5">
-              <div className="flex items-start gap-2.5 rounded-2xl border border-line bg-surface p-3.5 shadow-soft">
-                <Icon name="cpu" className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
-                <p className="text-[12.5px] leading-snug text-fg-soft"><span className="font-bold text-fg">ROI Pro activé 1 mois.</span> On pré-matche déjà les profils à rencontrer le jour J dans l’app.</p>
-              </div>
-              <div className="flex items-start gap-2.5 rounded-2xl border border-line bg-surface p-3.5 shadow-soft">
-                <Icon name="coffee" className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
-                <p className="text-[12.5px] leading-snug text-fg-soft">Petit-déjeuner d’affaires & afterwork inclus. Pense à réserver ta matinée.</p>
-              </div>
-            </div>
-          </div>
-        )
-
-      default:
-        return null
-    }
-  }
-
-  /* ----------------------------------------------------------------- footer */
-  const footer = () => {
-    if (step === 0) {
-      if (alreadyIn) {
-        return (
-          <div className="flex items-center gap-2">
-            <div className="flex flex-1 items-center gap-2 rounded-full bg-success-light px-4 py-3 text-[13px] font-bold text-success-dark">
-              <Icon name="checkCircle" className="h-4 w-4" /> Inscrit·e · dossard {raceRegistration.dossard}
-            </div>
-          </div>
-        )
-      }
-      return (
-        <button onClick={() => setStep(1)} className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 py-3.5 text-[15px] font-bold text-white shadow-brand tap">
-          S’inscrire — 500 € HT <Icon name="arrowRight" className="h-4 w-4" />
-        </button>
-      )
-    }
-    if (step === 7) {
-      return (
-        <button onClick={onClose} className="w-full rounded-full bg-gradient-to-b from-brand-500 to-brand-600 py-3.5 text-[15px] font-bold text-white shadow-brand tap">
-          Terminer
-        </button>
-      )
-    }
-    const isPay = step === 6
-    return (
-      <div className="flex items-center gap-2.5">
-        <button onClick={back} className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-line-strong text-fg-soft tap" aria-label="Précédent">
-          <Icon name="arrowLeft" className="h-5 w-5" />
-        </button>
-        <button
-          onClick={isPay ? confirm : next}
-          disabled={!canContinue()}
-          className={`flex flex-1 items-center justify-center gap-2 rounded-full py-3.5 text-[15px] font-bold text-white tap disabled:opacity-40 ${
-            isPay ? 'bg-gradient-to-b from-success to-success-dark shadow-brand' : 'bg-gradient-to-b from-brand-500 to-brand-600 shadow-brand'
-          }`}
-        >
-          {isPay
-            ? (form.pay === 'voucher' ? `Valider le bon de commande` : `Payer ${bill.ttc} € TTC`)
-            : <>Continuer <Icon name="arrowRight" className="h-4 w-4" /></>}
-        </button>
-      </div>
-    )
-  }
+  const urlInscription = siteUrl('inscription/', { distance, formule })
 
   return (
     <div className="absolute inset-0 z-40">
-      <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
-      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[96%] flex-col overflow-hidden rounded-t-[28px] bg-surface-soft shadow-float">
-        {/* En-tête */}
-        <div className="relative z-10 shrink-0 border-b border-line bg-surface px-5 pb-3 pt-2.5">
-          <div {...drag.handleProps} className="mx-auto mb-2.5 h-1 w-10 rounded-full bg-line-strong" aria-hidden="true" />
-          <div className="flex items-center justify-between">
-            {step > 0 && step < 7 ? (
-              <button onClick={back} className="grid h-9 w-9 place-items-center rounded-full bg-surface-2 text-fg-soft tap" aria-label="Précédent">
-                <Icon name="arrowLeft" className="h-5 w-5" />
-              </button>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wide text-brand-700">
-                <Icon name="flag" className="h-4 w-4" /> ROI Business Run
-              </span>
-            )}
-            <button onClick={onClose} className="grid h-9 w-9 place-items-center rounded-full bg-surface-2 text-fg-muted tap" aria-label="Fermer">
-              <Icon name="x" className="h-5 w-5" />
-            </button>
+      <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
+      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-canvas" style={drag.style}>
+        {/* En-tête encre : l'étiquette, le titre affiche, le compte à rebours */}
+        <div className="surface-hero relative shrink-0 px-5 pb-5 pt-3">
+          <div {...drag.handleProps} className="mx-auto mb-4 h-1 w-10 bg-craie/30" aria-hidden="true" />
+          <button onClick={onClose} className="absolute right-4 top-4 grid h-9 w-9 place-items-center border border-craie/30 text-craie tap" aria-label="Fermer">
+            <Icon name="x" className="h-4 w-4" />
+          </button>
+          <span className="tmark"><b>{EDITION.label}</b> — {EDITION.lieu}</span>
+          <h1 className="display mt-3 text-[24px] text-craie">L’impact après<br /><span className="creuse">la ligne d’arrivée.</span></h1>
+          <div className="mt-4 flex items-end justify-between gap-4 border-t border-craie/20 pt-3">
+            <div className="shrink-0">
+              <div className="display whitespace-nowrap text-[44px] leading-[.85] text-craie">T–<span className="tabular-nums">{jours}</span></div>
+              <div className="mt-2 font-mono text-[9.5px] uppercase tracking-label text-craie/60">Jours avant la ligne</div>
+            </div>
+            <div className="min-w-0 text-right font-mono text-[9.5px] uppercase leading-[1.9] tracking-mono text-craie/60">
+              {EDITION.mois} · 5 / 10 / 21,1 km<br />{EDITION.jauge}<br /><b className="text-brand-500">■ Vague {vague.nom} ouverte</b>
+            </div>
           </div>
+        </div>
 
-          {/* Barre de progression du tunnel */}
-          {step > 0 && step < 7 && (
-            <div className="mt-2.5">
-              <div className="flex items-center justify-between text-[11px] font-semibold text-fg-muted">
-                <span className="text-fg">{STEPS[step - 1]}</span>
-                <span className="tabular-nums">Étape {step}/6</span>
+        <div className="flex-1 overflow-y-auto no-scrollbar">
+          {/* ---------------------------------------------------- TON DOSSIER */}
+          <section className="px-5 pb-6 pt-5">
+            {dossier ? (
+              <DossierLie dossier={dossier} onDelier={delierDossier} onEspace={() => window.open(siteUrl('espace/'), '_blank', 'noopener')} />
+            ) : (
+              <PrendreOuLier
+                distance={distance} formule={formule} urlInscription={urlInscription}
+                onLier={async (champs) => {
+                  const r = await lierDossier(champs)
+                  if (r.dossier) { lierDossierApp(r.dossier); showToast(`Dossier ${r.dossier.reference} relié`) }
+                  return r
+                }}
+              />
+            )}
+          </section>
+
+          {/* ---------------------------------------------------- LA JOURNÉE */}
+          <section className="border-t border-line px-5 py-6">
+            <span className="tmark"><b>T–</b> / T+ — LA JOURNÉE</span>
+            <h2 className="titre mt-3 text-[22px]">La course le matin,<br />le réseau l’après-midi.</h2>
+            <div className="cadre mt-4 grid-cols-2">
+              {[{ t: 'T–', ...AVANT }, { t: 'T+', ...APRES }].map((b) => (
+                <div key={b.t} className="p-3.5">
+                  <div className="display text-[34px] leading-none text-brand-500">{b.t}</div>
+                  <h3 className="titre mt-2 text-[15px]">{b.titre}</h3>
+                  <p className="mt-1.5 text-[12.5px] leading-snug text-fg-muted">{b.lead}</p>
+                  <ul className="mt-2.5 space-y-1.5">
+                    {b.points.slice(0, 3).map((p, i) => (
+                      <li key={i} className="flex gap-2 text-[12px] leading-snug text-fg-soft">
+                        <span className="mt-[5px] h-1.5 w-1.5 shrink-0 bg-brand-500" />{p}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* ---------------------------------------------------- LES DISTANCES */}
+          <section className="border-t border-line px-5 py-6">
+            <span className="tmark"><b>T–01</b> / LES DOSSARDS</span>
+            <h2 className="titre mt-3 text-[22px]">Trois distances,<br />un seul dossard.</h2>
+            <p className="mt-2 text-[13.5px] text-fg-muted">Même prix, même accès, même après-midi. Choisis la tienne : elle sera pré-remplie sur le site.</p>
+            <div className="cadre mt-4 grid-cols-3" role="radiogroup" aria-label="Distance">
+              {DISTANCES.map((d) => {
+                const on = d.id === distance
+                return (
+                  <button
+                    key={d.id} role="radio" aria-checked={on} onClick={() => setDistance(d.id)}
+                    className={`flex flex-col p-3 text-left tap ${on ? 'bg-encre text-craie' : 'text-fg'}`}
+                  >
+                    <span className="display text-[30px] leading-none">{d.km}<small className={`ml-1 align-top font-mono text-[9px] font-bold tracking-mono ${on ? 'text-brand-500' : 'text-brand-500'}`}>KM</small></span>
+                    <span className="mt-2 font-mono text-[9.5px] font-bold uppercase tracking-mono">{d.nom}</span>
+                    <span className={`mt-1 text-[11px] leading-snug ${on ? 'text-craie/65' : 'text-fg-muted'}`}>{d.pourquoi}</span>
+                    {d.central && <span className="mt-2 font-mono text-[8.5px] font-bold uppercase tracking-mono text-brand-500">■ Le format central</span>}
+                  </button>
+                )
+              })}
+            </div>
+            <div className="relative mt-3 h-44 border border-line bg-surface-2">
+              <RouteMap route={dist.route} className="h-full w-full" />
+              <div className="pointer-events-none absolute left-2 top-2 z-[500] bg-encre px-2 py-1 font-mono text-[9.5px] font-bold uppercase tracking-mono text-craie">
+                {dist.trace}
               </div>
-              <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
-                <div className="h-full rounded-full bg-gradient-to-r from-brand-400 to-brand-600 transition-all duration-500" style={{ width: `${(step / 6) * 100}%` }} />
+              <div className="pointer-events-none absolute bottom-2 right-2 z-[500] bg-craie px-2 py-1 font-mono text-[9.5px] font-bold uppercase tracking-mono text-fg">
+                {ACCES_RESEAU.split('■')[0]}<b className="text-brand-500">■{ACCES_RESEAU.split('■')[1]}</b>
               </div>
             </div>
-          )}
-        </div>
+            <p className="mt-2 font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">Tracé indicatif · départ {EDITION.depart}, arrivée dans {EDITION.arrivee}</p>
+          </section>
 
-        {step === 0 ? renderIntro() : renderStep()}
+          {/* ---------------------------------------------------- LE PROGRAMME T+ */}
+          <section className="border-t border-line px-5 py-6">
+            <span className="tmark"><b>T+</b> / APRÈS LA LIGNE</span>
+            <h2 className="titre mt-3 text-[22px]">Le programme de l’après-midi.</h2>
+            <p className="mt-2 text-[13.5px] text-fg-muted">On court d’abord, on parle pendant, on prolonge après. Pas de stand, pas de slide, pas de pitch imposé.</p>
+            <div className="mt-4 border-t border-fg">
+              {PROGRAMME.map((r) => (
+                <div key={r.t} className="grid grid-cols-[64px_1fr] gap-3 border-b border-line py-3">
+                  <div className="font-mono text-[11px] font-bold tracking-mono text-brand-500">
+                    {r.t}<small className="mt-0.5 block text-[9px] font-medium tracking-mono text-fg-faint">{r.h}</small>
+                  </div>
+                  <div>
+                    <div className="titre text-[14px]">{r.quoi}</div>
+                    <p className="mt-1 text-[12.5px] leading-snug text-fg-muted">{r.texte}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
 
-        <div className="glass shrink-0 border-t border-line px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-          {footer()}
-          {step > 0 && step < 7 && (
-            <p className="mt-2 flex items-center justify-center gap-1.5 text-center text-[11px] text-fg-faint">
-              <Icon name="shield" className="h-3 w-3" /> Données chiffrées · facture entreprise · annulable jusqu’à J-30
-            </p>
-          )}
+          {/* ---------------------------------------------------- LES FORMULES */}
+          <section className="border-t border-line px-5 py-6">
+            <span className="tmark"><b>T–02</b> / LES FORMULES</span>
+            <h2 className="titre mt-3 text-[22px]">La course est la même.<br />Le réseau, non.</h2>
+            <p className="mt-2 text-[13.5px] text-fg-muted">Aucune formule n’achète une meilleure course. Ce qui change, c’est quand le réseau commence, et combien de portes s’ouvrent après.</p>
+            <div className="mt-4 border-t border-fg" role="radiogroup" aria-label="Formule">
+              {FORMULES.map((f) => {
+                const on = f.id === formule
+                return (
+                  <button
+                    key={f.id} role="radio" aria-checked={on} onClick={() => setFormule(f.id)}
+                    className={`relative block w-full border-b border-line p-3.5 text-left tap ${f.mise || on ? 'bg-encre text-craie' : 'text-fg'} ${on ? 'ring-1 ring-inset ring-brand-500' : ''}`}
+                  >
+                    {f.mise && <span className="absolute right-0 top-0 bg-brand-500 px-2 py-1 font-mono text-[8.5px] font-bold tracking-mono text-encre">LE PLUS CHOISI</span>}
+                    <div className="flex items-baseline justify-between gap-3 pr-24">
+                      <span className={`font-mono text-[10px] font-bold tracking-label ${f.mise || on ? 'text-craie/60' : 'text-fg-faint'}`}>FORMULE {f.n}</span>
+                    </div>
+                    <div className="mt-1 flex items-baseline justify-between gap-3">
+                      <span className="display text-[26px]">{f.nom}</span>
+                      <span className="font-mono text-[9.5px] font-bold uppercase tracking-mono text-brand-500">■ {f.etat}</span>
+                    </div>
+                    <div className={`mt-0.5 font-mono text-[9.5px] uppercase tracking-mono ${f.mise || on ? 'text-craie/60' : 'text-fg-faint'}`}>{f.pour}</div>
+                    <ul className="mt-2.5 space-y-1">
+                      {f.herite && (
+                        <li className={`flex gap-2 font-mono text-[9.5px] uppercase tracking-mono ${f.mise || on ? 'text-craie/60' : 'text-fg-faint'}`}>
+                          <span className="w-1.5 shrink-0 text-center font-bold text-brand-500">+</span>{f.herite}
+                        </li>
+                      )}
+                      {f.points.map((p, i) => (
+                        <li key={i} className={`flex gap-2 text-[12px] leading-snug ${f.mise || on ? 'text-craie/80' : 'text-fg-soft'}`}>
+                          <span className="mt-[5px] h-1.5 w-1.5 shrink-0 bg-brand-500" />{p}
+                        </li>
+                      ))}
+                    </ul>
+                  </button>
+                )
+              })}
+            </div>
+            <p className="mt-2 font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">Le tarif affiché est toujours celui de la vague. Premium et Cercle se demandent depuis ton espace.</p>
+          </section>
+
+          {/* ---------------------------------------------------- LES VAGUES */}
+          <section className="border-t border-line px-5 py-6">
+            <span className="tmark"><b>T–03</b> / LES VAGUES</span>
+            <h2 className="titre mt-3 text-[22px]">Trois vagues, un tarif qui monte.</h2>
+            <div className="mt-4 border-t border-fg">
+              {VAGUES.map((v, i) => {
+                const ouverte = v.code === vague.code
+                const passee = VAGUES.indexOf(vague) > i
+                return (
+                  <div key={v.code} className={`grid grid-cols-[1fr_auto] items-center gap-3 border-b border-line py-3 ${passee ? 'opacity-45' : ''}`}>
+                    <div>
+                      <div className="font-mono text-[10px] font-bold tracking-label text-fg-faint">
+                        VAGUE 0{i + 1} {ouverte && <b className="text-brand-500">■ OUVERTE</b>}
+                      </div>
+                      <div className="titre mt-0.5 text-[16px]">{v.nom}</div>
+                      <div className="font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">{v.periode}</div>
+                    </div>
+                    <div className="display text-[34px] leading-none">{v.prix}<small className="ml-0.5 align-top text-[13px]">€</small></div>
+                  </div>
+                )
+              })}
+            </div>
+            <p className="mt-2 text-[12.5px] text-fg-muted">Ta vague et son tarif sont gardés dès la création de ton compte, le temps que ton dossier soit lu. Le paiement vient après la validation, jamais avant.</p>
+            {!dossier && (
+              <a href={urlInscription} target="_blank" rel="noopener" className="btn btn-impact mt-4 w-full justify-between">
+                <span>Prendre un dossard · {dist.label}</span><span className="arr">→</span>
+              </a>
+            )}
+          </section>
+
+          {/* ---------------------------------------------------- LE LIEU */}
+          <section className="border-t border-line px-5 py-6">
+            <span className="tmark"><b>T+05</b> / LE LIEU</span>
+            <h2 className="titre mt-3 text-[22px]">Paris<br />La Défense.</h2>
+            <p className="mt-2 text-[13.5px] text-fg-muted"><b className="text-fg">Le plus grand quartier d’affaires d’Europe.</b> On court entre les tours où ces conversations se poursuivront le reste de l’année.</p>
+            <dl className="fiche mt-4">
+              {LIEU.map(([k, v]) => (
+                <div key={k}><dt>{k}</dt><dd>{v}</dd></div>
+              ))}
+            </dl>
+          </section>
+
+          {/* ---------------------------------------------------- QUI COURT */}
+          <section className="border-t border-line px-5 py-6">
+            <span className="tmark"><b>T+</b> / QUI COURT CETTE ANNÉE</span>
+            <h2 className="titre mt-3 text-[22px]">Tu sais déjà qui sera<br />sur la ligne.</h2>
+            <div className="mt-4 flex items-center gap-3 border border-line p-3.5">
+              <AvatarStack names={QUI_COURT.slice(0, 4)} total={INSCRITS} onMore={() => goTo('reseau')} />
+              <div className="min-w-0 flex-1">
+                <p className="text-[13px] font-medium leading-snug text-fg"><span className="font-mono tabular-nums">{fmt(INSCRITS)}</span> dossards déjà pris</p>
+                <p className="font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">Fondateurs · dirigeants · investisseurs</p>
+              </div>
+            </div>
+            <button onClick={() => { onClose(); goTo('reseau') }} className="btn btn-encre mt-3 w-full justify-between">
+              <span>Voir l’annuaire</span><span className="arr">→</span>
+            </button>
+            <p className="mt-2 text-[12.5px] text-fg-muted">L’annuaire complet s’ouvre le jour J. <b className="text-fg">En Premium, dès la validation</b> — des mois avant la ligne, avec six rencontres de huit minutes à réserver : recruter, lever, vendre, s’associer.</p>
+          </section>
+
+          {/* ---------------------------------------------------- PRINCIPES */}
+          <section className="border-t border-line px-5 pb-10 pt-6">
+            <span className="tmark"><b>T+</b> / CE QU’ON GARDE</span>
+            <div className="cadre mt-4 grid-cols-2">
+              {PRINCIPES.map((p) => (
+                <div key={p.n} className="p-3.5">
+                  <span className="font-mono text-[10px] font-bold tracking-label text-brand-500">{p.n}</span>
+                  <h3 className="titre mt-1.5 text-[13.5px]">{p.titre}</h3>
+                  <p className="mt-1 text-[12px] leading-snug text-fg-muted">{p.texte}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 flex items-center justify-between gap-3 font-mono text-[9px] uppercase tracking-mono text-fg-faint">
+              <span>© R.O.I · {EDITION.label} · 2027</span>
+              <a href={siteUrl('')} target="_blank" rel="noopener" className="text-fg">runoninvest.fr →</a>
+            </div>
+          </section>
         </div>
       </div>
     </div>
   )
 }
 
-/* ----------------------------------------------------------- sous-composants */
-function StepBody({ title, sub, children }) {
-  return (
-    <div className="flex-1 overflow-y-auto no-scrollbar px-5 pb-6 pt-4">
-      <h2 className="text-[19px] font-extrabold leading-tight text-fg">{title}</h2>
-      {sub && <p className="mt-0.5 text-[13px] text-fg-muted">{sub}</p>}
-      <div className="mt-4">{children}</div>
-    </div>
-  )
-}
-
-function Stepper({ value, min = 1, max = 99, onChange }) {
-  const btn = 'grid h-9 w-9 place-items-center rounded-full bg-surface-2 text-fg-soft tap disabled:opacity-40'
-  return (
-    <div className="flex items-center gap-2.5">
-      <button className={btn} onClick={() => onChange(Math.max(min, value - 1))} disabled={value <= min} aria-label="Retirer">
-        <span className="h-0.5 w-3.5 rounded-full bg-current" />
-      </button>
-      <span className="w-7 text-center text-[18px] font-extrabold tabular-nums text-fg">{value}</span>
-      <button className={btn} onClick={() => onChange(Math.min(max, value + 1))} disabled={value >= max} aria-label="Ajouter">
-        <Icon name="plus" className="h-4 w-4" />
-      </button>
-    </div>
-  )
-}
-
-/* Pastille distance compacte : 5k · 10k · 21. */
-function distBadge(x) {
-  if (x.id === 'semi') return '21'
-  return x.label.replace(' km', 'k')
-}
-
-/* Jauge de places restantes (scarcité). */
-function Gauge({ info }) {
-  const tone = info.full ? 'bg-fg-faint' : info.almostFull ? 'bg-gold' : 'bg-success'
+/* ---------------------------------------------------- dossier relié */
+function DossierLie({ dossier, onDelier, onEspace }) {
+  const n = ETAT_INDEX[dossier.etat] || 1
+  const dist = distanceById(dossier.distance)
+  const f = formuleById(dossier.formule)
   return (
     <div>
-      <div className="flex items-center justify-between text-[11px] font-semibold">
-        <span className={info.full ? 'text-fg-muted' : info.almostFull ? 'text-gold-dark' : 'text-success-dark'}>
-          {info.full ? 'Complet' : info.almostFull ? '🔥 Bientôt complet' : 'Places ouvertes'}
-        </span>
-        <span className="tabular-nums text-fg-muted">{info.full ? '—' : `${info.left.toLocaleString('fr-FR')} restantes`}</span>
+      <span className="tmark"><b>T–</b> / TON DOSSIER</span>
+      <h2 className="display mt-3 text-[28px]">Bonjour <span className="creuse">{dossier.prenom}</span>.</h2>
+      <p className="mt-2 font-mono text-[10px] uppercase leading-[1.9] tracking-mono text-fg-faint">
+        Dossier <b className="text-brand-500">{dossier.reference}</b> · Vague <b className="text-brand-500">{dossier.vague?.nom}</b> · Édition {dossier.edition || '01'}
+      </p>
+      {dossier.local && (
+        <p className="mt-3 border border-dashed border-line-strong px-3 py-2 font-mono text-[10px] uppercase leading-relaxed tracking-mono text-fg-faint">
+          <b className="text-brand-500">Aperçu hors ligne</b> — le site n’a pas répondu : ce dossier est reconstruit dans l’app.
+        </p>
+      )}
+
+      <div className="mt-4 grid grid-cols-[1fr_168px] items-start gap-4">
+        <dl className="border-t border-fg">
+          {[
+            ['Distance', `${dist.label} — ${dist.nom}`],
+            ['Formule', f.nom],
+            ['Tarif', dossier.vague ? `${dossier.vague.prix} € — vague ${dossier.vague.nom}` : '—'],
+            ['Dossard', `${dossier.prenom} ${dossier.nom} · ${dossier.fonction} · ${dossier.entreprise}`],
+          ].map(([k, v]) => (
+            <div key={k} className="border-b border-line py-2">
+              <dt className="font-mono text-[9px] font-bold uppercase tracking-label text-brand-500">{k}</dt>
+              <dd className="mt-0.5 text-[13px] font-medium leading-snug text-fg">{v}</dd>
+            </div>
+          ))}
+        </dl>
+        <Dossard dossier={dossier} />
       </div>
-      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
-        <div className={`h-full rounded-full ${tone} transition-all duration-700`} style={{ width: `${info.pct}%` }} />
+
+      <ol className="cadre mt-5 grid-cols-2" aria-label="Les quatre étapes du dossier">
+        {ETAPES.map((e, i) => (
+          <li key={e.id} className={`etape-suivi ${i + 1 < n ? 'fait' : ''} ${i + 1 === n ? 'cours' : ''}`} aria-current={i + 1 === n ? 'step' : undefined}>
+            <span className="e-n">{e.n}</span>
+            <h4>{e.titre}</h4>
+            <p>{e.texte}</p>
+          </li>
+        ))}
+      </ol>
+
+      <div className="mt-4 flex flex-col gap-2">
+        <button onClick={onEspace} className="btn btn-impact w-full justify-between"><span>Ouvrir mon espace sur le site</span><span className="arr">→</span></button>
+        <a href={siteUrl('espace/#formule')} target="_blank" rel="noopener" className="btn btn-ghost w-full justify-between"><span>Changer de formule</span><span className="arr">→</span></a>
       </div>
+      <p className="mt-3 flex items-center justify-between font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">
+        <span>Le site garde la vérité du dossier.</span>
+        <button onClick={onDelier} className="text-fg underline decoration-brand-500 underline-offset-4 tap">Délier</button>
+      </p>
     </div>
   )
 }
 
-function Row({ label, value, last }) {
-  return (
-    <div className={`flex items-center justify-between gap-3 py-1.5 ${last ? '' : 'border-b border-line'}`}>
-      <span className="text-[12.5px] text-fg-muted">{label}</span>
-      <span className="truncate text-[13px] font-semibold text-fg">{value}</span>
-    </div>
-  )
-}
+/* ---------------------------------------------------- prendre / relier */
+function PrendreOuLier({ distance, formule, urlInscription, onLier }) {
+  const [mode, setMode] = useState('prendre')
+  const [reference, setReference] = useState('')
+  const [email, setEmail] = useState('')
+  const [erreur, setErreur] = useState('')
+  const [busy, setBusy] = useState(false)
+  const dist = distanceById(distance)
+  const f = formuleById(formule)
 
-function PriceRow({ label, value, good, muted }) {
-  return (
-    <div className="flex items-center justify-between py-1 text-[13px]">
-      <span className={muted ? 'text-fg-faint' : 'text-fg-soft'}>{label}</span>
-      <span className={`tabular-nums font-semibold ${good ? 'text-success-dark' : muted ? 'text-fg-muted' : 'text-fg'}`}>{value}</span>
-    </div>
-  )
-}
-
-/* Marque de paiement — logos texte (aucun asset réseau, sobriété). */
-function PayMark({ id, active }) {
-  if (id === 'paypal') {
-    return <span className="text-[15px] font-extrabold italic"><span className="text-[#003087]">Pay</span><span className="text-[#0070E0]">Pal</span></span>
+  async function submit(e) {
+    e.preventDefault()
+    setBusy(true); setErreur('')
+    const r = await onLier({ reference, email })
+    setBusy(false)
+    if (r.erreur) setErreur(r.erreur)
   }
-  if (id === 'gpay') {
-    return (
-      <span className="flex items-center gap-1 text-[14px] font-bold">
-        <span className="text-[#4285F4]">G</span><span className="text-[#EA4335]">o</span><span className="text-[#FBBC05]">o</span><span className="text-[#4285F4]">g</span><span className="text-[#34A853]">l</span><span className="text-[#EA4335]">e</span>
-        <span className="text-fg-soft">Pay</span>
-      </span>
-    )
-  }
-  return (
-    <span className={`grid h-8 w-8 place-items-center rounded-xl ${active ? 'bg-brand-500 text-white' : 'bg-brand-50 text-brand-600'}`}>
-      <Icon name={id === 'card' ? 'creditCard' : 'briefcase'} className="h-4 w-4" />
-    </span>
-  )
-}
 
-function formatCard(v) {
-  return v.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim()
-}
-function formatExp(v) {
-  const n = v.replace(/\D/g, '').slice(0, 4)
-  return n.length >= 3 ? `${n.slice(0, 2)}/${n.slice(2)}` : n
+  return (
+    <div>
+      <span className="tmark"><b>T–</b> / TON DOSSARD</span>
+      <h2 className="display mt-3 text-[28px]">Un seul dossard.<br /><span className="creuse">Deux faces.</span></h2>
+      <p className="mt-2 text-[13.5px] text-fg-muted">Recto, il te fait passer la ligne. Verso, il devient ton profil — ici, toute l’année. <b className="text-fg">L’inscription se fait sur le site</b>, ton dossier se relie ensuite en deux champs.</p>
+
+      <div className="mt-4 grid grid-cols-2 border border-line" role="tablist">
+        {[['prendre', 'Prendre un dossard'], ['relier', 'J’ai déjà un dossier']].map(([id, label]) => (
+          <button key={id} role="tab" aria-selected={mode === id} onClick={() => setMode(id)}
+            className={`py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono tap ${mode === id ? 'bg-encre text-craie' : 'text-fg-muted'}`}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {mode === 'prendre' ? (
+        <div className="mt-4 grid grid-cols-[1fr_128px] items-start gap-4">
+          <div>
+            <dl className="border-t border-fg">
+              {[['Distance', `${dist.label} — ${dist.nom}`], ['Formule', `${f.nom} · ${f.prix}`], ['Vague', `${vagueCourante().nom} · ${vagueCourante().prix} €`]].map(([k, v]) => (
+                <div key={k} className="border-b border-line py-2">
+                  <dt className="font-mono text-[9px] font-bold uppercase tracking-label text-brand-500">{k}</dt>
+                  <dd className="mt-0.5 text-[13px] font-medium text-fg">{v}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-2 text-[12px] leading-snug text-fg-muted">Un compte, une distance, une formule : cinq minutes. Ta vague est gardée dès l’envoi.</p>
+          </div>
+          <Dossard verso={false} />
+        </div>
+      ) : (
+        <form onSubmit={submit} className="mt-4" noValidate>
+          <div className="champ">
+            <label htmlFor="ref">Référence du dossier</label>
+            <input id="ref" value={reference} onChange={(e) => setReference(e.target.value)} placeholder="E01-000123" autoComplete="off" spellCheck={false} />
+          </div>
+          <div className="champ mt-3">
+            <label htmlFor="mail">E-mail du compte</label>
+            <input id="mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="toi@entreprise.fr" autoComplete="email" inputMode="email" />
+          </div>
+          <p className="mt-2 text-[12px] leading-snug text-fg-muted">La référence est en haut de ton espace sur le site. Depuis l’espace, « Ouvrir mon dossard dans l’app » remplit tout seul ces deux champs.</p>
+          {erreur && <p className="form-msg mt-3" role="alert">{erreur}</p>}
+          <button type="submit" disabled={busy} aria-busy={busy} className="btn btn-impact mt-4 w-full justify-between">
+            <span>{busy ? 'Lecture du dossier…' : 'Relier mon dossier'}</span><span className="arr">→</span>
+          </button>
+        </form>
+      )}
+
+      {mode === 'prendre' && (
+        <a href={urlInscription} target="_blank" rel="noopener" className="btn btn-impact mt-4 w-full justify-between">
+          <span>Prendre un dossard sur le site</span><span className="arr">→</span>
+        </a>
+      )}
+    </div>
+  )
 }

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import { AppContext } from './AppContext'
 import { usePersistentState, clearPersistedState } from './lib/usePersistentState'
 import {
@@ -18,7 +18,7 @@ import { CONNECTIONS, REQUESTS } from './data/connections'
 
 import Icon from './components/Icon'
 import { Avatar } from './components/Avatar'
-import { Logo, PILL_TONES } from './components/primitives'
+import { Logo } from './components/primitives'
 import BottomNav from './components/BottomNav'
 import Sidebar from './components/Sidebar'
 import PostComposer from './components/PostComposer'
@@ -51,6 +51,7 @@ import { suggestRun } from './lib/runmatch'
 import { SERVICES } from './data/integrations'
 import { planById, hasFeature } from './data/plans'
 import { INITIAL_INVITES, INITIAL_TEAMMATES } from './data/invites'
+import { dossierDepuisUrl, lierDossier } from './lib/dossier'
 
 /* Contexte de matching (constant) : sorties & connexions en commun */
 const MATCH_NAMES = Object.keys(PROFILES)
@@ -86,7 +87,7 @@ function detectEcoDefault() {
 function ScreenFallback() {
   return (
     <div className="flex flex-1 items-center justify-center" aria-busy="true">
-      <span className="h-7 w-7 animate-spin rounded-full border-2 border-line-strong border-t-transparent" />
+      <span className="h-1 w-24 bg-line-strong"><span className="block h-full w-1/3 animate-pulse bg-brand-500" /></span>
       <span className="sr-only">Chargement…</span>
     </div>
   )
@@ -166,7 +167,7 @@ export default function App() {
   const [integrationsOpen, setIntegrationsOpen] = useState(false)
   const [integrations, setIntegrations] = usePersistentState('integrations', {})
 
-  // Abonnement · invitations
+  // Formule · cooptation
   const [plan, setPlan] = usePersistentState('plan', 'free')
   const [plansOpen, setPlansOpen] = useState(false)
   const [invites, setInvites] = usePersistentState('invites', INITIAL_INVITES)
@@ -185,9 +186,29 @@ export default function App() {
   const [runMatchOpen, setRunMatchOpen] = useState(false)
   const [proposedRuns, setProposedRuns] = usePersistentState('proposedRuns', {})
 
-  // Course officielle ROI Business Run · La Défense — annonce & inscription B2B
+  // L'édition — la course annuelle. Le dossier vit sur le site (runoninvest.fr),
+  // l'app le relie : par lien profond depuis l'espace (?dossier=&email=) ou à
+  // la main (référence + e-mail). `dossier` = ce que le site a répondu.
   const [raceOpen, setRaceOpen] = useState(false)
-  const [raceRegistration, setRaceRegistration] = usePersistentState('raceRegistration', null)
+  const [dossier, setDossier] = usePersistentState('dossier', null)
+  useEffect(() => {
+    const q = dossierDepuisUrl()
+    if (!q) return
+    let vivant = true
+    lierDossier(q).then((r) => {
+      if (!vivant) return
+      if (r.dossier) {
+        setDossier(r.dossier)
+        showToast(`Dossier ${r.dossier.reference} relié`)
+      } else {
+        showToast(r.erreur || 'Dossier introuvable')
+      }
+      setRaceOpen(true)
+    })
+    try { window.history.replaceState(null, '', window.location.pathname) } catch { /* sans historique */ }
+    return () => { vivant = false }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const planMeta = planById(plan)
   const referralJoined = invites.filter((i) => i.status === 'joined').length
@@ -249,8 +270,8 @@ export default function App() {
   function contactMember(name) {
     setContacted((c) => ({ ...c, [name]: true }))
     track({ type: 'contact', name })
-    addToPipeline(name, { via: 'Demande de contact envoyée' })
-    showToast('Demande envoyée · ajoutée au pipeline')
+    addToPipeline(name, { via: 'Rencontre proposée depuis l’annuaire' })
+    showToast(`Rencontre proposée à ${name.split(' ')[0]} · ajoutée au pipeline`)
   }
 
   function sendSuggestion(id, name) {
@@ -258,20 +279,20 @@ export default function App() {
     if (name) {
       setContacted((c) => ({ ...c, [name]: true }))
       track({ type: 'contact', name })
-      addToPipeline(name, { via: 'Match contacté' })
+      addToPipeline(name, { via: 'Rencontre proposée depuis « Pour toi »' })
     }
-    showToast('Demande envoyée · ajoutée au pipeline')
+    showToast(name ? `Rencontre proposée à ${name.split(' ')[0]} · ajoutée au pipeline` : 'Rencontre proposée · ajoutée au pipeline')
   }
 
   function acceptRequest(name) {
     setRequests((rs) => rs.filter((r) => r.name !== name))
     setConnections((cs) => (cs.some((c) => c.name === name) ? cs : [{ name, context: 'Connexion acceptée' }, ...cs]))
-    showToast(`${name.split(' ')[0]} ajouté·e à ton réseau`)
+    showToast(`${name.split(' ')[0]} rejoint tes rencontres`)
   }
 
   function declineRequest(name) {
     setRequests((rs) => rs.filter((r) => r.name !== name))
-    showToast('Demande déclinée')
+    showToast('Rencontre déclinée')
   }
 
   function toggleEventKudos(id) {
@@ -291,7 +312,7 @@ export default function App() {
   function toggleJoin(id) {
     setJoined((prev) => {
       const next = !prev[id]
-      showToast(next ? 'Inscription confirmée' : 'Inscription annulée')
+      showToast(next ? 'Tu es de la sortie' : 'Tu ne cours plus cette sortie')
       return { ...prev, [id]: next }
     })
   }
@@ -317,7 +338,7 @@ export default function App() {
       ...prev,
     ])
     setComposerOpen(false)
-    showToast('Post publié')
+    showToast('Publié dans le fil')
   }
 
   function openChat(id) {
@@ -351,7 +372,7 @@ export default function App() {
     setDraft('')
   }
 
-  // Brise-glace IA : pré-remplit un message pertinent et ouvre la conversation.
+  // Une première phrase, toute prête : pré-remplit le message et ouvre la conversation.
   function startIcebreaker(name) {
     const text = icebreaker(name, SHARED_RUNS[name] || 0)
     setMember(null)
@@ -360,10 +381,10 @@ export default function App() {
       goTo('messages')
       openChat(conv.id)
       setDraft(text)
-      showToast('Brise-glace prêt — plus qu’à envoyer')
+      showToast('Première phrase prête — plus qu’à envoyer')
     } else {
       navigator?.clipboard?.writeText?.(text)
-      showToast('Brise-glace copié')
+      showToast('Première phrase copiée')
     }
   }
 
@@ -379,7 +400,7 @@ export default function App() {
     setJoinedGroups((j) => ({ ...j, [id]: true }))
     setNewGroupName('')
     setCreatingGroup(false)
-    showToast('Groupe créé')
+    showToast('Cercle ouvert')
     openGroupChat(id)
   }
 
@@ -388,7 +409,7 @@ export default function App() {
     setJoinedGroups((j) => ({ ...j, [g.id]: true }))
     setGroups((gs) => [...gs, { ...g, members: g.members + 1, time: 'maintenant', unread: 0 }])
     setGroupThreads((t) => ({ ...t, [g.id]: t[g.id] || [] }))
-    showToast('Groupe rejoint')
+    showToast('Tu as rejoint le cercle')
   }
 
   function messageMember(name) {
@@ -398,7 +419,7 @@ export default function App() {
       goTo('messages')
       openChat(conv.id)
     } else {
-      showToast('Conversation bientôt disponible')
+      showToast('La conversation s’ouvre quand vous avez dit oui tous les deux')
     }
   }
 
@@ -411,9 +432,12 @@ export default function App() {
     setOnboarding(false)
   }
 
-  function registerRace(reg) {
-    setRaceRegistration(reg)
-    showToast(`Inscription confirmée · dossard ${reg.dossard}`)
+  function lierDossierApp(d) {
+    setDossier(d)
+  }
+  function delierDossier() {
+    setDossier(null)
+    showToast('Dossier délié — le site le garde')
   }
 
   function resetDemo() {
@@ -443,7 +467,7 @@ export default function App() {
     setPlan(id)
     setPlansOpen(false)
     const meta = planById(id)
-    showToast(id === 'free' ? 'Plan Découverte activé' : `Bienvenue dans ${meta.name}`)
+    showToast(id === 'free' ? 'Retour à la formule Dossard' : `Formule ${meta.name} demandée`)
   }
 
   function nameFromEmail(email) {
@@ -453,14 +477,14 @@ export default function App() {
 
   function sendInvite(email) {
     if (invites.some((i) => i.email === email)) {
-      showToast('Déjà invité·e')
+      showToast('Déjà coopté·e')
       return
     }
     setInvites((prev) => [
       { id: `inv-${Date.now()}`, name: nameFromEmail(email), email, status: 'pending', context: 'Invitation envoyée', date: 'à l’instant' },
       ...prev,
     ])
-    showToast('Invitation envoyée')
+    showToast(`Cooptation envoyée à ${nameFromEmail(email)}`)
   }
 
   function inviteTeammate(email) {
@@ -472,12 +496,12 @@ export default function App() {
       ...prev,
       { id: `t-${Date.now()}`, name: nameFromEmail(email), email, role: 'Invité·e', status: 'pending' },
     ])
-    showToast('Coéquipier invité')
+    showToast(`Dossard invité envoyé à ${nameFromEmail(email)}`)
   }
 
   function confirmMeeting(id) {
     setMeetingStatus((s) => ({ ...s, [id]: 'confirmed' }))
-    showToast('RDV confirmé')
+    showToast('Rencontre confirmée')
   }
 
   function proposeMeeting({ with: who, type = 'cafe', date, time, place, note }) {
@@ -494,7 +518,7 @@ export default function App() {
       ...prev,
     ])
     addToPipeline(who)
-    if (type !== 'run') showToast('Proposition de RDV envoyée')
+    if (type !== 'run') showToast(`Rencontre proposée à ${who.split(' ')[0]}`)
   }
 
   // RunMatch : proposer une sortie matchée → crée un RDV « run » daté, alimente
@@ -505,7 +529,7 @@ export default function App() {
     proposeMeeting({ with: name, type: 'run', date: plan.date, time: plan.time, place: plan.place, note: plan.note })
     track({ type: 'contact', name })
     setProposedRuns((p) => ({ ...p, [name]: true }))
-    showToast('Run proposé · agenda & pipeline mis à jour')
+    showToast(`Binôme proposé à ${name.split(' ')[0]} · rencontres & pipeline à jour`)
   }
 
   const ctx = {
@@ -522,11 +546,11 @@ export default function App() {
     openSearch: () => setSearchOpen(true),
     openIntegrations: () => setIntegrationsOpen(true),
     integrations, toggleIntegration,
-    // Abonnement
+    // Formule
     plan, planMeta, upgradePlan,
     hasFeature: (key) => hasFeature(plan, key),
     openPlans: () => setPlansOpen(true),
-    // Invitations
+    // Cooptation
     invites, sendInvite, referralJoined,
     teammates, inviteTeammate,
     openInvite: () => setInviteOpen(true),
@@ -538,9 +562,9 @@ export default function App() {
     openPipeline: () => setPipelineOpen(true),
     runMatches, proposeRun, proposedRuns,
     openRunMatch: () => setRunMatchOpen(true),
-    // Course officielle ROI Business Run
+    // L'édition — la course annuelle, et le dossier lu sur le site
     openRace: () => setRaceOpen(true),
-    raceRegistration, registerRace,
+    dossier, lierDossierApp, delierDossier,
     contacted, contactMember,
     sentSuggestions, sendSuggestion,
     connections, requests, acceptRequest, declineRequest,
@@ -582,32 +606,32 @@ export default function App() {
     return (
       <div className="absolute inset-0 z-40">
         <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={() => setNotifOpen(false)} />
-        <div className="animate-drawerIn absolute inset-y-0 right-0 flex w-[86%] max-w-[340px] flex-col bg-surface shadow-float">
-          <div className="flex shrink-0 items-center justify-between border-b border-line px-4 py-4">
-            <h2 className="text-lg font-semibold text-fg">Notifications</h2>
-            <button onClick={() => setNotifOpen(false)} className="grid h-9 w-9 place-items-center rounded-full bg-surface-2 text-fg-muted tap" aria-label="Fermer">
-              <Icon name="x" className="h-5 w-5" />
+        <div className="animate-drawerIn absolute inset-y-0 right-0 flex w-[86%] max-w-[340px] flex-col border-l border-line bg-canvas">
+          <div className="flex shrink-0 items-center justify-between border-b border-fg px-4 py-4">
+            <h2 className="tmark"><b>T+</b> / CE QUE LE RÉSEAU TE DIT</h2>
+            <button onClick={() => setNotifOpen(false)} className="ico tap" aria-label="Fermer">
+              <Icon name="x" className="h-4 w-4" />
             </button>
           </div>
           {unreadNotif > 0 && (
             <button
               onClick={() => setNotifs((ns) => ns.map((n) => ({ ...n, unread: false })))}
-              className="shrink-0 border-b border-line px-4 py-2.5 text-left text-xs font-semibold text-brand-600 tap"
+              className="shrink-0 border-b border-line px-4 py-2.5 text-left font-mono text-[10px] font-bold uppercase tracking-mono text-brand-500 tap"
             >
               Tout marquer comme lu
             </button>
           )}
           <div className="flex-1 overflow-y-auto no-scrollbar">
             {notifs.map((n) => (
-              <div key={n.id} className={`flex gap-3 border-b border-line px-4 py-3.5 ${n.unread ? 'bg-brand-light/30' : ''}`}>
-                <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${PILL_TONES[n.tone]}`}>
+              <div key={n.id} className={`flex gap-3 border-b border-line px-4 py-3.5 ${n.unread ? 'bg-surface-2' : ''}`}>
+                <span className={`ico ${n.unread ? 'plein' : ''}`}>
                   <Icon name={n.icon} className="h-4 w-4" filled={n.icon === 'heart' || n.icon === 'sparkles'} />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-[13px] leading-snug text-fg">{n.text}</p>
-                  <p className="mt-0.5 text-[11px] text-fg-faint">{n.time}</p>
+                  <p className="mt-0.5 font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">{n.time}</p>
                 </div>
-                {n.unread && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-500" />}
+                {n.unread && <span className="mt-1.5 h-2 w-2 shrink-0 bg-brand-500" />}
               </div>
             ))}
           </div>
@@ -618,7 +642,7 @@ export default function App() {
 
   return (
     <AppContext.Provider value={ctx}>
-      <div className={`relative flex h-[100dvh] w-full justify-center overflow-hidden bg-canvas bg-mesh ${eco ? 'eco' : ''}`}>
+      <div className={`relative flex h-[100dvh] w-full justify-center overflow-hidden bg-canvas ${eco ? 'eco' : ''}`}>
         {/* Navigation latérale (desktop) — remplace la BottomNav sur grand écran. */}
         <Sidebar
           active={tab}
@@ -633,24 +657,25 @@ export default function App() {
             confortable sur bureau (vrai layout web, sans maquette « téléphone »). */}
         <div className="relative flex h-full w-full max-w-[480px] flex-col overflow-hidden bg-canvas lg:max-w-[640px] lg:border-x lg:border-line">
 
+          {/* La nav du site, en haut : encre à 88 %, le logotype, les icônes craie. */}
           {showHeader && (
-            <header className="glass z-20 flex shrink-0 items-center justify-between border-b border-line px-5 pb-3 pt-[max(1rem,env(safe-area-inset-top))] lg:hidden">
-              <Logo />
+            <header className="glass-dark z-20 flex shrink-0 items-center justify-between border-b border-line-craie px-5 pb-2.5 pt-[max(0.9rem,env(safe-area-inset-top))] lg:hidden">
+              <Logo light />
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setSearchOpen(true)}
-                  className="grid h-10 w-10 place-items-center rounded-full text-fg-soft tap hover:bg-black/[0.05]"
+                  className="grid h-10 w-10 place-items-center text-craie tap hover:bg-craie hover:text-encre"
                   aria-label="Rechercher"
                 >
                   <Icon name="search" className="h-[21px] w-[21px]" />
                 </button>
                 <button
                   onClick={() => setNotifOpen(true)}
-                  className="relative grid h-10 w-10 place-items-center rounded-full text-fg-soft tap hover:bg-black/[0.05]"
+                  className="relative grid h-10 w-10 place-items-center text-craie tap hover:bg-craie hover:text-encre"
                   aria-label="Notifications"
                 >
                   <Icon name="bell" className="h-[22px] w-[22px]" />
-                  {unreadNotif > 0 && <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-brand-500 ring-2 ring-canvas" />}
+                  {unreadNotif > 0 && <span className="absolute right-2 top-2 h-2 w-2 bg-brand-500" />}
                 </button>
                 <Avatar name={CURRENT_USER.name} size="sm" onClick={() => goTo('profil')} />
               </div>
@@ -664,7 +689,7 @@ export default function App() {
           {toast && (
             <div
               key={toast.key}
-              className="animate-toastIn glass-dark pointer-events-none absolute bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-float"
+              className="animate-toastIn glass-dark pointer-events-none absolute bottom-24 left-1/2 z-50 -translate-x-1/2 border-l-[3px] border-brand-500 px-4 py-2.5 font-mono text-[11px] font-bold uppercase tracking-mono text-craie"
             >
               {toast.msg}
             </div>

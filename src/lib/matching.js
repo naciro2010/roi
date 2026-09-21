@@ -1,16 +1,16 @@
-/* Moteur de matching « Pour toi » — ROI Match IA.
+/* « Pour toi » — les rencontres proposées, et pourquoi.
 
-   Le score de match n'est PAS figé : il combine la complémentarité statique
-   (besoins ↔ offres, running, sujets, réseau) avec le COMPORTEMENT de
-   l'utilisateur dans l'app — comme l'algorithme d'un feed social, mais orienté
-   business. Plus tu regardes / likes / contactes un type de profil, plus ce
-   type remonte. Tout est pur et déterministe : (moi, profils, signaux) → score.
+   Le score n'est PAS figé : il combine ce qui se répond (ce que tu cherches ↔
+   ce qu'on t'apporte, la course, les sujets, les relations communes) avec ce
+   que tu FAIS dans l'app. Plus tu regardes, aimes, écris à un type de profil,
+   plus ce type remonte. Tout est pur et déterministe : (toi, profils, signaux)
+   → score, et chaque proposition est expliquée.
 
    Signaux (signals) — journal comportemental persistant :
      views   : { [name]: count }   profils ouverts
      likes   : { [name]: count }   posts likés (attribués à l'auteur)
      msgs    : { [name]: count }   messages envoyés
-     contacts: { [name]: true }    demandes de contact / RDV (intention forte)
+     contacts: { [name]: true }    rencontres proposées (intention forte)
      filters : { [category]: count } filtres d'annuaire utilisés
      topics  : { [topic]: weight }  sujets recherchés / explorés
 */
@@ -19,18 +19,19 @@ import { ARCHETYPES, ME, profileFor, RUN_WINDOWS, RUN_ZONES } from '../data/prof
 
 export const EMPTY_SIGNALS = { views: {}, likes: {}, msgs: {}, contacts: {}, filters: {}, topics: {} }
 
-/* Poids comportemental d'une action (sa force d'apprentissage). */
+/* Poids d'une action (ce qu'elle nous apprend). */
 const ACTION_WEIGHT = { view: 1, like: 1.6, msg: 2.4, contact: 3.4, filter: 1.2, search: 1 }
 
 /* Pondération des composantes du score final. */
 const W = { need: 0.34, behavior: 0.26, run: 0.18, vibe: 0.13, social: 0.09 }
 
-/* Filtres d'annuaire → archétype d'intérêt (alimente le « Pour toi »). */
+/* Filtres de l'annuaire (data/network.js) → archétype d'intérêt (alimente le « Pour toi »). */
 const FILTER_ARCHE = {
-  'Investit': 'investor',
+  'Lève': 'investor',
   'Recrute': 'operator',
-  'Cherche un associé': 'founder',
-  'Mentor': 'mentor',
+  'Vend': 'developer',
+  'S’associe': 'founder',
+  'Conseille': 'mentor',
 }
 
 const clamp = (n, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, n))
@@ -61,7 +62,7 @@ export function recordSignal(signals, { type, name, category, topics }) {
 /* vecteur d'intérêt comportemental */
 
 /* Agrège le comportement en un vecteur d'affinité par archétype + sujets.
-   C'est le « modèle » que l'algorithme apprend de l'utilisateur. */
+   C'est ce qu'on apprend de toi. */
 export function interestVector(signals = EMPTY_SIGNALS) {
   const arche = {}
   const perPerson = {}
@@ -112,7 +113,7 @@ function provideSatisfies(provider, seek, seeker) {
   }
 }
 
-/* Complémentarité besoins ↔ offres (ce que je gagne + ce que je lui apporte). */
+/* Ce qui se répond : ce que je cherche ↔ ce qu'on m'apporte, et l'inverse. */
 function needFit(me, them) {
   const seeks = me.seeks || []
   const theirSeeks = them.seeks || []
@@ -127,7 +128,7 @@ function needFit(me, them) {
   return clamp(0.55 * aFrac + 0.3 * bFrac + 0.3 * topic)
 }
 
-/* Compatibilité running : créneau, allure, zone, distance, événements. */
+/* Ce qu'on a en commun en course : créneau, allure, zone, distance, sorties. */
 function runFit(me, them, sharedRuns = 0) {
   const a = me.run || {}
   const b = them.run || {}
@@ -148,8 +149,8 @@ function vibeFit(me, them) {
   return clamp(o / Math.max(3, them.topics?.length || 3))
 }
 
-/* Composante comportementale : à quel point ce profil colle à ce que
-   l'utilisateur explore en ce moment (le cœur du « Pour toi »). */
+/* Ce que ton comportement a montré : à quel point cette fiche colle à ce que
+   tu explores en ce moment (le cœur du « Pour toi »). */
 function behaviorFit(them, vec, name) {
   const arche = vec.archeNorm[them.archetype] || 0
   const topicW = (them.topics || []).map((t) => vec.topicsNorm[t] || 0)
@@ -158,7 +159,7 @@ function behaviorFit(them, vec, name) {
   return clamp(0.55 * arche + 0.3 * topic + 0.3 * direct)
 }
 
-/* score complet + explications */
+/* score complet + le pourquoi */
 
 export function scoreMatch(name, signals = EMPTY_SIGNALS, opts = {}) {
   const them = profileFor(name)
@@ -182,18 +183,18 @@ export function scoreMatch(name, signals = EMPTY_SIGNALS, opts = {}) {
   return { name, score, parts, archetype: them.archetype, reasons: buildReasons(them, parts, vec, name, sharedRuns, mutuals) }
 }
 
-/* Explications lisibles, triées par contribution. */
+/* Le pourquoi, lisible, trié par contribution. */
 function buildReasons(them, parts, vec, name, sharedRuns, mutuals) {
   const out = []
   if (parts.need >= 0.45) {
     if ((them.provides || []).includes('capital') && ME.seeks.includes('capital'))
-      out.push({ icon: 'trendingUp', text: 'Tu prépares une seed — ' + name.split(' ')[0] + ' investit sur ta thèse' })
+      out.push({ icon: 'trendingUp', text: 'Tu lèves — ' + name.split(' ')[0] + ' investit sur ce que tu construis' })
     else if ((them.provides || []).includes('talent') && ME.seeks.includes('talent'))
-      out.push({ icon: 'cpu', text: 'Répond à ton besoin : un profil tech pour ton MVP' })
+      out.push({ icon: 'cpu', text: 'Répond à ce que tu cherches : un développeur pour ton produit' })
     else if ((them.provides || []).includes('mentor'))
-      out.push({ icon: 'compass', text: 'Propose du mentorat sur un sujet que tu creuses' })
+      out.push({ icon: 'compass', text: 'Conseille sur un sujet que tu creuses : structurer une équipe' })
     else
-      out.push({ icon: 'target', text: 'Forte complémentarité besoins ↔ offres' })
+      out.push({ icon: 'target', text: 'Vos intentions se répondent' })
   }
   if (sharedRuns) out.push({ icon: 'activity', text: `${sharedRuns} sortie${sharedRuns > 1 ? 's' : ''} déjà courue${sharedRuns > 1 ? 's' : ''} ensemble` })
   else if (parts.run >= 0.5) {
@@ -202,8 +203,8 @@ function buildReasons(them, parts, vec, name, sharedRuns, mutuals) {
     out.push({ icon: 'route', text: `Vous courez ${win} ${zone}` })
   }
   if ((vec.archeNorm[them.archetype] || 0) >= 0.6 && vec.strength >= 3)
-    out.push({ icon: 'sparkles', text: `Tu explores beaucoup les ${ARCHETYPES[them.archetype].label.toLowerCase()} en ce moment` })
-  if (mutuals >= 2) out.push({ icon: 'users', text: `${mutuals} connexions en commun` })
+    out.push({ icon: 'sparkles', text: `Tu regardes beaucoup les ${ARCHETYPES[them.archetype].label.toLowerCase()} en ce moment` })
+  if (mutuals >= 2) out.push({ icon: 'users', text: `${mutuals} relations en commun` })
   if (parts.vibe >= 0.5 && out.length < 4) {
     const shared = (them.topics || []).filter((t) => ME.topics.includes(t)).slice(0, 2)
     if (shared.length) out.push({ icon: 'link', text: `Sujets en commun : ${shared.join(', ')}` })
@@ -211,7 +212,7 @@ function buildReasons(them, parts, vec, name, sharedRuns, mutuals) {
   return out.slice(0, 4)
 }
 
-/* classement & insights */
+/* classement & synthèse */
 
 export function rankMatches(names, signals = EMPTY_SIGNALS, ctx = {}) {
   const vec = interestVector(signals)
@@ -226,11 +227,11 @@ export function rankMatches(names, signals = EMPTY_SIGNALS, ctx = {}) {
     .sort((a, b) => b.score - a.score)
 }
 
-/* RunMatch (binôme de course)
+/* Le binôme (la sortie à deux)
 
-   Même matière première que le « Pour toi », mais ré-pondérée autour de la
-   compatibilité running : on veut d'abord quelqu'un avec qui courir (même
-   allure, même créneau, même zone), et accessoirement un intérêt business.
+   Même matière première que le « Pour toi », mais repondérée autour de la
+   course : on veut d'abord quelqu'un avec qui courir (même allure, même
+   créneau, même zone), et ensuite une intention qui se répond.
    La sortie devient le rendez-vous — d'où le poids fort sur `run`. */
 const RUN_W = { run: 0.48, need: 0.27, behavior: 0.15, vibe: 0.1 }
 
@@ -243,13 +244,13 @@ function buildRunReasons(them, parts, name, sharedRuns) {
   const gap = Math.abs((ME.run?.pace || 6) - (them.run?.pace || 6))
   if (gap <= 0.4) out.push({ icon: 'activity', text: 'Allures très proches — vous tiendrez la conversation' })
   if ((them.provides || []).includes('capital') && ME.seeks.includes('capital'))
-    out.push({ icon: 'trendingUp', text: `Et ${name.split(' ')[0]} investit sur ta thèse` })
+    out.push({ icon: 'trendingUp', text: `Et ${name.split(' ')[0]} investit sur ce que tu construis` })
   else if ((them.provides || []).includes('talent') && ME.seeks.includes('talent'))
-    out.push({ icon: 'cpu', text: 'Et c’est un profil tech pour ton MVP' })
+    out.push({ icon: 'cpu', text: 'Et c’est le développeur que tu cherches' })
   else if ((them.provides || []).includes('mentor'))
-    out.push({ icon: 'compass', text: 'Et peut te conseiller sur ton scaling' })
+    out.push({ icon: 'compass', text: 'Et peut te conseiller pour structurer ton équipe' })
   else if (parts.need >= 0.4)
-    out.push({ icon: 'target', text: 'Et forte complémentarité business' })
+    out.push({ icon: 'target', text: 'Et vos intentions se répondent' })
   return out.slice(0, 3)
 }
 
@@ -268,7 +269,7 @@ export function scoreRunMatch(name, signals = EMPTY_SIGNALS, opts = {}) {
   return { name, score, parts, archetype: them.archetype, run: them.run, reasons: buildRunReasons(them, parts, name, sharedRuns) }
 }
 
-/* Classement des binômes de course : compatibilité running d'abord. */
+/* Classement des binômes : la course d'abord. */
 export function rankRunMatches(names, signals = EMPTY_SIGNALS, ctx = {}) {
   const vec = interestVector(signals)
   return names
@@ -278,7 +279,7 @@ export function rankRunMatches(names, signals = EMPTY_SIGNALS, ctx = {}) {
 
 const ACTION_VERB = { view: 'consultés', like: 'likés', contact: 'contactés', msg: 'messagés' }
 
-/* Synthèse comportementale affichée dans le bandeau « Pour toi ». */
+/* Ce que ton comportement a montré, affiché dans le bandeau « Pour toi ». */
 export function behaviorInsights(signals = EMPTY_SIGNALS) {
   const vec = interestVector(signals)
   const topArche = Object.entries(vec.arche).sort((a, b) => b[1] - a[1])[0]
@@ -291,8 +292,8 @@ export function behaviorInsights(signals = EMPTY_SIGNALS) {
     return {
       learning: false,
       archetype: null,
-      headline: 'On apprend ce qui te fait avancer',
-      detail: 'Explore quelques profils : le classement s’adapte à ce qui t’intéresse vraiment.',
+      headline: 'On apprend ce que tu cherches',
+      detail: 'Ouvre quelques fiches : les rencontres proposées suivront ce qui t’intéresse vraiment.',
       topTopics,
     }
   }
@@ -303,22 +304,22 @@ export function behaviorInsights(signals = EMPTY_SIGNALS) {
     icon: meta.icon,
     tone: meta.tone,
     headline: `Tu cherches surtout des ${meta.label.toLowerCase()}`,
-    detail: 'On a remonté les profils qui collent à ton activité récente sur l’app.',
+    detail: 'On a remonté celles et ceux qui répondent à ce que tu as regardé ces derniers jours.',
     topTopics,
   }
 }
 
-/* Brise-glace généré à partir des points communs (pour la fiche membre). */
+/* La première phrase, toute prête, à partir de ce que vous avez en commun (pour la fiche). */
 export function icebreaker(name, sharedRuns = 0) {
   const them = profileFor(name)
   const first = name.split(' ')[0]
-  if (sharedRuns) return `Salut ${first} ! Sympa cette sortie ensemble — partant·e pour remettre ça et échanger sur nos boîtes ?`
+  if (sharedRuns) return `Salut ${first}, bien couru pour la dernière. On remet ça, et on parle de nos boîtes pendant ?`
   if ((them.provides || []).includes('capital'))
-    return `Bonjour ${first}, je prépare une seed sur un SaaS B2B. On se cale un run ou un café pour que je te présente le projet ?`
+    return `Bonjour ${first}, je prépare une levée d’amorçage pour un SaaS B2B. Huit minutes, en courant ou autour d’un café, pour te présenter le projet ?`
   if ((them.provides || []).includes('talent'))
-    return `Salut ${first} ! Je construis le MVP d’un SaaS B2B et je cherche un renfort React. Dispo pour en parler en courant ?`
+    return `Salut ${first}, je construis un SaaS B2B et je cherche un développeur React. On en parle en courant ?`
   if ((them.provides || []).includes('mentor'))
-    return `Bonjour ${first}, ton parcours m’inspire. J’aimerais beaucoup avoir ton regard sur mon scaling — un café sur les quais ?`
+    return `Bonjour ${first}, tu as structuré une équipe avant moi. J’aimerais ton regard là-dessus — un café sur les quais, ou une sortie ?`
   const topic = (them.topics || [])[0]
-  return `Salut ${first} ! On partage pas mal de sujets${topic ? ` (${topic})` : ''}. Partant·e pour une sortie et un échange ?`
+  return `Salut ${first}, on partage pas mal de sujets${topic ? ` (${topic})` : ''}. Une sortie à allure de conversation, et on voit ce que ça produit ?`
 }

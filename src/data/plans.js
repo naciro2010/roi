@@ -1,67 +1,80 @@
-/* Abonnements ROI (démo — aucun paiement réel).
-   Le plan gratuit débloque l'essentiel ; Pro et Business débloquent les matchs
-   illimités, l'agenda & RDV, les analytics ROI, les sièges d'équipe, etc. */
+/* Les formules (démo — aucun paiement dans l'app, on change de formule depuis
+   l'espace du site). Mêmes ids techniques que le site : `free` → Dossard,
+   `pro` → Premium, `business` → Cercle. Aucune formule n'achète une meilleure
+   course : elle change quand le réseau commence, et combien de portes
+   s'ouvrent après la ligne. Aucun prix ici : le tarif est celui de la vague,
+   Premium est sur demande, le Cercle sur cooptation. */
 
 export const PLANS = [
   {
     id: 'free',
-    name: 'Découverte',
-    tagline: 'Pour commencer à networker',
+    n: '01',
+    name: 'Dossard',
+    tagline: 'La journée entière, et le réseau le jour J',
+    prix: 'Tarif de la vague',
+    etat: 'Inclus',
+    pour: 'La journée entière',
     priceMonthly: 0,
     priceAnnual: 0,
     accent: 'ink',
-    cta: 'Ton plan actuel',
+    cta: 'Revenir au Dossard',
     features: [
-      '3 matchs / semaine',
-      'RunMatch : 1 binôme / semaine',
-      'Pipeline ROI · suivi des relations',
-      'Fil, sorties & messages',
-      'Suivi des kilomètres & défis',
-      'Profil & connexions',
+      'L’annuaire de qui court, le jour J',
+      'Trois rencontres proposées chaque semaine',
+      'Un binôme par semaine',
+      'Le pipeline : ce que chaque rencontre produit',
+      'Les sorties à allure de conversation',
+      'Le fil et les messages',
     ],
   },
   {
     id: 'pro',
-    name: 'Pro',
-    tagline: 'Pour networker sérieusement',
-    priceMonthly: 12,
-    priceAnnual: 9,
+    n: '02',
+    name: 'Premium',
+    tagline: 'Le réseau commence avant la ligne',
+    prix: 'Sur demande',
+    etat: 'Sur demande',
+    pour: 'Le réseau commence avant la ligne',
+    priceMonthly: 0,
+    priceAnnual: 0,
     accent: 'brand',
     highlight: true,
     badge: 'Le plus choisi',
-    cta: 'Passer à Pro',
+    herite: 'Tout le Dossard, et',
+    cta: 'Passer en Premium',
     features: [
-      'Matchs illimités',
-      'RunMatch illimité · tous tes binômes',
-      'Pipeline ROI + analytics (valeur & km investis)',
-      'Vois qui veut te rencontrer',
-      'Agenda & RDV illimités',
-      'Filtres & recherche avancés',
-      'Boost de profil chaque mois',
-      'Badge Pro sur ton profil',
+      'L’annuaire dès la validation de ton dossier',
+      'Six rencontres réservées à l’avance',
+      'Rencontres proposées sans limite',
+      'Qui veut te rencontrer',
+      'Les filtres de l’annuaire',
+      'Le Salon de l’Arena, vestiaire et douches sans attente, sas de départ dédié',
+      'Le dîner des fondateurs, le soir',
     ],
   },
   {
     id: 'business',
-    name: 'Business',
-    tagline: 'Pour les équipes & communautés',
-    priceMonthly: 29,
-    priceAnnual: 24,
+    n: '03',
+    name: 'Cercle',
+    tagline: 'Quarante places, sur cooptation',
+    prix: 'Sur cooptation',
+    etat: 'Sur cooptation',
+    pour: 'Quarante places',
+    priceMonthly: 0,
+    priceAnnual: 0,
     accent: 'gold',
     perSeat: true,
-    cta: 'Passer à Business',
+    herite: 'Tout le Premium, et',
+    cta: 'Demander une place',
     features: [
-      'Tout le plan Pro, pour chaque membre',
-      'Invitations & sièges d’équipe',
-      'Espace équipe partagé',
-      'Analytics ROI avancés',
-      'Intros prioritaires',
-      'Account manager dédié',
+      'La table des investisseurs au déjeuner, un rendez-vous garanti avec les fonds présents',
+      'Trois dossards invités pour ton équipe ou tes associés',
+      'Ta place reconduite les éditions suivantes',
     ],
   },
 ]
 
-/* Fonctionnalités gated → liste des plans qui les débloquent. */
+/* Ce que chaque formule ouvre → liste des formules qui l'ouvrent. */
 export const FEATURES = {
   unlimitedMatches: ['pro', 'business'],
   whoWantsToMeet: ['pro', 'business'],
@@ -72,7 +85,7 @@ export const FEATURES = {
   team: ['business'],
 }
 
-/* Limites du plan gratuit (démo). */
+/* Rencontres proposées chaque semaine avec la formule Dossard (démo). */
 export const FREE_MATCH_LIMIT = 3
 
 export function planById(id) {
@@ -83,7 +96,7 @@ export function hasFeature(planId, key) {
   return (FEATURES[key] || []).includes(planId)
 }
 
-/* Quel plan minimal débloque cette fonctionnalité ? (pour les libellés) */
+/* Quelle formule minimale ouvre cette porte ? (pour les libellés) */
 export function unlockingPlan(key) {
   const id = (FEATURES[key] || [])[0]
   return planById(id)
