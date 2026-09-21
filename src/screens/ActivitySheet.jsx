@@ -151,7 +151,7 @@ export default function ActivitySheet({ id, onClose }) {
           {/* Ce que la sortie a ouvert : les personnes rencontrées → une rencontre à proposer. */}
           {avec && (
             <div className="mt-5">
-              <span className="tmark"><b>T+</b> / CE QUE LA SORTIE A OUVERT</span>
+              <span className="titre-section">Ce que cette sortie a ouvert</span>
               <div className="mt-2.5 space-y-2">
                 {a.metContacts.map((name) => (
                   <div key={name} className="border border-line bg-surface p-2.5">

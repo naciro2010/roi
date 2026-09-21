@@ -42,8 +42,12 @@ export default function PipelineSheet({ onClose }) {
             <Icon name="x" className="h-5 w-5" />
           </button>
           <div className="relative pr-10">
-            <span className="tmark text-craie/70"><b>T+</b> / LE PIPELINE</span>
-            <h2 className="titre mt-2 text-[22px] leading-tight text-craie">Ce que tes rencontres produisent</h2>
+            <span className="titre-section text-craie">Le suivi de tes relations</span>
+            <h2 className="mt-2 text-[22px] leading-tight text-craie">Où en est chaque relation</h2>
+            <p className="mt-2 max-w-[38ch] text-[14px] leading-relaxed text-craie/70">
+              Chaque personne que tu rencontres avance par étapes, de la première conversation
+              jusqu’à ce que ça donne quelque chose. Fais-la avancer d’un cran quand ça bouge.
+            </p>
           </div>
 
           {showAnalytics ? (
@@ -51,7 +55,7 @@ export default function PipelineSheet({ onClose }) {
               {headline.map((s) => (
                 <div key={s.label}>
                   <div className="display text-[26px] leading-none tabular-nums text-craie">{s.value}</div>
-                  <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-craie/60">{s.label}</div>
+                  <div className="mt-1.5 text-[12.5px] leading-snug text-craie/65">{s.label}</div>
                 </div>
               ))}
             </div>
@@ -74,7 +78,7 @@ export default function PipelineSheet({ onClose }) {
             </button>
           )}
           {!showAnalytics && (
-            <p className="relative mt-2 text-[11px] text-craie/55">La valeur en jeu se lit en Premium.</p>
+            <p className="relative mt-2 text-[13px] text-craie/60">Le montant en jeu s’affiche avec la formule Premium.</p>
           )}
         </div>
 

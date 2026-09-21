@@ -49,7 +49,7 @@ export default function EventSheet({ id, onClose }) {
         </div>
 
         <div className="flex-1 overflow-y-auto no-scrollbar px-5 pb-4 pt-4">
-          <span className="tmark"><b>T+</b> / UNE SORTIE</span>
+          <span className="titre-section">Une sortie du réseau</span>
           <h2 className="titre mt-2 text-[20px] leading-tight text-fg">{e.title}</h2>
 
           <div className="mt-3 flex items-center gap-3">

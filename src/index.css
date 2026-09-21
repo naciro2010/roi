@@ -239,14 +239,14 @@ body:has(.eco)::before {
     gap: 4px 12px;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-weight: 500;
-    font-size: 11px;
-    letter-spacing: 0.22em;
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--muted);
   }
   @media (min-width: 1024px) {
     .tmark {
-      font-size: 12px;
+      font-size: 12.5px;
     }
   }
   .tmark::before {
@@ -478,6 +478,46 @@ body:has(.eco)::before {
     width: 100%;
   }
 
+  /* ---- Lisibilité : les gestes ajoutés pour que l'app se lise vite. ---- */
+
+  /* Titre de section, en clair : une phrase, pas un code chrono. */
+  .titre-section {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 700;
+    font-size: 12.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--texte);
+  }
+
+  /* La ligne d'explication sous un titre : ce que c'est, en français. */
+  .aide {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  /* Bloc de contenu standard : un filet, de l'air. Remplace les empilements
+     de classes utilitaires répétés d'un écran à l'autre. */
+  .carte {
+    border: 1px solid var(--ligne);
+    padding: 16px;
+  }
+  .carte + .carte {
+    margin-top: 12px;
+  }
+
+  /* Une action posée sur une ligne : libellé lisible, flèche à droite. */
+  .lien-bloc {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    text-align: left;
+    border: 1px solid var(--ligne);
+    padding: 14px 16px;
+  }
+
   /* ---- Icône carrée : le pictogramme posé dans un carré bordé. ---- */
   .ico {
     display: grid;
@@ -506,6 +546,7 @@ body:has(.eco)::before {
 
   /* ---- Interrupteur : carré, encre quand il est ouvert (pas de pastille ronde). ---- */
   .inter {
+    display: inline-block;
     position: relative;
     width: 44px;
     height: 24px;
