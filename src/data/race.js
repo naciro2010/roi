@@ -29,7 +29,7 @@ export const EDITION = {
   mois: 'Septembre 2027',
   moisCourt: 'Sept. 2027',
   date: '2027-09-01',
-  jauge: '10 000 participants',
+  jauge: '10 000 décideurs attendus',
   accroche: "L'impact après la ligne d'arrivée.",
   manifeste: 'On ne se rencontre jamais aussi bien qu’essoufflé.',
 }
@@ -57,24 +57,28 @@ export const LOOP_5K = [
 
 /* ----------------------------------------------------------------- distances
    Trois distances, un seul dossard : même prix, même accès. Les clés sont
-   celles du site ('5' · '10' · '21'). */
+   celles du site ('5' · '10' · '21'), les mots aussi (section T+04 et
+   formulaire d'inscription). Le site n'annonce ni dénivelé ni temps : on
+   n'en invente pas. Le tracé sur la carte est indicatif. */
 export const DISTANCES = [
   {
     id: '5', km: '5', label: '5 km', nom: 'Le Sprint',
     pourquoi: 'Pour se lancer, ou garder du souffle pour l’après-midi.',
-    boucle: 'La petite boucle de l’Esplanade', route: LOOP_5K, deniv: '+18 m', duree: '20 à 35 min',
+    trace: 'Boucle Esplanade', route: LOOP_5K,
   },
   {
-    id: '10', km: '10', label: '10 km', nom: 'La Référence', populaire: true,
+    id: '10', km: '10', label: '10 km', nom: 'La Référence', central: true,
     pourquoi: 'Un vrai effort, de l’énergie pour la suite.',
-    boucle: 'Esplanade, Grande Arche, CNIT, pont de Neuilly, quais de Seine', route: LOOP_10K, deniv: '+42 m', duree: '40 min à 1 h 10',
+    trace: 'Entre les tours', route: LOOP_10K,
   },
   {
     id: '21', km: '21,1', label: '21,1 km', nom: 'Le Grand Format',
     pourquoi: 'Le semi de La Défense, mesuré.',
-    boucle: 'Deux fois la grande boucle', route: LOOP_10K, deniv: '+84 m', duree: '1 h 25 à 2 h 15',
+    trace: '21,0975 km · distance officielle', route: LOOP_10K,
   },
 ]
+/* Ce que dit chaque ligne de distance sur le site, en pied. */
+export const ACCES_RESEAU = 'Accès réseau ■ total'
 export const distanceById = (id) => DISTANCES.find((d) => d.id === String(id)) || DISTANCES[1]
 
 /* -------------------------------------------------------------------- vagues
@@ -95,15 +99,20 @@ export function vagueCourante(now = Date.now()) {
 export const FORMULES = [
   {
     id: 'dossard', n: '01', nom: 'Dossard', pour: 'La journée entière', prix: 'Tarif de la vague', etat: 'Inclus',
-    points: ['Course chronométrée, t-shirt, médaille finisher', 'L’arrivée dans l’Arena et le déjeuner des finishers', 'Tout l’après-midi : rencontres, conversations debout, soirée', 'Ton profil dans l’annuaire des participants, le jour J'],
+    base: 'Early Bird, Régulier ou Last Call : les trois vagues. Même prix quelle que soit la distance.',
+    points: ['Course chronométrée, t-shirt R.O.I, médaille finisher', 'L’arrivée dans l’Arena et le déjeuner des finishers', 'Tout l’après-midi : rencontres de huit minutes, conversations debout, soirée', 'Ton profil dans l’annuaire des participants, le jour J'],
   },
   {
     id: 'premium', n: '02', nom: 'Premium', pour: 'Le réseau commence avant la ligne', prix: 'Sur demande', etat: 'Sur demande', mise: true,
-    points: ['L’annuaire ouvert dès validation : tu sais qui court, des mois avant', 'Six rencontres réservées à l’avance, depuis l’app', 'Le Salon de l’Arena, vestiaire et douches sans attente', 'Le dîner des fondateurs, le soir'],
+    base: 'Se demande depuis ton espace, à tout moment jusqu’au jour J. Les conditions te sont précisées à la validation.',
+    herite: 'Tout le Dossard, et',
+    points: ['L’annuaire ouvert dès validation : tu sais qui court, des mois avant le départ', 'Six rencontres réservées à l’avance', 'Le Salon de l’Arena, vestiaire et douches sans attente, sas de départ dédié', 'Le dîner des fondateurs, le soir'],
   },
   {
     id: 'cercle', n: '03', nom: 'Cercle', pour: 'Quarante places', prix: 'Sur cooptation', etat: 'Sur cooptation',
-    points: ['Tout le Premium, et la table des investisseurs au déjeuner', 'Trois dossards invités pour ton équipe ou tes associés', 'Ta place au Cercle les éditions suivantes'],
+    base: 'Sur demande depuis ton espace, ou sur cooptation de deux membres. Les conditions te sont précisées à la validation.',
+    herite: 'Tout le Premium, et',
+    points: ['La table des investisseurs au déjeuner, un rendez-vous garanti avec les fonds présents', 'Trois dossards invités pour ton équipe ou tes associés', 'Ta place au Cercle, reconduite les éditions suivantes'],
   },
 ]
 export const formuleById = (id) => FORMULES.find((f) => f.id === id) || FORMULES[0]
@@ -116,10 +125,10 @@ export function dossardActif(formule) {
 /* -------------------------------------------------- les étapes du dossier
    demande → justificatif → valide → paye — l'état vit sur le site. */
 export const ETAPES = [
-  { id: 'demande', n: '01', titre: 'Demande reçue', texte: 'Compte créé, vague et distance notées. Le tarif est gardé.' },
-  { id: 'justificatif', n: '02', titre: 'Justificatif', texte: 'Kbis, avis SIRENE ou cooptation, en un mail depuis ton espace.' },
-  { id: 'valide', n: '03', titre: 'Validation', texte: 'Réponse sous 48 h ouvrées.' },
-  { id: 'paye', n: '04', titre: 'Paiement', texte: 'Après validation seulement. Ton dossard devient définitif.' },
+  { id: 'demande', n: '01', titre: 'Demande reçue', texte: 'Ton compte est créé, ta vague et ta distance sont notées. Le tarif est gardé.' },
+  { id: 'justificatif', n: '02', titre: 'Justificatif', texte: 'Kbis, avis SIRENE ou cooptation : envoie ta pièce en un mail, depuis ton espace.' },
+  { id: 'valide', n: '03', titre: 'Validation', texte: 'Réponse sous 48 h ouvrées. S’il manque quelque chose, on te dit précisément quoi.' },
+  { id: 'paye', n: '04', titre: 'Paiement', texte: 'Après validation seulement. Le lien de paiement arrive par mail, ton dossard devient définitif.' },
 ]
 export const ETAT_INDEX = { demande: 1, justificatif: 2, valide: 3, paye: 4 }
 
@@ -137,20 +146,53 @@ export const APRES = {
 
 /* Le programme de l'après-midi : T+ en tête de ligne. Indicatif. */
 export const PROGRAMME = [
-  { t: 'T+00', h: 'Dès 11 h', quoi: 'L’arrivée', texte: 'La ligne est dans l’Arena. Un café, et les premières conversations commencent là : en sueur, sans carte de visite.' },
-  { t: 'T+01', h: '12 h 30', quoi: 'Le déjeuner des finishers', texte: 'Tables par distance d’abord, puis par secteur. Personne ne déjeune seul.' },
-  { t: 'T+02', h: '14 h', quoi: 'Les rencontres', texte: 'Des rendez-vous de huit minutes, proposés depuis ton profil : recruter, lever, vendre, s’associer. En Premium, tu les réserves des semaines à l’avance.' },
-  { t: 'T+03', h: '16 h', quoi: 'Les conversations debout', texte: 'Trois prises de parole de quinze minutes, par des fondateurs qui ont couru le matin. Zéro slide.' },
-  { t: 'T+04', h: '18 h', quoi: 'La soirée', texte: 'Le dîner des fondateurs pour Premium et Cercle, la soirée pour tout le monde. Jusqu’au soir, et un peu après.' },
+  { t: 'T+00', h: 'Dès 11 h', quoi: 'L’arrivée', texte: 'La ligne est dans l’Arena. On reprend son souffle, on prend un café, et les premières conversations commencent là : en sueur, sans carte de visite.' },
+  { t: 'T+01', h: '12 h 30', quoi: 'Le déjeuner des finishers', texte: 'Tables par distance d’abord : on s’assoit avec ceux qui ont couru la même chose. Puis par secteur, si tu préfères. Personne ne déjeune seul.' },
+  { t: 'T+02', h: '14 h', quoi: 'Les rencontres', texte: 'Des rendez-vous de huit minutes, proposés depuis ton profil : recruter, lever, vendre, s’associer. Tu choisis qui, on s’occupe du où. En Premium, tu les réserves des semaines à l’avance.' },
+  { t: 'T+03', h: '16 h', quoi: 'Les conversations debout', texte: 'Trois prises de parole de quinze minutes, par des fondateurs qui ont couru le matin. Zéro slide. Puis on repart marcher, on repart parler.' },
+  { t: 'T+04', h: '18 h', quoi: 'La soirée', texte: 'Le dîner des fondateurs pour les formules Premium et Cercle, la soirée pour tout le monde. Jusqu’au soir, et un peu après.' },
 ]
 
-/* Les quatre principes gardés de ceux qui courent déjà ensemble. */
+/* Les quatre principes du site (T+03 / LE RÉSEAU), gardés de ceux qui
+   courent déjà ensemble. Mêmes titres, mêmes mots. */
 export const PRINCIPES = [
-  { n: '01', titre: 'Zéro pitch en course', texte: 'On court d’abord. On parle pendant. On conclut après.' },
-  { n: '02', titre: 'Toutes les allures', texte: 'Du rythme de conversation au chrono. Aucun niveau requis, pas de badge, pas de slide.' },
-  { n: '03', titre: 'L’après compte autant', texte: 'L’essentiel du retour se fait une fois la ligne franchie.' },
-  { n: '04', titre: 'Le réseau toute l’année', texte: 'Entre deux éditions, l’app garde la conversation ouverte.' },
+  { n: '01', titre: 'Zéro pitch en course', texte: 'On court, on parle si on veut, on ne vend rien. Ça vient après — et ça vient mieux.' },
+  { n: '02', titre: 'Zéro slide l’après-midi', texte: 'Des tables, des rendez-vous courts, des conversations debout. Pas de stand, pas d’écran.' },
+  { n: '03', titre: 'Toutes les allures', texte: 'Aucun temps à tenir. Le 5 km existe pour ça, et personne ne regarde les classements en salle.' },
+  { n: '04', titre: 'L’après compte autant', texte: 'Le café d’arrivée, le déjeuner, la soirée : c’est là que se fait l’essentiel du retour sur investissement.' },
 ]
+
+/* Les quatre publics du site (le registre de T+03). */
+export const PUBLICS = [
+  { n: '01', qui: 'Indépendants & entrepreneurs', quoi: 'Rompre l’isolement, élargir son cercle, et retrouver l’énergie de ceux qui entreprennent au même moment que toi.' },
+  { n: '02', qui: 'Intrapreneurs & cadres', quoi: 'Se challenger, rencontrer des profils qu’on ne croise jamais en interne, et nourrir sa capacité d’initiative.' },
+  { n: '03', qui: 'Dirigeants & décideurs', quoi: 'Rencontrer ses homologues sans salon ni intermédiaire, incarner une culture de l’effort, tisser des relations de confiance.' },
+  { n: '04', qui: 'Entreprises & équipes', quoi: 'Mobiliser ses équipes autour d’une expérience qui a du sens, et courir aux couleurs de l’entreprise. Dossards groupés et packs : entreprises@runoninvest.fr.' },
+]
+
+/* Les trois voies d'accès au dossard (T+03.1 / L'ACCÈS). */
+export const ACCES = [
+  { voie: 'Extrait Kbis', texte: 'Tu diriges ou tu détiens une société. Un extrait de moins de trois mois.' },
+  { voie: 'Avis SIRENE', texte: 'Tu es indépendant·e. L’avis de situation s’obtient en ligne, gratuitement.' },
+  { voie: 'Cooptation', texte: 'Tu es salarié·e. Une attestation de ton employeur, ou la cooptation d’un participant déjà inscrit.' },
+]
+
+/* Le lieu, en fiche clé / valeur (T+05). */
+export const LIEU = [
+  ['Départ', 'Village et sas de départ au pied de la Grande Arche.'],
+  ['Parcours', 'Un tracé fermé entre les tours : esplanade, parvis et dalles. Une ou plusieurs boucles selon la distance.'],
+  ['Arrivée', 'En salle, dans Paris La Défense Arena. La ligne est à l’intérieur.'],
+  ['Après la ligne', 'Déjeuner, rencontres et soirée dans l’Arena, jusqu’au soir.'],
+  ['Venir', 'Métro ligne 1, RER A, Transilien L, station La Défense Grande Arche.'],
+]
+
+/* Les adresses du site. */
+export const CONTACTS = {
+  contact: 'contact@runoninvest.fr',
+  dossiers: 'dossiers@runoninvest.fr',
+  entreprises: 'entreprises@runoninvest.fr',
+  partenariats: 'partenariats@runoninvest.fr',
+}
 
 /* Celles et ceux qui courent cette année (aperçu de l'annuaire). */
 export const QUI_COURT = ['Sarah Khalil', 'Marc Dubois', 'Nadia Cherif', 'Léa Fontaine', 'Yanis Benali', 'Claire Moreau']

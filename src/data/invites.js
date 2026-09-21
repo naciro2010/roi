@@ -1,12 +1,15 @@
-/* La cooptation (démo). Tu proposes un dossard à un dirigeant que tu connais :
-   c'est l'une des trois voies d'accès (Kbis, avis SIRENE, cooptation). Deux
-   membres qui te cooptent ouvrent le Cercle. Le Cercle gère trois dossards
-   invités pour ton équipe. */
+/* La cooptation (démo). Tu proposes un dossard à quelqu'un qui exerce —
+   « un seul critère : exercer », dit le site : c'est l'une des trois voies
+   d'accès (Kbis, avis SIRENE, cooptation d'un participant déjà inscrit).
+   Deux membres qui te cooptent ouvrent le Cercle, qui gère trois dossards
+   invités pour ton équipe. Le dossard se prend sur le site : le lien de
+   cooptation y mène. */
+import { siteUrl } from './race'
 
 export const REFERRAL = {
   code: 'THOMAS-ROI',
-  url: 'https://roi-mvp.up.railway.app/?coopte=THOMAS-ROI',
-  reward: 'Propose un dossard à un dirigeant que tu connais : ta cooptation vaut justificatif. À deux cooptations, le Cercle s’ouvre.',
+  url: siteUrl('inscription/', { coopte: 'THOMAS-ROI' }),
+  reward: 'Propose un dossard à quelqu’un qui exerce : ta cooptation vaut justificatif. À deux cooptations, le Cercle s’ouvre.',
   goal: 2,
 }
 
@@ -18,7 +21,7 @@ export const INITIAL_INVITES = [
 
 /* Ce que la cooptation ouvre, mis en avant dans la rubrique « Coopter ». */
 export const INVITE_PERKS = [
-  { icon: 'gift', tone: 'amber', title: 'L’accès au dossard', text: 'Ta cooptation vaut justificatif : pas de Kbis à fournir pour la personne que tu proposes.' },
+  { icon: 'gift', tone: 'amber', title: 'L’accès au dossard', text: 'Ta cooptation vaut justificatif : ni Kbis ni avis SIRENE à fournir pour la personne que tu proposes.' },
   { icon: 'sparkles', tone: 'brand', title: 'Le Cercle à deux cooptations', text: 'Quarante places, sur cooptation. Deux membres qui te cooptent suffisent.' },
   { icon: 'users', tone: 'emerald', title: 'Courir accompagné·e', text: 'Celles et ceux que tu cooptes courent l’édition à tes côtés, et tes sorties avec.' },
 ]

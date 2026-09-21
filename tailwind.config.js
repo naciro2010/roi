@@ -19,7 +19,7 @@ const CRAIE_3 = '#D9D2C2'
 const ENCRE = '#070707'
 const ENCRE_2 = '#101010'
 const IMPACT = '#FF4400'
-const IMPACT_SOMBRE = '#C63500' // l'orange qui tient le AA (4,51:1) sur la craie
+const IMPACT_SOMBRE = '#C63500' // réservé aux tons foncés de l'échelle (800)
 const MUTED = '#57534A' // texte atténué sur fond clair
 const BETON = '#6B6558' // labels mono sur fond clair
 const LIGNE = 'rgba(14,13,12,0.16)'
@@ -53,25 +53,28 @@ export default {
           3: ENCRE, // segment actif : encre sur craie
         },
         // Filets (hairlines) : l'encre diluée, comme --ligne-encre en section claire.
-        line: { DEFAULT: LIGNE, strong: LIGNE_FORTE },
+        line: { DEFAULT: LIGNE, strong: LIGNE_FORTE, craie: 'rgba(239,235,226,0.14)' },
         // Texte : encre pleine, puis les gris chauds du site.
         fg: { DEFAULT: ENCRE, soft: '#3A3731', muted: MUTED, faint: BETON },
 
-        /* L'accent unique : l'orange impact. Les tons clairs de l'échelle
-           sont des craies (pour les tuiles), les tons foncés l'orange
-           assombri conforme sur fond clair, le 900 l'encre. */
+        /* L'accent unique : l'orange impact, le même que le site sur les
+           deux fonds (#FF4400 partout — le point AA sur fond clair est un
+           choix de marque ouvert côté site, voir README). Les tons clairs de
+           l'échelle sont des craies (pour les tuiles), le 900 l'encre. */
         brand: {
           50: CRAIE_2, 100: CRAIE_2, 200: CRAIE_3,
           300: '#FF7A45', 400: '#FF5C1F', 500: IMPACT,
-          600: IMPACT_SOMBRE, 700: IMPACT_SOMBRE, 800: '#9E2A00', 900: ENCRE,
+          600: IMPACT, 700: IMPACT, 800: IMPACT_SOMBRE, 900: ENCRE,
           DEFAULT: IMPACT, dark: ENCRE, light: CRAIE_2,
         },
         ink: {
           50: CRAIE, 100: CRAIE_2, 200: CRAIE_3, 300: '#B0A99C', 400: '#8F897B',
           500: BETON, 600: MUTED, 700: '#3A3731', 800: '#1C1B18', 900: ENCRE_2, 950: ENCRE,
         },
-        // Le seul vert du site : celui du message « ok » des formulaires.
-        success: { 300: '#7FB894', DEFAULT: '#3E8E5C', light: CRAIE_2, dark: '#2F6E47' },
+        /* Pas de vert dans « La Ligne » (le site n'en a qu'un, le message
+           « ok » d'un formulaire, porté par .form-msg.ok). Les états « fait »,
+           « connecté », « confirmé » sont de l'encre sur craie. */
+        success: { 300: CRAIE_3, DEFAULT: ENCRE, light: CRAIE_2, dark: ENCRE },
         // « J'aime », premium, récompense : tout passe par l'accent unique.
         like: { DEFAULT: IMPACT, light: CRAIE_2 },
         gold: { 300: '#FF7A45', DEFAULT: IMPACT, dark: IMPACT_SOMBRE, light: CRAIE_2 },

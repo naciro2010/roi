@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
-import { PILL_TONES, ProgressBar } from '../components/primitives'
+import { ProgressBar } from '../components/primitives'
 import { useSheetDrag } from '../lib/useSheetDrag'
 import { REFERRAL, INVITE_PERKS } from '../data/invites'
 
@@ -12,8 +12,9 @@ function validEmail(v) {
   return EMAIL_RE.test(v.trim())
 }
 
-/* Coopter — l'une des trois voies d'accès au dossard (Kbis, SIRENE,
-   cooptation). Deux membres qui te cooptent ouvrent le Cercle. */
+/* La cooptation — l'une des trois voies d'accès au dossard (Kbis, avis
+   SIRENE, cooptation d'un participant déjà inscrit). « Un seul critère :
+   exercer. » Deux membres qui te cooptent ouvrent le Cercle. */
 export default function InviteSheet({ onClose }) {
   const {
     plan, invites, sendInvite, referralJoined,
@@ -56,39 +57,32 @@ export default function InviteSheet({ onClose }) {
     { id: 'equipe', label: 'Mon équipe' },
   ]
 
+  /* Vers le Cercle : le bloc encre, un chiffre, une ligne qui se remplit. */
   const progression = (
-    <section className="relative overflow-hidden rounded-3xl surface-hero p-4 text-white shadow-float">
-      <div className="absolute inset-0 bg-gold-sheen" />
-      <div className="relative">
-        <div className="flex items-center gap-2">
-          <Icon name="users" className="h-5 w-5 text-gold-300" />
-          <h3 className="text-base font-semibold">{referralJoined}/{REFERRAL.goal} cooptations vers le Cercle</h3>
-        </div>
-        <p className="mt-1 text-[12.5px] leading-relaxed text-white/65">{REFERRAL.reward}</p>
-        <div className="mt-3 flex items-center gap-3">
-          <ProgressBar value={referralJoined} total={REFERRAL.goal} className="bg-white/15" barClassName="bg-gold-300" />
-          <span className="shrink-0 text-[12px] font-semibold tabular-nums text-gold-300">{referralJoined}/{REFERRAL.goal}</span>
-        </div>
+    <section className="surface-hero p-4">
+      <span className="tmark"><b>T–</b> / VERS LE CERCLE</span>
+      <div className="mt-3 flex items-end justify-between gap-3">
+        <div className="display text-[40px] leading-[.85] text-craie tabular-nums">{referralJoined}<span className="text-[20px] t-beton">/{REFERRAL.goal}</span></div>
+        <div className="max-w-[24ch] text-right text-[12px] leading-snug t-muted">{REFERRAL.reward}</div>
       </div>
+      <div className="mt-3"><ProgressBar value={referralJoined} total={REFERRAL.goal} className="bg-craie/15" barClassName="bg-brand-500" /></div>
     </section>
   )
 
   const cooptations = invites.length > 0 && (
     <section>
-      <p className="mb-2 px-1 font-mono text-[10px] font-bold uppercase tracking-mono text-fg-faint">Tes cooptations · {invites.length}</p>
-      <div className="overflow-hidden rounded-3xl border border-line bg-surface shadow-soft">
-        {invites.map((inv, i) => {
+      <h3 className="tmark"><b>{invites.length}</b> / TES COOPTATIONS</h3>
+      <div className="mt-2 border-b border-line">
+        {invites.map((inv) => {
           const joined = inv.status === 'joined'
           return (
-            <div key={inv.id} className={`flex items-center gap-3 px-3.5 py-3 ${i > 0 ? 'border-t border-line' : ''}`}>
+            <div key={inv.id} className="rangee">
               <Avatar name={inv.name || inv.email} size="sm" />
               <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-semibold text-fg">{inv.name || inv.email}</div>
+                <div className="truncate text-sm font-medium text-fg">{inv.name || inv.email}</div>
                 <div className="truncate text-[12px] text-fg-faint">{inv.context} · {inv.date}</div>
               </div>
-              <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold ${joined ? 'bg-success-light text-success-dark' : 'bg-surface-2 text-fg-muted'}`}>
-                {joined ? 'A pris son dossard' : 'Cooptation envoyée'}
-              </span>
+              <span className={`tag shrink-0 ${joined ? 'on' : ''}`}>{joined ? 'Dossard pris' : 'Envoyée'}</span>
             </div>
           )
         })}
@@ -99,30 +93,27 @@ export default function InviteSheet({ onClose }) {
   return (
     <div className="absolute inset-0 z-40">
       <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
-      <div
-        style={drag.style}
-        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface-soft shadow-float"
-      >
-        <div className="relative shrink-0 border-b border-line bg-surface px-5 pb-3 pt-3">
+      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-canvas">
+        <div className="relative shrink-0 border-b border-fg px-5 pb-4 pt-3">
           <div {...drag.handleProps} className="mx-auto mb-3 h-1 w-10 bg-line-strong" aria-hidden="true" />
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <span className="tmark"><b>T–</b> / LA COOPTATION</span>
-              <h2 className="titre mt-1 text-[20px] text-fg">Coopte un dirigeant</h2>
+              <h2 className="mt-2 text-[22px] text-fg">Coopte quelqu’un<br /><span className="creuse">qui exerce.</span></h2>
             </div>
-            <button onClick={onClose} className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-surface-2 text-fg-muted tap" aria-label="Fermer">
-              <Icon name="x" className="h-5 w-5" />
+            <button onClick={onClose} className="ico shrink-0 tap" aria-label="Fermer">
+              <Icon name="x" className="h-4 w-4" />
             </button>
           </div>
           <p className="mt-2 text-[12.5px] leading-relaxed text-fg-muted">
-            La cooptation est l’une des trois voies d’accès au dossard, avec le Kbis et l’avis SIRENE. Tu proposes un dossard à quelqu’un que tu connais ; deux membres qui te cooptent ouvrent le Cercle.
+            Un seul critère : exercer. La cooptation est l’une des trois voies d’accès au dossard, avec le Kbis et l’avis SIRENE. Tu proposes un dossard à quelqu’un que tu connais ; deux membres qui te cooptent ouvrent le Cercle.
           </p>
           <div className="mt-3 flex divide-x divide-line border border-line">
             {tabs.map((t) => (
               <button
                 key={t.id}
                 onClick={() => setView(t.id)}
-                className={`flex-1 rounded-xl py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono transition tap ${view === t.id ? 'bg-fg text-canvas' : 'text-fg-muted'}`}
+                className={`flex-1 py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono transition tap ${view === t.id ? 'bg-fg text-canvas' : 'text-fg-muted'}`}
               >
                 {t.label}
               </button>
@@ -130,39 +121,28 @@ export default function InviteSheet({ onClose }) {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto no-scrollbar px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="flex-1 overflow-y-auto no-scrollbar px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           {view === 'email' && (
-            <div className="space-y-4">
+            <div className="space-y-5">
               {progression}
 
               {/* Coopter par e-mail */}
-              <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
-                <p className="font-mono text-[10px] font-bold uppercase tracking-mono text-fg-faint">Par e-mail</p>
-                <p className="mt-1 text-[12px] text-fg-muted">Il ou elle reçoit ta cooptation et prend son dossard sur le site, en cinq minutes.</p>
-                <form onSubmit={submitInvite} className="mt-2.5 flex items-center gap-2">
-                  <div className="flex flex-1 items-center gap-2 rounded-2xl border border-line-strong bg-surface px-3 py-2.5 focus-within:ring-2 focus-within:ring-brand-200">
-                    <Icon name="mail" className="h-4 w-4 text-fg-faint" />
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="prenom@entreprise.com"
-                      className="min-w-0 flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-fg-faint"
-                    />
-                  </div>
-                  <button type="submit" className="shrink-0 rounded-full btn btn-impact px-4 py-2.5 text-sm font-semibold text-white shadow-brand tap">Envoyer la cooptation</button>
-                </form>
-              </section>
+              <form onSubmit={submitInvite} className="border border-line p-4">
+                <div className="champ">
+                  <label htmlFor="coopte-mail">Par e-mail</label>
+                  <input id="coopte-mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="prenom@entreprise.com" autoComplete="email" inputMode="email" />
+                </div>
+                <p className="mt-2 text-[12px] text-fg-muted">Il ou elle reçoit ta cooptation et prend son dossard sur le site, en cinq minutes.</p>
+                <button type="submit" className="btn btn-impact btn-sm mt-3 w-full justify-between"><span>Envoyer la cooptation</span><span className="arr">→</span></button>
+              </form>
 
-              {/* Ce que ça ouvre */}
-              <section className="grid grid-cols-3 gap-2.5">
-                {INVITE_PERKS.map((p) => (
-                  <div key={p.title} className="rounded-2xl border border-line bg-surface p-3 text-center shadow-soft">
-                    <span className={`mx-auto grid h-9 w-9 place-items-center rounded-xl ${PILL_TONES[p.tone]}`}>
-                      <Icon name={p.icon} className="h-4 w-4" filled={p.icon === 'sparkles'} />
-                    </span>
-                    <div className="mt-2 text-[12px] font-semibold leading-tight text-fg">{p.title}</div>
-                    <div className="mt-0.5 text-[11px] leading-snug text-fg-muted">{p.text}</div>
+              {/* Ce que ça ouvre : trois cellules du cadre */}
+              <section className="cadre grid-cols-3">
+                {INVITE_PERKS.map((p, i) => (
+                  <div key={p.title} className="p-3">
+                    <span className="font-mono text-[10px] font-bold tracking-label text-brand-500">0{i + 1}</span>
+                    <div className="titre mt-1.5 text-[11.5px] text-fg">{p.title}</div>
+                    <div className="mt-1 text-[11px] leading-snug text-fg-muted">{p.text}</div>
                   </div>
                 ))}
               </section>
@@ -172,24 +152,19 @@ export default function InviteSheet({ onClose }) {
           )}
 
           {view === 'lien' && (
-            <div className="space-y-4">
+            <div className="space-y-5">
               {progression}
 
               {/* Lien & partage */}
-              <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
-                <p className="font-mono text-[10px] font-bold uppercase tracking-mono text-fg-faint">Ton lien de cooptation</p>
-                <p className="mt-1 text-[12px] text-fg-muted">Envoie-le comme tu veux : la cooptation est reliée à ton dossard.</p>
-                <div className="mt-2 flex items-center gap-2 rounded-2xl bg-surface-soft px-3 py-2.5">
-                  <Icon name="link" className="h-4 w-4 shrink-0 text-fg-faint" />
-                  <span className="min-w-0 flex-1 truncate text-[13px] font-semibold text-fg-soft">{REFERRAL.url}</span>
+              <section className="border border-line p-4">
+                <div className="champ">
+                  <span className="lbl">Ton lien de cooptation</span>
+                  <div className="input-ligne truncate font-mono text-[12px] text-fg" style={{ padding: '9px 0' }}>{REFERRAL.url}</div>
                 </div>
-                <div className="mt-2.5 grid grid-cols-2 gap-2">
-                  <button onClick={copyLink} className="flex items-center justify-center gap-2 rounded-full border border-line-strong py-3 text-sm font-semibold text-fg-soft tap">
-                    <Icon name="copy" className="h-4 w-4" /> Copier le lien
-                  </button>
-                  <button onClick={shareLink} className="flex items-center justify-center gap-2 rounded-full btn btn-impact py-3 text-sm font-semibold text-white shadow-brand tap">
-                    <Icon name="share" className="h-4 w-4" /> Partager
-                  </button>
+                <p className="mt-2 text-[12px] text-fg-muted">Envoie-le comme tu veux : la cooptation est reliée à ton dossard, le dossard se prend sur le site.</p>
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <button onClick={copyLink} className="btn btn-ghost btn-sm justify-center"><Icon name="copy" className="h-4 w-4" /><span>Copier</span></button>
+                  <button onClick={shareLink} className="btn btn-impact btn-sm justify-center"><Icon name="share" className="h-4 w-4" /><span>Partager</span></button>
                 </div>
               </section>
 
@@ -198,59 +173,40 @@ export default function InviteSheet({ onClose }) {
           )}
 
           {view === 'equipe' && (
-            <div className="space-y-4">
+            <div className="space-y-5">
               {!isCercle ? (
-                <section className="relative overflow-hidden rounded-3xl border-2 border-gold/40 bg-surface p-5 text-center shadow-card">
-                  <div className="absolute inset-0 bg-gold-sheen" />
-                  <div className="relative">
-                    <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-gold/15 text-gold-dark ring-1 ring-gold/25">
-                      <Icon name="users" className="h-7 w-7" />
-                    </span>
-                    <h3 className="mt-3 text-lg font-semibold text-fg">Les dossards de ton équipe</h3>
-                    <p className="mx-auto mt-1 max-w-[280px] text-[13px] leading-relaxed text-fg-muted">
-                      Le Cercle comprend trois dossards invités pour ton équipe. Quarante places, sur cooptation de deux membres.
-                    </p>
-                    <button
-                      onClick={() => { onClose(); openPlans() }}
-                      className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-gold-dark to-gold px-5 py-2.5 text-sm font-semibold text-white shadow-brand tap"
-                    >
-                      <Icon name="crown" className="h-4 w-4" filled /> Demander une place
-                    </button>
-                  </div>
+                <section className="surface-hero p-5">
+                  <span className="tmark"><b>FORMULE 03</b> / LE CERCLE</span>
+                  <h3 className="mt-3 text-[20px] text-craie">Les dossards<br /><span className="creuse">de ton équipe.</span></h3>
+                  <p className="mt-2 max-w-[36ch] text-[13px] leading-relaxed t-muted">
+                    Le Cercle comprend trois dossards invités pour ton équipe ou tes associés. Quarante places, sur cooptation de deux membres.
+                  </p>
+                  <button onClick={() => { onClose(); openPlans() }} className="btn btn-impact mt-4 w-full justify-between">
+                    <span>Demander une place</span><span className="arr">→</span>
+                  </button>
                 </section>
               ) : (
                 <>
-                  <section className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
-                    <p className="font-mono text-[10px] font-bold uppercase tracking-mono text-fg-faint">Ajouter un dossard invité</p>
-                    <p className="mt-1 text-[12px] text-fg-muted">Trois dossards invités pour ton équipe, avec tout le Premium.</p>
-                    <form onSubmit={submitTeammate} className="mt-2.5 flex items-center gap-2">
-                      <div className="flex flex-1 items-center gap-2 rounded-2xl border border-line-strong bg-surface px-3 py-2.5 focus-within:ring-2 focus-within:ring-brand-200">
-                        <Icon name="mail" className="h-4 w-4 text-fg-faint" />
-                        <input
-                          type="email"
-                          value={teamEmail}
-                          onChange={(e) => setTeamEmail(e.target.value)}
-                          placeholder="collegue@entreprise.com"
-                          className="min-w-0 flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-fg-faint"
-                        />
-                      </div>
-                      <button type="submit" className="shrink-0 rounded-full btn btn-impact px-4 py-2.5 text-sm font-semibold text-white shadow-brand tap" aria-label="Ajouter un dossard invité">
-                        <Icon name="userPlus" className="h-4 w-4" />
-                      </button>
-                    </form>
-                  </section>
+                  <form onSubmit={submitTeammate} className="border border-line p-4">
+                    <div className="champ">
+                      <label htmlFor="equipe-mail">Ajouter un dossard invité</label>
+                      <input id="equipe-mail" type="email" value={teamEmail} onChange={(e) => setTeamEmail(e.target.value)} placeholder="collegue@entreprise.com" autoComplete="email" inputMode="email" />
+                    </div>
+                    <p className="mt-2 text-[12px] text-fg-muted">Trois dossards invités pour ton équipe, avec tout le Premium.</p>
+                    <button type="submit" className="btn btn-impact btn-sm mt-3 w-full justify-between"><span>Envoyer le dossard invité</span><span className="arr">→</span></button>
+                  </form>
 
                   <section>
-                    <p className="mb-2 px-1 font-mono text-[10px] font-bold uppercase tracking-mono text-fg-faint">Les dossards de ton équipe · {teammates.length}</p>
-                    <div className="overflow-hidden rounded-3xl border border-line bg-surface shadow-soft">
-                      {teammates.map((t, i) => (
-                        <div key={t.id} className={`flex items-center gap-3 px-3.5 py-3 ${i > 0 ? 'border-t border-line' : ''}`}>
+                    <h3 className="tmark"><b>{teammates.length}</b> / LES DOSSARDS DE TON ÉQUIPE</h3>
+                    <div className="mt-2 border-b border-line">
+                      {teammates.map((t) => (
+                        <div key={t.id} className="rangee">
                           <Avatar name={t.name || t.email} size="sm" />
                           <div className="min-w-0 flex-1">
-                            <div className="truncate text-sm font-semibold text-fg">{t.name || t.email}</div>
+                            <div className="truncate text-sm font-medium text-fg">{t.name || t.email}</div>
                             <div className="truncate text-[12px] text-fg-faint">{t.email}</div>
                           </div>
-                          <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold ${t.status === 'active' ? 'bg-brand-50 text-brand-700' : 'bg-surface-2 text-fg-muted'}`}>
+                          <span className={`tag shrink-0 ${t.status === 'active' ? 'on' : ''}`}>
                             {t.role || (t.status === 'active' ? 'Membre' : 'Dossard invité')}
                           </span>
                         </div>

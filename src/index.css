@@ -42,7 +42,6 @@
   --encre: #070707;
   --encre-2: #101010;
   --impact: #FF4400;
-  --impact-sombre: #C63500;
   --beton: #6B6558;
   --muted: #57534A;
   --texte: #070707;
@@ -210,16 +209,25 @@ body:has(.eco)::before {
     letter-spacing: 0.14em;
   }
 
-  /* ---- Typo évidée : le second temps du titre est tracé, pas rempli ---- */
+  /* ---- Typo évidée : le second temps du titre est tracé, pas rempli.
+     Même épaisseur que le site (.022em) et même repli : en dessous de
+     620 px de large, le corps est trop petit pour qu'un contour reste
+     lisible, on revient au plein — sur téléphone, le site fait pareil. ---- */
   @supports (-webkit-text-stroke: 1px currentColor) {
     .creuse {
       color: transparent;
-      -webkit-text-stroke: 0.028em var(--texte);
+      -webkit-text-stroke: 0.022em var(--texte);
       paint-order: stroke fill;
     }
     .text-craie .creuse,
     .surface-hero .creuse {
       -webkit-text-stroke-color: #EFEBE2;
+    }
+    @media (max-width: 620px) {
+      .creuse {
+        color: inherit;
+        -webkit-text-stroke: 0;
+      }
     }
   }
 
@@ -228,18 +236,23 @@ body:has(.eco)::before {
     display: inline-flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 4px 10px;
+    gap: 4px 12px;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-weight: 500;
     font-size: 11px;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--beton);
+    color: var(--muted);
+  }
+  @media (min-width: 1024px) {
+    .tmark {
+      font-size: 12px;
+    }
   }
   .tmark::before {
     content: '';
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     background: var(--impact);
     flex: none;
   }
@@ -307,16 +320,22 @@ body:has(.eco)::before {
     opacity: 0.55;
     cursor: default;
   }
-  /* Orange, texte encre : 5,83:1 — l'inverse (craie sur orange) ne passe pas. */
+  /* Les couleurs du site : craie sur orange. Le survol reprend la finale
+     du site sur fond clair (encre) et la nav sur fond sombre (craie). */
   .btn-impact {
     background: var(--impact);
     border-color: var(--impact);
-    color: var(--encre);
+    color: var(--craie);
   }
   .btn-impact:hover {
     background: var(--encre);
     border-color: var(--encre);
     color: var(--craie);
+  }
+  .surface-hero .btn-impact:hover {
+    background: var(--craie);
+    border-color: var(--craie);
+    color: var(--encre);
   }
   .btn-encre {
     background: var(--encre);
@@ -326,12 +345,26 @@ body:has(.eco)::before {
   .btn-encre:hover {
     background: var(--impact);
     border-color: var(--impact);
-    color: var(--encre);
+    color: var(--craie);
   }
   .surface-hero .btn-encre {
     background: var(--craie);
     border-color: var(--craie);
     color: var(--encre);
+  }
+  .surface-hero .btn-encre:hover {
+    background: var(--impact);
+    border-color: var(--impact);
+    color: var(--craie);
+  }
+  /* La formule courante (site : .formule-choix .btn[disabled]) : bord et texte orange, rien d'autre. */
+  .btn-courante,
+  .btn-courante[disabled] {
+    background: transparent;
+    border-color: var(--impact);
+    color: var(--impact);
+    opacity: 1;
+    cursor: default;
   }
   .btn-ghost {
     background: transparent;
@@ -349,6 +382,155 @@ body:has(.eco)::before {
     padding: 10px 14px;
     font-size: 11px;
     gap: 8px;
+  }
+
+  /* ---- Couleurs contextuelles : elles basculent avec le fond (comme
+     --muted / --beton / --texte sur le site), donc valables dans un bloc
+     encre comme sur la craie. ---- */
+  .t-texte { color: var(--texte); }
+  .t-muted { color: var(--muted); }
+  .t-beton { color: var(--beton); }
+  .b-ligne { border-color: var(--ligne); }
+
+  /* ---- Fiche clé / valeur : la <dl class="fiche"> du site (accès, lieu, espace). ---- */
+  .fiche {
+    border-top: 1px solid var(--texte);
+  }
+  .fiche > div {
+    display: grid;
+    grid-template-columns: minmax(88px, 0.42fr) 1fr;
+    gap: 6px 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--ligne);
+  }
+  .fiche dt {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--impact);
+    padding-top: 0.25em;
+  }
+  .fiche dd {
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--texte);
+    min-width: 0;
+  }
+  .fiche dd small {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ---- Tag : la petite étiquette mono du site (.cell .note, .f-data). Un
+     ■ orange devant quand elle porte un état. ---- */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 9px;
+    border: 1px solid var(--ligne);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    color: var(--texte);
+    white-space: nowrap;
+    max-width: 100%;
+  }
+  .tag b {
+    color: var(--impact);
+    font-weight: 700;
+  }
+  .tag.on {
+    background: var(--encre);
+    border-color: var(--encre);
+    color: var(--craie);
+  }
+  .surface-hero .tag {
+    border-color: rgba(239, 235, 226, 0.28);
+  }
+  .surface-hero .tag.on {
+    background: var(--craie);
+    border-color: var(--craie);
+    color: var(--encre);
+  }
+  .tag.impact {
+    background: var(--impact);
+    border-color: var(--impact);
+    color: var(--encre);
+  }
+
+  /* ---- Rangée de liste : un filet au-dessus, comme .rg-row / .fiche > div. ---- */
+  .rangee {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+    border-top: 1px solid var(--ligne);
+    text-align: left;
+    width: 100%;
+  }
+
+  /* ---- Icône carrée : le pictogramme posé dans un carré bordé. ---- */
+  .ico {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex: none;
+    border: 1px solid var(--ligne);
+    color: var(--texte);
+  }
+  .ico.plein {
+    background: var(--encre);
+    border-color: var(--encre);
+    color: var(--craie);
+  }
+  .surface-hero .ico.plein {
+    background: var(--craie);
+    border-color: var(--craie);
+    color: var(--encre);
+  }
+  .ico.impact {
+    background: var(--impact);
+    border-color: var(--impact);
+    color: var(--craie);
+  }
+
+  /* ---- Interrupteur : carré, encre quand il est ouvert (pas de pastille ronde). ---- */
+  .inter {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex: none;
+    border: 1px solid var(--ligne-forte, rgba(14, 13, 12, 0.32));
+    background: transparent;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .inter::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    background: var(--texte);
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .inter.on {
+    background: var(--encre);
+    border-color: var(--encre);
+  }
+  .inter.on::after {
+    background: var(--impact);
+    transform: translateX(20px);
   }
 
   /* ---- Cadre : la grille bordée du site (bords haut+gauche sur le
@@ -378,7 +560,8 @@ body:has(.eco)::before {
   .champ input,
   .champ select,
   .champ textarea,
-  .input-ligne {
+  .input-ligne,
+  textarea.input-ligne {
     font: inherit;
     font-size: 16px;
     font-weight: 500;
@@ -397,6 +580,19 @@ body:has(.eco)::before {
   .surface-hero .input-ligne {
     border-bottom-color: rgba(239, 235, 226, 0.3);
   }
+  .champ select,
+  select.input-ligne {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z' fill='%23FF4400'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 2px center;
+    padding-right: 22px;
+    cursor: pointer;
+  }
+  .champ select option,
+  select.input-ligne option {
+    color: #070707;
+    background: #EFEBE2;
+  }
   .champ input:focus,
   .champ select:focus,
   .champ textarea:focus,
@@ -410,7 +606,7 @@ body:has(.eco)::before {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 11px;
     letter-spacing: 0.06em;
-    color: var(--impact-sombre);
+    color: var(--impact);
   }
   .form-msg {
     font-family: 'JetBrains Mono', ui-monospace, monospace;

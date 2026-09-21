@@ -7,7 +7,7 @@ export const CURRENT_USER = {
   role: 'Fondateur',
   company: 'SaaS B2B · en amorçage',
   location: 'Paris 11e',
-  community: 'Édition 01 · dossard 10 km',
+  community: 'Édition 01',
   joined: 'Dossard pris en septembre 2026',
   bio: "Je construis un SaaS B2B : un tableau de bord, et l’onboarding qui va avec. Je prépare une levée d’amorçage. Je cours le matin, le long de la Seine, à une allure où l’on peut encore parler.",
   needs: ['Lève · une levée d’amorçage', 'Recrute · un développeur React', 'Des conseils de dirigeants qui ont déjà structuré une équipe'],

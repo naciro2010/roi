@@ -56,15 +56,14 @@ export default function RunMatchSheet({ onClose }) {
       <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
       <div
         style={drag.style}
-        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface-soft shadow-float"
+        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-canvas"
       >
         {/* En-tête */}
-        <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-5 pt-3 text-white">
-          <div className="absolute inset-0 bg-hero-glow" />
-          <div {...drag.handleProps} className="relative mx-auto mb-3 h-1 w-10 rounded-full bg-white/30" aria-hidden="true" />
+        <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-5 pt-3 text-craie">
+          <div {...drag.handleProps} className="relative mx-auto mb-3 h-1 w-10 bg-craie/30" aria-hidden="true" />
           <button
             onClick={onClose}
-            className="glass-dark absolute right-4 top-4 z-10 grid h-9 w-9 place-items-center rounded-full text-white tap"
+            className="absolute right-4 top-4 z-10 grid h-9 w-9 place-items-center border border-craie/30 text-craie tap"
             aria-label="Fermer"
           >
             <Icon name="x" className="h-5 w-5" />
@@ -72,7 +71,7 @@ export default function RunMatchSheet({ onClose }) {
           <div className="relative">
             <span className="tmark text-craie/70"><b>T–</b> / LA SORTIE À DEUX</span>
             <h2 className="titre mt-2 text-[22px] leading-tight text-craie">Ton binôme de sortie</h2>
-            <p className="mt-2 text-[12.5px] leading-snug text-white/65">
+            <p className="mt-2 text-[12.5px] leading-snug text-craie/65">
               À partir de vos deux allures, on propose un jour, une heure, un lieu, une distance et une allure cible :
               la moyenne des deux, pour tenir la conversation. La sortie devient le rendez-vous.
             </p>
@@ -84,7 +83,7 @@ export default function RunMatchSheet({ onClose }) {
             const plan = suggestRun(top.name)
             const arche = ARCHETYPES[top.archetype]
             return (
-              <article className="overflow-hidden rounded-3xl border border-brand-200 bg-surface shadow-card">
+              <article className="overflow-hidden border border-line-strong bg-surface">
                 <div className="flex items-center gap-3 p-4 pb-3">
                   <Avatar name={top.name} size="lg" onClick={() => openMember(top.name)} />
                   <div className="min-w-0 flex-1">
@@ -96,23 +95,23 @@ export default function RunMatchSheet({ onClose }) {
                   </div>
                   <div className="text-center">
                     <MatchRing value={top.score} size={48} />
-                    <div className="mt-0.5 text-[9px] font-bold uppercase tracking-wide text-fg-faint">Accord</div>
+                    <div className="mt-0.5 font-mono text-[9px] font-bold uppercase tracking-mono text-fg-faint">Accord</div>
                   </div>
                 </div>
 
-                <div className="mx-4 rounded-2xl bg-brand-light/50 p-3">
-                  <div className="mb-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-brand-700">
+                <div className="mx-4 bg-surface-2 p-3">
+                  <div className="mb-2 flex items-center gap-1.5 font-mono text-[9.5px] font-bold uppercase tracking-mono text-brand-500">
                     <Icon name="route" className="h-3.5 w-3.5" /> La sortie proposée
                   </div>
                   <RunPlan plan={plan} />
                 </div>
 
                 <div className="mx-4 mt-3">
-                  <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-fg-faint">Pourquoi vous deux</div>
+                  <div className="mb-1 font-mono text-[9px] uppercase tracking-label text-fg-faint">Pourquoi vous deux</div>
                   <div className="space-y-1.5">
                     {top.reasons.map((r) => (
                       <div key={r.text} className="flex items-center gap-2 text-[13px] text-fg-soft">
-                        <Icon name={r.icon} className="h-3.5 w-3.5 shrink-0 text-brand-600" /> {r.text}
+                        <Icon name={r.icon} className="h-3.5 w-3.5 shrink-0 text-brand-500" /> {r.text}
                       </div>
                     ))}
                   </div>
@@ -133,13 +132,13 @@ export default function RunMatchSheet({ onClose }) {
 
           {rest.length > 0 && (
             <div>
-              <div className="mb-2 px-1 text-xs font-bold uppercase tracking-wide text-fg-muted">D'autres binômes possibles</div>
+              <div className="mb-2 px-1 tmark sans">D'autres binômes possibles</div>
               <div className="space-y-2.5">
                 {rest.map((m) => {
                   const plan = suggestRun(m.name)
                   const d = formatEventDate(plan.date)
                   return (
-                    <article key={m.name} className="rounded-3xl border border-line bg-surface p-3.5 shadow-soft">
+                    <article key={m.name} className="border border-line bg-surface p-3.5">
                       <div className="flex items-center gap-3">
                         <Avatar name={m.name} size="md" onClick={() => openMember(m.name)} />
                         <button onClick={() => openMember(m.name)} className="min-w-0 flex-1 text-left">
@@ -160,18 +159,17 @@ export default function RunMatchSheet({ onClose }) {
           {lockedCount > 0 && (
             <button
               onClick={openPlans}
-              className="relative w-full overflow-hidden rounded-3xl surface-hero p-4 text-left text-white shadow-float tap"
+              className="relative w-full overflow-hidden surface-hero p-4 text-left text-craie tap"
             >
-              <div className="absolute inset-0 bg-aurora" />
               <div className="relative flex items-center gap-3">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/15 text-white">
+                <span className="grid h-10 w-10 shrink-0 place-items-center bg-craie/15 text-craie">
                   <Icon name="lock" className="h-5 w-5" />
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-extrabold">{lockedCount} autre{lockedCount > 1 ? 's' : ''} binôme{lockedCount > 1 ? 's' : ''} pour toi</div>
-                  <p className="text-[12px] text-white/60">Un binôme par semaine avec ta formule {planMeta?.name ?? 'Dossard'} · tous tes binômes en Premium.</p>
+                  <p className="text-[12px] text-craie/60">Un binôme par semaine avec ta formule {planMeta?.name ?? 'Dossard'} · tous tes binômes en Premium.</p>
                 </div>
-                <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-fg">Premium</span>
+                <span className="shrink-0 bg-craie px-3 py-1.5 text-xs font-bold text-fg">Premium</span>
               </div>
             </button>
           )}

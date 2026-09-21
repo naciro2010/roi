@@ -2,9 +2,9 @@ import Icon from './Icon'
 
 /* Tons des étiquettes : dans « La Ligne » il n'y a qu'un accent. Les tons
    historiques restent comme clés (les données les utilisent) mais tous
-   rendent une étiquette mono sur craie, à l'exception de `brand` (orange). */
+   rendent une étiquette craie/encre, à l'exception de `brand` (orange). */
 export const PILL_TONES = {
-  brand: 'bg-brand-500 text-encre',
+  brand: 'bg-brand-500 text-craie',
   emerald: 'bg-surface-2 text-fg',
   indigo: 'bg-surface-2 text-fg',
   amber: 'bg-surface-2 text-fg',
@@ -21,18 +21,19 @@ export const DOT_TONES = {
   ink: 'bg-fg-faint',
 }
 
-/* Étiquette mono, puce carrée orange : le `.tmark` du site en petit. */
-export function Badge({ tone = 'brand', dot = true, children }) {
+/* Étiquette mono bordée, la puce carrée ■ orange devant : le `.tag` du site
+   (les notes des cellules, la data des formats). */
+export function Badge({ tone = 'brand', dot = true, on = false, className = '', children }) {
   return (
-    <span className={`${tone === 'brand' ? 'bg-surface-2 text-fg' : PILL_TONES[tone]} inline-flex items-center gap-1.5 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-mono`}>
-      {dot && <span className={`h-1.5 w-1.5 ${DOT_TONES[tone]}`} />}
+    <span className={`tag ${on ? 'on' : ''} ${className}`}>
+      {dot && <b>■</b>}
       {children}
     </span>
   )
 }
 
 /* Jauge : un filet qui se remplit d'orange — la ligne de progression du site. */
-export function ProgressBar({ value, total, className = 'bg-white/15', barClassName = 'bg-brand-500' }) {
+export function ProgressBar({ value, total, className = 'bg-craie/15', barClassName = 'bg-brand-500' }) {
   const pct = Math.min(100, Math.round((value / total) * 100))
   return (
     <div className={`h-1 w-full overflow-hidden ${className}`}>
@@ -68,10 +69,10 @@ export function ProgressRing({ value, size = 76, stroke = 8, track = 'rgba(239,2
   )
 }
 
-// Décomposition de compatibilité (Besoin · Running · Affinité) — 3 mini-jauges.
+// Décomposition de la proposition (Intention · Course · Affinité) — 3 mini-jauges.
 const COMPAT_BARS = [
-  { key: 'need', label: 'Besoin', bar: 'bg-brand-500' },
-  { key: 'run', label: 'Running', bar: 'bg-fg' },
+  { key: 'need', label: 'Intention', bar: 'bg-brand-500' },
+  { key: 'run', label: 'Course', bar: 'bg-fg' },
   { key: 'behavior', label: 'Affinité', bar: 'bg-fg-faint' },
 ]
 export function CompatBars({ parts, className = '' }) {
@@ -134,19 +135,19 @@ export function Logo({ light = false, size = 22 }) {
   )
 }
 
-// Badge d'abonnement affiché près du nom (rien pour le plan gratuit).
+/* La formule, près du nom (rien pour le Dossard) : la pastille du verso du
+   dossard, « ■ Premium » / « ■ Cercle ». */
 export function PlanBadge({ plan, className = '' }) {
   if (!plan || plan === 'free') return null
-  const isBusiness = plan === 'business'
   return (
     <span className={`inline-flex items-center gap-1 bg-brand-500 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-mono text-encre ${className}`}>
-      ■ {isBusiness ? 'Business' : 'Pro'}
+      ■ {plan === 'business' ? 'Cercle' : 'Premium'}
     </span>
   )
 }
 
-// Puce « verrouillé » pour signaler une fonctionnalité premium.
-export function LockChip({ label = 'Pro', className = '' }) {
+// Puce « fermé » : ce qui s'ouvre avec une autre formule.
+export function LockChip({ label = 'Premium', className = '' }) {
   return (
     <span className={`inline-flex items-center gap-1 bg-encre px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-mono text-craie ${className}`}>
       <Icon name="lock" className="h-2.5 w-2.5" />
@@ -159,15 +160,29 @@ export function LockChip({ label = 'Pro', className = '' }) {
 export function SectionTitle({ children, action, onAction, t }) {
   return (
     <div className="mb-2.5 flex items-end justify-between gap-3">
-      <h2 className="tmark text-fg-muted">
+      <h2 className="tmark">
         {t && <b>{t}</b>}
         {t ? ' / ' : ''}{children}
       </h2>
       {action && (
-        <button onClick={onAction} className="flex shrink-0 items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-mono text-brand-600 tap">
+        <button onClick={onAction} className="flex shrink-0 items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-mono text-brand-500 tap">
           {action} <span aria-hidden>→</span>
         </button>
       )}
     </div>
+  )
+}
+
+/* Fiche clé / valeur — la <dl class="fiche"> du site. rows = [[clé, valeur, note?]] */
+export function Fiche({ rows, className = '' }) {
+  return (
+    <dl className={`fiche ${className}`}>
+      {rows.map(([k, v, note]) => (
+        <div key={k}>
+          <dt>{k}</dt>
+          <dd>{v}{note && <small>{note}</small>}</dd>
+        </div>
+      ))}
+    </dl>
   )
 }

@@ -8,8 +8,8 @@ import { useSheetDrag } from '../lib/useSheetDrag'
 import { lierDossier } from '../lib/dossier'
 import {
   EDITION, daysToRace, siteUrl,
-  DISTANCES, distanceById, VAGUES, vagueCourante, FORMULES, formuleById,
-  ETAPES, ETAT_INDEX, AVANT, APRES, PROGRAMME, PRINCIPES, QUI_COURT, INSCRITS,
+  DISTANCES, ACCES_RESEAU, distanceById, VAGUES, vagueCourante, FORMULES, formuleById,
+  ETAPES, ETAT_INDEX, AVANT, APRES, PROGRAMME, PRINCIPES, LIEU, QUI_COURT, INSCRITS,
 } from '../data/race'
 
 const fmt = (n) => n.toLocaleString('fr-FR')
@@ -107,10 +107,10 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
                     key={d.id} role="radio" aria-checked={on} onClick={() => setDistance(d.id)}
                     className={`flex flex-col p-3 text-left tap ${on ? 'bg-encre text-craie' : 'text-fg'}`}
                   >
-                    <span className="display text-[30px] leading-none">{d.km}<small className={`ml-1 align-top font-mono text-[9px] font-bold tracking-mono ${on ? 'text-brand-500' : 'text-brand-600'}`}>KM</small></span>
+                    <span className="display text-[30px] leading-none">{d.km}<small className={`ml-1 align-top font-mono text-[9px] font-bold tracking-mono ${on ? 'text-brand-500' : 'text-brand-500'}`}>KM</small></span>
                     <span className="mt-2 font-mono text-[9.5px] font-bold uppercase tracking-mono">{d.nom}</span>
                     <span className={`mt-1 text-[11px] leading-snug ${on ? 'text-craie/65' : 'text-fg-muted'}`}>{d.pourquoi}</span>
-                    {d.populaire && <span className={`mt-2 font-mono text-[8.5px] font-bold uppercase tracking-mono ${on ? 'text-brand-500' : 'text-brand-600'}`}>■ La plus choisie</span>}
+                    {d.central && <span className="mt-2 font-mono text-[8.5px] font-bold uppercase tracking-mono text-brand-500">■ Le format central</span>}
                   </button>
                 )
               })}
@@ -118,13 +118,13 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
             <div className="relative mt-3 h-44 border border-line bg-surface-2">
               <RouteMap route={dist.route} className="h-full w-full" />
               <div className="pointer-events-none absolute left-2 top-2 z-[500] bg-encre px-2 py-1 font-mono text-[9.5px] font-bold uppercase tracking-mono text-craie">
-                {dist.boucle}
+                {dist.trace}
               </div>
               <div className="pointer-events-none absolute bottom-2 right-2 z-[500] bg-craie px-2 py-1 font-mono text-[9.5px] font-bold uppercase tracking-mono text-fg">
-                {dist.deniv} · {dist.duree}
+                {ACCES_RESEAU.split('■')[0]}<b className="text-brand-500">■{ACCES_RESEAU.split('■')[1]}</b>
               </div>
             </div>
-            <p className="mt-2 font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">Départ {EDITION.depart} · arrivée dans {EDITION.arrivee}</p>
+            <p className="mt-2 font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">Tracé indicatif · départ {EDITION.depart}, arrivée dans {EDITION.arrivee}</p>
           </section>
 
           {/* ---------------------------------------------------- LE PROGRAMME T+ */}
@@ -135,7 +135,7 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
             <div className="mt-4 border-t border-fg">
               {PROGRAMME.map((r) => (
                 <div key={r.t} className="grid grid-cols-[64px_1fr] gap-3 border-b border-line py-3">
-                  <div className="font-mono text-[11px] font-bold tracking-mono text-brand-600">
+                  <div className="font-mono text-[11px] font-bold tracking-mono text-brand-500">
                     {r.t}<small className="mt-0.5 block text-[9px] font-medium tracking-mono text-fg-faint">{r.h}</small>
                   </div>
                   <div>
@@ -170,6 +170,11 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
                     </div>
                     <div className={`mt-0.5 font-mono text-[9.5px] uppercase tracking-mono ${f.mise || on ? 'text-craie/60' : 'text-fg-faint'}`}>{f.pour}</div>
                     <ul className="mt-2.5 space-y-1">
+                      {f.herite && (
+                        <li className={`flex gap-2 font-mono text-[9.5px] uppercase tracking-mono ${f.mise || on ? 'text-craie/60' : 'text-fg-faint'}`}>
+                          <span className="w-1.5 shrink-0 text-center font-bold text-brand-500">+</span>{f.herite}
+                        </li>
+                      )}
                       {f.points.map((p, i) => (
                         <li key={i} className={`flex gap-2 text-[12px] leading-snug ${f.mise || on ? 'text-craie/80' : 'text-fg-soft'}`}>
                           <span className="mt-[5px] h-1.5 w-1.5 shrink-0 bg-brand-500" />{p}
@@ -195,7 +200,7 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
                   <div key={v.code} className={`grid grid-cols-[1fr_auto] items-center gap-3 border-b border-line py-3 ${passee ? 'opacity-45' : ''}`}>
                     <div>
                       <div className="font-mono text-[10px] font-bold tracking-label text-fg-faint">
-                        VAGUE 0{i + 1} {ouverte && <b className="text-brand-600">■ OUVERTE</b>}
+                        VAGUE 0{i + 1} {ouverte && <b className="text-brand-500">■ OUVERTE</b>}
                       </div>
                       <div className="titre mt-0.5 text-[16px]">{v.nom}</div>
                       <div className="font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">{v.periode}</div>
@@ -211,6 +216,18 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
                 <span>Prendre un dossard · {dist.label}</span><span className="arr">→</span>
               </a>
             )}
+          </section>
+
+          {/* ---------------------------------------------------- LE LIEU */}
+          <section className="border-t border-line px-5 py-6">
+            <span className="tmark"><b>T+05</b> / LE LIEU</span>
+            <h2 className="titre mt-3 text-[22px]">Paris<br />La Défense.</h2>
+            <p className="mt-2 text-[13.5px] text-fg-muted"><b className="text-fg">Le plus grand quartier d’affaires d’Europe.</b> On court entre les tours où ces conversations se poursuivront le reste de l’année.</p>
+            <dl className="fiche mt-4">
+              {LIEU.map(([k, v]) => (
+                <div key={k}><dt>{k}</dt><dd>{v}</dd></div>
+              ))}
+            </dl>
           </section>
 
           {/* ---------------------------------------------------- QUI COURT */}
@@ -236,7 +253,7 @@ export default function RaceSheet({ onClose, onglet = 'edition' }) {
             <div className="cadre mt-4 grid-cols-2">
               {PRINCIPES.map((p) => (
                 <div key={p.n} className="p-3.5">
-                  <span className="font-mono text-[10px] font-bold tracking-label text-brand-600">{p.n}</span>
+                  <span className="font-mono text-[10px] font-bold tracking-label text-brand-500">{p.n}</span>
                   <h3 className="titre mt-1.5 text-[13.5px]">{p.titre}</h3>
                   <p className="mt-1 text-[12px] leading-snug text-fg-muted">{p.texte}</p>
                 </div>
@@ -263,11 +280,11 @@ function DossierLie({ dossier, onDelier, onEspace }) {
       <span className="tmark"><b>T–</b> / TON DOSSIER</span>
       <h2 className="display mt-3 text-[28px]">Bonjour <span className="creuse">{dossier.prenom}</span>.</h2>
       <p className="mt-2 font-mono text-[10px] uppercase leading-[1.9] tracking-mono text-fg-faint">
-        Dossier <b className="text-brand-600">{dossier.reference}</b> · Vague <b className="text-brand-600">{dossier.vague?.nom}</b> · Édition {dossier.edition || '01'}
+        Dossier <b className="text-brand-500">{dossier.reference}</b> · Vague <b className="text-brand-500">{dossier.vague?.nom}</b> · Édition {dossier.edition || '01'}
       </p>
       {dossier.local && (
         <p className="mt-3 border border-dashed border-line-strong px-3 py-2 font-mono text-[10px] uppercase leading-relaxed tracking-mono text-fg-faint">
-          <b className="text-brand-600">Aperçu hors ligne</b> — le site n’a pas répondu : ce dossier est reconstruit dans l’app.
+          <b className="text-brand-500">Aperçu hors ligne</b> — le site n’a pas répondu : ce dossier est reconstruit dans l’app.
         </p>
       )}
 
@@ -280,7 +297,7 @@ function DossierLie({ dossier, onDelier, onEspace }) {
             ['Dossard', `${dossier.prenom} ${dossier.nom} · ${dossier.fonction} · ${dossier.entreprise}`],
           ].map(([k, v]) => (
             <div key={k} className="border-b border-line py-2">
-              <dt className="font-mono text-[9px] font-bold uppercase tracking-label text-brand-600">{k}</dt>
+              <dt className="font-mono text-[9px] font-bold uppercase tracking-label text-brand-500">{k}</dt>
               <dd className="mt-0.5 text-[13px] font-medium leading-snug text-fg">{v}</dd>
             </div>
           ))}
@@ -349,7 +366,7 @@ function PrendreOuLier({ distance, formule, urlInscription, onLier }) {
             <dl className="border-t border-fg">
               {[['Distance', `${dist.label} — ${dist.nom}`], ['Formule', `${f.nom} · ${f.prix}`], ['Vague', `${vagueCourante().nom} · ${vagueCourante().prix} €`]].map(([k, v]) => (
                 <div key={k} className="border-b border-line py-2">
-                  <dt className="font-mono text-[9px] font-bold uppercase tracking-label text-brand-600">{k}</dt>
+                  <dt className="font-mono text-[9px] font-bold uppercase tracking-label text-brand-500">{k}</dt>
                   <dd className="mt-0.5 text-[13px] font-medium text-fg">{v}</dd>
                 </div>
               ))}

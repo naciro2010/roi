@@ -27,7 +27,7 @@ export function AvatarStack({ names, total, onMore }) {
       {extra > 0 && (
         <button
           onClick={onMore}
-          className="ml-1 grid h-9 min-w-9 place-items-center rounded-full border-2 border-canvas bg-surface-2 px-1 font-mono text-[11px] font-bold text-fg-muted"
+          className="ml-1 grid h-9 min-w-9 place-items-center border-2 border-canvas bg-surface-2 px-1 font-mono text-[11px] font-bold text-fg-muted"
         >
           +{extra}
         </button>

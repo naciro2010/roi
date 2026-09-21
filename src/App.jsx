@@ -18,7 +18,7 @@ import { CONNECTIONS, REQUESTS } from './data/connections'
 
 import Icon from './components/Icon'
 import { Avatar } from './components/Avatar'
-import { Logo, PILL_TONES } from './components/primitives'
+import { Logo } from './components/primitives'
 import BottomNav from './components/BottomNav'
 import Sidebar from './components/Sidebar'
 import PostComposer from './components/PostComposer'
@@ -167,7 +167,7 @@ export default function App() {
   const [integrationsOpen, setIntegrationsOpen] = useState(false)
   const [integrations, setIntegrations] = usePersistentState('integrations', {})
 
-  // Abonnement · invitations
+  // Formule · cooptation
   const [plan, setPlan] = usePersistentState('plan', 'free')
   const [plansOpen, setPlansOpen] = useState(false)
   const [invites, setInvites] = usePersistentState('invites', INITIAL_INVITES)
@@ -270,7 +270,7 @@ export default function App() {
   function contactMember(name) {
     setContacted((c) => ({ ...c, [name]: true }))
     track({ type: 'contact', name })
-    addToPipeline(name, { via: 'Demande de contact envoyée' })
+    addToPipeline(name, { via: 'Rencontre proposée depuis l’annuaire' })
     showToast(`Rencontre proposée à ${name.split(' ')[0]} · ajoutée au pipeline`)
   }
 
@@ -279,7 +279,7 @@ export default function App() {
     if (name) {
       setContacted((c) => ({ ...c, [name]: true }))
       track({ type: 'contact', name })
-      addToPipeline(name, { via: 'Match contacté' })
+      addToPipeline(name, { via: 'Rencontre proposée depuis « Pour toi »' })
     }
     showToast(name ? `Rencontre proposée à ${name.split(' ')[0]} · ajoutée au pipeline` : 'Rencontre proposée · ajoutée au pipeline')
   }
@@ -372,7 +372,7 @@ export default function App() {
     setDraft('')
   }
 
-  // Brise-glace IA : pré-remplit un message pertinent et ouvre la conversation.
+  // Une première phrase, toute prête : pré-remplit le message et ouvre la conversation.
   function startIcebreaker(name) {
     const text = icebreaker(name, SHARED_RUNS[name] || 0)
     setMember(null)
@@ -546,11 +546,11 @@ export default function App() {
     openSearch: () => setSearchOpen(true),
     openIntegrations: () => setIntegrationsOpen(true),
     integrations, toggleIntegration,
-    // Abonnement
+    // Formule
     plan, planMeta, upgradePlan,
     hasFeature: (key) => hasFeature(plan, key),
     openPlans: () => setPlansOpen(true),
-    // Invitations
+    // Cooptation
     invites, sendInvite, referralJoined,
     teammates, inviteTeammate,
     openInvite: () => setInviteOpen(true),
@@ -606,17 +606,17 @@ export default function App() {
     return (
       <div className="absolute inset-0 z-40">
         <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={() => setNotifOpen(false)} />
-        <div className="animate-drawerIn absolute inset-y-0 right-0 flex w-[86%] max-w-[340px] flex-col bg-surface shadow-float">
-          <div className="flex shrink-0 items-center justify-between border-b border-line px-4 py-4">
-            <h2 className="tmark">Notifications</h2>
-            <button onClick={() => setNotifOpen(false)} className="grid h-9 w-9 place-items-center rounded-full bg-surface-2 text-fg-muted tap" aria-label="Fermer">
-              <Icon name="x" className="h-5 w-5" />
+        <div className="animate-drawerIn absolute inset-y-0 right-0 flex w-[86%] max-w-[340px] flex-col border-l border-line bg-canvas">
+          <div className="flex shrink-0 items-center justify-between border-b border-fg px-4 py-4">
+            <h2 className="tmark"><b>T+</b> / CE QUE LE RÉSEAU TE DIT</h2>
+            <button onClick={() => setNotifOpen(false)} className="ico tap" aria-label="Fermer">
+              <Icon name="x" className="h-4 w-4" />
             </button>
           </div>
           {unreadNotif > 0 && (
             <button
               onClick={() => setNotifs((ns) => ns.map((n) => ({ ...n, unread: false })))}
-              className="shrink-0 border-b border-line px-4 py-2.5 text-left font-mono text-[10px] font-bold uppercase tracking-mono text-brand-600 tap"
+              className="shrink-0 border-b border-line px-4 py-2.5 text-left font-mono text-[10px] font-bold uppercase tracking-mono text-brand-500 tap"
             >
               Tout marquer comme lu
             </button>
@@ -624,14 +624,14 @@ export default function App() {
           <div className="flex-1 overflow-y-auto no-scrollbar">
             {notifs.map((n) => (
               <div key={n.id} className={`flex gap-3 border-b border-line px-4 py-3.5 ${n.unread ? 'bg-surface-2' : ''}`}>
-                <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${PILL_TONES[n.tone]}`}>
+                <span className={`ico ${n.unread ? 'plein' : ''}`}>
                   <Icon name={n.icon} className="h-4 w-4" filled={n.icon === 'heart' || n.icon === 'sparkles'} />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-[13px] leading-snug text-fg">{n.text}</p>
-                  <p className="mt-0.5 text-[11px] text-fg-faint">{n.time}</p>
+                  <p className="mt-0.5 font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">{n.time}</p>
                 </div>
-                {n.unread && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-500" />}
+                {n.unread && <span className="mt-1.5 h-2 w-2 shrink-0 bg-brand-500" />}
               </div>
             ))}
           </div>
@@ -642,7 +642,7 @@ export default function App() {
 
   return (
     <AppContext.Provider value={ctx}>
-      <div className={`relative flex h-[100dvh] w-full justify-center overflow-hidden bg-canvas bg-mesh ${eco ? 'eco' : ''}`}>
+      <div className={`relative flex h-[100dvh] w-full justify-center overflow-hidden bg-canvas ${eco ? 'eco' : ''}`}>
         {/* Navigation latérale (desktop) — remplace la BottomNav sur grand écran. */}
         <Sidebar
           active={tab}
@@ -657,20 +657,21 @@ export default function App() {
             confortable sur bureau (vrai layout web, sans maquette « téléphone »). */}
         <div className="relative flex h-full w-full max-w-[480px] flex-col overflow-hidden bg-canvas lg:max-w-[640px] lg:border-x lg:border-line">
 
+          {/* La nav du site, en haut : encre à 88 %, le logotype, les icônes craie. */}
           {showHeader && (
-            <header className="glass z-20 flex shrink-0 items-center justify-between border-b border-fg px-5 pb-2.5 pt-[max(0.9rem,env(safe-area-inset-top))] lg:hidden">
-              <Logo />
+            <header className="glass-dark z-20 flex shrink-0 items-center justify-between border-b border-line-craie px-5 pb-2.5 pt-[max(0.9rem,env(safe-area-inset-top))] lg:hidden">
+              <Logo light />
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setSearchOpen(true)}
-                  className="grid h-10 w-10 place-items-center text-fg tap hover:bg-fg hover:text-craie"
+                  className="grid h-10 w-10 place-items-center text-craie tap hover:bg-craie hover:text-encre"
                   aria-label="Rechercher"
                 >
                   <Icon name="search" className="h-[21px] w-[21px]" />
                 </button>
                 <button
                   onClick={() => setNotifOpen(true)}
-                  className="relative grid h-10 w-10 place-items-center text-fg tap hover:bg-fg hover:text-craie"
+                  className="relative grid h-10 w-10 place-items-center text-craie tap hover:bg-craie hover:text-encre"
                   aria-label="Notifications"
                 >
                   <Icon name="bell" className="h-[22px] w-[22px]" />

@@ -9,13 +9,13 @@ export default function IntegrationsSheet({ onClose }) {
   return (
     <div className="absolute inset-0 z-40">
       <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
-      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[92%] flex-col overflow-hidden bg-surface shadow-float">
+      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[92%] flex-col overflow-hidden bg-surface">
         <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-3.5">
           <div className="min-w-0">
             <span className="tmark"><b>T–</b> / STRAVA, LINKEDIN, TA MONTRE</span>
             <h2 className="titre mt-1 text-[20px] text-fg">Tes sorties, importées</h2>
           </div>
-          <button onClick={onClose} className="grid h-9 w-9 place-items-center rounded-full bg-surface-2 text-fg-muted tap" aria-label="Fermer">
+          <button onClick={onClose} className="ico tap" aria-label="Fermer">
             <Icon name="x" className="h-5 w-5" />
           </button>
         </div>
@@ -32,13 +32,13 @@ export default function IntegrationsSheet({ onClose }) {
                 {SERVICES.filter((s) => s.category === cat.id).map((s) => {
                   const connected = !!integrations[s.id]
                   return (
-                    <article key={s.id} className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3 shadow-soft">
+                    <article key={s.id} className="flex items-center gap-3 border border-line bg-surface p-3">
                       <ServiceLogo service={s} />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
                           <span className="truncate font-semibold text-fg">{s.name}</span>
                           {connected && (
-                            <span className="inline-flex items-center gap-0.5 rounded-full bg-success-light px-1.5 py-0.5 text-[10px] font-semibold text-success-dark">
+                            <span className="tag on">
                               <Icon name="check" className="h-2.5 w-2.5" /> Connecté
                             </span>
                           )}
@@ -49,7 +49,7 @@ export default function IntegrationsSheet({ onClose }) {
                       </div>
                       <button
                         onClick={() => toggleIntegration(s.id)}
-                        className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold tap ${
+                        className={`shrink-0 px-3.5 py-1.5 text-xs font-semibold tap ${
                           connected ? 'border border-line-strong text-fg-soft' : 'btn btn-impact'
                         }`}
                       >

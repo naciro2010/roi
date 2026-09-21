@@ -1,7 +1,7 @@
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
-import { PILL_TONES } from '../components/primitives'
+
 import { PIPELINE_STAGES, pipelineStats, stageIndex } from '../data/pipeline'
 import { kmWith, runsWith } from '../data/activities'
 import { formatEventDate } from '../lib/dates'
@@ -29,15 +29,14 @@ export default function PipelineSheet({ onClose }) {
       <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
       <div
         style={drag.style}
-        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface-soft shadow-float"
+        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-canvas"
       >
         {/* En-tête */}
-        <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-4 pt-3 text-white">
-          <div className="absolute inset-0 bg-hero-glow" />
-          <div {...drag.handleProps} className="relative mx-auto mb-3 h-1 w-10 rounded-full bg-white/30" aria-hidden="true" />
+        <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-4 pt-3 text-craie">
+          <div {...drag.handleProps} className="relative mx-auto mb-3 h-1 w-10 bg-craie/30" aria-hidden="true" />
           <button
             onClick={onClose}
-            className="glass-dark absolute right-4 top-4 z-10 grid h-9 w-9 place-items-center rounded-full text-white tap"
+            className="absolute right-4 top-4 z-10 grid h-9 w-9 place-items-center border border-craie/30 text-craie tap"
             aria-label="Fermer"
           >
             <Icon name="x" className="h-5 w-5" />
@@ -48,34 +47,34 @@ export default function PipelineSheet({ onClose }) {
           </div>
 
           {showAnalytics ? (
-            <div className="relative mt-4 grid grid-cols-3 gap-2 border-t border-white/12 pt-3">
+            <div className="relative mt-4 grid grid-cols-3 gap-2 border-t border-craie/12 pt-3">
               {headline.map((s) => (
                 <div key={s.label}>
                   <div className="display text-[26px] leading-none tabular-nums text-craie">{s.value}</div>
-                  <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-white/60">{s.label}</div>
+                  <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-craie/60">{s.label}</div>
                 </div>
               ))}
             </div>
           ) : (
             <button
               onClick={openPlans}
-              className="relative mt-4 flex w-full items-center gap-3 border-t border-white/12 pt-3 text-left tap"
+              className="relative mt-4 flex w-full items-center gap-3 border-t border-craie/12 pt-3 text-left tap"
             >
               <div className="grid flex-1 grid-cols-3 gap-2" aria-hidden="true">
                 {headline.map((s, i) => (
                   <div key={s.label} className={i === 0 ? 'blur-[5px]' : ''}>
                     <div className="display text-[26px] leading-none tabular-nums text-craie">{s.value}</div>
-                    <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-white/60">{s.label}</div>
+                    <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-craie/60">{s.label}</div>
                   </div>
                 ))}
               </div>
-              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-fg">
+              <span className="inline-flex shrink-0 items-center gap-1.5 bg-craie px-3 py-1.5 text-[11px] font-bold text-fg">
                 <Icon name="lock" className="h-3.5 w-3.5" /> Premium
               </span>
             </button>
           )}
           {!showAnalytics && (
-            <p className="relative mt-2 text-[11px] text-white/55">La valeur en jeu se lit en Premium.</p>
+            <p className="relative mt-2 text-[11px] text-craie/55">La valeur en jeu se lit en Premium.</p>
           )}
         </div>
 
@@ -87,17 +86,17 @@ export default function PipelineSheet({ onClose }) {
             return (
               <section key={stage.id} className="flex w-[80%] shrink-0 snap-start flex-col">
                 <div className="mb-2.5 flex items-center gap-2 px-1">
-                  <span className={`grid h-7 w-7 place-items-center rounded-lg ${PILL_TONES[stage.tone]}`}>
+                  <span className="ico h-7 w-7">
                     <Icon name={stage.icon} className="h-3.5 w-3.5" />
                   </span>
                   <span className="text-sm font-bold text-fg">{stage.label}</span>
-                  <span className="grid h-5 min-w-5 place-items-center rounded-full bg-surface-2 px-1.5 text-[11px] font-bold text-fg-muted">{deals.length}</span>
+                  <span className="grid h-5 min-w-5 place-items-center bg-surface-2 px-1.5 text-[11px] font-bold text-fg-muted">{deals.length}</span>
                   {showAnalytics && colValue > 0 && <span className="ml-auto text-[11px] font-bold tabular-nums text-fg-faint">{colValue} k€</span>}
                 </div>
 
                 <div className="flex-1 space-y-2.5 overflow-y-auto no-scrollbar pb-2">
                   {deals.length === 0 && (
-                    <div className="grid place-items-center rounded-2xl border border-dashed border-line-strong px-4 py-8 text-center">
+                    <div className="grid place-items-center border border-dashed border-line-strong px-4 py-8 text-center">
                       <span className="text-[12px] leading-snug text-fg-faint">Rien ici pour l'instant. Une sortie ou une rencontre y mettra quelqu'un.</span>
                     </div>
                   )}
@@ -106,7 +105,7 @@ export default function PipelineSheet({ onClose }) {
                     const runs = runsWith(me, d.name).length
                     const idx = stageIndex(d.stage)
                     return (
-                      <article key={d.id} className="rounded-3xl border border-line bg-surface p-3.5 shadow-soft">
+                      <article key={d.id} className="border border-line bg-surface p-3.5">
                         <button onClick={() => openMember(d.name)} className="flex w-full items-center gap-2.5 text-left tap">
                           <Avatar name={d.name} size="sm" />
                           <div className="min-w-0 flex-1">
@@ -114,13 +113,13 @@ export default function PipelineSheet({ onClose }) {
                             <div className="truncate text-[12px] text-fg-muted">{d.kind}</div>
                           </div>
                           {showAnalytics && d.value > 0 && (
-                            <span className="shrink-0 rounded-full bg-gold-light px-2 py-0.5 text-[11px] font-extrabold text-gold-dark">{d.value} k€</span>
+                            <span className="shrink-0 bg-surface-2 px-2 py-0.5 text-[11px] font-extrabold text-fg">{d.value} k€</span>
                           )}
                         </button>
 
                         <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-fg-muted">
                           {runs > 0 && (
-                            <span className="inline-flex items-center gap-1 font-semibold text-success-dark">
+                            <span className="inline-flex items-center gap-1 font-mono text-[9.5px] font-bold uppercase tracking-mono text-fg">
                               <Icon name="activity" className="h-3.5 w-3.5" /> {km} km investis
                             </span>
                           )}
@@ -130,8 +129,8 @@ export default function PipelineSheet({ onClose }) {
                         </div>
 
                         {d.next && (
-                          <div className="mt-2 flex items-start gap-1.5 rounded-2xl bg-surface-soft px-2.5 py-2 text-[12px] text-fg-soft">
-                            <Icon name="arrowRight" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-600" />
+                          <div className="mt-2 flex items-start gap-1.5 bg-surface-soft px-2.5 py-2 text-[12px] text-fg-soft">
+                            <Icon name="arrowRight" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-500" />
                             <span className="min-w-0 flex-1">
                               <span className="font-semibold text-fg">Prochaine étape</span> · {d.next}
                               {d.nextDate && <span className="text-fg-faint"> · {formatEventDate(d.nextDate).relative}</span>}
@@ -143,7 +142,7 @@ export default function PipelineSheet({ onClose }) {
                           {idx > 0 && (
                             <button
                               onClick={() => advanceDeal(d.id, -1)}
-                              className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-line-strong text-fg-faint tap"
+                              className="grid h-9 w-9 shrink-0 place-items-center border border-line-strong text-fg-faint tap"
                               aria-label="Reculer"
                               title="Reculer"
                             >
@@ -151,7 +150,7 @@ export default function PipelineSheet({ onClose }) {
                             </button>
                           )}
                           {d.stage === 'won' ? (
-                            <span className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-success-light py-2 text-[13px] font-bold text-success-dark">
+                            <span className="tag on flex-1 justify-center py-2.5">
                               <Icon name="checkCircle" className="h-4 w-4" /> Conclu
                             </span>
                           ) : (
@@ -174,7 +173,7 @@ export default function PipelineSheet({ onClose }) {
         </div>
 
         <p className="flex shrink-0 items-center justify-center gap-1.5 border-t border-line bg-surface px-4 py-3 text-center text-[11px] text-fg-faint">
-          <Icon name="activity" className="h-3.5 w-3.5 text-success" />
+          <span className="h-1.5 w-1.5 bg-brand-500" />
           {kmInvested > 0 ? `${kmInvested} km investis dans ces relations · chaque sortie en fait avancer une.` : 'Chaque sortie courue fait avancer une relation.'}
         </p>
       </div>

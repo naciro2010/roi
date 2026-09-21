@@ -41,7 +41,7 @@ function SplitChart({ splits }) {
               key={i}
               onClick={() => setSel(active ? null : i)}
               aria-label={`Km ${i + 1} : ${fmtPace(s)} par km`}
-              className={`flex-1 rounded-t-md transition-colors ${active ? 'bg-brand-700' : fastest ? 'bg-brand-500' : 'bg-brand-200'}`}
+              className={`flex-1 transition-colors ${active ? 'bg-encre' : fastest ? 'bg-brand-500' : 'bg-craie-3'}`}
               style={{ height: `${heightFor(s)}%` }}
             />
           )
@@ -62,7 +62,7 @@ function SplitChart({ splits }) {
 function Chiffre({ value, label, unit }) {
   return (
     <div className="px-3.5 py-3">
-      <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-fg-faint">{label}</div>
+      <div className="font-mono text-[9px] uppercase tracking-label text-fg-faint">{label}</div>
       <div className="mt-0.5 text-[20px] font-bold leading-none tracking-tight text-fg tabular-nums">
         {value}
         {unit && <span className="ml-0.5 text-[12px] font-semibold text-fg-muted">{unit}</span>}
@@ -83,22 +83,22 @@ export default function ActivitySheet({ id, onClose }) {
   return (
     <div className="absolute inset-0 z-40">
       <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
-      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface shadow-float">
+      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface">
         {/* Carte interactive */}
         <div className="relative h-56 shrink-0 bg-surface-2">
           <RouteMap route={a.route} interactive className="h-full w-full" />
           <div {...drag.handleProps} className="absolute left-1/2 top-0 z-[500] flex h-9 w-24 -translate-x-1/2 items-center justify-center" aria-hidden="true">
-            <div className="mt-2.5 h-1.5 w-12 rounded-full bg-white/70 shadow-soft" />
+            <div className="mt-2.5 h-1.5 w-12 bg-craie/70" />
           </div>
-          <button onClick={onClose} className="glass-dark absolute right-3 top-3 z-[500] grid h-9 w-9 place-items-center rounded-full text-white tap" aria-label="Fermer">
+          <button onClick={onClose} className="absolute right-3 top-3 z-[500] grid h-9 w-9 place-items-center border border-craie/40 bg-encre/80 text-craie tap" aria-label="Fermer">
             <Icon name="x" className="h-5 w-5" />
           </button>
           <div className="pointer-events-none absolute left-4 top-3 z-[500] flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-fg-soft shadow-soft backdrop-blur">
+            <span className="inline-flex items-center gap-1 bg-craie/90 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-fg-soft backdrop-blur">
               <Icon name="activity" className="h-3 w-3 text-brand-500" /> {a.type}
             </span>
             {avec && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-brand-500 px-2.5 py-1 text-[11px] font-bold text-white shadow-soft">
+              <span className="inline-flex items-center gap-1 bg-brand-500 px-2.5 py-1 text-[11px] font-bold text-craie">
                 <Icon name="users" className="h-3 w-3" /> {a.metContacts.length}
               </span>
             )}
@@ -115,8 +115,8 @@ export default function ActivitySheet({ id, onClose }) {
             <button
               onClick={() => toggleActKudos(a.id)}
               aria-pressed={k?.liked}
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold tap ${
-                k?.liked ? 'bg-brand-500 text-white shadow-brand' : 'bg-surface-2 text-fg-muted'
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold tap ${
+                k?.liked ? 'bg-brand-500 text-craie' : 'bg-surface-2 text-fg-muted'
               }`}
             >
               <Icon name="thumbsUp" className="h-4 w-4" filled={k?.liked} />
@@ -127,13 +127,13 @@ export default function ActivitySheet({ id, onClose }) {
           <h2 className="mt-3 text-[19px] font-bold leading-tight tracking-tight text-fg">{a.title}</h2>
 
           {/* D'abord : avec qui. */}
-          <div className={`mt-1.5 flex items-center gap-1.5 text-[14px] ${avec ? 'font-semibold text-brand-700' : 'text-fg-muted'}`}>
-            <Icon name="users" className={`h-4 w-4 shrink-0 ${avec ? 'text-brand-600' : 'text-fg-faint'}`} />
+          <div className={`mt-1.5 flex items-center gap-1.5 text-[14px] ${avec ? 'font-semibold text-brand-500' : 'text-fg-muted'}`}>
+            <Icon name="users" className={`h-4 w-4 shrink-0 ${avec ? 'text-brand-500' : 'text-fg-faint'}`} />
             <span>{couruAvec(a.metContacts)}</span>
           </div>
 
           {/* Les trois chiffres, puis le reste en discret. */}
-          <div className="mt-3 overflow-hidden rounded-2xl border border-line bg-surface shadow-soft">
+          <div className="mt-3 overflow-hidden border border-line bg-surface">
             <div className="grid grid-cols-3 divide-x divide-line">
               <Chiffre label="Distance" value={a.distance.toFixed(1)} unit="km" />
               <Chiffre label="Temps" value={a.duration} />
@@ -154,7 +154,7 @@ export default function ActivitySheet({ id, onClose }) {
               <span className="tmark"><b>T+</b> / CE QUE LA SORTIE A OUVERT</span>
               <div className="mt-2.5 space-y-2">
                 {a.metContacts.map((name) => (
-                  <div key={name} className="rounded-2xl border border-line bg-surface p-2.5 shadow-soft">
+                  <div key={name} className="border border-line bg-surface p-2.5">
                     <div className="flex items-center gap-3">
                       <Avatar name={name} size="sm" onClick={() => openMember(name)} />
                       <button onClick={() => openMember(name)} className="min-w-0 flex-1 truncate text-left text-sm font-semibold text-fg">{name}</button>
@@ -184,13 +184,13 @@ export default function ActivitySheet({ id, onClose }) {
           {/* Sur cette sortie — ce que la sortie a marqué. */}
           {a.achievements?.length > 0 && (
             <div className="mt-5">
-              <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-fg-muted">
-                <Icon name="flag" className="h-3.5 w-3.5 text-brand-600" /> Sur cette sortie
+              <div className="mb-2 flex items-center gap-1.5 tmark sans">
+                <Icon name="flag" className="h-3.5 w-3.5 text-brand-500" /> Sur cette sortie
               </div>
               <div className="space-y-2">
                 {a.achievements.map((ach) => (
-                  <div key={ach.label} className="flex items-center gap-3 rounded-2xl border border-line bg-surface-soft px-3 py-2.5">
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-surface-2 text-fg">
+                  <div key={ach.label} className="flex items-center gap-3 border border-line bg-surface-soft px-3 py-2.5">
+                    <span className="grid h-9 w-9 shrink-0 place-items-center bg-surface-2 text-fg">
                       <Icon name={ach.icon} className="h-[18px] w-[18px]" filled={ach.icon === 'medal'} />
                     </span>
                     <span className="text-[13px] font-semibold text-fg">{ach.label}</span>
@@ -201,7 +201,7 @@ export default function ActivitySheet({ id, onClose }) {
           )}
 
           <div className="mt-5">
-            <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-fg-muted">
+            <div className="mb-2 flex items-center gap-1.5 tmark sans">
               <Icon name="route" className="h-3.5 w-3.5" /> Les kilomètres
             </div>
             <SplitChart splits={a.splits} />
@@ -209,13 +209,13 @@ export default function ActivitySheet({ id, onClose }) {
 
           {/* Bien couru — qui l'a dit. */}
           {a.kudosBy?.length > 0 && (
-            <div className="mt-5 flex items-center gap-3 rounded-2xl border border-line bg-surface p-3 shadow-soft">
+            <div className="mt-5 flex items-center gap-3 border border-line bg-surface p-3">
               <button
                 onClick={() => toggleActKudos(a.id)}
                 aria-label="Bien couru"
                 aria-pressed={k?.liked}
-                className={`grid h-10 w-10 shrink-0 place-items-center rounded-full tap ${
-                  k?.liked ? 'bg-brand-500 text-white shadow-brand' : 'bg-surface-2 text-fg-muted'
+                className={`grid h-10 w-10 shrink-0 place-items-center tap ${
+                  k?.liked ? 'bg-brand-500 text-craie' : 'bg-surface-2 text-fg-muted'
                 }`}
               >
                 <Icon name="thumbsUp" className="h-5 w-5" filled={k?.liked} />

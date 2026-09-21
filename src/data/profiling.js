@@ -30,7 +30,7 @@ export const ME = {
   provides: ['expertise', 'intros'],
   topics: ['saas', 'b2b', 'product', 'fundraising', 'design'],
   run: { pace: 5.5, window: 'am', zone: 'seine', distance: 'long' },
-  events: ['Run & Pitch'],
+  events: ['Sortie du jeudi'],
 }
 
 /* Attributs par membre (clé = nom, aligné sur data/network.js). */
@@ -41,7 +41,7 @@ export const PROFILES = {
     provides: ['expertise', 'intros'],
     topics: ['foodtech', 'seed', 'brand', 'product', 'fundraising'],
     run: { pace: 5.3, window: 'am', zone: 'seine', distance: 'long' },
-    events: ['Run & Pitch', 'Défi 10 km'],
+    events: ['Sortie du jeudi', 'Sortie du dimanche'],
   },
   'Yanis Benali': {
     archetype: 'developer',
@@ -49,7 +49,7 @@ export const PROFILES = {
     provides: ['talent', 'expertise'],
     topics: ['react', 'mvp', 'b2b', 'product'],
     run: { pace: 5.0, window: 'am', zone: 'canal', distance: 'tempo' },
-    events: ['Défi 10 km'],
+    events: ['Sortie du dimanche'],
   },
   'Claire Moreau': {
     archetype: 'mentor',
@@ -57,7 +57,7 @@ export const PROFILES = {
     provides: ['mentor', 'expertise', 'intros'],
     topics: ['scaling', 'retail', 'ops', 'product'],
     run: { pace: 6.0, window: 'we', zone: 'ouest', distance: 'long' },
-    events: ['Run & Pitch'],
+    events: ['Sortie du jeudi'],
   },
   'Karim Haddad': {
     archetype: 'investor',
@@ -65,7 +65,7 @@ export const PROFILES = {
     provides: ['capital', 'intros', 'expertise'],
     topics: ['finance', 'seed', 'saas', 'b2b'],
     run: { pace: 4.7, window: 'am', zone: 'ouest', distance: 'tempo' },
-    events: ['Run & Pitch'],
+    events: ['Sortie du jeudi'],
   },
   'Léa Fontaine': {
     archetype: 'operator',
@@ -81,7 +81,7 @@ export const PROFILES = {
     provides: ['expertise', 'intros'],
     topics: ['fintech', 'product', 'b2b'],
     run: { pace: 6.2, window: 'we', zone: 'vincennes', distance: 'long' },
-    events: ['Défi 10 km'],
+    events: ['Sortie du dimanche'],
   },
   'Inès Roy': {
     archetype: 'investor',
@@ -89,7 +89,7 @@ export const PROFILES = {
     provides: ['capital', 'intros'],
     topics: ['b2b', 'climat', 'saas', 'seed'],
     run: { pace: 5.6, window: 'am', zone: 'seine', distance: 'tempo' },
-    events: ['Run & Pitch'],
+    events: ['Sortie du jeudi'],
   },
   'Hugo Bernard': {
     archetype: 'operator',
@@ -97,7 +97,7 @@ export const PROFILES = {
     provides: ['expertise', 'intros'],
     topics: ['logistique', 'scaling', 'ops'],
     run: { pace: 4.9, window: 'pm', zone: 'paris11', distance: 'tempo' },
-    events: ['Défi 10 km'],
+    events: ['Sortie du dimanche'],
   },
   'Nadia Cherif': {
     archetype: 'mentor',
@@ -105,7 +105,7 @@ export const PROFILES = {
     provides: ['mentor', 'expertise', 'intros'],
     topics: ['gtm', 'growth', 'product', 'serial'],
     run: { pace: 6.1, window: 'we', zone: 'vincennes', distance: 'long' },
-    events: ['Défi 10 km'],
+    events: ['Sortie du dimanche'],
   },
 }
 

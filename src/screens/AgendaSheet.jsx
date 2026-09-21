@@ -2,13 +2,13 @@ import { useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from '../components/Icon'
 import { Avatar } from '../components/Avatar'
-import { PILL_TONES } from '../components/primitives'
+
 import { MEETING_TYPES } from '../data/meetings'
 import { MEMBERS } from '../data/network'
 import { formatEventDate } from '../lib/dates'
 import { useSheetDrag } from '../lib/useSheetDrag'
 
-const CHAMP = 'w-full rounded-xl border border-line-strong bg-surface px-3 py-2.5 text-sm text-fg outline-none focus:ring-2 focus:ring-brand-200'
+const CHAMP = 'input-ligne text-sm'
 const ETIQUETTE = 'mb-1.5 block font-mono text-[9.5px] font-bold uppercase tracking-mono text-fg-muted'
 
 /* Lieu par défaut selon le « où » choisi. */
@@ -40,7 +40,7 @@ function ProposeForm({ onSubmit, onCancel }) {
   }
 
   return (
-    <form onSubmit={submit} className="space-y-3 rounded-3xl border border-brand-200 bg-surface p-4 shadow-card">
+    <form onSubmit={submit} className="space-y-3 border border-line-strong bg-surface p-4">
       <div>
         <label htmlFor="rdv-who" className={ETIQUETTE}>Avec qui</label>
         <select id="rdv-who" value={who} onChange={(e) => setWho(e.target.value)} className={CHAMP}>
@@ -59,7 +59,7 @@ function ProposeForm({ onSubmit, onCancel }) {
               type="button"
               onClick={() => setType(key)}
               aria-pressed={type === key}
-              className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-left text-[13px] font-semibold tap ${
+              className={`flex items-center gap-2 border px-3 py-2 text-left text-[13px] font-semibold tap ${
                 type === key ? 'border-fg bg-fg text-canvas' : 'border-line text-fg-soft'
               }`}
             >
@@ -119,15 +119,14 @@ export default function AgendaSheet({ onClose }) {
       <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
       <div
         style={drag.style}
-        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface-soft shadow-float"
+        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-canvas"
       >
         {/* En-tête */}
-        <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-5 pt-3 text-white">
-          <div className="absolute inset-0 bg-hero-glow" />
-          <div {...drag.handleProps} className="relative mx-auto mb-3 h-1 w-10 rounded-full bg-white/30" aria-hidden="true" />
+        <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-5 pt-3 text-craie">
+          <div {...drag.handleProps} className="relative mx-auto mb-3 h-1 w-10 bg-craie/30" aria-hidden="true" />
           <button
             onClick={onClose}
-            className="glass-dark absolute right-4 top-4 z-10 grid h-9 w-9 place-items-center rounded-full text-white tap"
+            className="absolute right-4 top-4 z-10 grid h-9 w-9 place-items-center border border-craie/30 text-craie tap"
             aria-label="Fermer"
           >
             <Icon name="x" className="h-5 w-5" />
@@ -135,10 +134,10 @@ export default function AgendaSheet({ onClose }) {
           <div className="relative pr-10">
             <span className="tmark text-craie/70"><b>T+</b> / L'AGENDA</span>
             <h2 className="titre mt-2 text-[22px] leading-tight text-craie">Tes rencontres</h2>
-            <p className="mt-2 text-[12.5px] leading-snug text-white/65">
+            <p className="mt-2 text-[12.5px] leading-snug text-craie/65">
               Huit minutes, un sujet : recruter, lever, vendre, s'associer. À l'Arena le jour J, en courant, autour d'un café ou en visio.
             </p>
-            <p className="mt-2 font-mono text-[9.5px] uppercase tracking-mono text-white/55">
+            <p className="mt-2 font-mono text-[9.5px] uppercase tracking-mono text-craie/55">
               {meetings.length} à venir · {confirmedCount} confirmée{confirmedCount > 1 ? 's' : ''}
             </p>
           </div>
@@ -157,20 +156,20 @@ export default function AgendaSheet({ onClose }) {
           {!unlimited && (
             <button
               onClick={openPlans}
-              className="flex w-full items-center gap-3 rounded-2xl border border-line bg-surface p-3 text-left shadow-soft tap"
+              className="flex w-full items-center gap-3 border border-line bg-surface p-3 text-left tap"
             >
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-surface-2 text-fg">
+              <span className="grid h-9 w-9 shrink-0 place-items-center bg-surface-2 text-fg">
                 <Icon name="lock" className="h-4 w-4" />
               </span>
               <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-fg-soft">
                 Six rencontres réservées à l'avance en Premium, depuis ton espace.
               </span>
-              <span className="shrink-0 font-mono text-[10px] font-bold uppercase tracking-mono text-brand-600">Premium →</span>
+              <span className="shrink-0 font-mono text-[10px] font-bold uppercase tracking-mono text-brand-500">Premium →</span>
             </button>
           )}
 
           {sorted.length === 0 && (
-            <p className="rounded-2xl border border-dashed border-line-strong px-4 py-8 text-center text-[12px] text-fg-faint">
+            <p className="border border-dashed border-line-strong px-4 py-8 text-center text-[12px] text-fg-faint">
               Aucune rencontre à venir. Propose-en une, ou laisse une sortie s'en charger.
             </p>
           )}
@@ -181,7 +180,7 @@ export default function AgendaSheet({ onClose }) {
             const confirmed = m.status === 'confirmed'
             const prenom = m.with.split(' ')[0]
             return (
-              <article key={m.id} className="rounded-3xl border border-line bg-surface p-4 shadow-soft">
+              <article key={m.id} className="border border-line bg-surface p-4">
                 <div className="flex items-center gap-3">
                   <Avatar name={m.with} size="md" onClick={() => openMember(m.with)} />
                   <button onClick={() => openMember(m.with)} className="min-w-0 flex-1 text-left">
@@ -190,19 +189,19 @@ export default function AgendaSheet({ onClose }) {
                     </div>
                     <div className="truncate text-[12px] text-fg-muted">{m.with}</div>
                   </button>
-                  <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${PILL_TONES[meta.tone]}`}>
+                  <span className="ico">
                     <Icon name={meta.icon} className="h-4 w-4" />
                   </span>
                 </div>
 
                 <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px]">
                   <span className="inline-flex items-center gap-1.5 font-semibold text-fg-soft">
-                    <Icon name="calendar" className="h-4 w-4 text-brand-400" /> {d.full} · {m.time}
+                    <Icon name="calendar" className="h-4 w-4 text-brand-500" /> {d.full} · {m.time}
                   </span>
-                  <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-semibold text-brand-700">{d.relative}</span>
+                  <span className="bg-surface-2 px-2 py-0.5 text-[11px] font-semibold text-brand-500">{d.relative}</span>
                   <span
-                    className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                      confirmed ? 'bg-success-light text-success-dark' : 'bg-surface-2 text-fg-muted'
+                    className={`px-2 py-0.5 text-[11px] font-semibold ${
+                      confirmed ? 'tag on' : 'tag'
                     }`}
                   >
                     {confirmed ? 'Confirmée' : 'À confirmer'}
@@ -219,7 +218,7 @@ export default function AgendaSheet({ onClose }) {
 
                 <div className="mt-3 flex items-center gap-2">
                   {confirmed ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-success-light px-3 py-1.5 text-[12px] font-semibold text-success-dark">
+                    <span className="tag on">
                       <Icon name="checkCircle" className="h-4 w-4" /> Confirmée
                     </span>
                   ) : (
@@ -240,7 +239,7 @@ export default function AgendaSheet({ onClose }) {
                   )}
                   <button
                     onClick={() => showToast('Dans ton calendrier')}
-                    className="ml-auto grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-line-strong text-fg-soft tap"
+                    className="ml-auto grid h-10 w-10 shrink-0 place-items-center border border-line-strong text-fg-soft tap"
                     aria-label="Ajouter à ton calendrier"
                   >
                     <Icon name="calendar" className="h-5 w-5" />

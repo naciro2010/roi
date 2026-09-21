@@ -80,13 +80,13 @@ export default function Accueil() {
           <span className="tmark"><b>T+</b> / CE QUE TON RÉSEAU RAPPORTE</span>
           <div className="mt-2 flex items-end justify-between gap-3 border-b border-fg pb-3">
             <div className="min-w-0 flex-1">
-              <h1 className="text-[26px]">{greet},<br /><span className="creuse">{u.name.split(' ')[0]}</span>.</h1>
+              <h1 className="text-[26px]">{greet}<br /><span className="creuse">{u.name.split(' ')[0]}</span>.</h1>
             </div>
             <div className="shrink-0 text-right">
               <div className="display text-[40px] leading-none">{u.roi.score}<small className="ml-1 align-top font-mono text-[10px] font-bold tracking-mono text-fg-faint">/100</small></div>
               <div className="mt-1 flex items-center justify-end gap-2">
                 <Sparkline data={u.roi.trend} width={72} height={22} stroke="#070707" />
-                <span className="font-mono text-[9.5px] font-bold uppercase tracking-mono text-brand-600">+{u.roi.weekDelta} cette sem.</span>
+                <span className="font-mono text-[9.5px] font-bold uppercase tracking-mono text-brand-500">+{u.roi.weekDelta} cette sem.</span>
               </div>
             </div>
           </div>
@@ -122,7 +122,7 @@ export default function Accueil() {
         {/* ---- Qui court cette année : le réseau commence avant la ligne ---- */}
         <div className="border border-line p-3.5">
           <div className="flex items-center justify-between gap-3">
-            <span className="font-mono text-[9.5px] font-bold uppercase tracking-mono text-brand-600">■ Qui court cette année</span>
+            <span className="font-mono text-[9.5px] font-bold uppercase tracking-mono text-brand-500">■ Qui court cette année</span>
             <AvatarStack names={QUI_COURT.slice(0, 4)} total={INSCRITS} onMore={() => goTo('reseau')} />
           </div>
           <button onClick={openRace} className="mt-3 flex w-full items-center gap-3 text-left tap">

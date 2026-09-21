@@ -1,7 +1,8 @@
 import Icon from './Icon'
 
-/* Pastille de marque (glyphes simplifiés, sans logo officiel). */
-const SIZES = { sm: 'h-9 w-9 rounded-xl', md: 'h-11 w-11 rounded-2xl', lg: 'h-12 w-12 rounded-2xl' }
+/* Carré de marque (glyphes simplifiés, sans logo officiel) : la seule couleur
+   étrangère à la palette, celle du service lui-même. */
+const SIZES = { sm: 'h-9 w-9', md: 'h-11 w-11', lg: 'h-12 w-12' }
 
 function Glyph({ id }) {
   if (id === 'strava') {
@@ -23,7 +24,7 @@ function Glyph({ id }) {
   }
   if (id === 'coros') return <span className="text-[15px] font-semibold text-white">C</span>
   if (id === 'polar') {
-    return <span className="grid h-5 w-5 place-items-center rounded-full border-[3px] border-canvas" />
+    return <span className="grid h-5 w-5 place-items-center border-[3px] border-canvas" />
   }
   return <span className="text-[15px] font-semibold text-white">{id[0]?.toUpperCase()}</span>
 }

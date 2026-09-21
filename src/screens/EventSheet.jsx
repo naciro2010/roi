@@ -6,8 +6,10 @@ import { EVENTS } from '../data/events'
 import { formatEventDate } from '../lib/dates'
 import { useSheetDrag } from '../lib/useSheetDrag'
 
-/* Les quatre principes d'une sortie — rappelés sur chaque fiche. */
-const PRINCIPES = ['Zéro pitch en course', 'Toutes les allures', "L'après compte autant", 'Le réseau toute l’année']
+import { PRINCIPES as PRINCIPES_SITE } from '../data/race'
+
+/* Les quatre principes du site — rappelés sur chaque fiche de sortie. */
+const PRINCIPES = PRINCIPES_SITE.map((p) => p.titre)
 
 export default function EventSheet({ id, onClose }) {
   const { joined, toggleJoin, eventKudos, toggleEventKudos, openMember, contacted, contactMember, showToast } = useApp()
@@ -30,19 +32,19 @@ export default function EventSheet({ id, onClose }) {
   return (
     <div className="absolute inset-0 z-40">
       <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
-      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface shadow-float">
+      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface">
         {/* Carte du parcours */}
         <div className="relative h-48 shrink-0 bg-surface-2">
-          {e.route ? <RouteMap route={e.route} className="h-full w-full" /> : <div className="absolute inset-0 bg-hero-glow surface-hero" />}
+          {e.route ? <RouteMap route={e.route} className="h-full w-full" /> : <div className="absolute inset-0 surface-hero" />}
           <div {...drag.handleProps} className="absolute left-1/2 top-0 z-[500] flex h-9 w-24 -translate-x-1/2 items-center justify-center" aria-hidden="true">
-            <div className="mt-2.5 h-1.5 w-12 rounded-full bg-white/70 shadow-soft" />
+            <div className="mt-2.5 h-1.5 w-12 bg-craie/70" />
           </div>
-          <button onClick={onClose} className="glass-dark absolute right-3 top-3 z-[500] grid h-9 w-9 place-items-center rounded-full text-white tap" aria-label="Fermer">
+          <button onClick={onClose} className="absolute right-3 top-3 z-[500] grid h-9 w-9 place-items-center border border-craie/40 bg-encre/80 text-craie tap" aria-label="Fermer">
             <Icon name="x" className="h-5 w-5" />
           </button>
-          <span className="pointer-events-none absolute left-4 top-3 z-[500] rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-semibold text-fg-soft shadow-soft backdrop-blur">
+          <span className="pointer-events-none absolute left-4 top-3 z-[500] bg-craie/85 px-2.5 py-1 text-[11px] font-semibold text-fg-soft backdrop-blur">
             {d.relative} · {e.time}
-            {e.tag && <span className="ml-1 text-brand-600">{e.tag}</span>}
+            {e.tag && <span className="ml-1 text-brand-500">{e.tag}</span>}
           </span>
         </div>
 
@@ -59,8 +61,8 @@ export default function EventSheet({ id, onClose }) {
             <button
               onClick={() => toggleEventKudos(e.id)}
               aria-pressed={k.liked}
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold tap ${
-                k.liked ? 'bg-brand-500 text-white shadow-brand' : 'bg-surface-2 text-fg-muted'
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold tap ${
+                k.liked ? 'bg-brand-500 text-craie' : 'bg-surface-2 text-fg-muted'
               }`}
             >
               <Icon name="thumbsUp" className="h-4 w-4" filled={k.liked} />
@@ -73,21 +75,21 @@ export default function EventSheet({ id, onClose }) {
             {facts.map((f, i) => (
               <span key={f.text} className="inline-flex items-center gap-1.5">
                 {i > 0 && <span className="mr-0.5 text-fg-faint">·</span>}
-                <Icon name={f.icon} className="h-4 w-4 text-brand-600" />
+                <Icon name={f.icon} className="h-4 w-4 text-brand-500" />
                 <span className="font-semibold text-fg">{f.text}</span>
               </span>
             ))}
-            <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-semibold text-brand-700">{d.relative}</span>
+            <span className="bg-surface-2 px-2 py-0.5 text-[11px] font-semibold text-brand-500">{d.relative}</span>
             <span className="text-[12px] text-fg-muted">{e.level}</span>
           </div>
 
           <button
             onClick={() => showToast('Itinéraire bientôt disponible')}
-            className="mt-3 flex w-full items-center gap-2 rounded-2xl bg-surface-soft px-3.5 py-3 text-left tap"
+            className="mt-3 flex w-full items-center gap-2 bg-surface-soft px-3.5 py-3 text-left tap"
           >
-            <Icon name="mapPin" className="h-5 w-5 shrink-0 text-brand-600" />
+            <Icon name="mapPin" className="h-5 w-5 shrink-0 text-brand-500" />
             <span className="flex-1 text-sm font-semibold text-fg">Départ · {e.place}</span>
-            <span className="text-xs font-semibold text-brand-600">Itinéraire</span>
+            <span className="text-xs font-semibold text-brand-500">Itinéraire</span>
           </button>
 
           {/* Les quatre principes */}
@@ -102,26 +104,26 @@ export default function EventSheet({ id, onClose }) {
 
           {e.description && (
             <div className="mt-4">
-              <div className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-fg-muted">
-                <Icon name="coffee" className="h-3.5 w-3.5 text-brand-600" /> On parle pendant · café d'arrivée
+              <div className="mb-1.5 flex items-center gap-1.5 tmark sans">
+                <Icon name="coffee" className="h-3.5 w-3.5 text-brand-500" /> On parle pendant · café d'arrivée
               </div>
               <p className="text-[14px] leading-relaxed text-fg-soft">{e.description}</p>
             </div>
           )}
 
           <div className="mt-5">
-            <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-fg-muted">
+            <div className="mb-2 flex items-center gap-1.5 tmark sans">
               <Icon name="users" className="h-3.5 w-3.5" /> Qui vient · {e.participants}
             </div>
             <div className="space-y-2">
               {others.map((name) => (
-                <div key={name} className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-2.5 shadow-soft">
+                <div key={name} className="flex items-center gap-3 border border-line bg-surface p-2.5">
                   <Avatar name={name} size="sm" onClick={() => openMember(name)} />
                   <button onClick={() => openMember(name)} className="min-w-0 flex-1 truncate text-left text-sm font-semibold text-fg">{name}</button>
                   <button
                     onClick={() => contactMember(name)}
-                    className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold tap ${
-                      contacted[name] ? 'bg-success-light text-success-dark' : 'btn btn-impact'
+                    className={`shrink-0 px-3 py-1.5 text-xs font-semibold tap ${
+                      contacted[name] ? 'tag on' : 'btn btn-impact btn-sm'
                     }`}
                   >
                     {contacted[name] ? 'Proposée' : 'Rencontrer'}
@@ -144,7 +146,7 @@ export default function EventSheet({ id, onClose }) {
           </button>
           <button
             onClick={() => showToast(`Dans ton agenda · ${d.full}`)}
-            className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-line-strong text-fg-soft tap"
+            className="grid h-12 w-12 shrink-0 place-items-center border border-line-strong text-fg-soft tap"
             aria-label="Ajouter à ton agenda"
           >
             <Icon name="calendar" className="h-5 w-5" />
