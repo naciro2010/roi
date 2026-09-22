@@ -116,28 +116,28 @@ export default function AgendaSheet({ onClose }) {
 
   return (
     <div className="absolute inset-0 z-40">
-      <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
+      <div className="absolute inset-0 animate-fadeIn bg-voile" onClick={onClose} />
       <div
         style={drag.style}
-        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-canvas"
+        className="animate-sheetIn absolute inset-x-0 bottom-0 mx-auto flex max-h-[88dvh] w-full max-w-[560px] flex-col overflow-hidden rounded-t-3xl bg-canvas"
       >
         {/* En-tête */}
-        <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-5 pt-3 text-craie">
-          <div {...drag.handleProps} className="relative mx-auto mb-3 h-1 w-10 bg-craie/30" aria-hidden="true" />
+        <div className="relative shrink-0 overflow-hidden border-b border-line-soft px-5 pb-5 pt-3">
+          <div {...drag.handleProps} className="relative mx-auto mb-3 h-1 w-10 rounded-full bg-line-strong" aria-hidden="true" />
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 z-10 grid h-9 w-9 place-items-center border border-craie/30 text-craie tap"
+            className="absolute right-4 top-4 z-10 rond tap"
             aria-label="Fermer"
           >
             <Icon name="x" className="h-5 w-5" />
           </button>
           <div className="relative pr-10">
-            <span className="titre-section text-craie">Tes rendez-vous</span>
-            <h2 className="mt-2 text-[22px] leading-tight text-craie">Ce qui est prévu</h2>
-            <p className="mt-2 max-w-[38ch] text-[14px] leading-relaxed text-craie/70">
+            <span className="titre-section">Tes rendez-vous</span>
+            <h2 className="mt-2 text-[22px] leading-tight">Ce qui est prévu</h2>
+            <p className="mt-2 max-w-[38ch] text-[14px] leading-relaxed text-fg-muted">
               Huit minutes avec quelqu’un : en courant, autour d’un café, en visio, ou à l’Arena le jour de la course.
             </p>
-            <p className="mt-3 text-[13px] text-craie/60">
+            <p className="mt-3 text-[13px] text-fg-faint">
               {meetings.length} à venir, dont {confirmedCount} confirmée{confirmedCount > 1 ? 's' : ''}.
             </p>
           </div>
@@ -162,7 +162,7 @@ export default function AgendaSheet({ onClose }) {
                 <Icon name="lock" className="h-4 w-4" />
               </span>
               <span className="min-w-0 flex-1 text-[13.5px] leading-snug text-fg-soft">
-                Avec la formule Premium, tu peux réserver six rencontres à l’avance.
+                Avec le palier Premium, tu peux réserver six rencontres à l’avance.
               </span>
               <span className="shrink-0 font-mono text-[10px] font-bold uppercase tracking-mono text-brand-500">Premium →</span>
             </button>

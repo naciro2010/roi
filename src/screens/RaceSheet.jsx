@@ -1,403 +1,231 @@
 import { useState } from 'react'
 import { useApp } from '../AppContext'
-import Icon from '../components/Icon'
-import { AvatarStack } from '../components/Avatar'
-import RouteMap from '../components/RouteMap'
-import Dossard from '../components/Dossard'
-import { useSheetDrag } from '../lib/useSheetDrag'
+import Sheet, { SheetBloc } from '../components/Sheet'
 import { lierDossier } from '../lib/dossier'
+import Icon from '../components/Icon'
 import {
-  EDITION, daysToRace, siteUrl,
-  DISTANCES, ACCES_RESEAU, distanceById, VAGUES, vagueCourante, FORMULES, formuleById,
-  ETAPES, ETAT_INDEX, AVANT, APRES, PROGRAMME, PRINCIPES, LIEU, QUI_COURT, INSCRITS,
+  EDITION, daysToRace, siteUrl, DISTANCES, distanceById,
+  VAGUES, vagueCourante, PROGRAMME, numeroDossard,
 } from '../data/race'
-
-const fmt = (n) => n.toLocaleString('fr-FR')
+import { CURRENT_USER } from '../data/user'
 
 /* ==========================================================================
-   L'ÉDITION — la course annuelle, vue depuis l'app.
-   Une fiche de course, pas une plaquette : la ligne (T– / T+), les trois
-   distances, les formules, les vagues, et — en tête — ton dossier, lu sur
-   le site. L'inscription se fait sur runoninvest.fr : ici on y va, ou on
-   relie un dossier déjà ouvert.
+   LA COURSE — ouverte depuis la ligne de l'Accueil et depuis « Ma course ».
+   Le compte à rebours dans un bloc encre, les trois distances, le programme
+   de l'après-midi, et l'inscription. L'inscription se fait sur le site :
+   ici on y va, ou on relie un dossier déjà ouvert.
    ========================================================================== */
-export default function RaceSheet({ onClose, onglet = 'edition' }) {
-  const { dossier, lierDossierApp, delierDossier, goTo, showToast } = useApp()
-  const drag = useSheetDrag(onClose)
-  const [distance, setDistance] = useState(dossier?.distance || '10')
-  const [formule, setFormule] = useState(dossier?.formule || 'dossard')
-  const dist = distanceById(distance)
+export default function RaceSheet({ onClose }) {
+  const { dossier, lierDossierApp, delierDossier, showToast, avancement } = useApp()
+  const [relier, setRelier] = useState(false)
   const jours = daysToRace()
   const vague = vagueCourante()
-
-  const urlInscription = siteUrl('inscription/', { distance, formule })
+  const [early, regulier, last] = VAGUES
 
   return (
-    <div className="absolute inset-0 z-40">
-      <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
-      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-canvas" style={drag.style}>
-        {/* En-tête encre : l'étiquette, le titre affiche, le compte à rebours */}
-        <div className="surface-hero relative shrink-0 px-5 pb-5 pt-3">
-          <div {...drag.handleProps} className="mx-auto mb-4 h-1 w-10 bg-craie/30" aria-hidden="true" />
-          <button onClick={onClose} className="absolute right-4 top-4 grid h-9 w-9 place-items-center border border-craie/30 text-craie tap" aria-label="Fermer">
-            <Icon name="x" className="h-4 w-4" />
-          </button>
-          <span className="titre-section text-craie">{EDITION.label} — {EDITION.lieu}</span>
-          <h1 className="display mt-3 text-[24px] text-craie">L’impact après<br /><span className="creuse">la ligne d’arrivée.</span></h1>
-          <div className="mt-4 flex items-end justify-between gap-4 border-t border-craie/20 pt-3">
-            <div className="shrink-0">
-              <div className="display whitespace-nowrap text-[44px] leading-[.85] text-craie tabular-nums">{jours}</div>
-              <div className="mt-2 text-[13px] leading-snug text-craie/60">jours avant<br />la course</div>
-            </div>
-            <div className="min-w-0 text-right font-mono text-[10.5px] uppercase leading-[1.9] tracking-mono text-craie/60">
-              {EDITION.mois} · 5 / 10 / 21,1 km<br />{EDITION.jauge}<br /><b className="text-brand-500">■ Vague {vague.nom} ouverte</b>
-            </div>
-          </div>
+    <Sheet title="La course" onClose={onClose}>
+      {/* ---- Le compte à rebours ---- */}
+      <SheetBloc>
+        <div className="flex items-end gap-2.5">
+          <span className="text-[52px] font-medium leading-[.9] tracking-[-.02em] tabular-nums">{jours}</span>
+          <span className="pb-2 text-[14px] text-craie/70">jours avant la course</span>
         </div>
-
-        <div className="flex-1 overflow-y-auto no-scrollbar">
-          {/* ---------------------------------------------------- TON DOSSIER */}
-          <section className="px-5 pb-6 pt-5">
-            {dossier ? (
-              <DossierLie dossier={dossier} onDelier={delierDossier} onEspace={() => window.open(siteUrl('espace/'), '_blank', 'noopener')} />
-            ) : (
-              <PrendreOuLier
-                distance={distance} formule={formule} urlInscription={urlInscription}
-                onLier={async (champs) => {
-                  const r = await lierDossier(champs)
-                  if (r.dossier) { lierDossierApp(r.dossier); showToast(`C’est bon : ton inscription ${r.dossier.reference} est reliée`) }
-                  return r
-                }}
-              />
-            )}
-          </section>
-
-          {/* ---------------------------------------------------- LA JOURNÉE */}
-          <section className="border-t border-line px-5 py-6">
-            <span className="titre-section">Le déroulé de la journée</span>
-            <h2 className="titre mt-3 text-[22px]">La course le matin,<br />le réseau l’après-midi.</h2>
-            <div className="cadre mt-4 grid-cols-2">
-              {[{ t: 'Le matin', ...AVANT }, { t: 'L’après-midi', ...APRES }].map((b) => (
-                <div key={b.t} className="p-3.5">
-                  <div className="titre-section text-brand-500">{b.t}</div>
-                  <h3 className="mt-2 text-[15px] font-medium leading-snug">{b.titre}</h3>
-                  <p className="mt-1.5 text-[13px] leading-snug text-fg-muted">{b.lead}</p>
-                  <ul className="mt-2.5 space-y-1.5">
-                    {b.points.slice(0, 3).map((p, i) => (
-                      <li key={i} className="flex gap-2 text-[12.5px] leading-snug text-fg-soft">
-                        <span className="mt-[5px] h-1.5 w-1.5 shrink-0 bg-brand-500" />{p}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* ---------------------------------------------------- LES DISTANCES */}
-          <section className="border-t border-line px-5 py-6">
-            <span className="titre-section">Les trois distances</span>
-            <h2 className="titre mt-3 text-[22px]">Trois distances,<br />un seul dossard.</h2>
-            <p className="mt-2 text-[13.5px] text-fg-muted">Même prix, même accès, même après-midi. Choisis la tienne : elle sera pré-remplie sur le site.</p>
-            <div className="cadre mt-4 grid-cols-3" role="radiogroup" aria-label="Distance">
-              {DISTANCES.map((d) => {
-                const on = d.id === distance
-                return (
-                  <button
-                    key={d.id} role="radio" aria-checked={on} onClick={() => setDistance(d.id)}
-                    className={`flex flex-col p-3 text-left tap ${on ? 'bg-encre text-craie' : 'text-fg'}`}
-                  >
-                    <span className="display text-[30px] leading-none">{d.km}<small className={`ml-1 align-top font-mono text-[9px] font-bold tracking-mono ${on ? 'text-brand-500' : 'text-brand-500'}`}>KM</small></span>
-                    <span className="mt-2 font-mono text-[9.5px] font-bold uppercase tracking-mono">{d.nom}</span>
-                    <span className={`mt-1 text-[11px] leading-snug ${on ? 'text-craie/65' : 'text-fg-muted'}`}>{d.pourquoi}</span>
-                    {d.central && <span className="mt-2 font-mono text-[8.5px] font-bold uppercase tracking-mono text-brand-500">■ Le format central</span>}
-                  </button>
-                )
-              })}
-            </div>
-            <div className="relative mt-3 h-44 border border-line bg-surface-2">
-              <RouteMap route={dist.route} className="h-full w-full" />
-              <div className="pointer-events-none absolute left-2 top-2 z-[500] bg-encre px-2 py-1 font-mono text-[9.5px] font-bold uppercase tracking-mono text-craie">
-                {dist.trace}
-              </div>
-              <div className="pointer-events-none absolute bottom-2 right-2 z-[500] bg-craie px-2 py-1 font-mono text-[9.5px] font-bold uppercase tracking-mono text-fg">
-                {ACCES_RESEAU.split('■')[0]}<b className="text-brand-500">■{ACCES_RESEAU.split('■')[1]}</b>
-              </div>
-            </div>
-            <p className="mt-2 font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">Tracé indicatif · départ {EDITION.depart}, arrivée dans {EDITION.arrivee}</p>
-          </section>
-
-          {/* ---------------------------------------------------- LE PROGRAMME T+ */}
-          <section className="border-t border-line px-5 py-6">
-            <span className="titre-section">L’après-midi, après la course</span>
-            <h2 className="titre mt-3 text-[22px]">Le programme de l’après-midi.</h2>
-            <p className="mt-2 text-[13.5px] text-fg-muted">On court d’abord, on parle pendant, on prolonge après. Pas de stand, pas de slide, pas de pitch imposé.</p>
-            <div className="mt-4 border-t border-fg">
-              {PROGRAMME.map((r) => (
-                <div key={r.t} className="grid grid-cols-[64px_1fr] gap-3 border-b border-line py-3">
-                  <div className="font-mono text-[11px] font-bold tracking-mono text-brand-500">
-                    {r.t}<small className="mt-0.5 block text-[9px] font-medium tracking-mono text-fg-faint">{r.h}</small>
-                  </div>
-                  <div>
-                    <div className="titre text-[14px]">{r.quoi}</div>
-                    <p className="mt-1 text-[12.5px] leading-snug text-fg-muted">{r.texte}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* ---------------------------------------------------- LES FORMULES */}
-          <section className="border-t border-line px-5 py-6">
-            <span className="titre-section">Les trois formules</span>
-            <h2 className="titre mt-3 text-[22px]">La course est la même.<br />Le réseau, non.</h2>
-            <p className="mt-2 text-[13.5px] text-fg-muted">Aucune formule n’achète une meilleure course. Ce qui change, c’est quand le réseau commence, et combien de portes s’ouvrent après.</p>
-            <div className="mt-4 border-t border-fg" role="radiogroup" aria-label="Formule">
-              {FORMULES.map((f) => {
-                const on = f.id === formule
-                return (
-                  <button
-                    key={f.id} role="radio" aria-checked={on} onClick={() => setFormule(f.id)}
-                    className={`relative block w-full border-b border-line p-3.5 text-left tap ${f.mise || on ? 'bg-encre text-craie' : 'text-fg'} ${on ? 'ring-1 ring-inset ring-brand-500' : ''}`}
-                  >
-                    {f.mise && <span className="absolute right-0 top-0 bg-brand-500 px-2 py-1 font-mono text-[8.5px] font-bold tracking-mono text-encre">LE PLUS CHOISI</span>}
-                    <div className="flex items-baseline justify-between gap-3 pr-24">
-                      <span className={`font-mono text-[10px] font-bold tracking-label ${f.mise || on ? 'text-craie/60' : 'text-fg-faint'}`}>FORMULE {f.n}</span>
-                    </div>
-                    <div className="mt-1 flex items-baseline justify-between gap-3">
-                      <span className="display text-[26px]">{f.nom}</span>
-                      <span className="font-mono text-[9.5px] font-bold uppercase tracking-mono text-brand-500">■ {f.etat}</span>
-                    </div>
-                    <div className={`mt-0.5 font-mono text-[9.5px] uppercase tracking-mono ${f.mise || on ? 'text-craie/60' : 'text-fg-faint'}`}>{f.pour}</div>
-                    <ul className="mt-2.5 space-y-1">
-                      {f.herite && (
-                        <li className={`flex gap-2 font-mono text-[9.5px] uppercase tracking-mono ${f.mise || on ? 'text-craie/60' : 'text-fg-faint'}`}>
-                          <span className="w-1.5 shrink-0 text-center font-bold text-brand-500">+</span>{f.herite}
-                        </li>
-                      )}
-                      {f.points.map((p, i) => (
-                        <li key={i} className={`flex gap-2 text-[12px] leading-snug ${f.mise || on ? 'text-craie/80' : 'text-fg-soft'}`}>
-                          <span className="mt-[5px] h-1.5 w-1.5 shrink-0 bg-brand-500" />{p}
-                        </li>
-                      ))}
-                    </ul>
-                  </button>
-                )
-              })}
-            </div>
-            <p className="mt-2 font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">Le tarif affiché est toujours celui de la vague. Premium et Cercle se demandent depuis ton espace.</p>
-          </section>
-
-          {/* ---------------------------------------------------- LES VAGUES */}
-          <section className="border-t border-line px-5 py-6">
-            <span className="titre-section">Les prix, par période</span>
-            <h2 className="titre mt-3 text-[22px]">Trois vagues, un tarif qui monte.</h2>
-            <div className="mt-4 border-t border-fg">
-              {VAGUES.map((v, i) => {
-                const ouverte = v.code === vague.code
-                const passee = VAGUES.indexOf(vague) > i
-                return (
-                  <div key={v.code} className={`grid grid-cols-[1fr_auto] items-center gap-3 border-b border-line py-3 ${passee ? 'opacity-45' : ''}`}>
-                    <div>
-                      <div className="font-mono text-[10px] font-bold tracking-label text-fg-faint">
-                        VAGUE 0{i + 1} {ouverte && <b className="text-brand-500">■ OUVERTE</b>}
-                      </div>
-                      <div className="titre mt-0.5 text-[16px]">{v.nom}</div>
-                      <div className="font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">{v.periode}</div>
-                    </div>
-                    <div className="display text-[34px] leading-none">{v.prix}<small className="ml-0.5 align-top text-[13px]">€</small></div>
-                  </div>
-                )
-              })}
-            </div>
-            <p className="mt-2 text-[12.5px] text-fg-muted">Ta vague et son tarif sont gardés dès la création de ton compte, le temps que ton dossier soit lu. Le paiement vient après la validation, jamais avant.</p>
-            {!dossier && (
-              <a href={urlInscription} target="_blank" rel="noopener" className="btn btn-impact mt-4 w-full justify-between">
-                <span>Prendre un dossard · {dist.label}</span><span className="arr">→</span>
-              </a>
-            )}
-          </section>
-
-          {/* ---------------------------------------------------- LE LIEU */}
-          <section className="border-t border-line px-5 py-6">
-            <span className="titre-section">Où ça se passe</span>
-            <h2 className="titre mt-3 text-[22px]">Paris<br />La Défense.</h2>
-            <p className="mt-2 text-[13.5px] text-fg-muted"><b className="text-fg">Le plus grand quartier d’affaires d’Europe.</b> On court entre les tours où ces conversations se poursuivront le reste de l’année.</p>
-            <dl className="fiche mt-4">
-              {LIEU.map(([k, v]) => (
-                <div key={k}><dt>{k}</dt><dd>{v}</dd></div>
-              ))}
-            </dl>
-          </section>
-
-          {/* ---------------------------------------------------- QUI COURT */}
-          <section className="border-t border-line px-5 py-6">
-            <span className="titre-section">Qui court cette année</span>
-            <h2 className="titre mt-3 text-[22px]">Tu sais déjà qui sera<br />sur la ligne.</h2>
-            <div className="mt-4 flex items-center gap-3 border border-line p-3.5">
-              <AvatarStack names={QUI_COURT.slice(0, 4)} total={INSCRITS} onMore={() => goTo('reseau')} />
-              <div className="min-w-0 flex-1">
-                <p className="text-[13px] font-medium leading-snug text-fg"><span className="font-mono tabular-nums">{fmt(INSCRITS)}</span> dossards déjà pris</p>
-                <p className="font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">Fondateurs · dirigeants · investisseurs</p>
-              </div>
-            </div>
-            <button onClick={() => { onClose(); goTo('reseau') }} className="btn btn-encre mt-3 w-full justify-between">
-              <span>Voir l’annuaire</span><span className="arr">→</span>
-            </button>
-            <p className="mt-2 text-[12.5px] text-fg-muted">L’annuaire complet s’ouvre le jour J. <b className="text-fg">En Premium, dès la validation</b> — des mois avant la ligne, avec six rencontres de huit minutes à réserver : recruter, lever, vendre, s’associer.</p>
-          </section>
-
-          {/* ---------------------------------------------------- PRINCIPES */}
-          <section className="border-t border-line px-5 pb-10 pt-6">
-            <span className="titre-section">Les règles de la course</span>
-            <div className="cadre mt-4 grid-cols-2">
-              {PRINCIPES.map((p) => (
-                <div key={p.n} className="p-3.5">
-                  <span className="font-mono text-[10px] font-bold tracking-label text-brand-500">{p.n}</span>
-                  <h3 className="titre mt-1.5 text-[13.5px]">{p.titre}</h3>
-                  <p className="mt-1 text-[12px] leading-snug text-fg-muted">{p.texte}</p>
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 flex items-center justify-between gap-3 font-mono text-[9px] uppercase tracking-mono text-fg-faint">
-              <span>© R.O.I · {EDITION.label} · 2027</span>
-              <a href={siteUrl('')} target="_blank" rel="noopener" className="text-fg">runoninvest.fr →</a>
-            </div>
-          </section>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/* ---------------------------------------------------- dossier relié */
-function DossierLie({ dossier, onDelier, onEspace }) {
-  const n = ETAT_INDEX[dossier.etat] || 1
-  const dist = distanceById(dossier.distance)
-  const f = formuleById(dossier.formule)
-  return (
-    <div>
-      <span className="titre-section">Ton inscription</span>
-      <h2 className="display mt-3 text-[28px]">Bonjour <span className="creuse">{dossier.prenom}</span>.</h2>
-      <p className="mt-2 font-mono text-[10px] uppercase leading-[1.9] tracking-mono text-fg-faint">
-        Dossier <b className="text-brand-500">{dossier.reference}</b> · Vague <b className="text-brand-500">{dossier.vague?.nom}</b> · Édition {dossier.edition || '01'}
-      </p>
-      {dossier.local && (
-        <p className="mt-3 border border-dashed border-line-strong px-3 py-2 font-mono text-[10px] uppercase leading-relaxed tracking-mono text-fg-faint">
-          <b className="text-brand-500">Aperçu hors ligne</b> — le site n’a pas répondu : ce dossier est reconstruit dans l’app.
+        <p className="mt-3.5 text-[14.5px] leading-[1.55] text-craie/80">
+          {EDITION.label} · {EDITION.lieu} · {EDITION.jour.toLowerCase()}. 5, 10 ou 21,1 km le matin, puis tout un
+          après-midi dans l’Arena. {EDITION.jauge}. {EDITION.cadence}
         </p>
-      )}
+      </SheetBloc>
 
-      <div className="mt-4 grid grid-cols-[1fr_168px] items-start gap-4">
-        <dl className="border-t border-fg">
-          {[
-            ['Distance', `${dist.label} — ${dist.nom}`],
-            ['Formule', f.nom],
-            ['Tarif', dossier.vague ? `${dossier.vague.prix} € — vague ${dossier.vague.nom}` : '—'],
-            ['Dossard', `${dossier.prenom} ${dossier.nom} · ${dossier.fonction} · ${dossier.entreprise}`],
-          ].map(([k, v]) => (
-            <div key={k} className="border-b border-line py-2">
-              <dt className="font-mono text-[9px] font-bold uppercase tracking-label text-brand-500">{k}</dt>
-              <dd className="mt-0.5 text-[13px] font-medium leading-snug text-fg">{v}</dd>
-            </div>
-          ))}
-        </dl>
-        <Dossard dossier={dossier} />
-      </div>
-
-      <ol className="cadre mt-5 grid-cols-2" aria-label="Les quatre étapes du dossier">
-        {ETAPES.map((e, i) => (
-          <li key={e.id} className={`etape-suivi ${i + 1 < n ? 'fait' : ''} ${i + 1 === n ? 'cours' : ''}`} aria-current={i + 1 === n ? 'step' : undefined}>
-            <span className="e-n">{e.n}</span>
-            <h4>{e.titre}</h4>
-            <p>{e.texte}</p>
-          </li>
-        ))}
+      {/* ---- Ta route vers l'édition ---- */}
+      <h3 className="titre-section mb-2.5 mt-6">Ta route vers l’{EDITION.label}</h3>
+      <ol className="flex flex-col">
+        {avancement.etapes.map((e, i) => {
+          const fait = e.statut === 'fait'
+          const encours = e.statut === 'encours'
+          return (
+            <li key={e.id} className="flex gap-3.5">
+              {/* la colonne des pastilles, reliées par un filet */}
+              <div className="flex w-7 shrink-0 flex-col items-center">
+                <span
+                  className={`grid h-7 w-7 shrink-0 place-items-center rounded-full ${
+                    fait ? 'bg-brand-500 text-craie' : encours ? 'border border-line-strong text-fg' : 'border border-line text-fg-faint'
+                  }`}
+                >
+                  <Icon name={fait ? 'check' : e.icon} className="h-[14px] w-[14px]" />
+                </span>
+                {i < avancement.etapes.length - 1 && (
+                  <span className={`w-px flex-1 ${fait ? 'bg-brand-500/40' : 'bg-line-soft'}`} aria-hidden />
+                )}
+              </div>
+              <div className="min-w-0 flex-1 pb-5">
+                <div className="flex items-baseline gap-2">
+                  <span className={`text-[15px] font-semibold ${fait || encours ? '' : 'text-fg-faint'}`}>{e.titre}</span>
+                  {e.ouvreDans > 0 && (
+                    <span className="text-[12.5px] text-fg-faint">dans {e.ouvreDans} j</span>
+                  )}
+                </div>
+                <p className="mt-0.5 text-[13.5px] leading-[1.45] text-fg-muted">{e.texte}</p>
+              </div>
+            </li>
+          )
+        })}
       </ol>
 
-      <div className="mt-4 flex flex-col gap-2">
-        <button onClick={onEspace} className="btn btn-impact w-full justify-between"><span>Ouvrir mon espace sur le site</span><span className="arr">→</span></button>
-        <a href={siteUrl('espace/#formule')} target="_blank" rel="noopener" className="btn btn-ghost w-full justify-between"><span>Changer de formule</span><span className="arr">→</span></a>
+      {/* ---- Les trois distances ---- */}
+      <h3 className="titre-section mb-2.5 mt-2">Les distances</h3>
+      <div className="flex flex-col gap-2.5">
+        {DISTANCES.map((d) => (
+          <div key={d.id} className="flex items-center gap-3.5 rounded-lg border border-line bg-surface px-[18px] py-4">
+            <span className="w-[72px] shrink-0 text-[19px] font-medium tabular-nums">{d.label}</span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15px] font-semibold">{d.nom}</span>
+              <span className="mt-px block text-[13.5px] leading-[1.4] text-fg-muted">
+                {d.pourquoi}{d.central ? ' Le format central.' : ''}
+              </span>
+            </span>
+          </div>
+        ))}
       </div>
-      <p className="mt-3 flex items-center justify-between font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">
-        <span>Le site garde la vérité du dossier.</span>
-        <button onClick={onDelier} className="text-fg underline decoration-brand-500 underline-offset-4 tap">Délier</button>
+
+      {/* ---- L'après-midi ---- */}
+      <h3 className="titre-section mb-2.5 mt-6">L’après-midi</h3>
+      <div className="flex flex-col gap-3.5">
+        {PROGRAMME.map((p) => (
+          <div key={p.t} className="flex gap-3.5">
+            <span className="w-16 shrink-0 pt-0.5 text-[13px] font-semibold text-brand-500">{p.h}</span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15px] font-semibold">{p.quoi}</span>
+              <span className="mt-0.5 block text-[13.5px] leading-[1.5] text-fg-muted">{p.texte}</span>
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* ---- Ton inscription ---- */}
+      <h3 className="titre-section mb-2.5 mt-6">Ton inscription</h3>
+      {CURRENT_USER.dossard?.numero && (
+        <div className="mb-3.5 flex items-center gap-4 rounded-lg border border-line bg-surface px-[18px] py-4">
+          <span className="min-w-0">
+            <span className="block text-[12.5px] text-fg-faint">Dossard</span>
+            <span className="block text-[26px] font-medium leading-none tabular-nums">
+              {numeroDossard(CURRENT_USER.dossard.numero)}
+            </span>
+          </span>
+          <span className="ml-auto shrink-0 text-right">
+            <span className="block text-[12.5px] text-fg-faint">Distance</span>
+            <span className="block text-[15px] font-semibold">{distanceById(CURRENT_USER.dossard.distance).label}</span>
+          </span>
+        </div>
+      )}
+      {dossier ? (
+        <>
+          <p className="text-[14.5px] leading-[1.6] text-fg-soft">
+            Ta place est gardée : {distanceById(dossier.distance).label}, dossier {dossier.reference}.
+            Le site garde la vérité du dossier.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2.5">
+            <a
+              href={siteUrl('espace/')}
+              target="_blank"
+              rel="noopener"
+              className="rounded-full bg-brand-500 px-[22px] py-3 text-[14px] font-semibold text-craie tap"
+            >
+              Ouvrir mon espace
+            </a>
+            <button
+              onClick={delierDossier}
+              className="rounded-full border border-line-strong px-[22px] py-3 text-[14px] font-semibold text-fg tap"
+            >
+              Délier mon dossier
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <p className="text-[14.5px] leading-[1.6] text-fg-soft">
+            L’inscription se fait sur runoninvest.fr, en cinq minutes : un compte, une distance, une vague.
+            L’app lit ensuite ton dossier et ton dossard s’affiche ici.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2.5">
+            <a
+              href={siteUrl('inscription/', { distance: '10' })}
+              target="_blank"
+              rel="noopener"
+              className="rounded-full bg-brand-500 px-[22px] py-3 text-[14px] font-semibold text-craie tap"
+            >
+              Prendre un dossard
+            </a>
+            <button
+              onClick={() => setRelier((v) => !v)}
+              className="rounded-full border border-line-strong px-[22px] py-3 text-[14px] font-semibold text-fg tap"
+            >
+              Relier mon dossier
+            </button>
+          </div>
+
+          {relier && (
+            <FormulaireDossier
+              onLier={async (champs) => {
+                const r = await lierDossier(champs)
+                if (r.dossier) {
+                  lierDossierApp(r.dossier)
+                  showToast(`C’est bon : ton inscription ${r.dossier.reference} est reliée`)
+                  setRelier(false)
+                }
+                return r
+              }}
+            />
+          )}
+        </>
+      )}
+
+      <p className="mt-3.5 text-[13px] leading-snug text-fg-faint">
+        Vague {early.nom} · {early.prix} € {early.periode.toLowerCase()}, puis {regulier.nom} {regulier.prix} €,
+        {' '}{last.nom} {last.prix} €.{vague.code !== 'early' && ` Vague en cours : ${vague.nom}.`}
       </p>
-    </div>
+    </Sheet>
   )
 }
 
-/* ---------------------------------------------------- prendre / relier */
-function PrendreOuLier({ distance, formule, urlInscription, onLier }) {
-  const [mode, setMode] = useState('prendre')
+/* Deux champs : la référence du dossier, l'e-mail du compte. Depuis l'espace
+   du site, « Ouvrir mon dossard dans l'app » les remplit tout seul. */
+function FormulaireDossier({ onLier }) {
   const [reference, setReference] = useState('')
   const [email, setEmail] = useState('')
   const [erreur, setErreur] = useState('')
   const [busy, setBusy] = useState(false)
-  const dist = distanceById(distance)
-  const f = formuleById(formule)
 
   async function submit(e) {
     e.preventDefault()
-    setBusy(true); setErreur('')
+    setBusy(true)
+    setErreur('')
     const r = await onLier({ reference, email })
     setBusy(false)
     if (r.erreur) setErreur(r.erreur)
   }
 
   return (
-    <div>
-      <span className="titre-section">Ton dossard</span>
-      <h2 className="display mt-3 text-[28px]">Un seul dossard.<br /><span className="creuse">Deux faces.</span></h2>
-      <p className="mt-2 text-[13.5px] text-fg-muted">Recto, il te fait passer la ligne. Verso, il devient ton profil — ici, toute l’année. <b className="text-fg">L’inscription se fait sur le site</b>, ton dossier se relie ensuite en deux champs.</p>
-
-      <div className="mt-4 grid grid-cols-2 border border-line" role="tablist">
-        {[['prendre', 'Prendre un dossard'], ['relier', 'J’ai déjà un dossier']].map(([id, label]) => (
-          <button key={id} role="tab" aria-selected={mode === id} onClick={() => setMode(id)}
-            className={`py-2.5 font-mono text-[10px] font-bold uppercase tracking-mono tap ${mode === id ? 'bg-encre text-craie' : 'text-fg-muted'}`}>
-            {label}
-          </button>
-        ))}
+    <form onSubmit={submit} className="mt-4 rounded-xl border border-line bg-surface p-[18px]" noValidate>
+      <div className="champ">
+        <label htmlFor="ref">Référence du dossier</label>
+        <input id="ref" value={reference} onChange={(e) => setReference(e.target.value)} placeholder="E01-000123" autoComplete="off" spellCheck={false} />
       </div>
-
-      {mode === 'prendre' ? (
-        <div className="mt-4 grid grid-cols-[1fr_128px] items-start gap-4">
-          <div>
-            <dl className="border-t border-fg">
-              {[['Distance', `${dist.label} — ${dist.nom}`], ['Formule', `${f.nom} · ${f.prix}`], ['Vague', `${vagueCourante().nom} · ${vagueCourante().prix} €`]].map(([k, v]) => (
-                <div key={k} className="border-b border-line py-2">
-                  <dt className="font-mono text-[9px] font-bold uppercase tracking-label text-brand-500">{k}</dt>
-                  <dd className="mt-0.5 text-[13px] font-medium text-fg">{v}</dd>
-                </div>
-              ))}
-            </dl>
-            <p className="mt-2 text-[12px] leading-snug text-fg-muted">Un compte, une distance, une formule : cinq minutes. Ta vague est gardée dès l’envoi.</p>
-          </div>
-          <Dossard verso={false} />
-        </div>
-      ) : (
-        <form onSubmit={submit} className="mt-4" noValidate>
-          <div className="champ">
-            <label htmlFor="ref">Référence du dossier</label>
-            <input id="ref" value={reference} onChange={(e) => setReference(e.target.value)} placeholder="E01-000123" autoComplete="off" spellCheck={false} />
-          </div>
-          <div className="champ mt-3">
-            <label htmlFor="mail">E-mail du compte</label>
-            <input id="mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="toi@entreprise.fr" autoComplete="email" inputMode="email" />
-          </div>
-          <p className="mt-2 text-[12px] leading-snug text-fg-muted">La référence est en haut de ton espace sur le site. Depuis l’espace, « Ouvrir mon dossard dans l’app » remplit tout seul ces deux champs.</p>
-          {erreur && <p className="form-msg mt-3" role="alert">{erreur}</p>}
-          <button type="submit" disabled={busy} aria-busy={busy} className="btn btn-impact mt-4 w-full justify-between">
-            <span>{busy ? 'Lecture du dossier…' : 'Relier mon dossier'}</span><span className="arr">→</span>
-          </button>
-        </form>
-      )}
-
-      {mode === 'prendre' && (
-        <a href={urlInscription} target="_blank" rel="noopener" className="btn btn-impact mt-4 w-full justify-between">
-          <span>Prendre un dossard sur le site</span><span className="arr">→</span>
-        </a>
-      )}
-    </div>
+      <div className="champ mt-3">
+        <label htmlFor="mail">E-mail du compte</label>
+        <input id="mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="toi@entreprise.fr" autoComplete="email" inputMode="email" />
+      </div>
+      <p className="mt-2.5 text-[13px] leading-snug text-fg-muted">
+        La référence est en haut de ton espace sur le site.
+      </p>
+      {erreur && <p className="form-msg mt-3" role="alert">{erreur}</p>}
+      <button
+        type="submit"
+        disabled={busy}
+        aria-busy={busy}
+        className="mt-4 w-full rounded-full bg-encre px-5 py-3 text-[14px] font-semibold text-craie tap disabled:opacity-60"
+      >
+        {busy ? 'Lecture du dossier…' : 'Relier mon dossier'}
+      </button>
+    </form>
   )
 }

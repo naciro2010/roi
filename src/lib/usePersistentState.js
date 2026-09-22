@@ -34,7 +34,7 @@ export function usePersistentState(key, initial) {
 export function clearPersistedState() {
   try {
     Object.keys(localStorage)
-      .filter((k) => k.startsWith(PREFIX) || k === 'roi_onboarded')
+      .filter((k) => k.startsWith(PREFIX) || k === 'roi2_onboarded')
       .forEach((k) => localStorage.removeItem(k))
   } catch {
     /* stockage indisponible */

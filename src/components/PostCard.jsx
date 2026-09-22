@@ -2,18 +2,20 @@ import { useState } from 'react'
 import { useApp } from '../AppContext'
 import Icon from './Icon'
 import { Avatar } from './Avatar'
-import { Badge } from './primitives'
-import { ActivityPreview } from './ActivityCard'
-import { POST_TYPES } from '../data/feed'
 import { personFor } from '../data/network'
 import { CURRENT_USER } from '../data/user'
+import { nombre } from '../data/activities'
 
-export default function PostCard({ post, activity, onLike, onAddComment, onShare, onOpenActivity, onOpenAuthor }) {
+/* Une carte de post : l'auteur, un paragraphe, les stats de la sortie quand
+   il y en a une, et une barre d'actions réduite au kudo. Les trois anciens
+   boutons pleine largeur (Utile / Répondre / Partager) ont disparu : le
+   retour vient de la couleur de la pilule, pas d'une animation. */
+export default function PostCard({ post, activity, onLike, onAddComment, onOpenActivity, onOpenAuthor }) {
   const { profile } = useApp()
   const [showComments, setShowComments] = useState(false)
   const [draft, setDraft] = useState('')
-  const meta = POST_TYPES[post.type]
   const subtitleFor = (name) => (name === CURRENT_USER.name ? profile.title : personFor(name).title)
+  const avec = activity?.metContacts?.length || 0
 
   function submit() {
     const text = draft.trim()
@@ -24,87 +26,88 @@ export default function PostCard({ post, activity, onLike, onAddComment, onShare
   }
 
   return (
-    <article className="border border-line">
+    <article className="overflow-hidden rounded-xl border border-line bg-surface">
       {/* En-tête auteur */}
-      <div className="flex items-center gap-3 p-4 pb-3">
+      <div className="flex items-center gap-3 px-[18px] pt-4">
         <Avatar name={post.author} size="md" onClick={onOpenAuthor} />
         <button onClick={onOpenAuthor} className="min-w-0 flex-1 text-left">
-          <div className="truncate text-[15px] font-medium text-fg">{post.author}</div>
-          <div className="mt-0.5 truncate text-[13px] text-fg-muted">{subtitleFor(post.author)} · {post.time}</div>
+          <div className="truncate text-[15px] font-semibold text-fg">{post.author}</div>
+          <div className="mt-px truncate text-[13px] text-fg-faint">{subtitleFor(post.author)} · {post.time}</div>
         </button>
-        <Badge tone={meta.tone}>{meta.label}</Badge>
       </div>
 
-      {/* Texte */}
-      <p className="whitespace-pre-line px-4 text-[14px] leading-relaxed text-fg">{post.text}</p>
+      {/* Texte : un paragraphe dense, pas de puces. */}
+      <p className="mt-3 whitespace-pre-line px-[18px] text-[14.5px] leading-[1.6] text-fg-soft">{post.text}</p>
 
-      {/* Sortie liée */}
+      {/* Stats de sortie, quand le post porte une activité */}
       {activity && (
-        <div className="px-4 pt-3">
-          <ActivityPreview activity={activity} onOpen={onOpenActivity} mapClass="h-36" />
-        </div>
+        <button
+          onClick={onOpenActivity}
+          className="mx-[18px] mt-3.5 flex w-[calc(100%-36px)] gap-[22px] border-t border-line-soft pt-3 text-left tap"
+        >
+          {[
+            { v: nombre(activity.distance), l: 'km' },
+            { v: activity.duration.replace(/:\d\d$/, ''), l: 'temps' },
+            { v: activity.pace, l: 'allure' },
+            { v: avec, l: avec > 1 ? 'rencontrés' : 'rencontré' },
+          ].map((s) => (
+            <span key={s.l} className="min-w-0">
+              <span className="block text-[19px] font-medium tabular-nums">{s.v}</span>
+              <span className="block text-[12px] text-fg-faint">{s.l}</span>
+            </span>
+          ))}
+        </button>
       )}
 
-      {/* Compteurs */}
-      <div className="flex items-center justify-between px-4 pt-3 text-[12.5px] text-fg-muted">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 bg-brand-500" />
-          {post.likes} utile{post.likes > 1 ? 's' : ''}
-        </span>
+      {/* Barre d'actions : un kudo, et le compte des réponses. */}
+      <div className="mt-3.5 flex items-center gap-2 border-t border-line-soft px-3 py-2.5">
+        <button
+          onClick={onLike}
+          aria-pressed={post.liked}
+          className={`flex items-center gap-2 rounded-full px-3.5 py-2 text-[13.5px] font-semibold ${
+            post.liked ? 'bg-brand-500 text-craie' : 'bg-canvas text-fg-muted'
+          }`}
+        >
+          <Icon name="thumbsUp" className="h-[17px] w-[17px]" filled={post.liked} />
+          {post.likes}
+        </button>
         {post.comments.length > 0 && (
-          <button onClick={() => setShowComments((s) => !s)} className="tap">
+          <button onClick={() => setShowComments((s) => !s)} className="text-[13.5px] text-fg-faint">
             {post.comments.length} réponse{post.comments.length > 1 ? 's' : ''}
           </button>
         )}
       </div>
 
-      {/* Actions */}
-      <div className="mt-2 flex items-center divide-x divide-line border-t border-line">
-        <button
-          onClick={onLike}
-          className={`flex flex-1 items-center justify-center gap-1.5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-mono tap ${post.liked ? 'text-brand-500' : 'text-fg-muted'}`}
-        >
-          <Icon name="heart" className="h-4 w-4" filled={post.liked} /> Utile
-        </button>
-        <button
-          onClick={() => setShowComments((s) => !s)}
-          className="flex flex-1 items-center justify-center gap-1.5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-mono text-fg-muted tap"
-        >
-          <Icon name="comment" className="h-4 w-4" /> Répondre
-        </button>
-        <button
-          onClick={onShare}
-          className="flex flex-1 items-center justify-center gap-1.5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-mono text-fg-muted tap"
-        >
-          <Icon name="share" className="h-4 w-4" /> Partager
-        </button>
-      </div>
-
       {/* Réponses */}
       {showComments && (
-        <div className="border-t border-line bg-surface-2/60 px-4 py-3">
-          <div className="space-y-2.5">
+        <div className="border-t border-line-soft px-[18px] py-3.5">
+          <div className="space-y-3">
             {post.comments.map((c, i) => (
               <div key={i} className="flex items-start gap-2.5">
                 <Avatar name={c.author} size="xs" onClick={() => onOpenAuthor?.(c.author)} />
-                <div className="min-w-0 flex-1 border-l-2 border-line pl-3">
-                  <div className="text-[13px] font-medium text-fg">{c.author}</div>
-                  <div className="text-[13px] leading-snug text-fg-soft">{c.text}</div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[13.5px] font-semibold text-fg">{c.author}</div>
+                  <div className="text-[13.5px] leading-snug text-fg-soft">{c.text}</div>
                 </div>
               </div>
             ))}
           </div>
-          <div className="mt-3 flex items-center gap-2">
+          <div className="mt-3.5 flex items-center gap-2">
             <Avatar name={CURRENT_USER.name} size="xs" />
             <input
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && submit()}
               placeholder="Répondre…"
-              className="input-ligne flex-1 text-[13px]"
-              style={{ padding: '6px 0' }}
+              className="input-ligne flex-1 bg-canvas text-[13.5px]"
+              style={{ padding: '8px 14px' }}
             />
-            <button onClick={submit} disabled={!draft.trim()} className="ico impact tap disabled:opacity-40" aria-label="Envoyer">
+            <button
+              onClick={submit}
+              disabled={!draft.trim()}
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-500 text-craie tap disabled:opacity-40"
+              aria-label="Envoyer"
+            >
               <Icon name="send" className="h-4 w-4" />
             </button>
           </div>

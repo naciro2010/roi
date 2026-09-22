@@ -1,7 +1,13 @@
 /* ==========================================================================
    R.O.I — RUN ON INVESTMENT · L'édition
-   La course annuelle : Édition 01, Paris La Défense, septembre 2027. Une
-   course le matin (5, 10 ou 21,1 km), un après-midi entier dans l'Arena.
+   La course annuelle, fin novembre : Édition 01, Paris La Défense, samedi
+   27 novembre 2027. Une course le matin (5, 10 ou 21,1 km), un après-midi
+   entier dans l'Arena. Puis chaque année, à la même période.
+
+   Avant elle, une pré-édition : LA PILOTE (novembre 2025, Bois de Vincennes,
+   380 finishers). C'est elle qui sert de laissez-passer — l'app est réservée
+   à celles et ceux qui ont déjà couru un R.O.I (voir data/user.js).
+
    Ces données sont celles du site (runoninvest.fr) : distances, vagues,
    formules, programme. L'inscription se fait SUR LE SITE — l'app lit le
    dossier, elle ne le crée jamais (voir lib/dossier.js).
@@ -24,15 +30,37 @@ export const EDITION = {
   lieu: 'Paris La Défense',
   arrivee: 'Paris La Défense Arena',
   depart: 'Grande Arche',
-  // Le site annonce « septembre 2027 » sans jour ferme : on compte les jours
-  // jusqu'au premier du mois, et on l'affiche comme un mois, pas une date.
-  mois: 'Septembre 2027',
-  moisCourt: 'Sept. 2027',
-  date: '2027-09-01',
+  // La course est datée : samedi 27 novembre 2027. Le compte à rebours part
+  // de là, et la cadence est annuelle — fin novembre, chaque année.
+  mois: 'Novembre 2027',
+  moisCourt: 'Nov. 2027',
+  jour: 'Samedi 27 novembre 2027',
+  date: '2027-11-27',
+  cadence: 'Chaque année, fin novembre.',
   jauge: '10 000 décideurs attendus',
   accroche: "L'impact après la ligne d'arrivée.",
   manifeste: 'On ne se rencontre jamais aussi bien qu’essoufflé.',
 }
+
+/* ------------------------------------------------------------- la pilote
+   La pré-édition : c'est elle qui ouvre l'accès à l'app. On ne rentre pas
+   dans R.O.I en s'abonnant — on y rentre en ayant couru. */
+export const EDITION_PILOTE = {
+  numero: '00',
+  label: 'Édition 00',
+  nom: 'La Pilote',
+  lieu: 'Bois de Vincennes',
+  mois: 'Novembre 2025',
+  moisCourt: 'Nov. 2025',
+  jour: 'Samedi 22 novembre 2025',
+  date: '2025-11-22',
+  finishers: 380,
+  resume: 'Une matinée, 380 coureurs, un déjeuner qui a duré jusqu’au soir. Le format tenait : on l’a gardé.',
+}
+
+/* Les éditions, de la plus récente à la plus ancienne. */
+export const EDITIONS = [EDITION, EDITION_PILOTE]
+export const editionByNumero = (n) => EDITIONS.find((e) => e.numero === String(n)) || EDITION
 
 /* Jours avant la ligne (T–). */
 export function daysToRace(now = new Date()) {
@@ -85,17 +113,19 @@ export const distanceById = (id) => DISTANCES.find((d) => d.id === String(id)) |
    Trois vagues, un tarif qui monte. Les dates vivent aussi dans server.js et
    index.html côté site — à garder alignées. */
 export const VAGUES = [
-  { code: 'early', nom: 'Early Bird', prix: 350, fin: '2026-11-30T23:59:59+01:00', periode: 'Jusqu’au 30 novembre 2026' },
-  { code: 'regulier', nom: 'Régulier', prix: 400, fin: '2027-01-31T23:59:59+01:00', periode: 'Décembre 2026 → fin janvier 2027' },
-  { code: 'last', nom: 'Last Call', prix: 500, fin: null, periode: 'Février 2027 → jour J' },
+  { code: 'early', nom: 'Early Bird', prix: 350, fin: '2027-02-28T23:59:59+01:00', periode: 'Jusqu’au 28 février 2027' },
+  { code: 'regulier', nom: 'Régulier', prix: 400, fin: '2027-06-30T23:59:59+02:00', periode: 'Mars → fin juin 2027' },
+  { code: 'last', nom: 'Last Call', prix: 500, fin: null, periode: 'Juillet 2027 → jour J' },
 ]
 export function vagueCourante(now = Date.now()) {
   return VAGUES.find((v) => !v.fin || now <= Date.parse(v.fin)) || VAGUES[VAGUES.length - 1]
 }
 
 /* ------------------------------------------------------------------ formules
-   Aucune formule n'achète une meilleure course : elle change quand le réseau
-   commence, et combien de portes s'ouvrent après. */
+   Les anciennes formules de course. Elles ont laissé la place aux paliers
+   d'abonnement (data/plans.js) : l'app ne les affiche plus. On les garde ici
+   parce que le site les documente encore — c'est lui la source de vérité du
+   dossier, et le pont lit ce qu'il renvoie. */
 export const FORMULES = [
   {
     id: 'dossard', n: '01', nom: 'Dossard', pour: 'La journée entière', prix: 'Tarif de la vague', etat: 'Inclus',
@@ -131,6 +161,94 @@ export const ETAPES = [
   { id: 'paye', n: '04', titre: 'Paiement', texte: 'Après validation seulement. Le lien de paiement arrive par mail, ton dossard devient définitif.' },
 ]
 export const ETAT_INDEX = { demande: 1, justificatif: 2, valide: 3, paye: 4 }
+
+/* ------------------------------------------------- l'avancement de l'édition
+   « Ta route vers l'Édition 01 » : ce qui est fait, ce qui s'ouvre quand.
+   C'est ce qu'on regarde en ouvrant l'app — le dossard et où l'on en est.
+
+   Un jalon est FAIT quand sa condition est remplie, À VENIR tant qu'il n'est
+   pas encore ouvert (`ouvreA` = jours avant la course), EN COURS sinon. Rien
+   n'est bloqué par un palier : un jalon à venir dit seulement « pas encore ». */
+export const JALONS = [
+  { id: 'dossard', icon: 'flag', titre: 'Ton dossard' },
+  { id: 'dossier', icon: 'shield', titre: 'Ton dossier' },
+  { id: 'distance', icon: 'activity', titre: 'Ta distance' },
+  { id: 'sas', icon: 'users', titre: 'Ton sas de départ', ouvreA: 90 },
+  { id: 'rdv', icon: 'calendar', titre: 'Tes rendez-vous', ouvreA: 42 },
+  { id: 'jourj', icon: 'trophy', titre: 'Le jour J', ouvreA: 0 },
+]
+
+/* Le numéro de dossard, tel qu'il est imprimé : quatre chiffres. */
+export const numeroDossard = (n) => String(n ?? '').padStart(4, '0')
+
+/* État de chaque jalon, pour un dossard donné et un nombre de rendez-vous
+   déjà réservés pour l'après-midi. */
+export function avancementEdition({ dossard, rdv = 0, now = new Date() } = {}) {
+  const jours = daysToRace(now)
+  const d = dossard || null
+  const dist = d?.distance ? distanceById(d.distance) : null
+
+  const etat = {
+    dossard: {
+      fait: !!d?.numero,
+      texte: d?.numero
+        ? `Dossard n° ${numeroDossard(d.numero)} — ta place est prise.`
+        : 'Prends ta place : l’inscription se fait sur le site, en cinq minutes.',
+    },
+    dossier: {
+      fait: d?.statut === 'valide' || d?.statut === 'paye',
+      texte: d?.statut === 'valide' || d?.statut === 'paye'
+        ? 'Justificatif reçu, dossier validé.'
+        : 'Envoie ton Kbis, ton avis SIRENE ou ta cooptation depuis ton espace.',
+    },
+    distance: {
+      fait: !!dist,
+      texte: dist
+        ? `${dist.label} — ${dist.nom}.`
+        : 'Choisis 5, 10 ou 21,1 km. Ça se change jusqu’à un mois avant.',
+    },
+    sas: {
+      fait: !!d?.sas,
+      texte: d?.sas
+        ? `Sas ${d.sas} — départ par vagues d’allure.`
+        : 'Les sas s’attribuent trois mois avant, sur l’allure que tu annonces.',
+    },
+    rdv: {
+      fait: rdv > 0,
+      texte: rdv > 0
+        ? `${rdv} rencontre${rdv > 1 ? 's' : ''} réservée${rdv > 1 ? 's' : ''} pour l’après-midi.`
+        : 'Les huit-minutes de l’après-midi se réservent six semaines avant.',
+    },
+    jourj: {
+      fait: jours === 0,
+      texte: jours === 0
+        ? 'C’est aujourd’hui. On se retrouve dans l’Arena.'
+        : 'L’arrivée est dans l’Arena. La journée continue jusqu’au soir.',
+    },
+  }
+
+  const etapes = JALONS.map((j) => {
+    const e = etat[j.id]
+    const ouvert = j.ouvreA == null || jours <= j.ouvreA
+    return {
+      ...j,
+      texte: e.texte,
+      statut: e.fait ? 'fait' : ouvert ? 'encours' : 'avenir',
+      ouvreDans: ouvert ? 0 : jours - j.ouvreA,
+    }
+  })
+
+  const faits = etapes.filter((e) => e.statut === 'fait').length
+  const courante = etapes.find((e) => e.statut === 'encours') || etapes.find((e) => e.statut === 'avenir') || null
+  return {
+    etapes,
+    faits,
+    total: etapes.length,
+    pct: Math.round((faits / etapes.length) * 100),
+    courante,
+    jours,
+  }
+}
 
 /* ---------------------------------------------------- la journée : T– / T+ */
 export const AVANT = {

@@ -25,7 +25,7 @@ export default function InviteSheet({ onClose }) {
   const [email, setEmail] = useState('')
   const [teamEmail, setTeamEmail] = useState('')
 
-  const isCercle = plan === 'business'
+  const isCercle = plan === 'cercle'
 
   function copyLink() {
     try { navigator.clipboard?.writeText(REFERRAL.url) } catch { /* presse-papier indisponible */ }
@@ -59,7 +59,7 @@ export default function InviteSheet({ onClose }) {
 
   /* Vers le Cercle : le bloc encre, un chiffre, une ligne qui se remplit. */
   const progression = (
-    <section className="surface-hero p-4">
+    <section className="surface-hero rounded-2xl p-4">
       <span className="titre-section">Tes invitations</span>
       <div className="mt-3 flex items-end justify-between gap-3">
         <div className="display text-[40px] leading-[.85] text-craie tabular-nums">{referralJoined}<span className="text-[20px] t-beton">/{REFERRAL.goal}</span></div>
@@ -92,10 +92,10 @@ export default function InviteSheet({ onClose }) {
 
   return (
     <div className="absolute inset-0 z-40">
-      <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
-      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-canvas">
+      <div className="absolute inset-0 animate-fadeIn bg-voile" onClick={onClose} />
+      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 mx-auto flex max-h-[88dvh] w-full max-w-[560px] flex-col overflow-hidden rounded-t-3xl bg-canvas">
         <div className="relative shrink-0 border-b border-fg px-5 pb-4 pt-3">
-          <div {...drag.handleProps} className="mx-auto mb-3 h-1 w-10 bg-line-strong" aria-hidden="true" />
+          <div {...drag.handleProps} className="mx-auto mb-3 h-1 w-10 rounded-full bg-line-strong" aria-hidden="true" />
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <span className="titre-section">Inviter quelqu’un</span>
@@ -177,9 +177,9 @@ export default function InviteSheet({ onClose }) {
           {view === 'equipe' && (
             <div className="space-y-5">
               {!isCercle ? (
-                <section className="surface-hero p-5">
-                  <span className="titre-section">La formule Cercle</span>
-                  <h3 className="mt-3 text-[20px] text-craie">Les dossards<br /><span className="creuse">de ton équipe.</span></h3>
+                <section className="surface-hero rounded-2xl p-5">
+                  <span className="titre-section">Le palier Cercle</span>
+                  <h3 className="mt-3 text-[20px]">Les dossards<br /><span className="creuse">de ton équipe.</span></h3>
                   <p className="mt-2 max-w-[36ch] text-[13px] leading-relaxed t-muted">
                     Le Cercle comprend trois dossards invités pour ton équipe ou tes associés. Quarante places, sur cooptation de deux membres.
                   </p>

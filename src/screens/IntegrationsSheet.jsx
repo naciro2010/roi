@@ -8,8 +8,8 @@ export default function IntegrationsSheet({ onClose }) {
 
   return (
     <div className="absolute inset-0 z-40">
-      <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
-      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[92%] flex-col overflow-hidden bg-surface">
+      <div className="absolute inset-0 animate-fadeIn bg-voile" onClick={onClose} />
+      <div className="animate-sheetIn absolute inset-x-0 bottom-0 mx-auto flex max-h-[88dvh] w-full max-w-[560px] flex-col overflow-hidden rounded-t-3xl bg-surface">
         <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-3.5">
           <div className="min-w-0">
             <span className="titre-section">Tes applis connectées</span>

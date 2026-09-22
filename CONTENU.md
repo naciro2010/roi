@@ -55,9 +55,31 @@ kilomètre *investi* dans une relation.
 
 ## 4. Le modèle : ce que chaque brique veut dire
 
-- **Le dossard = le profil.** Verso : nom, fonction, entreprise, formule. Le profil
-  ajoute **ce que je cherche** (un ou plusieurs des quatre verbes, précisé en une
-  phrase) et **ce que j'apporte**.
+- **L'accès = avoir couru.** On n'entre pas dans l'app en s'abonnant, on y entre en
+  ayant franchi une ligne R.O.I. C'est ce qui fait que tout le monde ici a quelque
+  chose en commun, et que personne n'a besoin de se présenter. Le laissez-passer
+  d'aujourd'hui : **l'Édition 00 — La Pilote**, novembre 2025, 380 finishers.
+  À quelqu'un qui n'a pas encore couru, on ne montre pas un mur : on montre la
+  prochaine course et comment y prendre sa place.
+- **L'abonnement = ce qui garde l'accès ouvert.** Annuel, trois paliers — *Membre ·
+  Premium · Cercle*. Il a remplacé les formules de course : le dossard s'achète sur
+  le site, par édition ; l'abonnement tient le réseau entre deux courses. Expiré,
+  **on ne ferme rien** : l'app passe en lecture seule. On garde les nouvelles, son
+  dossard, le fil et ses conversations ; on ne peut plus écrire. Le mot à employer
+  est « reprendre », jamais « débloquer ».
+- **Le dossard = ton numéro.** C'est la première chose qu'on voit en ouvrant l'app :
+  « Dossard n° 1042 ». Il porte l'édition à venir, la distance et le sas. Plus de
+  carte recto/verso dans l'app — le dossard-objet est un sujet du site.
+- **L'avancement = ta route vers la course.** Six jalons, dans l'ordre : *ton dossard,
+  ton dossier, ta distance, ton sas de départ, tes rendez-vous, le jour J*. Un jalon
+  qui n'est pas encore ouvert ne dit pas « verrouillé », il dit **quand** : « les sas
+  s'attribuent trois mois avant ».
+- **Les nouvelles = la voix de l'organisation.** Une nouvelle = un fait, une date, et
+  **ce que ça change pour toi** — cette dernière phrase est obligatoire. Trois
+  catégories : *La course · Le réseau · Pratique*. Jamais de communiqué, jamais de
+  superlatif, jamais de « nous sommes heureux de vous annoncer ».
+- **Le profil.** Nom, fonction, entreprise, et surtout **ce que je cherche** (un ou
+  plusieurs des quatre verbes, précisé en une phrase) et **ce que j'apporte**.
 - **L'annuaire** = qui court cette année (dossards pris). Filtres par intention :
   *Recrute · Lève · Vend · S'associe · Conseille* (le mentorat = « conseille »).
   L'annuaire complet s'ouvre le jour J ; **en Premium, dès la validation**.
@@ -79,16 +101,16 @@ kilomètre *investi* dans une relation.
   quelqu'un* font monter un palier qui ouvre des rencontres supplémentaires, une
   catégorie d'annuaire, une présentation prioritaire. Titres des paliers :
   *Première foulée · Compagnon de route · Relais · Tête de peloton*.
-- **Les formules** (ex-abonnements) = celles du site, mêmes ids techniques :
-  `free` → **Dossard** (inclus : l'annuaire le jour J, trois rencontres proposées
-  par semaine, un binôme par semaine, le pipeline, les sorties, les messages) ·
-  `pro` → **Premium** (sur demande : l'annuaire dès validation, six rencontres
-  réservées à l'avance, propositions sans limite, « qui veut te rencontrer »,
-  filtres de l'annuaire, le Salon de l'Arena, le dîner des fondateurs) ·
-  `business` → **Cercle** (sur cooptation, quarante places : tout le Premium,
-  la table des investisseurs, trois dossards invités pour ton équipe, ta place
-  reconduite). Aucun prix dans l'app : « tarif de la vague », « sur demande »,
-  « sur cooptation ». Changer de formule = depuis l'espace du site.
+- **Les paliers d'abonnement** (ids techniques `membre`, `premium`, `cercle`) :
+  **Membre** — 9 €/mois ou 90 €/an, offert la première année après ta première
+  course : les nouvelles, ton dossard, trois rencontres proposées par semaine, un
+  binôme, le suivi, le fil et les messages · **Premium** — 29 €/mois ou 290 €/an :
+  propositions sans limite, l'annuaire complet et ses filtres, « qui veut te
+  rencontrer », six rencontres réservées à l'avance le jour J, le Salon de l'Arena,
+  le dîner des fondateurs · **Cercle** — 190 €/mois, sur cooptation, quarante
+  places : la table des investisseurs, trois dossards invités, ta place reconduite.
+  Rien ne se paie dans l'app : le règlement et la résiliation se font sur le site.
+  Résilier ne retire pas ton dossard — ça ferme le réseau, pas la course.
 - **La cooptation** (ex-invitations/parrainage) = tu proposes un dossard à
   quelqu'un qui exerce — « un seul critère : exercer », dit le site, qui
   s'adresse aux entrepreneurs, intrapreneurs, cadres dirigeants et commerciaux,

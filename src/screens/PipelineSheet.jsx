@@ -26,59 +26,59 @@ export default function PipelineSheet({ onClose }) {
 
   return (
     <div className="absolute inset-0 z-40">
-      <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
+      <div className="absolute inset-0 animate-fadeIn bg-voile" onClick={onClose} />
       <div
         style={drag.style}
-        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-canvas"
+        className="animate-sheetIn absolute inset-x-0 bottom-0 mx-auto flex max-h-[88dvh] w-full max-w-[560px] flex-col overflow-hidden rounded-t-3xl bg-canvas"
       >
         {/* En-tête */}
-        <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-4 pt-3 text-craie">
-          <div {...drag.handleProps} className="relative mx-auto mb-3 h-1 w-10 bg-craie/30" aria-hidden="true" />
+        <div className="relative shrink-0 overflow-hidden border-b border-line-soft px-5 pb-4 pt-3">
+          <div {...drag.handleProps} className="relative mx-auto mb-3 h-1 w-10 rounded-full bg-line-strong" aria-hidden="true" />
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 z-10 grid h-9 w-9 place-items-center border border-craie/30 text-craie tap"
+            className="absolute right-4 top-4 z-10 rond tap"
             aria-label="Fermer"
           >
             <Icon name="x" className="h-5 w-5" />
           </button>
           <div className="relative pr-10">
-            <span className="titre-section text-craie">Le suivi de tes relations</span>
-            <h2 className="mt-2 text-[22px] leading-tight text-craie">Où en est chaque relation</h2>
-            <p className="mt-2 max-w-[38ch] text-[14px] leading-relaxed text-craie/70">
+            <span className="titre-section">Le suivi de tes relations</span>
+            <h2 className="mt-2 text-[22px] leading-tight">Où en est chaque relation</h2>
+            <p className="mt-2 max-w-[38ch] text-[14px] leading-relaxed text-fg-muted">
               Chaque personne que tu rencontres avance par étapes, de la première conversation
               jusqu’à ce que ça donne quelque chose. Fais-la avancer d’un cran quand ça bouge.
             </p>
           </div>
 
           {showAnalytics ? (
-            <div className="relative mt-4 grid grid-cols-3 gap-2 border-t border-craie/12 pt-3">
+            <div className="relative mt-4 grid grid-cols-3 gap-2 border-t border-line-soft pt-3">
               {headline.map((s) => (
                 <div key={s.label}>
-                  <div className="display text-[26px] leading-none tabular-nums text-craie">{s.value}</div>
-                  <div className="mt-1.5 text-[12.5px] leading-snug text-craie/65">{s.label}</div>
+                  <div className="display text-[26px] leading-none tabular-nums">{s.value}</div>
+                  <div className="mt-1.5 text-[12.5px] leading-snug text-fg-muted">{s.label}</div>
                 </div>
               ))}
             </div>
           ) : (
             <button
               onClick={openPlans}
-              className="relative mt-4 flex w-full items-center gap-3 border-t border-craie/12 pt-3 text-left tap"
+              className="relative mt-4 flex w-full items-center gap-3 border-t border-line-soft pt-3 text-left tap"
             >
               <div className="grid flex-1 grid-cols-3 gap-2" aria-hidden="true">
                 {headline.map((s, i) => (
                   <div key={s.label} className={i === 0 ? 'blur-[5px]' : ''}>
-                    <div className="display text-[26px] leading-none tabular-nums text-craie">{s.value}</div>
-                    <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-craie/60">{s.label}</div>
+                    <div className="display text-[26px] leading-none tabular-nums">{s.value}</div>
+                    <div className="mt-1 font-mono text-[9.5px] uppercase tracking-mono text-fg-faint">{s.label}</div>
                   </div>
                 ))}
               </div>
-              <span className="inline-flex shrink-0 items-center gap-1.5 bg-craie px-3 py-1.5 text-[11px] font-bold text-fg">
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-encre px-3 py-1.5 text-[11px] font-semibold text-craie">
                 <Icon name="lock" className="h-3.5 w-3.5" /> Premium
               </span>
             </button>
           )}
           {!showAnalytics && (
-            <p className="relative mt-2 text-[13px] text-craie/60">Le montant en jeu s’affiche avec la formule Premium.</p>
+            <p className="relative mt-2 text-[13px] text-fg-faint">Le montant en jeu s’affiche avec le palier Premium.</p>
           )}
         </div>
 
@@ -177,7 +177,7 @@ export default function PipelineSheet({ onClose }) {
         </div>
 
         <p className="flex shrink-0 items-center justify-center gap-1.5 border-t border-line bg-surface px-4 py-3 text-center text-[11px] text-fg-faint">
-          <span className="h-1.5 w-1.5 bg-brand-500" />
+          <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
           {kmInvested > 0 ? `${kmInvested} km investis dans ces relations · chaque sortie en fait avancer une.` : 'Chaque sortie courue fait avancer une relation.'}
         </p>
       </div>

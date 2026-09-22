@@ -46,10 +46,13 @@ const InviteSheet = lazy(() => import('./screens/InviteSheet'))
 const PipelineSheet = lazy(() => import('./screens/PipelineSheet'))
 const RunMatchSheet = lazy(() => import('./screens/RunMatchSheet'))
 const RaceSheet = lazy(() => import('./screens/RaceSheet'))
+const NewsSheet = lazy(() => import('./screens/NewsSheet'))
+const AccesReserve = lazy(() => import('./screens/AccesReserve'))
 import { INITIAL_PIPELINE, shiftStage, stageMeta } from './data/pipeline'
 import { suggestRun } from './lib/runmatch'
 import { SERVICES } from './data/integrations'
-import { planById, hasFeature } from './data/plans'
+import { planById, hasFeature, etatAbonnement, PALIER_BASE } from './data/plans'
+import { avancementEdition, EDITION } from './data/race'
 import { INITIAL_INVITES, INITIAL_TEAMMATES } from './data/invites'
 import { dossierDepuisUrl, lierDossier } from './lib/dossier'
 
@@ -87,7 +90,7 @@ function detectEcoDefault() {
 function ScreenFallback() {
   return (
     <div className="flex flex-1 items-center justify-center" aria-busy="true">
-      <span className="h-1 w-24 bg-line-strong"><span className="block h-full w-1/3 animate-pulse bg-brand-500" /></span>
+      <span className="h-1 w-24 overflow-hidden rounded-full bg-craie-2"><span className="block h-full w-1/3 animate-pulse rounded-full bg-brand-500" /></span>
       <span className="sr-only">Chargement…</span>
     </div>
   )
@@ -164,7 +167,7 @@ export default function App() {
 
   // Onboarding · explication ROI · recherche globale
   const [onboarding, setOnboarding] = useState(() => {
-    try { return !localStorage.getItem('roi_onboarded') } catch { return true }
+    try { return !localStorage.getItem('roi2_onboarded') } catch { return true }
   })
   const [roiInfoOpen, setRoiInfoOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -172,8 +175,19 @@ export default function App() {
   const [integrations, setIntegrations] = usePersistentState('integrations', {})
 
   // Formule · cooptation
-  const [plan, setPlan] = usePersistentState('plan', 'free')
+  /* L'abonnement : c'est lui qui garde l'accès ouvert. Expiré, l'app ne se
+     ferme pas — elle passe en lecture seule. Le palier (Membre · Premium ·
+     Cercle) en fait partie : `plan` en est dérivé, pour que tout ce qui
+     interroge `hasFeature` continue de marcher tel quel. */
+  const [abonnement, setAbonnement] = usePersistentState('abonnement', CURRENT_USER.abonnement)
+  const etatAbo = etatAbonnement(abonnement)
+  const plan = abonnement.palier || PALIER_BASE
+  const lectureSeule = etatAbo.statut === 'expire'
   const [plansOpen, setPlansOpen] = useState(false)
+
+  /* L'accès : on ne rentre pas dans R.O.I en s'abonnant, on y rentre en
+     ayant couru. Sans édition au compteur, l'app ne s'ouvre pas. */
+  const [finisher, setFinisher] = usePersistentState('finisher', CURRENT_USER.editions.length > 0)
   const [invites, setInvites] = usePersistentState('invites', INITIAL_INVITES)
   const [teammates, setTeammates] = usePersistentState('teammates', INITIAL_TEAMMATES)
   const [inviteOpen, setInviteOpen] = useState(false)
@@ -194,6 +208,8 @@ export default function App() {
   // l'app le relie : par lien profond depuis l'espace (?dossier=&email=) ou à
   // la main (référence + e-mail). `dossier` = ce que le site a répondu.
   const [raceOpen, setRaceOpen] = useState(false)
+  // Les nouvelles de R.O.I : la liste, ou une nouvelle en entier.
+  const [news, setNews] = useState({ open: false, id: null })
   const [dossier, setDossier] = usePersistentState('dossier', null)
   useEffect(() => {
     const q = dossierDepuisUrl()
@@ -215,6 +231,13 @@ export default function App() {
   }, [])
 
   const planMeta = planById(plan)
+
+  /* Ta route vers l'édition : ce qui est fait, ce qui s'ouvre quand. Les
+     rendez-vous comptés sont ceux du jour J, à l'Arena. */
+  const avancement = avancementEdition({
+    dossard: CURRENT_USER.dossard,
+    rdv: meetings.filter((m) => m.type === 'deal' && m.date === EDITION.date).length,
+  })
   const referralJoined = invites.filter((i) => i.status === 'joined').length
 
   const unreadConv = CONVERSATIONS.filter((c) => c.unread && !convRead[c.id]).length
@@ -228,6 +251,20 @@ export default function App() {
     setToast({ msg, key: Date.now() })
     window.clearTimeout(showToast._t)
     showToast._t = window.setTimeout(() => setToast(null), 1900)
+  }
+
+  /* Lecture seule : abonnement expiré, on lit tout, on n'écrit rien. Le
+     verrou ne cache pas l'action — il l'explique et ouvre le renouvellement,
+     pour qu'on sache toujours pourquoi ça ne part pas. */
+  function verrou(action, quoi = 'écrire') {
+    return (...args) => {
+      if (lectureSeule) {
+        showToast(`Ton abonnement a expiré — reprends-le pour ${quoi}`)
+        setPlansOpen(true)
+        return
+      }
+      return action(...args)
+    }
   }
 
   function goTo(t) {
@@ -438,7 +475,7 @@ export default function App() {
   }
 
   function finishOnboarding() {
-    try { localStorage.setItem('roi_onboarded', '1') } catch { /* stockage indisponible */ }
+    try { localStorage.setItem('roi2_onboarded', '1') } catch { /* stockage indisponible */ }
     setOnboarding(false)
   }
 
@@ -472,12 +509,40 @@ export default function App() {
     })
   }
 
+  /* Dans un an, jour pour jour — l'abonnement suit l'année, comme la course. */
+  function dansUnAn() {
+    const d = new Date()
+    d.setFullYear(d.getFullYear() + 1)
+    return d.toISOString().slice(0, 10)
+  }
+
   function upgradePlan(id) {
-    if (id === plan) return
-    setPlan(id)
-    setPlansOpen(false)
     const meta = planById(id)
-    showToast(id === 'free' ? 'Tu es revenu à la formule Dossard' : `Formule ${meta.name} demandée`)
+    setAbonnement((a) => ({ ...a, palier: id, statut: 'actif', echeance: a.statut === 'expire' ? dansUnAn() : a.echeance }))
+    setPlansOpen(false)
+    showToast(id === PALIER_BASE ? 'Tu es revenu au palier Membre' : `Palier ${meta.name} demandé`)
+  }
+
+  /* Reprendre l'abonnement : l'échéance repart pour un an, tout se rouvre. */
+  function renouveler() {
+    setAbonnement((a) => ({ ...a, statut: 'actif', echeance: dansUnAn() }))
+    setPlansOpen(false)
+    showToast('Abonnement repris — tout est rouvert')
+  }
+
+  /* Démo : basculer les deux états d'accès pour les voir tels qu'ils sont. */
+  function simulerExpiration() {
+    setAbonnement((a) => {
+      const expire = a.statut !== 'expire'
+      showToast(expire ? 'Démo · abonnement expiré' : 'Démo · abonnement repris')
+      return { ...a, statut: expire ? 'expire' : 'actif', echeance: expire ? a.echeance : dansUnAn() }
+    })
+  }
+  function simulerFinisher() {
+    setFinisher((f) => {
+      showToast(f ? 'Démo · compte sans édition courue' : 'Démo · finisher')
+      return !f
+    })
   }
 
   function nameFromEmail(email) {
@@ -548,7 +613,7 @@ export default function App() {
     openMember,
     openActivity: setActivityId,
     // Matching comportemental « Pour toi »
-    rankedMatches, insights, matchDetail, track, startIcebreaker,
+    rankedMatches, insights, matchDetail, track, startIcebreaker: verrou(startIcebreaker, 'écrire'),
     sharedRunsFor: (name) => SHARED_RUNS[name] || 0,
     openEvent: setEventId,
     openComposer: () => setComposerOpen(true),
@@ -557,35 +622,41 @@ export default function App() {
     openSearch: () => setSearchOpen(true),
     openIntegrations: () => setIntegrationsOpen(true),
     integrations, toggleIntegration,
-    // Formule
-    plan, planMeta, upgradePlan,
+    // L'abonnement — ce qui garde l'accès ouvert
+    plan, planMeta, upgradePlan, abonnement, etatAbo, lectureSeule, renouveler,
     hasFeature: (key) => hasFeature(plan, key),
     openPlans: () => setPlansOpen(true),
+    // L'accès — réservé à celles et ceux qui ont déjà couru
+    finisher, simulerExpiration, simulerFinisher,
     // Cooptation
-    invites, sendInvite, referralJoined,
-    teammates, inviteTeammate,
+    invites, sendInvite: verrou(sendInvite, 'inviter'), referralJoined,
+    teammates, inviteTeammate: verrou(inviteTeammate, 'inviter'),
     openInvite: () => setInviteOpen(true),
     // Agenda & RDV
-    meetings, confirmMeeting, proposeMeeting,
+    meetings, confirmMeeting, proposeMeeting: verrou(proposeMeeting, 'proposer un rendez-vous'),
     openAgenda: () => setAgendaOpen(true),
     // Pipeline ROI & RunMatch
     pipeline, addToPipeline, advanceDeal,
     openPipeline: () => setPipelineOpen(true),
-    runMatches, proposeRun, proposedRuns,
+    runMatches, proposeRun: verrou(proposeRun, 'proposer une sortie'), proposedRuns,
     openRunMatch: () => setRunMatchOpen(true),
-    // L'édition — la course annuelle, et le dossier lu sur le site
+    // L'édition — la course annuelle, ton avancement, et le dossier lu sur le site
     openRace: () => setRaceOpen(true),
+    avancement,
     dossier, lierDossierApp, delierDossier,
-    contacted, contactMember,
-    sentSuggestions, sendSuggestion,
-    connections, requests, acceptRequest, declineRequest,
+    // Les nouvelles de R.O.I
+    openNews: (id = null) => setNews({ open: true, id }),
+    contacted, contactMember: verrou(contactMember, 'proposer une rencontre'),
+    sentSuggestions, sendSuggestion: verrou(sendSuggestion, 'proposer une rencontre'),
+    connections, requests, acceptRequest: verrou(acceptRequest, 'dire oui'), declineRequest,
     eventKudos, toggleEventKudos, joined, toggleJoin,
     actKudos, toggleActKudos,
-    posts, togglePostLike, addComment,
+    posts, togglePostLike, addComment: verrou(addComment, 'répondre'),
     msgView, setMsgView, openConv, openGroup, openChat, openGroupChat, closeChat,
-    threads, draft, setDraft, sendMessage, convRead,
+    threads, draft, setDraft, sendMessage: verrou(sendMessage, 'écrire'), convRead,
     groups, groupThreads, groupRead, creatingGroup, setCreatingGroup,
-    newGroupName, setNewGroupName, createGroup, joinedGroups, joinGroup,
+    newGroupName, setNewGroupName, createGroup: verrou(createGroup, 'créer un groupe'),
+    joinedGroups, joinGroup: verrou(joinGroup, 'rejoindre un groupe'),
     messageMember,
     profile, updateProfile,
     // Numérique responsable — mode sobriété
@@ -595,7 +666,9 @@ export default function App() {
   }
 
   const inChat = tab === 'messages' && (openConv || openGroup)
-  const showHeader = !inChat && tab !== 'profil'
+  // L'en-tête craie est sur tous les écrans ; seule une conversation ouverte
+  // la remplace par son propre bandeau (retour, avatar, nom).
+  const showHeader = !inChat
   const anyOverlay =
     member || activityId || eventId || composerOpen || notifOpen || editProfileOpen ||
     roiInfoOpen || integrationsOpen || searchOpen || plansOpen || inviteOpen || agendaOpen ||
@@ -616,33 +689,33 @@ export default function App() {
     if (!notifOpen) return null
     return (
       <div className="absolute inset-0 z-40">
-        <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={() => setNotifOpen(false)} />
-        <div className="animate-drawerIn absolute inset-y-0 right-0 flex w-[86%] max-w-[340px] flex-col border-l border-line bg-canvas">
-          <div className="flex shrink-0 items-center justify-between border-b border-fg px-4 py-4">
-            <h2 className="titre-section">Notifications</h2>
-            <button onClick={() => setNotifOpen(false)} className="ico tap" aria-label="Fermer">
-              <Icon name="x" className="h-4 w-4" />
+        <div className="absolute inset-0 animate-fadeIn bg-voile" onClick={() => setNotifOpen(false)} />
+        <div className="animate-drawerIn absolute inset-y-0 right-0 flex w-[86%] max-w-[340px] flex-col border-l border-line-soft bg-canvas">
+          <div className="flex shrink-0 items-center justify-between border-b border-line-soft px-4 py-4">
+            <h2 className="text-[20px] font-medium tracking-[-.01em]">Notifications</h2>
+            <button onClick={() => setNotifOpen(false)} className="rond tap" aria-label="Fermer">
+              <Icon name="x" className="h-[17px] w-[17px]" />
             </button>
           </div>
           {unreadNotif > 0 && (
             <button
               onClick={() => setNotifs((ns) => ns.map((n) => ({ ...n, unread: false })))}
-              className="shrink-0 border-b border-line px-4 py-3 text-left font-mono text-[11px] font-bold uppercase tracking-mono text-brand-500 tap"
+              className="shrink-0 border-b border-line-soft px-4 py-3 text-left text-[13.5px] font-semibold text-brand-500 tap"
             >
               Tout marquer comme lu
             </button>
           )}
           <div className="flex-1 overflow-y-auto no-scrollbar">
             {notifs.map((n) => (
-              <div key={n.id} className={`flex gap-3 border-b border-line px-4 py-3.5 ${n.unread ? 'bg-surface-2' : ''}`}>
-                <span className={`ico ${n.unread ? 'plein' : ''}`}>
-                  <Icon name={n.icon} className="h-4 w-4" filled={n.icon === 'heart' || n.icon === 'sparkles'} />
+              <div key={n.id} className={`flex gap-3 border-b border-line-soft px-4 py-3.5 ${n.unread ? 'bg-surface' : ''}`}>
+                <span className="ico">
+                  <Icon name={n.icon} className="h-[18px] w-[18px]" filled={n.icon === 'heart' || n.icon === 'sparkles'} />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-[14px] leading-snug text-fg">{n.text}</p>
-                  <p className="mt-1 text-[12px] text-fg-faint">{n.time}</p>
+                  <p className="mt-1 text-[12.5px] text-fg-faint">{n.time}</p>
                 </div>
-                {n.unread && <span className="mt-1.5 h-2 w-2 shrink-0 bg-brand-500" />}
+                {n.unread && <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-500" />}
               </div>
             ))}
           </div>
@@ -651,46 +724,67 @@ export default function App() {
     )
   }
 
+  /* L'app ne s'ouvre pas sans une édition courue : on montre la prochaine
+     course et comment y prendre sa place, pas un mur. */
+  if (!finisher) {
+    return (
+      <Suspense fallback={null}>
+        <AccesReserve onRelier={() => { setFinisher(true); setRaceOpen(true) }} onFinisher={() => setFinisher(true)} />
+      </Suspense>
+    )
+  }
+
   return (
     <AppContext.Provider value={ctx}>
       <div className={`relative flex h-[100dvh] w-full justify-center overflow-hidden bg-canvas ${eco ? 'eco' : ''}`}>
         {/* Navigation latérale (desktop) — remplace la BottomNav sur grand écran. */}
-        <Sidebar
-          active={tab}
-          onChange={goTo}
-          unread={navUnread}
-          unreadNotif={unreadNotif}
-          onSearch={() => setSearchOpen(true)}
-          onNotif={() => setNotifOpen(true)}
-        />
+        <Sidebar active={tab} onChange={goTo} unread={navUnread} />
 
         {/* Colonne de contenu : pleine largeur sur mobile, colonne centrée et
             confortable sur bureau (vrai layout web, sans maquette « téléphone »). */}
-        <div className="relative flex h-full w-full max-w-[480px] flex-col overflow-hidden bg-canvas lg:max-w-[640px] lg:border-x lg:border-line">
+        {/* Colonne de contenu : pleine largeur sur mobile, 620 px centrés
+            sur bureau — la mesure confortable d'une colonne de lecture. */}
+        <div className="relative flex h-full w-full flex-col overflow-hidden bg-canvas lg:max-w-[620px]">
 
-          {/* La nav du site, en haut : encre à 88 %, le logotype, les icônes craie. */}
+          {/* L'en-tête : craie, le logotype à gauche (le bureau l'a déjà dans
+              la sidebar), et à droite de quoi chercher, voir ses
+              notifications et ouvrir son profil. */}
           {showHeader && (
-            <header className="glass-dark z-20 flex shrink-0 items-center justify-between border-b border-line-craie px-5 pb-2.5 pt-[max(0.9rem,env(safe-area-inset-top))] lg:hidden">
-              <Logo light />
-              <div className="flex items-center gap-1">
+            <header className="z-20 flex shrink-0 items-center justify-between px-5 pb-2.5 pt-[max(0.875rem,env(safe-area-inset-top))]">
+              <span className="lg:invisible"><Logo /></span>
+              <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => setSearchOpen(true)}
-                  className="grid h-10 w-10 place-items-center text-craie tap hover:bg-craie hover:text-encre"
+                  className="grid h-[34px] w-[34px] place-items-center rounded-full text-fg-faint tap hover:bg-craie-2"
                   aria-label="Rechercher"
                 >
-                  <Icon name="search" className="h-[21px] w-[21px]" />
+                  <Icon name="search" className="h-[19px] w-[19px]" />
                 </button>
                 <button
                   onClick={() => setNotifOpen(true)}
-                  className="relative grid h-10 w-10 place-items-center text-craie tap hover:bg-craie hover:text-encre"
+                  className="relative grid h-[34px] w-[34px] place-items-center rounded-full text-fg-faint tap hover:bg-craie-2"
                   aria-label="Notifications"
                 >
-                  <Icon name="bell" className="h-[22px] w-[22px]" />
-                  {unreadNotif > 0 && <span className="absolute right-2 top-2 h-2 w-2 bg-brand-500" />}
+                  <Icon name="bell" className="h-[19px] w-[19px]" />
+                  {unreadNotif > 0 && <span className="absolute right-1.5 top-1.5 h-[7px] w-[7px] rounded-full bg-brand-500" />}
                 </button>
                 <Avatar name={CURRENT_USER.name} size="sm" onClick={() => goTo('profil')} />
               </div>
             </header>
+          )}
+
+          {/* Lecture seule : on le dit une fois, en haut, sans bloquer la page. */}
+          {lectureSeule && (
+            <button
+              onClick={() => setPlansOpen(true)}
+              className="z-10 flex shrink-0 items-center gap-2.5 border-b border-line-soft bg-craie-2 px-5 py-2.5 text-left tap"
+            >
+              <Icon name="lock" className="h-4 w-4 shrink-0 text-fg-muted" />
+              <span className="min-w-0 flex-1 text-[13.5px] leading-snug text-fg-muted">
+                <b className="font-semibold text-fg">Abonnement expiré</b> · tu peux tout lire, mais plus écrire.
+              </span>
+              <span className="shrink-0 text-[13.5px] font-semibold text-brand-500">Reprendre</span>
+            </button>
           )}
 
           <main className="relative flex flex-1 flex-col overflow-hidden">
@@ -700,7 +794,7 @@ export default function App() {
           {toast && (
             <div
               key={toast.key}
-              className="animate-toastIn glass-dark pointer-events-none absolute bottom-24 left-1/2 z-50 -translate-x-1/2 border-l-[3px] border-brand-500 px-4 py-2.5 font-mono text-[11px] font-bold uppercase tracking-mono text-craie"
+              className="animate-toastIn pointer-events-none absolute bottom-[104px] left-1/2 z-50 -translate-x-1/2 rounded-full bg-encre px-5 py-[11px] text-[13.5px] font-medium text-craie"
             >
               {toast.msg}
             </div>
@@ -714,6 +808,13 @@ export default function App() {
             {pipelineOpen && <PipelineSheet onClose={() => setPipelineOpen(false)} />}
             {runMatchOpen && <RunMatchSheet onClose={() => setRunMatchOpen(false)} />}
             {raceOpen && <RaceSheet onClose={() => setRaceOpen(false)} />}
+            {news.open && (
+              <NewsSheet
+                id={news.id}
+                onSelect={(id) => setNews({ open: true, id })}
+                onClose={() => setNews({ open: false, id: null })}
+              />
+            )}
             {member && <MemberSheet name={member} onClose={() => setMember(null)} />}
             {activityId && <ActivitySheet id={activityId} onClose={() => setActivityId(null)} />}
             {eventId && <EventSheet id={eventId} onClose={() => setEventId(null)} />}
@@ -721,7 +822,7 @@ export default function App() {
             {roiInfoOpen && <RoiInfoSheet onClose={() => setRoiInfoOpen(false)} />}
             {integrationsOpen && <IntegrationsSheet onClose={() => setIntegrationsOpen(false)} />}
           </Suspense>
-          <PostComposer open={composerOpen} onClose={() => setComposerOpen(false)} onPublish={publishPost} />
+          <PostComposer open={composerOpen} onClose={() => setComposerOpen(false)} onPublish={verrou(publishPost, 'publier')} />
           <NotifDrawer />
 
           <BottomNav active={tab} onChange={goTo} unread={navUnread} />
