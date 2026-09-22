@@ -87,7 +87,7 @@ function detectEcoDefault() {
 function ScreenFallback() {
   return (
     <div className="flex flex-1 items-center justify-center" aria-busy="true">
-      <span className="h-1 w-24 bg-line-strong"><span className="block h-full w-1/3 animate-pulse bg-brand-500" /></span>
+      <span className="h-1 w-24 overflow-hidden rounded-full bg-craie-2"><span className="block h-full w-1/3 animate-pulse rounded-full bg-brand-500" /></span>
       <span className="sr-only">Chargement…</span>
     </div>
   )
@@ -164,7 +164,7 @@ export default function App() {
 
   // Onboarding · explication ROI · recherche globale
   const [onboarding, setOnboarding] = useState(() => {
-    try { return !localStorage.getItem('roi_onboarded') } catch { return true }
+    try { return !localStorage.getItem('roi2_onboarded') } catch { return true }
   })
   const [roiInfoOpen, setRoiInfoOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -438,7 +438,7 @@ export default function App() {
   }
 
   function finishOnboarding() {
-    try { localStorage.setItem('roi_onboarded', '1') } catch { /* stockage indisponible */ }
+    try { localStorage.setItem('roi2_onboarded', '1') } catch { /* stockage indisponible */ }
     setOnboarding(false)
   }
 
@@ -595,7 +595,9 @@ export default function App() {
   }
 
   const inChat = tab === 'messages' && (openConv || openGroup)
-  const showHeader = !inChat && tab !== 'profil'
+  // L'en-tête craie est sur tous les écrans ; seule une conversation ouverte
+  // la remplace par son propre bandeau (retour, avatar, nom).
+  const showHeader = !inChat
   const anyOverlay =
     member || activityId || eventId || composerOpen || notifOpen || editProfileOpen ||
     roiInfoOpen || integrationsOpen || searchOpen || plansOpen || inviteOpen || agendaOpen ||
@@ -616,33 +618,33 @@ export default function App() {
     if (!notifOpen) return null
     return (
       <div className="absolute inset-0 z-40">
-        <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={() => setNotifOpen(false)} />
-        <div className="animate-drawerIn absolute inset-y-0 right-0 flex w-[86%] max-w-[340px] flex-col border-l border-line bg-canvas">
-          <div className="flex shrink-0 items-center justify-between border-b border-fg px-4 py-4">
-            <h2 className="titre-section">Notifications</h2>
-            <button onClick={() => setNotifOpen(false)} className="ico tap" aria-label="Fermer">
-              <Icon name="x" className="h-4 w-4" />
+        <div className="absolute inset-0 animate-fadeIn bg-voile" onClick={() => setNotifOpen(false)} />
+        <div className="animate-drawerIn absolute inset-y-0 right-0 flex w-[86%] max-w-[340px] flex-col border-l border-line-soft bg-canvas">
+          <div className="flex shrink-0 items-center justify-between border-b border-line-soft px-4 py-4">
+            <h2 className="text-[20px] font-medium tracking-[-.01em]">Notifications</h2>
+            <button onClick={() => setNotifOpen(false)} className="rond tap" aria-label="Fermer">
+              <Icon name="x" className="h-[17px] w-[17px]" />
             </button>
           </div>
           {unreadNotif > 0 && (
             <button
               onClick={() => setNotifs((ns) => ns.map((n) => ({ ...n, unread: false })))}
-              className="shrink-0 border-b border-line px-4 py-3 text-left font-mono text-[11px] font-bold uppercase tracking-mono text-brand-500 tap"
+              className="shrink-0 border-b border-line-soft px-4 py-3 text-left text-[13.5px] font-semibold text-brand-500 tap"
             >
               Tout marquer comme lu
             </button>
           )}
           <div className="flex-1 overflow-y-auto no-scrollbar">
             {notifs.map((n) => (
-              <div key={n.id} className={`flex gap-3 border-b border-line px-4 py-3.5 ${n.unread ? 'bg-surface-2' : ''}`}>
-                <span className={`ico ${n.unread ? 'plein' : ''}`}>
-                  <Icon name={n.icon} className="h-4 w-4" filled={n.icon === 'heart' || n.icon === 'sparkles'} />
+              <div key={n.id} className={`flex gap-3 border-b border-line-soft px-4 py-3.5 ${n.unread ? 'bg-surface' : ''}`}>
+                <span className="ico">
+                  <Icon name={n.icon} className="h-[18px] w-[18px]" filled={n.icon === 'heart' || n.icon === 'sparkles'} />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-[14px] leading-snug text-fg">{n.text}</p>
-                  <p className="mt-1 text-[12px] text-fg-faint">{n.time}</p>
+                  <p className="mt-1 text-[12.5px] text-fg-faint">{n.time}</p>
                 </div>
-                {n.unread && <span className="mt-1.5 h-2 w-2 shrink-0 bg-brand-500" />}
+                {n.unread && <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-500" />}
               </div>
             ))}
           </div>
@@ -655,38 +657,35 @@ export default function App() {
     <AppContext.Provider value={ctx}>
       <div className={`relative flex h-[100dvh] w-full justify-center overflow-hidden bg-canvas ${eco ? 'eco' : ''}`}>
         {/* Navigation latérale (desktop) — remplace la BottomNav sur grand écran. */}
-        <Sidebar
-          active={tab}
-          onChange={goTo}
-          unread={navUnread}
-          unreadNotif={unreadNotif}
-          onSearch={() => setSearchOpen(true)}
-          onNotif={() => setNotifOpen(true)}
-        />
+        <Sidebar active={tab} onChange={goTo} unread={navUnread} />
 
         {/* Colonne de contenu : pleine largeur sur mobile, colonne centrée et
             confortable sur bureau (vrai layout web, sans maquette « téléphone »). */}
-        <div className="relative flex h-full w-full max-w-[480px] flex-col overflow-hidden bg-canvas lg:max-w-[640px] lg:border-x lg:border-line">
+        {/* Colonne de contenu : pleine largeur sur mobile, 620 px centrés
+            sur bureau — la mesure confortable d'une colonne de lecture. */}
+        <div className="relative flex h-full w-full flex-col overflow-hidden bg-canvas lg:max-w-[620px]">
 
-          {/* La nav du site, en haut : encre à 88 %, le logotype, les icônes craie. */}
+          {/* L'en-tête : craie, le logotype à gauche (le bureau l'a déjà dans
+              la sidebar), et à droite de quoi chercher, voir ses
+              notifications et ouvrir son profil. */}
           {showHeader && (
-            <header className="glass-dark z-20 flex shrink-0 items-center justify-between border-b border-line-craie px-5 pb-2.5 pt-[max(0.9rem,env(safe-area-inset-top))] lg:hidden">
-              <Logo light />
-              <div className="flex items-center gap-1">
+            <header className="z-20 flex shrink-0 items-center justify-between px-5 pb-2.5 pt-[max(0.875rem,env(safe-area-inset-top))]">
+              <span className="lg:invisible"><Logo /></span>
+              <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => setSearchOpen(true)}
-                  className="grid h-10 w-10 place-items-center text-craie tap hover:bg-craie hover:text-encre"
+                  className="grid h-[34px] w-[34px] place-items-center rounded-full text-fg-faint tap hover:bg-craie-2"
                   aria-label="Rechercher"
                 >
-                  <Icon name="search" className="h-[21px] w-[21px]" />
+                  <Icon name="search" className="h-[19px] w-[19px]" />
                 </button>
                 <button
                   onClick={() => setNotifOpen(true)}
-                  className="relative grid h-10 w-10 place-items-center text-craie tap hover:bg-craie hover:text-encre"
+                  className="relative grid h-[34px] w-[34px] place-items-center rounded-full text-fg-faint tap hover:bg-craie-2"
                   aria-label="Notifications"
                 >
-                  <Icon name="bell" className="h-[22px] w-[22px]" />
-                  {unreadNotif > 0 && <span className="absolute right-2 top-2 h-2 w-2 bg-brand-500" />}
+                  <Icon name="bell" className="h-[19px] w-[19px]" />
+                  {unreadNotif > 0 && <span className="absolute right-1.5 top-1.5 h-[7px] w-[7px] rounded-full bg-brand-500" />}
                 </button>
                 <Avatar name={CURRENT_USER.name} size="sm" onClick={() => goTo('profil')} />
               </div>
@@ -700,7 +699,7 @@ export default function App() {
           {toast && (
             <div
               key={toast.key}
-              className="animate-toastIn glass-dark pointer-events-none absolute bottom-24 left-1/2 z-50 -translate-x-1/2 border-l-[3px] border-brand-500 px-4 py-2.5 font-mono text-[11px] font-bold uppercase tracking-mono text-craie"
+              className="animate-toastIn pointer-events-none absolute bottom-[104px] left-1/2 z-50 -translate-x-1/2 rounded-full bg-encre px-5 py-[11px] text-[13.5px] font-medium text-craie"
             >
               {toast.msg}
             </div>

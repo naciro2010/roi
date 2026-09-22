@@ -25,8 +25,8 @@ export default function PostComposer({ open, onClose, onPublish }) {
 
   return (
     <div className="absolute inset-0 z-40">
-      <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
-      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[90%] flex-col overflow-hidden bg-canvas">
+      <div className="absolute inset-0 animate-fadeIn bg-voile" onClick={onClose} />
+      <div className="animate-sheetIn absolute inset-x-0 bottom-0 mx-auto flex max-h-[88dvh] w-full max-w-[560px] flex-col overflow-hidden rounded-t-3xl bg-canvas">
         <div className="flex shrink-0 items-center justify-between border-b border-fg px-5 py-3.5">
           <button onClick={onClose} className="font-mono text-[10px] font-bold uppercase tracking-mono text-fg-muted tap">Annuler</button>
           <h2 className="titre-section">Écrire dans le fil</h2>

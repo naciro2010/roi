@@ -8,7 +8,7 @@
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#EFEBE2",
-  "theme_color": "#070707",
+  "theme_color": "#EFEBE2",
   "categories": ["business", "social", "sports", "lifestyle"],
   "icons": [
     {

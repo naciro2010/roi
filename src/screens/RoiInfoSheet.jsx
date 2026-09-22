@@ -31,14 +31,14 @@ export default function RoiInfoSheet({ onClose }) {
   const u = CURRENT_USER
   return (
     <div className="absolute inset-0 z-40">
-      <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
-      <div className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[92%] flex-col overflow-hidden bg-canvas">
-        <div className="surface-hero relative shrink-0 px-5 pb-5 pt-6">
-          <button onClick={onClose} className="absolute right-3 top-3 grid h-9 w-9 place-items-center border border-craie/30 text-craie tap" aria-label="Fermer">
+      <div className="absolute inset-0 animate-fadeIn bg-voile" onClick={onClose} />
+      <div className="animate-sheetIn absolute inset-x-0 bottom-0 mx-auto flex max-h-[88dvh] w-full max-w-[560px] flex-col overflow-hidden rounded-t-3xl bg-canvas">
+        <div className="relative shrink-0 border-b border-line-soft px-5 pb-5 pt-6">
+          <button onClick={onClose} className="absolute right-3 top-3 rond tap" aria-label="Fermer">
             <Icon name="x" className="h-4 w-4" />
           </button>
-          <span className="titre-section text-craie">Comment on compte</span>
-          <h2 className="mt-3 text-[22px] text-craie">Ce que ton réseau te rapporte.</h2>
+          <span className="titre-section">Comment on compte</span>
+          <h2 className="mt-3 text-[22px]">Ce que ton réseau te rapporte.</h2>
           <p className="mt-2 max-w-[38ch] text-[14px] leading-relaxed t-muted">
             R.O.I veut dire « retour sur investissement ». Ici, ce que tu investis, ce sont des kilomètres et du
             temps — et ce que ça rapporte, ce sont des relations qui servent à quelque chose.
@@ -64,7 +64,7 @@ export default function RoiInfoSheet({ onClose }) {
           <div className="mt-2 border-t border-fg">
             {MESURES.map((m, i) => (
               <div key={m.cle} className="flex items-start gap-3 border-b border-line py-3.5">
-                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center bg-brand-500 font-mono text-[11px] font-bold text-craie">
+                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center bg-brand-500 font-mono text-[11px] font-bold">
                   {i + 1}
                 </span>
                 <div className="min-w-0">

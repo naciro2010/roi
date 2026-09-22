@@ -31,15 +31,15 @@ export default function EventSheet({ id, onClose }) {
 
   return (
     <div className="absolute inset-0 z-40">
-      <div className="absolute inset-0 animate-fadeIn bg-black/65" onClick={onClose} />
-      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-surface">
+      <div className="absolute inset-0 animate-fadeIn bg-voile" onClick={onClose} />
+      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 mx-auto flex max-h-[88dvh] w-full max-w-[560px] flex-col overflow-hidden rounded-t-3xl bg-surface">
         {/* Carte du parcours */}
         <div className="relative h-48 shrink-0 bg-surface-2">
           {e.route ? <RouteMap route={e.route} className="h-full w-full" /> : <div className="absolute inset-0 surface-hero" />}
           <div {...drag.handleProps} className="absolute left-1/2 top-0 z-[500] flex h-9 w-24 -translate-x-1/2 items-center justify-center" aria-hidden="true">
-            <div className="mt-2.5 h-1.5 w-12 bg-craie/70" />
+            <div className="mt-2.5 h-1.5 w-12 rounded-full bg-craie/80" />
           </div>
-          <button onClick={onClose} className="absolute right-3 top-3 z-[500] grid h-9 w-9 place-items-center border border-craie/40 bg-encre/80 text-craie tap" aria-label="Fermer">
+          <button onClick={onClose} className="absolute right-3 top-3 z-[500] rond bg-craie tap" aria-label="Fermer">
             <Icon name="x" className="h-5 w-5" />
           </button>
           <span className="pointer-events-none absolute left-4 top-3 z-[500] bg-craie/85 px-2.5 py-1 text-[11px] font-semibold text-fg-soft backdrop-blur">

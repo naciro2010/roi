@@ -53,25 +53,25 @@ export default function RunMatchSheet({ onClose }) {
 
   return (
     <div className="absolute inset-0 z-40">
-      <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
+      <div className="absolute inset-0 animate-fadeIn bg-voile" onClick={onClose} />
       <div
         style={drag.style}
-        className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-canvas"
+        className="animate-sheetIn absolute inset-x-0 bottom-0 mx-auto flex max-h-[88dvh] w-full max-w-[560px] flex-col overflow-hidden rounded-t-3xl bg-canvas"
       >
         {/* En-tête */}
-        <div className="relative shrink-0 overflow-hidden surface-hero px-5 pb-5 pt-3 text-craie">
-          <div {...drag.handleProps} className="relative mx-auto mb-3 h-1 w-10 bg-craie/30" aria-hidden="true" />
+        <div className="relative shrink-0 overflow-hidden border-b border-line-soft px-5 pb-5 pt-3">
+          <div {...drag.handleProps} className="relative mx-auto mb-3 h-1 w-10 rounded-full bg-line-strong" aria-hidden="true" />
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 z-10 grid h-9 w-9 place-items-center border border-craie/30 text-craie tap"
+            className="absolute right-4 top-4 z-10 rond tap"
             aria-label="Fermer"
           >
             <Icon name="x" className="h-5 w-5" />
           </button>
           <div className="relative">
-            <span className="titre-section text-craie">Courir à deux</span>
-            <h2 className="titre mt-2 text-[22px] leading-tight text-craie">Ton binôme de sortie</h2>
-            <p className="mt-2 max-w-[38ch] text-[14px] leading-relaxed text-craie/70">
+            <span className="titre-section">Courir à deux</span>
+            <h2 className="titre mt-2 text-[22px] leading-tight">Ton binôme de sortie</h2>
+            <p className="mt-2 max-w-[38ch] text-[14px] leading-relaxed text-fg-muted">
               On te propose quelqu’un qui court à peu près à ton allure, avec un jour, une heure et un lieu.
               Vous courez ensemble : la sortie tient lieu de rendez-vous.
             </p>
@@ -155,10 +155,10 @@ export default function RunMatchSheet({ onClose }) {
           {lockedCount > 0 && (
             <button
               onClick={openPlans}
-              className="relative w-full overflow-hidden surface-hero p-4 text-left text-craie tap"
+              className="relative w-full overflow-hidden rounded-2xl surface-hero p-4 text-left text-craie tap"
             >
               <div className="relative flex items-center gap-3">
-                <span className="grid h-10 w-10 shrink-0 place-items-center bg-craie/15 text-craie">
+                <span className="grid h-10 w-10 shrink-0 place-items-center bg-craie/15">
                   <Icon name="lock" className="h-5 w-5" />
                 </span>
                 <div className="min-w-0 flex-1">

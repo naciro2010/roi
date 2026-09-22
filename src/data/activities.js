@@ -3,6 +3,8 @@
    `route` = liste de points [lat, lng] tracés sur une vraie carte (Leaflet/OSM).
    Les tracés suivent grossièrement des parcours connus de Paris. */
 
+import { CURRENT_USER } from './user'
+
 export const ACTIVITIES = [
   {
     id: 'r1',
@@ -112,6 +114,32 @@ export const ACTIVITIES = [
     ],
   },
 ]
+
+/* ------------------------------------------------------ « Cette semaine »
+   Le résumé du bloc encre de l'Accueil : le volume de la semaine en cours,
+   le nombre de sorties, le temps passé à courir, et la part courue à
+   plusieurs. Le volume déclaré (user.week) fait foi pour les totaux ; les
+   sorties d'ACTIVITIES donnent le détail des kilomètres partagés. */
+export function resumeSemaine(me = CURRENT_USER.name) {
+  const w = CURRENT_USER.week
+  const km = w.km.reduce((s, v) => s + v, 0)
+  const sorties = w.runs ?? w.km.filter((v) => v > 0).length
+  const kmAvec = w.kmAvec ?? ACTIVITIES
+    .filter((a) => a.athlete === me && a.metContacts.length > 0)
+    .reduce((s, a) => s + a.distance, 0)
+  return { km, sorties, temps: dureeCourte(w.time), kmAvec }
+}
+
+/* « 3:21:00 » → « 3 h 21 ». Les minutes seules restent en minutes. */
+export function dureeCourte(hms = '') {
+  const [h, m] = hms.split(':')
+  return Number(h) > 0 ? `${Number(h)} h ${m}` : `${Number(m)} min`
+}
+
+/* Le nombre à la française : 36.5 → « 36,5 ». */
+export function nombre(v, decimales = 1) {
+  return Number(v).toLocaleString('fr-FR', { minimumFractionDigits: decimales, maximumFractionDigits: decimales })
+}
 
 export function activityById(id) {
   return ACTIVITIES.find((a) => a.id === id)

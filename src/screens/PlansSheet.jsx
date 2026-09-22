@@ -19,16 +19,16 @@ export default function PlansSheet({ onClose }) {
 
   return (
     <div className="absolute inset-0 z-40">
-      <div className="absolute inset-0 animate-fadeIn bg-black/70" onClick={onClose} />
-      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 flex max-h-[94%] flex-col overflow-hidden bg-canvas">
+      <div className="absolute inset-0 animate-fadeIn bg-voile" onClick={onClose} />
+      <div style={drag.style} className="animate-sheetIn absolute inset-x-0 bottom-0 mx-auto flex max-h-[88dvh] w-full max-w-[560px] flex-col overflow-hidden rounded-t-3xl bg-canvas">
         {/* En-tête encre */}
-        <div className="surface-hero relative shrink-0 px-5 pb-5 pt-3">
-          <div {...drag.handleProps} className="mx-auto mb-4 h-1 w-10 bg-craie/30" aria-hidden="true" />
-          <button onClick={onClose} className="absolute right-4 top-4 grid h-9 w-9 place-items-center border border-craie/30 text-craie tap" aria-label="Fermer">
+        <div className="relative shrink-0 border-b border-line-soft px-5 pb-5 pt-3">
+          <div {...drag.handleProps} className="mx-auto mb-4 h-1 w-10 rounded-full bg-line-strong" aria-hidden="true" />
+          <button onClick={onClose} className="absolute right-4 top-4 rond tap" aria-label="Fermer">
             <Icon name="x" className="h-4 w-4" />
           </button>
-          <span className="titre-section text-craie">Ta formule</span>
-          <h2 className="mt-3 text-[24px] text-craie">La course est la même.<br /><span className="creuse">Le réseau, non.</span></h2>
+          <span className="titre-section">Ta formule</span>
+          <h2 className="mt-3 text-[24px]">La course est la même.<br /><span className="creuse">Le réseau, non.</span></h2>
           <p className="mt-3 max-w-[40ch] text-[14px] leading-relaxed t-muted">
             Aucune formule n’achète une meilleure course. Ce qui change, c’est le moment où ton réseau démarre,
             et le nombre de rencontres qu’on te propose ensuite.
@@ -67,7 +67,7 @@ export default function PlansSheet({ onClose }) {
                     )}
                     {p.features.map((f) => (
                       <li key={f} className="flex gap-2.5 border-b b-ligne py-2 text-[12.5px] leading-snug t-muted">
-                        <span className="mt-[6px] h-1.5 w-1.5 shrink-0 bg-brand-500" />{f}
+                        <span className="mt-[6px] h-1.5 w-1.5 shrink-0 rounded-full bg-brand-500" />{f}
                       </li>
                     ))}
                   </ul>

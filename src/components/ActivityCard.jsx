@@ -29,7 +29,7 @@ export function ActivityPreview({ activity, onOpen, mapClass = 'h-44' }) {
         <RouteMap route={activity.route} className="h-full w-full" />
         <div className="pointer-events-none absolute left-2.5 top-2.5 flex items-center gap-1.5">
           <span className="inline-flex items-center gap-1.5 bg-craie/90 px-2 py-1 font-mono text-[9.5px] font-bold uppercase tracking-mono text-fg">
-            <span className="h-1.5 w-1.5 bg-brand-500" /> {activity.type}
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-500" /> {activity.type}
           </span>
           {activity.metContacts?.length > 0 && (
             <span className="inline-flex items-center gap-1 bg-brand-500 px-2 py-1 font-mono text-[9.5px] font-bold text-craie">
@@ -70,7 +70,7 @@ export function ActivityCard({ activity, kudo, onKudo, onOpen, onOpenAthlete }) 
       {/* La première chose sous le titre : avec qui. La valeur d'une sortie,
           c'est qui on a rencontré, pas le chrono. */}
       <div className="mt-1 flex items-center gap-1.5 px-3.5 pb-2.5 font-mono text-[11px] font-bold uppercase tracking-mono">
-        <span className={`h-1.5 w-1.5 shrink-0 ${avec ? 'bg-brand-500' : 'bg-fg-faint'}`} />
+        <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${avec ? 'bg-brand-500' : 'bg-fg-faint'}`} />
         <span className={`truncate ${avec ? 'text-fg' : 'text-fg-faint'}`}>{couruAvec(activity.metContacts)}</span>
       </div>
 

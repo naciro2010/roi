@@ -1,23 +1,24 @@
-// Avatars « La Ligne » : des carrés de craie ou d'encre, initiales en Archivo
-// étendu. Une seule variante orange pour rythmer les listes.
+// Avatars : pas de photo. Les initiales (deux lettres au plus) sur un fond
+// déterministe — le nom donne toujours la même couleur. Palette resserrée
+// de huit paires [fond, texte], toujours en rond.
 export const AVATAR_TINTS = [
-  'bg-craie-2 text-fg',
-  'bg-encre text-craie',
-  'bg-craie-3 text-fg',
-  'bg-encre-2 text-craie',
-  'bg-craie-2 text-fg',
-  'bg-brand-500 text-encre',
-  'bg-craie-3 text-fg',
+  'bg-craie-2 text-encre', // #E7E1D4 / #131211
+  'bg-encre text-craie', // #131211 / #EFEBE2
+  'bg-craie-3 text-encre', // #D9D2C2 / #131211
+  'bg-encre-2 text-craie', // #2A2723 / #EFEBE2
+  'bg-brand-500 text-craie', // #FF4400 / #EFEBE2
+  'bg-craie-2 text-encre',
+  'bg-craie-3 text-encre',
   'bg-encre text-craie',
 ]
 
 export const AVATAR_SIZES = {
-  xs: 'w-7 h-7 text-[10px]',
-  sm: 'w-9 h-9 text-xs',
-  md: 'w-11 h-11 text-sm',
-  lg: 'w-14 h-14 text-base',
-  xl: 'w-20 h-20 text-2xl',
-  '2xl': 'w-24 h-24 text-3xl',
+  xs: 'w-8 h-8 text-[11px]',
+  sm: 'w-[34px] h-[34px] text-[12px]',
+  md: 'w-10 h-10 text-[13px]',
+  lg: 'w-[46px] h-[46px] text-[15px]',
+  xl: 'w-[60px] h-[60px] text-[19px]',
+  '2xl': 'w-[66px] h-[66px] text-[22px]',
 }
 
 export function initials(name) {

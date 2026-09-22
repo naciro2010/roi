@@ -15,7 +15,8 @@ export const CURRENT_USER = {
   interests: ['Levée d’amorçage', 'Produit', 'Sorties longues', 'Café d’arrivée', 'Design'],
   stats: { km: 42, sorties: 6, defis: 2 },
   // Volume des 7 derniers jours (lun→dim), en km — pour le résumé « Cette semaine ».
-  week: { days: ['L', 'M', 'M', 'J', 'V', 'S', 'D'], km: [6.2, 0, 8.1, 5.3, 0, 12.4, 4.5], runs: 5, time: '3:21:00' },
+  // `kmAvec` : la part courue avec au moins une autre personne.
+  week: { days: ['L', 'M', 'M', 'J', 'V', 'S', 'D'], km: [6.2, 0, 8.1, 5.3, 0, 12.4, 4.5], runs: 5, time: '3:21:00', kmAvec: 27.6 },
   roi: {
     score: 78,
     weekDelta: 6,

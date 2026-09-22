@@ -54,8 +54,10 @@ const ICON_PATHS = {
   medal: 'M8.2 13.5 5 3h4l2.5 6M15.8 13.5 19 3h-4l-2.5 6M12 22a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 15v2',
 }
 
-export default function Icon({ name, className = 'w-5 h-5', filled = false }) {
-  const stroke = { fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }
+/* Traits SVG, jamais de pictogramme plein : `strokeWidth` 1.8 partout
+   (1.9 dans la nav basse), un peu plus léger que l'ancien 2. */
+export default function Icon({ name, className = 'w-5 h-5', filled = false, strokeWidth = 1.8 }) {
+  const stroke = { fill: 'none', stroke: 'currentColor', strokeWidth, strokeLinecap: 'round', strokeLinejoin: 'round' }
   if (name === 'heart') {
     return (
       <svg viewBox="0 0 24 24" className={className} {...stroke} fill={filled ? 'currentColor' : 'none'}>
