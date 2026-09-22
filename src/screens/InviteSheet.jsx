@@ -25,7 +25,7 @@ export default function InviteSheet({ onClose }) {
   const [email, setEmail] = useState('')
   const [teamEmail, setTeamEmail] = useState('')
 
-  const isCercle = plan === 'business'
+  const isCercle = plan === 'cercle'
 
   function copyLink() {
     try { navigator.clipboard?.writeText(REFERRAL.url) } catch { /* presse-papier indisponible */ }
@@ -178,7 +178,7 @@ export default function InviteSheet({ onClose }) {
             <div className="space-y-5">
               {!isCercle ? (
                 <section className="surface-hero rounded-2xl p-5">
-                  <span className="titre-section">La formule Cercle</span>
+                  <span className="titre-section">Le palier Cercle</span>
                   <h3 className="mt-3 text-[20px]">Les dossards<br /><span className="creuse">de ton équipe.</span></h3>
                   <p className="mt-2 max-w-[36ch] text-[13px] leading-relaxed t-muted">
                     Le Cercle comprend trois dossards invités pour ton équipe ou tes associés. Quarante places, sur cooptation de deux membres.

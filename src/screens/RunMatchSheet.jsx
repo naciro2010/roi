@@ -163,7 +163,7 @@ export default function RunMatchSheet({ onClose }) {
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-extrabold">{lockedCount} autre{lockedCount > 1 ? 's' : ''} binôme{lockedCount > 1 ? 's' : ''} pour toi</div>
-                  <p className="text-[12px] text-craie/60">Un binôme par semaine avec ta formule {planMeta?.name ?? 'Dossard'} · tous tes binômes en Premium.</p>
+                  <p className="text-[12px] text-craie/60">Un binôme par semaine avec ton palier {planMeta?.name ?? 'Membre'} · tous tes binômes en Premium.</p>
                 </div>
                 <span className="shrink-0 bg-craie px-3 py-1.5 text-xs font-bold text-fg">Premium</span>
               </div>

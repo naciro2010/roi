@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { useApp } from '../AppContext'
 import Sheet, { SheetBloc } from '../components/Sheet'
 import { lierDossier } from '../lib/dossier'
+import Icon from '../components/Icon'
 import {
-  EDITION, daysToRace, siteUrl, DISTANCES, distanceById, formuleById,
-  VAGUES, vagueCourante, PROGRAMME,
+  EDITION, daysToRace, siteUrl, DISTANCES, distanceById,
+  VAGUES, vagueCourante, PROGRAMME, numeroDossard,
 } from '../data/race'
+import { CURRENT_USER } from '../data/user'
 
 /* ==========================================================================
    LA COURSE — ouverte depuis la ligne de l'Accueil et depuis « Ma course ».
@@ -14,7 +16,7 @@ import {
    ici on y va, ou on relie un dossier déjà ouvert.
    ========================================================================== */
 export default function RaceSheet({ onClose }) {
-  const { dossier, lierDossierApp, delierDossier, showToast } = useApp()
+  const { dossier, lierDossierApp, delierDossier, showToast, avancement } = useApp()
   const [relier, setRelier] = useState(false)
   const jours = daysToRace()
   const vague = vagueCourante()
@@ -29,13 +31,49 @@ export default function RaceSheet({ onClose }) {
           <span className="pb-2 text-[14px] text-craie/70">jours avant la course</span>
         </div>
         <p className="mt-3.5 text-[14.5px] leading-[1.55] text-craie/80">
-          {EDITION.label} · {EDITION.lieu} · {EDITION.mois.toLowerCase()}. 5, 10 ou 21,1 km le matin, puis tout un
-          après-midi dans l’Arena. {EDITION.jauge}.
+          {EDITION.label} · {EDITION.lieu} · {EDITION.jour.toLowerCase()}. 5, 10 ou 21,1 km le matin, puis tout un
+          après-midi dans l’Arena. {EDITION.jauge}. {EDITION.cadence}
         </p>
       </SheetBloc>
 
+      {/* ---- Ta route vers l'édition ---- */}
+      <h3 className="titre-section mb-2.5 mt-6">Ta route vers l’{EDITION.label}</h3>
+      <ol className="flex flex-col">
+        {avancement.etapes.map((e, i) => {
+          const fait = e.statut === 'fait'
+          const encours = e.statut === 'encours'
+          return (
+            <li key={e.id} className="flex gap-3.5">
+              {/* la colonne des pastilles, reliées par un filet */}
+              <div className="flex w-7 shrink-0 flex-col items-center">
+                <span
+                  className={`grid h-7 w-7 shrink-0 place-items-center rounded-full ${
+                    fait ? 'bg-brand-500 text-craie' : encours ? 'border border-line-strong text-fg' : 'border border-line text-fg-faint'
+                  }`}
+                >
+                  <Icon name={fait ? 'check' : e.icon} className="h-[14px] w-[14px]" />
+                </span>
+                {i < avancement.etapes.length - 1 && (
+                  <span className={`w-px flex-1 ${fait ? 'bg-brand-500/40' : 'bg-line-soft'}`} aria-hidden />
+                )}
+              </div>
+              <div className="min-w-0 flex-1 pb-5">
+                <div className="flex items-baseline gap-2">
+                  <span className={`text-[15px] font-semibold ${fait || encours ? '' : 'text-fg-faint'}`}>{e.titre}</span>
+                  {e.ouvreDans > 0 && (
+                    <span className="text-[12.5px] text-fg-faint">dans {e.ouvreDans} j</span>
+                  )}
+                </div>
+                <p className="mt-0.5 text-[13.5px] leading-[1.45] text-fg-muted">{e.texte}</p>
+              </div>
+            </li>
+          )
+        })}
+      </ol>
+
       {/* ---- Les trois distances ---- */}
-      <div className="mt-[18px] flex flex-col gap-2.5">
+      <h3 className="titre-section mb-2.5 mt-2">Les distances</h3>
+      <div className="flex flex-col gap-2.5">
         {DISTANCES.map((d) => (
           <div key={d.id} className="flex items-center gap-3.5 rounded-lg border border-line bg-surface px-[18px] py-4">
             <span className="w-[72px] shrink-0 text-[19px] font-medium tabular-nums">{d.label}</span>
@@ -65,11 +103,25 @@ export default function RaceSheet({ onClose }) {
 
       {/* ---- Ton inscription ---- */}
       <h3 className="titre-section mb-2.5 mt-6">Ton inscription</h3>
+      {CURRENT_USER.dossard?.numero && (
+        <div className="mb-3.5 flex items-center gap-4 rounded-lg border border-line bg-surface px-[18px] py-4">
+          <span className="min-w-0">
+            <span className="block text-[12.5px] text-fg-faint">Dossard</span>
+            <span className="block text-[26px] font-medium leading-none tabular-nums">
+              {numeroDossard(CURRENT_USER.dossard.numero)}
+            </span>
+          </span>
+          <span className="ml-auto shrink-0 text-right">
+            <span className="block text-[12.5px] text-fg-faint">Distance</span>
+            <span className="block text-[15px] font-semibold">{distanceById(CURRENT_USER.dossard.distance).label}</span>
+          </span>
+        </div>
+      )}
       {dossier ? (
         <>
           <p className="text-[14.5px] leading-[1.6] text-fg-soft">
-            Ta place est gardée : {distanceById(dossier.distance).label}, formule {formuleById(dossier.formule).nom},
-            dossier {dossier.reference}. Le site garde la vérité du dossier.
+            Ta place est gardée : {distanceById(dossier.distance).label}, dossier {dossier.reference}.
+            Le site garde la vérité du dossier.
           </p>
           <div className="mt-4 flex flex-wrap gap-2.5">
             <a
@@ -91,7 +143,7 @@ export default function RaceSheet({ onClose }) {
       ) : (
         <>
           <p className="text-[14.5px] leading-[1.6] text-fg-soft">
-            L’inscription se fait sur runoninvest.fr, en cinq minutes : un compte, une distance, une formule.
+            L’inscription se fait sur runoninvest.fr, en cinq minutes : un compte, une distance, une vague.
             L’app lit ensuite ton dossier et ton dossard s’affiche ici.
           </p>
           <div className="mt-4 flex flex-wrap gap-2.5">

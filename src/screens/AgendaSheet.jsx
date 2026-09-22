@@ -162,7 +162,7 @@ export default function AgendaSheet({ onClose }) {
                 <Icon name="lock" className="h-4 w-4" />
               </span>
               <span className="min-w-0 flex-1 text-[13.5px] leading-snug text-fg-soft">
-                Avec la formule Premium, tu peux réserver six rencontres à l’avance.
+                Avec le palier Premium, tu peux réserver six rencontres à l’avance.
               </span>
               <span className="shrink-0 font-mono text-[10px] font-bold uppercase tracking-mono text-brand-500">Premium →</span>
             </button>

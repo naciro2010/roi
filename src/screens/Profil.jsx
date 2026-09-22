@@ -3,7 +3,8 @@ import Icon from '../components/Icon'
 import { SectionTitle, PlanBadge, Tuile } from '../components/primitives'
 import { CURRENT_USER } from '../data/user'
 import { SERVICES } from '../data/integrations'
-import { EDITION } from '../data/race'
+import { EDITION, EDITION_PILOTE, numeroDossard, distanceById } from '../data/race'
+import { dateLongue } from '../data/plans'
 import { initials } from '../lib/avatar'
 
 /* Une ligne de réglage : une icône, un libellé, une indication à droite, un
@@ -25,6 +26,7 @@ export default function Profil() {
     showToast, openEditProfile, replayOnboarding, openIntegrations, integrations,
     profile, resetDemo, plan, planMeta, openPlans, openInvite, referralJoined,
     meetings, openAgenda, eco, toggleEco, openRace, openPipeline, openRoiInfo, pipeline,
+    etatAbo, simulerExpiration, simulerFinisher, openNews,
   } = useApp()
   const u = CURRENT_USER
   const connectes = SERVICES.filter((s) => integrations[s.id]).length
@@ -43,6 +45,10 @@ export default function Profil() {
             <PlanBadge plan={plan} />
           </p>
           <p className="mt-px text-[13.5px] text-fg-faint">{u.location} · {EDITION.label}</p>
+          <p className="mt-1.5 text-[13.5px] text-fg-muted">
+            Dossard n° <b className="font-semibold tabular-nums text-fg">{numeroDossard(u.dossard.numero)}</b>
+            {' '}· {distanceById(u.dossard.distance).label}
+          </p>
         </div>
       </div>
 
@@ -52,6 +58,38 @@ export default function Profil() {
         <Tuile value={u.stats.km} label="km courus à plusieurs" size={28} />
         <Tuile value={u.roi.meetings} label="présentations faites" size={28} />
       </div>
+
+      {/* ---- Ce que tu as déjà couru : le laissez-passer ---- */}
+      <section className="mt-[26px]">
+        <SectionTitle>Tes courses</SectionTitle>
+        <div className="flex flex-col gap-2.5">
+          {u.editions.map((e) => (
+            <div key={e.edition} className="rounded-xl border border-line bg-surface p-[18px]">
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="text-[15.5px] font-semibold">Édition {e.edition} · {e.nom}</span>
+                <span className="text-[13px] text-fg-faint">{dateLongue(e.date)}</span>
+              </div>
+              <div className="mt-3.5 flex gap-[22px]">
+                {[
+                  { v: numeroDossard(e.numero), l: 'dossard' },
+                  { v: distanceById(e.distance).label, l: 'distance' },
+                  { v: e.chrono, l: 'chrono' },
+                  { v: `${e.classement}ᵉ`, l: `sur ${e.finishers}` },
+                ].map((c) => (
+                  <span key={c.l} className="min-w-0">
+                    <span className="block text-[19px] font-medium tabular-nums">{c.v}</span>
+                    <span className="block text-[12px] text-fg-faint">{c.l}</span>
+                  </span>
+                ))}
+              </div>
+              <p className="mt-3.5 border-t border-line-soft pt-3 text-[13.5px] leading-snug text-fg-muted">{e.note}</p>
+            </div>
+          ))}
+          <p className="text-[13px] leading-snug text-fg-faint">
+            C’est {EDITION_PILOTE.nom} qui t’ouvre l’app : sans une ligne franchie, on n’entre pas.
+          </p>
+        </div>
+      </section>
 
       {/* ---- Ce que tu cherches : la seule chose que les autres lisent ---- */}
       <section className="mt-[26px]">
@@ -91,7 +129,13 @@ export default function Profil() {
           <LigneReglage icon="flag" label="Ma course" hint={EDITION.label} onClick={openRace} />
           <LigneReglage icon="calendar" label="Mes rendez-vous" hint={`${meetings.length}`} onClick={openAgenda} />
           <LigneReglage icon="briefcase" label="Le suivi de tes relations" hint={`${pipeline.length}`} onClick={openPipeline} />
-          <LigneReglage icon="crown" label="Ma formule" hint={planMeta.name} onClick={openPlans} />
+          <LigneReglage
+            icon="crown"
+            label="Mon abonnement"
+            hint={etatAbo.statut === 'expire' ? 'Expiré' : `${planMeta.name} · ${etatAbo.jours} j`}
+            onClick={openPlans}
+          />
+          <LigneReglage icon="sparkles" label="Les nouvelles de R.O.I" onClick={() => openNews()} />
           <LigneReglage icon="gift" label="Inviter quelqu’un" hint={`${referralJoined}`} onClick={openInvite} />
           <LigneReglage
             icon="link"
@@ -113,6 +157,41 @@ export default function Profil() {
           </div>
 
           <LigneReglage icon="refresh" label="Réinitialiser la démo" onClick={resetDemo} />
+        </div>
+      </section>
+
+      {/* ---- Démo : voir les deux états d'accès tels qu'ils sont ---- */}
+      <section className="mt-[26px]">
+        <SectionTitle help="L’app n’a pas de compte : ces deux interrupteurs montrent ce que voit quelqu’un dont l’abonnement a expiré, ou qui n’a encore couru aucun R.O.I.">
+          Aperçu des états
+        </SectionTitle>
+        <div>
+          <div className="flex w-full items-center gap-3.5 border-b border-line-soft px-0.5 py-[15px]">
+            <Icon name="lock" className="h-[19px] w-[19px] shrink-0 text-fg-muted" />
+            <span className="min-w-0 flex-1 text-[15px] font-medium">Abonnement expiré</span>
+            <button
+              onClick={simulerExpiration}
+              role="switch"
+              aria-checked={etatAbo.statut === 'expire'}
+              aria-label="Simuler un abonnement expiré"
+              className="shrink-0 tap"
+            >
+              <span className={`inter ${etatAbo.statut === 'expire' ? 'on' : ''}`} aria-hidden />
+            </button>
+          </div>
+          <div className="flex w-full items-center gap-3.5 border-b border-line-soft px-0.5 py-[15px]">
+            <Icon name="flag" className="h-[19px] w-[19px] shrink-0 text-fg-muted" />
+            <span className="min-w-0 flex-1 text-[15px] font-medium">Compte sans édition courue</span>
+            <button
+              onClick={simulerFinisher}
+              role="switch"
+              aria-checked={false}
+              aria-label="Simuler un compte sans édition courue"
+              className="shrink-0 tap"
+            >
+              <span className="inter" aria-hidden />
+            </button>
+          </div>
         </div>
       </section>
 

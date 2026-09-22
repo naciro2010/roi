@@ -92,12 +92,12 @@ export function Logo({ light = false, size = 21 }) {
   )
 }
 
-/* La formule, près du nom (rien pour le Dossard). */
+/* Le palier d'abonnement, près du nom (rien pour le palier Membre). */
 export function PlanBadge({ plan, className = '' }) {
-  if (!plan || plan === 'free') return null
+  if (!plan || plan === 'membre') return null
   return (
     <span className={`inline-flex items-center rounded-full bg-brand-500 px-2 py-[3px] text-[11px] font-semibold text-craie ${className}`}>
-      {plan === 'business' ? 'Cercle' : 'Premium'}
+      {plan === 'cercle' ? 'Cercle' : 'Premium'}
     </span>
   )
 }

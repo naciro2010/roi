@@ -6,7 +6,19 @@ import { personFor } from '../data/network'
 
 /* La barre de saisie : une pilule, et un bouton d'envoi rond orange.
    Entrée vaut envoi. */
-function Composer({ draft, setDraft, onSend }) {
+function Composer({ draft, setDraft, onSend, verrouille, onReprendre }) {
+  if (verrouille) {
+    return (
+      <button
+        onClick={onReprendre}
+        className="flex shrink-0 items-center gap-2.5 rounded-full border border-line bg-surface py-3 pl-4 pr-5 text-left tap"
+      >
+        <Icon name="lock" className="h-[17px] w-[17px] shrink-0 text-fg-faint" />
+        <span className="min-w-0 flex-1 text-[14px] text-fg-muted">Abonnement expiré — tu peux lire, pas répondre.</span>
+        <span className="shrink-0 text-[13.5px] font-semibold text-brand-500">Reprendre</span>
+      </button>
+    )
+  }
   return (
     <div className="flex shrink-0 items-center gap-2.5 rounded-full border border-line bg-surface py-2 pl-4 pr-2">
       <input
@@ -67,7 +79,7 @@ export default function Messages() {
   const {
     openConv, openGroup, openChat, openGroupChat, closeChat,
     threads, draft, setDraft, sendMessage, convRead,
-    groups, groupThreads, groupRead, openMember,
+    groups, groupThreads, groupRead, openMember, lectureSeule, openPlans,
   } = useApp()
 
   /* --- Une conversation en tête à tête --- */
@@ -90,7 +102,7 @@ export default function Messages() {
             </div>
           ))}
         </div>
-        <Composer draft={draft} setDraft={setDraft} onSend={sendMessage} />
+        <Composer draft={draft} setDraft={setDraft} onSend={sendMessage} verrouille={lectureSeule} onReprendre={openPlans} />
       </div>
     )
   }
@@ -122,7 +134,7 @@ export default function Messages() {
             )
           })}
         </div>
-        <Composer draft={draft} setDraft={setDraft} onSend={sendMessage} />
+        <Composer draft={draft} setDraft={setDraft} onSend={sendMessage} verrouille={lectureSeule} onReprendre={openPlans} />
       </div>
     )
   }

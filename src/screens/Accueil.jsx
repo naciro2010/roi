@@ -1,20 +1,38 @@
 import { useApp } from '../AppContext'
 import { SectionTitle, Action, Tuile } from '../components/primitives'
-import Icon from '../components/Icon'
+import BlocEdition from '../components/BlocEdition'
 import PostCard from '../components/PostCard'
 import { CURRENT_USER } from '../data/user'
 import { activityById, resumeSemaine, nombre } from '../data/activities'
 import { pipelineStats } from '../data/pipeline'
 import { MEETING_TYPES } from '../data/meetings'
-import { EDITION, daysToRace, vagueCourante } from '../data/race'
+import { NOUVELLES, CATEGORIES, dateNouvelle } from '../data/news'
+import { dateLongue } from '../data/plans'
 import { formatEventDate } from '../lib/dates'
 
-/* Ce qu'il y a à faire maintenant, dans l'ordre — deux lignes au plus.
-   L'accueil répond à une seule question, « et maintenant ? », au lieu
-   d'empiler six blocs qui se disputent l'attention. */
+/* Ce qu'il y a à faire maintenant, dans l'ordre — trois lignes au plus.
+   L'accueil répond à deux questions : où j'en suis de la course, et
+   qu'est-ce qu'on attend de moi. */
 function aFaire(ctx) {
-  const { requests, meetings, confirmMeeting, openReseau } = ctx
+  const { requests, meetings, confirmMeeting, openReseau, abonnement, etatAbo, openPlans } = ctx
   const lignes = []
+
+  // L'abonnement d'abord quand il touche à sa fin : c'est ce qui ferme tout.
+  if (etatAbo.statut === 'expire') {
+    lignes.push({
+      icon: 'crown',
+      label: 'Ton abonnement a expiré',
+      detail: 'Tu peux tout lire, mais plus écrire ni proposer de rencontre. Ça se reprend en une minute.',
+      onClick: openPlans,
+    })
+  } else if (etatAbo.bientot) {
+    lignes.push({
+      icon: 'crown',
+      label: `Ton abonnement se termine dans ${etatAbo.jours} jours`,
+      detail: `Échéance le ${dateLongue(abonnement.echeance)}. Sans renouvellement, l’app passe en lecture seule.`,
+      onClick: openPlans,
+    })
+  }
 
   lignes.push({
     icon: 'users',
@@ -40,60 +58,55 @@ function aFaire(ctx) {
     })
   }
 
-  return lignes.slice(0, 2)
+  return lignes.slice(0, 3)
+}
+
+/* Une nouvelle de R.O.I : d'où elle vient, quand, et ce qu'elle dit. */
+function Nouvelle({ n, onOpen }) {
+  const cat = CATEGORIES[n.categorie]
+  return (
+    <button onClick={onOpen} className="w-full rounded-xl border border-line bg-surface p-[18px] text-left tap">
+      <div className="flex items-baseline gap-2 text-[12.5px]">
+        <span className="font-semibold text-brand-500">{cat.label}</span>
+        <span className="text-fg-faint">· {dateNouvelle(n.date)}</span>
+      </div>
+      <div className="mt-1.5 text-[15.5px] font-semibold leading-snug">{n.titre}</div>
+      <p className="mt-1.5 text-[14px] leading-[1.5] text-fg-muted">{n.chapo}</p>
+    </button>
+  )
 }
 
 export default function Accueil() {
   const ctx = useApp()
-  const { openMember, openActivity, openComposer, openRace, pipeline, posts, togglePostLike, addComment } = ctx
+  const {
+    openMember, openActivity, openComposer, openRace, openNews,
+    pipeline, posts, togglePostLike, addComment, avancement,
+  } = ctx
   const u = CURRENT_USER
   const semaine = resumeSemaine()
   const pstats = pipelineStats(pipeline)
-  const jours = daysToRace()
-  const vague = vagueCourante()
 
   return (
     <div className="animate-screenIn no-scrollbar flex flex-col gap-[26px] overflow-y-auto px-5 pb-7 pt-2">
 
-      {/* ---- 1.1 · Cette semaine — le seul bloc encre de l'app ---- */}
-      <section className="surface-hero rounded-2xl p-[22px]">
-        <div className="flex items-baseline justify-between gap-3 text-[13.5px] text-craie/60">
-          <span>Cette semaine</span>
-          <span>lun. → dim.</span>
-        </div>
-        <div className="mt-2.5 flex items-end gap-2">
-          <span className="text-[60px] font-medium leading-[.9] tracking-[-.02em] tabular-nums">{nombre(semaine.km)}</span>
-          <span className="pb-[9px] text-[17px] text-craie/70">km</span>
-        </div>
-        <div className="mt-[18px] grid grid-cols-3 gap-3">
-          {[
-            { v: semaine.sorties, l: 'sorties' },
-            { v: semaine.temps, l: 'de course' },
-            { v: nombre(semaine.kmAvec), l: 'km à plusieurs' },
-          ].map((c) => (
-            <div key={c.l}>
-              <div className="text-[22px] font-medium tabular-nums">{c.v}</div>
-              <div className="mt-0.5 text-[12.5px] text-craie/60">{c.l}</div>
-            </div>
-          ))}
-        </div>
+      {/* ---- Ton dossard et ta route vers la course ---- */}
+      <BlocEdition dossard={u.dossard} avancement={avancement} onOpen={openRace} />
+
+      {/* ---- Ta semaine de course, en trois chiffres ---- */}
+      <section className="grid shrink-0 grid-cols-3 gap-3 rounded-lg border border-line bg-surface px-[18px] py-4">
+        {[
+          { v: nombre(semaine.km), l: 'km cette semaine' },
+          { v: semaine.sorties, l: 'sorties' },
+          { v: nombre(semaine.kmAvec), l: 'km à plusieurs' },
+        ].map((c) => (
+          <div key={c.l}>
+            <div className="text-[22px] font-medium leading-none tabular-nums">{c.v}</div>
+            <div className="mt-1.5 text-[12.5px] leading-[1.3] text-fg-muted">{c.l}</div>
+          </div>
+        ))}
       </section>
 
-      {/* ---- 1.2 · La course, réduite à une ligne cliquable ---- */}
-      <button onClick={openRace} className="lien-bloc tap">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-500 text-craie">
-          <Icon name="flag" className="h-[18px] w-[18px]" />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-[15.5px] font-semibold">{jours} jours avant la course</span>
-          <span className="mt-0.5 block text-[13.5px] leading-snug text-fg-muted">
-            {EDITION.label} · {EDITION.lieu} · la vague {vague.nom} est ouverte à {vague.prix} €.
-          </span>
-        </span>
-        <Icon name="chevronRight" className="h-[18px] w-[18px] shrink-0 text-fg-faint" />
-      </button>
-
-      {/* ---- 1.3 · À faire ---- */}
+      {/* ---- À faire ---- */}
       <section>
         <SectionTitle>À faire</SectionTitle>
         <div className="flex flex-col gap-2.5">
@@ -103,7 +116,17 @@ export default function Accueil() {
         </div>
       </section>
 
-      {/* ---- 1.4 · Ton réseau ---- */}
+      {/* ---- Les nouvelles de R.O.I ---- */}
+      <section>
+        <SectionTitle action="Tout voir" onAction={() => openNews()}>Les nouvelles de R.O.I</SectionTitle>
+        <div className="flex flex-col gap-3">
+          {NOUVELLES.slice(0, 2).map((n) => (
+            <Nouvelle key={n.id} n={n} onOpen={() => openNews(n.id)} />
+          ))}
+        </div>
+      </section>
+
+      {/* ---- Ton réseau ---- */}
       <section>
         <SectionTitle>Ton réseau</SectionTitle>
         <div className="grid grid-cols-3 gap-2.5">
@@ -113,7 +136,7 @@ export default function Accueil() {
         </div>
       </section>
 
-      {/* ---- 1.5 · Le fil ---- */}
+      {/* ---- Le fil ---- */}
       <section>
         <SectionTitle action="Écrire" onAction={openComposer}>Le fil</SectionTitle>
         <div className="flex flex-col gap-3">

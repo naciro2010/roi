@@ -8,11 +8,11 @@ import { EDITION } from '../data/race'
 const STEPS = [
   {
     titre: 'Une course par an.',
-    texte: `${EDITION.mois}, à ${EDITION.lieu} : 5, 10 ou 21,1 km entre les tours. Puis tout un après-midi à l’Arena, avec celles et ceux qui viennent de courir à côté de toi.`,
+    texte: `${EDITION.jour}, à ${EDITION.lieu} : 5, 10 ou 21,1 km entre les tours. Puis tout un après-midi à l’Arena, avec celles et ceux qui viennent de courir à côté de toi. Et ainsi chaque année, fin novembre.`,
   },
   {
     titre: 'Un réseau toute l’année.',
-    texte: 'Le reste de l’année, l’app te propose des personnes à rencontrer : des gens qui recrutent, lèvent, vendent ou cherchent un associé — comme toi.',
+    texte: 'Entre deux éditions, l’app te donne les nouvelles de la course et te propose des personnes à rencontrer : des gens qui recrutent, lèvent, vendent ou cherchent un associé — comme toi. Elle est réservée à celles et ceux qui en ont déjà couru une, et tenue par un abonnement.',
   },
   {
     titre: 'Comment ça marche.',

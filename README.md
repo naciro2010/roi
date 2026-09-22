@@ -1,6 +1,8 @@
 # R.O.I — Run On Investment · L'app
 
-L'app de **R.O.I — Run On Investment** : une course par an au cœur de Paris La Défense (5 / 10 / 21,1 km, puis un après-midi entier dans l'Arena), et **un réseau toute l'année** entre deux lignes. Le site ([runoninvest.fr](https://runoninvest.fr), repo `Site-roi`) porte l'événement et l'inscription ; l'app est ce qui se passe avant et après : l'annuaire de celles et ceux qui courent, des rencontres de huit minutes, des sorties à allure de conversation, un suivi des relations branché sur les kilomètres.
+L'app de **R.O.I — Run On Investment** : une course par an au cœur de Paris La Défense, **fin novembre** (5 / 10 / 21,1 km, puis un après-midi entier dans l'Arena), et **un réseau toute l'année** entre deux lignes. Le site ([runoninvest.fr](https://runoninvest.fr), repo `Site-roi`) porte l'événement et l'inscription ; l'app est ce qui se passe avant et après : les nouvelles de la course, ton dossard et ta route vers le départ, des rencontres de huit minutes, un suivi des relations branché sur les kilomètres.
+
+**On n'entre pas dans l'app en s'abonnant : on y entre en ayant couru.** Elle est réservée à celles et ceux qui ont déjà franchi une ligne R.O.I, et un abonnement annuel garde l'accès ouvert ensuite. Voir « Le modèle d'accès » ci-dessous.
 
 > **R.O.I — L'impact après la ligne d'arrivée.**
 
@@ -53,6 +55,27 @@ L'app ne garde de l'identité éditoriale du site que **deux signaux** : le logo
 
 **Le dossard recto/verso a quitté l'app** (il reste un sujet du site) : le Profil est désormais un avatar rond, un nom, et trois chiffres.
 
+## Le modèle d'accès : on entre en courant, on reste en s'abonnant
+
+Deux conditions, et elles ne se remplacent pas.
+
+1. **Avoir couru au moins un R.O.I.** L'app ne s'ouvre pas sans une édition au compteur (`editions` dans `src/data/user.js`). Sans elle, on voit `AccesReserve` : la prochaine course, le compte à rebours, et comment prendre sa place — pas un mur. La pré-édition qui sert de laissez-passer est **l'Édition 00 — La Pilote**, novembre 2025 au Bois de Vincennes, 380 finishers (`EDITION_PILOTE`).
+2. **Un abonnement à jour.** Il a remplacé les anciennes formules de course : ce n'est plus un supplément qu'on achète avec son dossard, c'est l'adhésion au réseau, à l'année. Trois paliers dans `src/data/plans.js` — **Membre** (9 €/mois, 90 €/an, offert la première année après ta première course) · **Premium** (29 €/mois, 290 €/an) · **Cercle** (190 €/mois, sur cooptation, quarante places). Le dossard, lui, se prend toujours sur le site, par édition.
+
+**Abonnement expiré → lecture seule.** L'app ne se ferme pas : on garde les nouvelles, son dossard, le fil et ses conversations. Ce qui s'arrête, c'est d'écrire — proposer une rencontre, dire oui, répondre, publier, inviter. Un bandeau le dit en haut de la colonne, la liste « Pour toi » se met en pause avec un mot d'explication, et le champ de saisie des messages devient un bouton « Reprendre ». Côté code, un seul point de passage : `verrou()` dans `App.jsx` enveloppe chaque action qui écrit, explique pourquoi ça ne part pas, et ouvre le renouvellement.
+
+Les deux états se regardent sans compte : **Profil → Aperçu des états** porte deux interrupteurs (abonnement expiré, compte sans édition courue).
+
+## L'édition, et ta route vers elle
+
+La course est annuelle, **le dernier samedi de novembre** — la prochaine est l'**Édition 01**, samedi 27 novembre 2027 à Paris La Défense. En ouvrant l'app, on voit d'abord son **numéro de dossard** et **où l'on en est** : c'est le bloc encre de l'accueil (`src/components/BlocEdition.jsx`).
+
+`avancementEdition()` (`src/data/race.js`) calcule six jalons, dans l'ordre : *Ton dossard · Ton dossier · Ta distance · Ton sas de départ · Tes rendez-vous · Le jour J*. Un jalon est **fait** quand sa condition est remplie, **à venir** tant qu'il n'est pas encore ouvert (`ouvreA` = jours avant la course : le sas à J−90, les rendez-vous à J−42), **en cours** sinon. Rien n'est verrouillé par un palier : un jalon à venir dit seulement « pas encore, et voilà quand ». La timeline complète est dans la sheet « La course ».
+
+## Les nouvelles de R.O.I
+
+La première vocation de l'app : entre deux éditions, on ne laisse pas les gens sans nouvelles. `src/data/news.js` porte les annonces de l'organisation — le parcours, les vagues, le programme, ce que l'édition précédente a produit. Trois catégories (*La course · Le réseau · Pratique*), une nouvelle = un fait, une date, et **ce que ça change pour toi**. Jamais de communiqué. Les deux dernières sont sur l'accueil, toutes dans la sheet `NewsSheet`.
+
 ## Le pont avec le site : l'inscription là-bas, le dossard ici
 
 L'inscription (compte, distance, formule, vague gardée, justificatif, validation, paiement) vit **sur le site**. L'app ne la refait pas : elle y envoie, puis elle **lit** le dossier.
@@ -60,14 +83,15 @@ L'inscription (compte, distance, formule, vague gardée, justificatif, validatio
 - **Site → app** : depuis l'espace personnel du site, « Ouvrir mon dossard dans l'app » ouvre `https://roi-mvp.up.railway.app/?dossier=E01-000123&email=…`. Au chargement, l'app appelle `GET https://runoninvest.fr/api/dossier?reference&email` (lecture publique, CORS ouvert, limitée à dix essais par minute), enregistre le dossier (`localStorage`, clé `roi1.dossier`), ouvre la fiche de l'édition et nettoie l'URL. Depuis l'app, on peut aussi relier un dossier à la main (référence + e-mail) dans la fiche de l'édition.
 - **App → site** : « Prendre un dossard » envoie sur `/inscription/?distance=10&formule=premium` avec la distance et la formule choisies dans l'app ; « Ouvrir mon espace » et « Changer de formule » renvoient sur `/espace/`. Le site garde la vérité du dossier ; l'app affiche la référence, la vague et son tarif, la distance, la formule, et les quatre étapes (`demande → justificatif → valide → paye`).
 - **Sans site joignable** (aperçu, hors ligne) : `src/lib/dossier.js` bascule en mode local, comme le site le fait sans serveur — la référence est acceptée telle quelle et le dossier est reconstruit depuis le profil, avec un bandeau « aperçu hors ligne ».
-- Les faits de l'édition (`src/data/race.js`) sont ceux du site, **mot pour mot** : Édition 01, Paris La Défense, septembre 2027, *10 000 décideurs attendus*, trois distances (Le Sprint · Boucle Esplanade, La Référence · Entre les tours · le format central, Le Grand Format · 21,0975 km · distance officielle, « accès réseau ■ total » pour les trois), trois vagues (Early Bird 350 € → Régulier 400 € → Last Call 500 €, dates alignées sur `server.js` du site), trois formules (Dossard · Premium · Cercle, avec les listes et le « Tout le Dossard, et » du site), les quatre étapes du dossier, le programme de l'après-midi `T+00…T+04`, les quatre principes, les quatre publics, les trois voies d'accès, la fiche du lieu. Le site n'annonce ni dénivelé, ni temps de course, ni tracé précis : l'app n'en invente pas (la carte est un tracé indicatif, et le dit). `SITE_URL`, `APP_URL` et les adresses de contact y sont définis.
+- Les faits de l'édition (`src/data/race.js`) sont ceux du site : Édition 01, Paris La Défense, **samedi 27 novembre 2027** (puis chaque année, fin novembre), *10 000 décideurs attendus*, trois distances (Le Sprint · Boucle Esplanade, La Référence · Entre les tours · le format central, Le Grand Format · 21,0975 km · distance officielle, « accès réseau ■ total » pour les trois), trois vagues (Early Bird 350 € jusqu'au 28 février 2027 → Régulier 400 € → Last Call 500 €, **à réaligner sur `server.js` du site**), les quatre étapes du dossier, le programme de l'après-midi `T+00…T+04`, les quatre principes, les quatre publics, les trois voies d'accès, la fiche du lieu. Les trois formules de course ont laissé la place aux trois paliers d'abonnement (voir « Le modèle d'accès »). Le site n'annonce ni dénivelé, ni temps de course, ni tracé précis : l'app n'en invente pas (la carte est un tracé indicatif, et le dit). `SITE_URL`, `APP_URL` et les adresses de contact y sont définis.
 
 ## Une course annuelle, un réseau toute l'année
 
 Le fond et le ton de tout le texte de l'app sont fixés dans **[`CONTENU.md`](CONTENU.md)** : la course est le prétexte, le réseau est le sujet. Les quatre verbes — **recruter · lever · vendre · s'associer** — structurent le profil, l'annuaire, les rencontres et le pipeline. On y documente aussi ce qu'on emprunte aux formats qui existent déjà (clubs de fondateurs qui courent puis prennent un café, sorties mensuelles de dirigeants « pas de badge, pas de slide, pas de chrono », rencontres flash de salon, matchmaking par intention des apps d'événement, intros 1:1 hebdomadaires) et comment R.O.I l'adapte.
 
-- **Accueil** — le résumé de ta semaine de course (le seul bloc encre de l'app), la course en une ligne,
-  **ce qu'il y a à faire maintenant** (une à deux étapes, expliquées), ton réseau en trois chiffres, puis le fil.
+- **Accueil** — ton dossard et ta route vers la course (le seul bloc encre de l'app), ta semaine en trois
+  chiffres, **ce qu'il y a à faire maintenant** (jusqu'à trois étapes, l'abonnement d'abord quand il
+  touche à sa fin), les nouvelles de R.O.I, ton réseau en trois chiffres, puis le fil.
 - **La course** (sheet, depuis la ligne de l'accueil ou « Ma course » dans les réglages) — le compte à
   rebours dans un bloc encre, les trois distances, le programme de l'après-midi, puis ton inscription :
   prendre un dossard sur le site, ou relier un dossier déjà ouvert.
@@ -83,9 +107,11 @@ Le fond et le ton de tout le texte de l'app sont fixés dans **[`CONTENU.md`](CO
   courus à plusieurs remontent dans le bloc « Cette semaine » de l'Accueil, et dans les stats des posts
   du fil (km · temps · allure · rencontrés). L'onglet *Courir* a disparu.
 - **Messages** — les conversations et les groupes, dans une seule liste.
-- **Profil** — ton avatar, ce que tu cherches et ce que tu apportes, trois chiffres, puis **une seule
-  liste « Ton compte »** : ma course, rendez-vous, formule, invitations, applis connectées,
-  confidentialité, revoir l'introduction, mode sobriété, réinitialisation.
+- **Profil** — ton avatar et ton numéro de dossard, trois chiffres, **tes courses** (les éditions déjà
+  courues : dossard, chrono, classement, ce que la journée a produit), ce que tu cherches et ce que tu
+  apportes, puis **une seule liste « Ton compte »** : ma course, rendez-vous, suivi, abonnement,
+  invitations, applis connectées, nouvelles, confidentialité, revoir l'introduction, mode sobriété,
+  réinitialisation — et l'aperçu des états.
 - **Onboarding en trois écrans** — une course par an · un réseau toute l'année · **comment ça marche**
   (tu proposes, la personne dit oui, la conversation s'ouvre).
 
@@ -95,15 +121,20 @@ Le fond et le ton de tout le texte de l'app sont fixés dans **[`CONTENU.md`](CO
 src/
   App.jsx              orchestrateur : état partagé + contexte + layout + overlays (+ lien profond ?dossier=)
   AppContext.js        contexte applicatif (useApp)
-  data/race.js         l'édition : faits du site, distances, vagues, formules, programme, SITE_URL
+  data/race.js         l'édition : Édition 01 (nov. 2027), La Pilote, les six jalons d'avancement,
+                       distances, vagues, programme, SITE_URL
+  data/news.js         les nouvelles de R.O.I — la voix de l'organisation entre deux éditions
+  data/plans.js        l'abonnement : Membre · Premium · Cercle, et l'état (actif / expiré)
   ../CONTENU.md        la bible de contenu : positionnement, ton, vocabulaire, emprunts aux formats existants
   data/                autres données fictives (user, network, profiling, events, messages, feed, activities…)
   lib/dossier.js       le pont : lecture du dossier sur le site, repli local
   lib/matching.js      moteur de matching comportemental « Pour toi »
-  components/          Icon, Avatar, BottomNav, Sidebar, Sheet, RouteMap, PostCard…
+  components/          Icon, Avatar, BottomNav, Sidebar, Sheet, BlocEdition, RouteMap, PostCard…
   components/primitives.jsx  Card, Btn, Chip, SectionTitle, Action, Chiffre, Tuile, Badge, ProgressBar, Logo
   components/Sheet.jsx  le conteneur commun des sheets (voile + panneau + sheetUp + en-tête collant)
-  screens/             Accueil, Reseau, Messages, Profil + fiches et sheets (RaceSheet = la course)
+  screens/             Accueil, Reseau, Messages, Profil, AccesReserve (le portail d'accès)
+                       + fiches et sheets (RaceSheet = la course, NewsSheet = les nouvelles,
+                       PlansSheet = l'abonnement)
   index.css            les classes partagées (.titre-section, .aide, .carte, .lien-bloc, .btn, .tag, .ico…)
 public/fonts/          Archivo variable (les deux fichiers latin / latin-ext)
 ```

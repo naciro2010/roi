@@ -46,10 +46,13 @@ const InviteSheet = lazy(() => import('./screens/InviteSheet'))
 const PipelineSheet = lazy(() => import('./screens/PipelineSheet'))
 const RunMatchSheet = lazy(() => import('./screens/RunMatchSheet'))
 const RaceSheet = lazy(() => import('./screens/RaceSheet'))
+const NewsSheet = lazy(() => import('./screens/NewsSheet'))
+const AccesReserve = lazy(() => import('./screens/AccesReserve'))
 import { INITIAL_PIPELINE, shiftStage, stageMeta } from './data/pipeline'
 import { suggestRun } from './lib/runmatch'
 import { SERVICES } from './data/integrations'
-import { planById, hasFeature } from './data/plans'
+import { planById, hasFeature, etatAbonnement, PALIER_BASE } from './data/plans'
+import { avancementEdition, EDITION } from './data/race'
 import { INITIAL_INVITES, INITIAL_TEAMMATES } from './data/invites'
 import { dossierDepuisUrl, lierDossier } from './lib/dossier'
 
@@ -172,8 +175,19 @@ export default function App() {
   const [integrations, setIntegrations] = usePersistentState('integrations', {})
 
   // Formule · cooptation
-  const [plan, setPlan] = usePersistentState('plan', 'free')
+  /* L'abonnement : c'est lui qui garde l'accès ouvert. Expiré, l'app ne se
+     ferme pas — elle passe en lecture seule. Le palier (Membre · Premium ·
+     Cercle) en fait partie : `plan` en est dérivé, pour que tout ce qui
+     interroge `hasFeature` continue de marcher tel quel. */
+  const [abonnement, setAbonnement] = usePersistentState('abonnement', CURRENT_USER.abonnement)
+  const etatAbo = etatAbonnement(abonnement)
+  const plan = abonnement.palier || PALIER_BASE
+  const lectureSeule = etatAbo.statut === 'expire'
   const [plansOpen, setPlansOpen] = useState(false)
+
+  /* L'accès : on ne rentre pas dans R.O.I en s'abonnant, on y rentre en
+     ayant couru. Sans édition au compteur, l'app ne s'ouvre pas. */
+  const [finisher, setFinisher] = usePersistentState('finisher', CURRENT_USER.editions.length > 0)
   const [invites, setInvites] = usePersistentState('invites', INITIAL_INVITES)
   const [teammates, setTeammates] = usePersistentState('teammates', INITIAL_TEAMMATES)
   const [inviteOpen, setInviteOpen] = useState(false)
@@ -194,6 +208,8 @@ export default function App() {
   // l'app le relie : par lien profond depuis l'espace (?dossier=&email=) ou à
   // la main (référence + e-mail). `dossier` = ce que le site a répondu.
   const [raceOpen, setRaceOpen] = useState(false)
+  // Les nouvelles de R.O.I : la liste, ou une nouvelle en entier.
+  const [news, setNews] = useState({ open: false, id: null })
   const [dossier, setDossier] = usePersistentState('dossier', null)
   useEffect(() => {
     const q = dossierDepuisUrl()
@@ -215,6 +231,13 @@ export default function App() {
   }, [])
 
   const planMeta = planById(plan)
+
+  /* Ta route vers l'édition : ce qui est fait, ce qui s'ouvre quand. Les
+     rendez-vous comptés sont ceux du jour J, à l'Arena. */
+  const avancement = avancementEdition({
+    dossard: CURRENT_USER.dossard,
+    rdv: meetings.filter((m) => m.type === 'deal' && m.date === EDITION.date).length,
+  })
   const referralJoined = invites.filter((i) => i.status === 'joined').length
 
   const unreadConv = CONVERSATIONS.filter((c) => c.unread && !convRead[c.id]).length
@@ -228,6 +251,20 @@ export default function App() {
     setToast({ msg, key: Date.now() })
     window.clearTimeout(showToast._t)
     showToast._t = window.setTimeout(() => setToast(null), 1900)
+  }
+
+  /* Lecture seule : abonnement expiré, on lit tout, on n'écrit rien. Le
+     verrou ne cache pas l'action — il l'explique et ouvre le renouvellement,
+     pour qu'on sache toujours pourquoi ça ne part pas. */
+  function verrou(action, quoi = 'écrire') {
+    return (...args) => {
+      if (lectureSeule) {
+        showToast(`Ton abonnement a expiré — reprends-le pour ${quoi}`)
+        setPlansOpen(true)
+        return
+      }
+      return action(...args)
+    }
   }
 
   function goTo(t) {
@@ -472,12 +509,40 @@ export default function App() {
     })
   }
 
+  /* Dans un an, jour pour jour — l'abonnement suit l'année, comme la course. */
+  function dansUnAn() {
+    const d = new Date()
+    d.setFullYear(d.getFullYear() + 1)
+    return d.toISOString().slice(0, 10)
+  }
+
   function upgradePlan(id) {
-    if (id === plan) return
-    setPlan(id)
-    setPlansOpen(false)
     const meta = planById(id)
-    showToast(id === 'free' ? 'Tu es revenu à la formule Dossard' : `Formule ${meta.name} demandée`)
+    setAbonnement((a) => ({ ...a, palier: id, statut: 'actif', echeance: a.statut === 'expire' ? dansUnAn() : a.echeance }))
+    setPlansOpen(false)
+    showToast(id === PALIER_BASE ? 'Tu es revenu au palier Membre' : `Palier ${meta.name} demandé`)
+  }
+
+  /* Reprendre l'abonnement : l'échéance repart pour un an, tout se rouvre. */
+  function renouveler() {
+    setAbonnement((a) => ({ ...a, statut: 'actif', echeance: dansUnAn() }))
+    setPlansOpen(false)
+    showToast('Abonnement repris — tout est rouvert')
+  }
+
+  /* Démo : basculer les deux états d'accès pour les voir tels qu'ils sont. */
+  function simulerExpiration() {
+    setAbonnement((a) => {
+      const expire = a.statut !== 'expire'
+      showToast(expire ? 'Démo · abonnement expiré' : 'Démo · abonnement repris')
+      return { ...a, statut: expire ? 'expire' : 'actif', echeance: expire ? a.echeance : dansUnAn() }
+    })
+  }
+  function simulerFinisher() {
+    setFinisher((f) => {
+      showToast(f ? 'Démo · compte sans édition courue' : 'Démo · finisher')
+      return !f
+    })
   }
 
   function nameFromEmail(email) {
@@ -548,7 +613,7 @@ export default function App() {
     openMember,
     openActivity: setActivityId,
     // Matching comportemental « Pour toi »
-    rankedMatches, insights, matchDetail, track, startIcebreaker,
+    rankedMatches, insights, matchDetail, track, startIcebreaker: verrou(startIcebreaker, 'écrire'),
     sharedRunsFor: (name) => SHARED_RUNS[name] || 0,
     openEvent: setEventId,
     openComposer: () => setComposerOpen(true),
@@ -557,35 +622,41 @@ export default function App() {
     openSearch: () => setSearchOpen(true),
     openIntegrations: () => setIntegrationsOpen(true),
     integrations, toggleIntegration,
-    // Formule
-    plan, planMeta, upgradePlan,
+    // L'abonnement — ce qui garde l'accès ouvert
+    plan, planMeta, upgradePlan, abonnement, etatAbo, lectureSeule, renouveler,
     hasFeature: (key) => hasFeature(plan, key),
     openPlans: () => setPlansOpen(true),
+    // L'accès — réservé à celles et ceux qui ont déjà couru
+    finisher, simulerExpiration, simulerFinisher,
     // Cooptation
-    invites, sendInvite, referralJoined,
-    teammates, inviteTeammate,
+    invites, sendInvite: verrou(sendInvite, 'inviter'), referralJoined,
+    teammates, inviteTeammate: verrou(inviteTeammate, 'inviter'),
     openInvite: () => setInviteOpen(true),
     // Agenda & RDV
-    meetings, confirmMeeting, proposeMeeting,
+    meetings, confirmMeeting, proposeMeeting: verrou(proposeMeeting, 'proposer un rendez-vous'),
     openAgenda: () => setAgendaOpen(true),
     // Pipeline ROI & RunMatch
     pipeline, addToPipeline, advanceDeal,
     openPipeline: () => setPipelineOpen(true),
-    runMatches, proposeRun, proposedRuns,
+    runMatches, proposeRun: verrou(proposeRun, 'proposer une sortie'), proposedRuns,
     openRunMatch: () => setRunMatchOpen(true),
-    // L'édition — la course annuelle, et le dossier lu sur le site
+    // L'édition — la course annuelle, ton avancement, et le dossier lu sur le site
     openRace: () => setRaceOpen(true),
+    avancement,
     dossier, lierDossierApp, delierDossier,
-    contacted, contactMember,
-    sentSuggestions, sendSuggestion,
-    connections, requests, acceptRequest, declineRequest,
+    // Les nouvelles de R.O.I
+    openNews: (id = null) => setNews({ open: true, id }),
+    contacted, contactMember: verrou(contactMember, 'proposer une rencontre'),
+    sentSuggestions, sendSuggestion: verrou(sendSuggestion, 'proposer une rencontre'),
+    connections, requests, acceptRequest: verrou(acceptRequest, 'dire oui'), declineRequest,
     eventKudos, toggleEventKudos, joined, toggleJoin,
     actKudos, toggleActKudos,
-    posts, togglePostLike, addComment,
+    posts, togglePostLike, addComment: verrou(addComment, 'répondre'),
     msgView, setMsgView, openConv, openGroup, openChat, openGroupChat, closeChat,
-    threads, draft, setDraft, sendMessage, convRead,
+    threads, draft, setDraft, sendMessage: verrou(sendMessage, 'écrire'), convRead,
     groups, groupThreads, groupRead, creatingGroup, setCreatingGroup,
-    newGroupName, setNewGroupName, createGroup, joinedGroups, joinGroup,
+    newGroupName, setNewGroupName, createGroup: verrou(createGroup, 'créer un groupe'),
+    joinedGroups, joinGroup: verrou(joinGroup, 'rejoindre un groupe'),
     messageMember,
     profile, updateProfile,
     // Numérique responsable — mode sobriété
@@ -653,6 +724,16 @@ export default function App() {
     )
   }
 
+  /* L'app ne s'ouvre pas sans une édition courue : on montre la prochaine
+     course et comment y prendre sa place, pas un mur. */
+  if (!finisher) {
+    return (
+      <Suspense fallback={null}>
+        <AccesReserve onRelier={() => { setFinisher(true); setRaceOpen(true) }} onFinisher={() => setFinisher(true)} />
+      </Suspense>
+    )
+  }
+
   return (
     <AppContext.Provider value={ctx}>
       <div className={`relative flex h-[100dvh] w-full justify-center overflow-hidden bg-canvas ${eco ? 'eco' : ''}`}>
@@ -692,6 +773,20 @@ export default function App() {
             </header>
           )}
 
+          {/* Lecture seule : on le dit une fois, en haut, sans bloquer la page. */}
+          {lectureSeule && (
+            <button
+              onClick={() => setPlansOpen(true)}
+              className="z-10 flex shrink-0 items-center gap-2.5 border-b border-line-soft bg-craie-2 px-5 py-2.5 text-left tap"
+            >
+              <Icon name="lock" className="h-4 w-4 shrink-0 text-fg-muted" />
+              <span className="min-w-0 flex-1 text-[13.5px] leading-snug text-fg-muted">
+                <b className="font-semibold text-fg">Abonnement expiré</b> · tu peux tout lire, mais plus écrire.
+              </span>
+              <span className="shrink-0 text-[13.5px] font-semibold text-brand-500">Reprendre</span>
+            </button>
+          )}
+
           <main className="relative flex flex-1 flex-col overflow-hidden">
             <Suspense fallback={<ScreenFallback />}>{renderScreen()}</Suspense>
           </main>
@@ -713,6 +808,13 @@ export default function App() {
             {pipelineOpen && <PipelineSheet onClose={() => setPipelineOpen(false)} />}
             {runMatchOpen && <RunMatchSheet onClose={() => setRunMatchOpen(false)} />}
             {raceOpen && <RaceSheet onClose={() => setRaceOpen(false)} />}
+            {news.open && (
+              <NewsSheet
+                id={news.id}
+                onSelect={(id) => setNews({ open: true, id })}
+                onClose={() => setNews({ open: false, id: null })}
+              />
+            )}
             {member && <MemberSheet name={member} onClose={() => setMember(null)} />}
             {activityId && <ActivitySheet id={activityId} onClose={() => setActivityId(null)} />}
             {eventId && <EventSheet id={eventId} onClose={() => setEventId(null)} />}
@@ -720,7 +822,7 @@ export default function App() {
             {roiInfoOpen && <RoiInfoSheet onClose={() => setRoiInfoOpen(false)} />}
             {integrationsOpen && <IntegrationsSheet onClose={() => setIntegrationsOpen(false)} />}
           </Suspense>
-          <PostComposer open={composerOpen} onClose={() => setComposerOpen(false)} onPublish={publishPost} />
+          <PostComposer open={composerOpen} onClose={() => setComposerOpen(false)} onPublish={verrou(publishPost, 'publier')} />
           <NotifDrawer />
 
           <BottomNav active={tab} onChange={goTo} unread={navUnread} />

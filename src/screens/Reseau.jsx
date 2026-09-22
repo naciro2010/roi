@@ -7,6 +7,7 @@ import { MEMBERS, FILTERS, personFor } from '../data/network'
 import { FREE_MATCH_LIMIT } from '../data/plans'
 import { CURRENT_USER } from '../data/user'
 import { bonusMatches } from '../data/levels'
+import { EDITION } from '../data/race'
 
 /* Une personne, toujours présentée de la même façon : qui elle est, ce
    qu'elle cherche, un bouton. L'ancienne étiquette « POURQUOI CETTE
@@ -57,7 +58,7 @@ export default function Reseau() {
   const {
     openMember, sentSuggestions, sendSuggestion, contacted, contactMember,
     connections, requests, acceptRequest, declineRequest, messageMember,
-    hasFeature, openPlans, reseauView, setReseauView, rankedMatches, track,
+    hasFeature, openPlans, reseauView, setReseauView, rankedMatches, track, lectureSeule,
   } = useApp()
 
   const [filtre, setFiltre] = useState('Tous')
@@ -85,9 +86,12 @@ export default function Reseau() {
     { id: 'contacts', label: 'Contacts', badge: requests.length },
   ]
 
-  /* Les cartes de la liste courante. */
+  /* Les cartes de la liste courante. Abonnement expiré : « Pour toi » se
+     ferme — c'est la seule liste qui disparaît, le reste reste lisible. */
   let cartes = []
-  if (reseauView === 'suggestions') {
+  if (reseauView === 'suggestions' && lectureSeule) {
+    cartes = []
+  } else if (reseauView === 'suggestions') {
     cartes = suggestions.map((m) => ({
       name: m.name,
       besoin: m.reasons?.[0]?.text || personFor(m.name).title,
@@ -187,6 +191,14 @@ export default function Reseau() {
         </>
       )}
 
+      {/* D'où viennent les propositions — on l'explique, on ne le devine pas. */}
+      {reseauView === 'suggestions' && !lectureSeule && cartes.length > 0 && (
+        <p className="mt-4 text-[13.5px] leading-[1.45] text-fg-faint">
+          Trois propositions chaque lundi, tirées du peloton de l’{EDITION.label} et de ce que
+          tu cherches. Chacune dit pourquoi.
+        </p>
+      )}
+
       {/* La liste */}
       <div className="mt-4 flex flex-col gap-3">
         {cartes.map((c) => (
@@ -201,13 +213,29 @@ export default function Reseau() {
           />
         ))}
 
-        {cartes.length === 0 && (
+        {cartes.length === 0 && reseauView === 'suggestions' && lectureSeule && (
+          <div className="rounded-xl border border-line bg-surface p-[18px]">
+            <h2 className="text-[15.5px] font-semibold">Les propositions sont en pause</h2>
+            <p className="mt-1.5 text-[14px] leading-[1.5] text-fg-muted">
+              Chaque lundi, on te propose des personnes dont l’intention répond à la tienne. Ça reprend
+              dès que ton abonnement est à jour.
+            </p>
+            <button
+              onClick={openPlans}
+              className="mt-4 rounded-full bg-brand-500 px-5 py-[11px] text-[14px] font-semibold text-craie tap"
+            >
+              Reprendre mon abonnement
+            </button>
+          </div>
+        )}
+
+        {cartes.length === 0 && !(reseauView === 'suggestions' && lectureSeule) && (
           <p className="my-6 text-center text-[14px] text-fg-faint">
             Personne ne correspond. Essaie un autre mot, ou enlève le filtre.
           </p>
         )}
 
-        {reseauView === 'suggestions' && !sansLimite && cachees > 0 && (
+        {reseauView === 'suggestions' && !lectureSeule && !sansLimite && cachees > 0 && (
           <button onClick={openPlans} className="lien-bloc tap">
             <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-canvas text-fg">
               <Icon name="lock" className="h-[18px] w-[18px]" />

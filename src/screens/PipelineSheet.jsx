@@ -78,7 +78,7 @@ export default function PipelineSheet({ onClose }) {
             </button>
           )}
           {!showAnalytics && (
-            <p className="relative mt-2 text-[13px] text-fg-faint">Le montant en jeu s’affiche avec la formule Premium.</p>
+            <p className="relative mt-2 text-[13px] text-fg-faint">Le montant en jeu s’affiche avec le palier Premium.</p>
           )}
         </div>
 
