@@ -132,6 +132,7 @@ src/
   components/          Icon, Avatar, BottomNav, Sidebar, Sheet, BlocEdition, RouteMap, PostCard…
   components/primitives.jsx  Card, Btn, Chip, SectionTitle, Action, Chiffre, Tuile, Badge, ProgressBar, Logo
   components/Sheet.jsx  le conteneur commun des sheets (voile + panneau + sheetUp + en-tête collant)
+  lib/natif.js         la couche native (Capacitor) : liens, retour Android, liens profonds, mode démo
   screens/             Accueil, Reseau, Messages, Profil, AccesReserve (le portail d'accès)
                        + fiches et sheets (RaceSheet = la course, NewsSheet = les nouvelles,
                        PlansSheet = l'abonnement)
@@ -148,12 +149,24 @@ public/fonts/          Archivo variable (les deux fichiers latin / latin-ext)
 
 ## Stack
 
-React 18 · Vite · Tailwind CSS · Leaflet (cartes). PWA installable (`manifest.webmanifest`, icône = le signe du site : encre, un filet craie, le point carré orange).
+React 18 · Vite · Tailwind CSS · Leaflet (cartes). PWA installable (`manifest.webmanifest`, icônes PNG + SVG, service worker hors ligne `public/sw.js`), et **apps Android / iOS** par Capacitor 8 (`android/`, `ios/`).
 
 ```bash
 npm install
-npm run dev      # serveur de développement
-npm run build    # build de production
+npm run dev          # serveur de développement
+npm test             # tests (vitest)
+npm run build        # build web (mode démo compris)
+npm run build:store  # build des apps des stores (mode démo coupé)
+npm run natif:sync   # build:store + copie dans android/ et ios/
 ```
+
+## Les apps Android et iOS
+
+Tout est dans **[`DEPLOIEMENT.md`](DEPLOIEMENT.md)** : comptes, clés de signature, secrets GitHub, premier envoi, nouvelles versions, et ce qui peut encore faire refuser l'app. Les textes, captures et réponses aux questionnaires des stores sont dans **[`store/`](store/README.md)**.
+
+- **Confidentialité et suppression du compte** — Profil → « Confidentialité et suppression du compte » (`ConfidentialiteSheet.jsx`) : ce que l'app garde, l'effacement immédiat des données de l'appareil, la demande de suppression du compte. Pages publiques : `public/confidentialite.html`, `suppression-compte.html`, `support.html`.
+- **Le mode démo** (`modeDemo` dans `src/lib/natif.js`) : l'aperçu des états, la réinitialisation, le faux finisher et les connexions Strava/montre simulées n'existent que sur le web. Les builds des stores sont faits avec `VITE_DEMO=false`.
+- **L'abonnement dans les apps natives** : ni prix, ni bouton d'achat, ni lien vers le règlement — les stores imposent leur achat intégré pour un abonnement numérique. Le dossard (billet d'un événement physique) se prend toujours sur le site.
+- **CI** (`.github/workflows/`) : tests + build web + APK de debug à chaque push, build iOS simulateur quand le natif change ; sur un tag `v*`, `.aab` signé vers Google Play et `.ipa` vers TestFlight.
 
 > Déployée sur Railway : https://roi-mvp.up.railway.app — c'est l'adresse que le site utilise pour « Ouvrir mon dossard dans l'app » (surchargeable côté site avec `data-app` sur `<body>`).
