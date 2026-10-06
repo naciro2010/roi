@@ -1,0 +1,40 @@
+# iOS : vérifie que le projet compile (simulateur, sans signature) quand le
+# natif change. La publication sur TestFlight est dans ios-release.yml.
+name: iOS
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'ios/**'
+      - 'capacitor.config.json'
+      - 'package.json'
+      - '.github/workflows/ios.yml'
+  pull_request:
+    paths:
+      - 'ios/**'
+      - 'capacitor.config.json'
+      - 'package.json'
+  workflow_dispatch:
+
+jobs:
+  simulateur:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run natif:sync
+      - name: Build simulateur
+        working-directory: ios/App
+        run: |
+          xcodebuild -project App.xcodeproj -scheme App -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build | tail -40
+          exit ${PIPESTATUS[0]}

@@ -1,0 +1,77 @@
+# iOS : archive signée et envoi sur TestFlight, sur un tag v* (ex. v1.0.0)
+# ou à la main depuis l'onglet Actions.
+#
+# Secrets pour la publication (Settings → Secrets and variables → Actions) :
+#   APPLE_TEAM_ID             identifiant d'équipe (10 caractères)
+#   ASC_KEY_ID                ID de la clé API App Store Connect
+#   ASC_ISSUER_ID             Issuer ID de la clé API
+#   ASC_KEY_P8_BASE64         le fichier AuthKey_XXXX.p8 encodé en base64
+# La clé API doit avoir le rôle « Admin » : la signature est gérée par
+# Xcode (certificats et profils créés au besoin, -allowProvisioningUpdates).
+name: iOS — publication
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  testflight:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run natif:sync
+
+      - name: Clé API App Store Connect
+        env:
+          P8: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+        run: |
+          if [ -z "$P8" ]; then echo "::error::Secret ASC_KEY_P8_BASE64 manquant (voir DEPLOIEMENT.md)"; exit 1; fi
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "$P8" | base64 -d > ~/.appstoreconnect/private_keys/AuthKey_$KEY_ID.p8
+
+      - name: Archive signée
+        working-directory: ios/App
+        env:
+          TEAM: ${{ secrets.APPLE_TEAM_ID }}
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          VERSION=$(node -p "require('../../package.json').version")
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_$KEY_ID.p8 \
+            -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER" \
+            DEVELOPMENT_TEAM="$TEAM" CODE_SIGN_STYLE=Automatic \
+            MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
+            archive
+          sed "s/__TEAM_ID__/$TEAM/" ExportOptions.plist > "$RUNNER_TEMP/ExportOptions.plist"
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_$KEY_ID.p8 \
+            -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: roi-ios-ipa
+          path: ${{ runner.temp }}/export/*.ipa
+
+      - name: Envoi sur TestFlight
+        env:
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          xcrun altool --upload-app -t ios -f "$RUNNER_TEMP"/export/*.ipa \
+            --apiKey "$KEY_ID" --apiIssuer "$ISSUER"

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { AppContext } from './AppContext'
 import { usePersistentState, clearPersistedState } from './lib/usePersistentState'
 import {
@@ -29,7 +29,6 @@ import Accueil from './screens/Accueil'
    écrans et tous les overlays (fiches, réglages, sheets) sont chargés à la
    demande — moins de JS à télécharger, parser et exécuter au démarrage. */
 const Reseau = lazy(() => import('./screens/Reseau'))
-const Courir = lazy(() => import('./screens/Courir'))
 const Messages = lazy(() => import('./screens/Messages'))
 const Profil = lazy(() => import('./screens/Profil'))
 const MemberSheet = lazy(() => import('./screens/MemberSheet'))
@@ -48,6 +47,7 @@ const RunMatchSheet = lazy(() => import('./screens/RunMatchSheet'))
 const RaceSheet = lazy(() => import('./screens/RaceSheet'))
 const NewsSheet = lazy(() => import('./screens/NewsSheet'))
 const AccesReserve = lazy(() => import('./screens/AccesReserve'))
+const ConfidentialiteSheet = lazy(() => import('./screens/ConfidentialiteSheet'))
 import { INITIAL_PIPELINE, shiftStage, stageMeta } from './data/pipeline'
 import { suggestRun } from './lib/runmatch'
 import { SERVICES } from './data/integrations'
@@ -55,6 +55,7 @@ import { planById, hasFeature, etatAbonnement, PALIER_BASE } from './data/plans'
 import { avancementEdition, EDITION } from './data/race'
 import { INITIAL_INVITES, INITIAL_TEAMMATES } from './data/invites'
 import { dossierDepuisUrl, lierDossier } from './lib/dossier'
+import { demarrerNatif, ecouterRetour, ecouterLiensProfonds, vibrer, modeDemo, estNatif } from './lib/natif'
 
 /* Contexte de matching (constant) : sorties & connexions en commun */
 const MATCH_NAMES = Object.keys(PROFILES)
@@ -133,7 +134,7 @@ export default function App() {
   // RunMatch — binômes de course classés par compatibilité running.
   const runMatches = useMemo(() => rankRunMatches(MATCH_NAMES, signals, MATCH_CTX), [signals])
 
-  // Courir — événements & activités
+  // Sorties — événements & activités
   const [eventKudos, setEventKudos] = usePersistentState('eventKudos', Object.fromEntries(EVENTS.map((a) => [a.id, { count: a.kudos, liked: false }])))
   const [joined, setJoined] = usePersistentState('joined', {})
   const [actKudos, setActKudos] = usePersistentState('actKudos', Object.fromEntries(ACTIVITIES.map((a) => [a.id, { count: a.kudos, liked: false }])))
@@ -184,6 +185,7 @@ export default function App() {
   const plan = abonnement.palier || PALIER_BASE
   const lectureSeule = etatAbo.statut === 'expire'
   const [plansOpen, setPlansOpen] = useState(false)
+  const [confidentialiteOpen, setConfidentialiteOpen] = useState(false)
 
   /* L'accès : on ne rentre pas dans R.O.I en s'abonnant, on y rentre en
      ayant couru. Sans édition au compteur, l'app ne s'ouvre pas. */
@@ -211,12 +213,12 @@ export default function App() {
   // Les nouvelles de R.O.I : la liste, ou une nouvelle en entier.
   const [news, setNews] = useState({ open: false, id: null })
   const [dossier, setDossier] = usePersistentState('dossier', null)
-  useEffect(() => {
-    const q = dossierDepuisUrl()
+  /* Relie un dossier arrivé par lien profond : depuis l'espace du site sur le
+     web (?dossier=&email=), ou par lien universel / roi:// dans l'app native. */
+  function relierDepuis(search) {
+    const q = dossierDepuisUrl(search)
     if (!q) return
-    let vivant = true
     lierDossier(q).then((r) => {
-      if (!vivant) return
       if (r.dossier) {
         setDossier(r.dossier)
         showToast(`C’est bon : ton inscription ${r.dossier.reference} est reliée`)
@@ -225,8 +227,14 @@ export default function App() {
       }
       setRaceOpen(true)
     })
-    try { window.history.replaceState(null, '', window.location.pathname) } catch { /* sans historique */ }
-    return () => { vivant = false }
+  }
+  useEffect(() => {
+    if (dossierDepuisUrl()) {
+      relierDepuis(window.location.search)
+      try { window.history.replaceState(null, '', window.location.pathname) } catch { /* sans historique */ }
+    }
+    demarrerNatif()
+    return ecouterLiensProfonds(relierDepuis)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -332,6 +340,7 @@ export default function App() {
   }
 
   function acceptRequest(name) {
+    vibrer()
     setRequests((rs) => rs.filter((r) => r.name !== name))
     setConnections((cs) => (cs.some((c) => c.name === name) ? cs : [{ name, context: 'Connexion acceptée' }, ...cs]))
     showToast(`C’est oui — tu peux écrire à ${name.split(' ')[0]}`)
@@ -365,6 +374,7 @@ export default function App() {
   }
 
   function togglePostLike(id) {
+    vibrer()
     const post = posts.find((p) => p.id === id)
     if (post && !post.liked && post.author !== CURRENT_USER.name) track({ type: 'like', name: post.author })
     setPosts((prev) =>
@@ -416,6 +426,7 @@ export default function App() {
       const c = CONVERSATIONS.find((x) => x.id === openConv)
       if (c?.name) track({ type: 'msg', name: c.name })
     } else return
+    vibrer()
     setDraft('')
   }
 
@@ -490,6 +501,13 @@ export default function App() {
   function resetDemo() {
     clearPersistedState()
     window.location.reload()
+  }
+
+  /* Effacer ses données de l'appareil : tout ce que l'app garde localement,
+     lien vers le dossier compris. On repart de l'introduction. */
+  function effacerMesDonnees() {
+    clearPersistedState()
+    window.location.replace(window.location.pathname)
   }
 
   function toggleEco() {
@@ -662,7 +680,8 @@ export default function App() {
     // Numérique responsable — mode sobriété
     eco, toggleEco,
     replayOnboarding: () => setOnboarding(true),
-    resetDemo,
+    resetDemo, effacerMesDonnees, modeDemo, estNatif,
+    openConfidentialite: () => setConfidentialiteOpen(true),
   }
 
   const inChat = tab === 'messages' && (openConv || openGroup)
@@ -672,13 +691,47 @@ export default function App() {
   const anyOverlay =
     member || activityId || eventId || composerOpen || notifOpen || editProfileOpen ||
     roiInfoOpen || integrationsOpen || searchOpen || plansOpen || inviteOpen || agendaOpen ||
-    pipelineOpen || runMatchOpen || raceOpen || onboarding
+    pipelineOpen || runMatchOpen || raceOpen || news.open || confidentialiteOpen || onboarding
+
+  /* Bouton retour d'Android : on ferme ce qui est au-dessus, dans l'ordre
+     inverse de l'empilement ; puis on revient à l'accueil ; puis on sort. */
+  const fermerDessus = () => {
+    const pile = [
+      [onboarding, finishOnboarding],
+      [notifOpen, () => setNotifOpen(false)],
+      [composerOpen, () => setComposerOpen(false)],
+      [confidentialiteOpen, () => setConfidentialiteOpen(false)],
+      [integrationsOpen, () => setIntegrationsOpen(false)],
+      [roiInfoOpen, () => setRoiInfoOpen(false)],
+      [editProfileOpen, () => setEditProfileOpen(false)],
+      [eventId, () => setEventId(null)],
+      [activityId, () => setActivityId(null)],
+      [member, () => setMember(null)],
+      [news.id, () => setNews({ open: true, id: null })],
+      [news.open, () => setNews({ open: false, id: null })],
+      [raceOpen, () => setRaceOpen(false)],
+      [runMatchOpen, () => setRunMatchOpen(false)],
+      [pipelineOpen, () => setPipelineOpen(false)],
+      [agendaOpen, () => setAgendaOpen(false)],
+      [inviteOpen, () => setInviteOpen(false)],
+      [plansOpen, () => setPlansOpen(false)],
+      [searchOpen, () => setSearchOpen(false)],
+      [openConv || openGroup, closeChat],
+      [tab !== 'accueil', () => goTo('accueil')],
+    ]
+    const haut = pile.find(([ouvert]) => ouvert)
+    if (!haut) return false
+    haut[1]()
+    return true
+  }
+  const fermerDessusRef = useRef(fermerDessus)
+  fermerDessusRef.current = fermerDessus
+  useEffect(() => ecouterRetour(() => fermerDessusRef.current()), [])
 
   function renderScreen() {
     switch (tab) {
       case 'accueil': return <Accueil />
       case 'reseau': return <Reseau />
-      case 'courir': return <Courir />
       case 'messages': return <Messages />
       case 'profil': return <Profil />
       default: return null
@@ -783,7 +836,7 @@ export default function App() {
               <span className="min-w-0 flex-1 text-[13.5px] leading-snug text-fg-muted">
                 <b className="font-semibold text-fg">Abonnement expiré</b> · tu peux tout lire, mais plus écrire.
               </span>
-              <span className="shrink-0 text-[13.5px] font-semibold text-brand-500">Reprendre</span>
+              <span className="shrink-0 text-[13.5px] font-semibold text-brand-500">{estNatif ? 'Voir' : 'Reprendre'}</span>
             </button>
           )}
 
@@ -821,6 +874,7 @@ export default function App() {
             {editProfileOpen && <EditProfileSheet onClose={() => setEditProfileOpen(false)} />}
             {roiInfoOpen && <RoiInfoSheet onClose={() => setRoiInfoOpen(false)} />}
             {integrationsOpen && <IntegrationsSheet onClose={() => setIntegrationsOpen(false)} />}
+            {confidentialiteOpen && <ConfidentialiteSheet onClose={() => setConfidentialiteOpen(false)} />}
           </Suspense>
           <PostComposer open={composerOpen} onClose={() => setComposerOpen(false)} onPublish={verrou(publishPost, 'publier')} />
           <NotifDrawer />

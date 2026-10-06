@@ -1,0 +1,79 @@
+# Build signé pour Google Play (.aab), et envoi sur la piste « internal » si
+# le compte de service est configuré. Se lance sur un tag v* (ex. v1.0.0) ou
+# à la main depuis l'onglet Actions.
+#
+# Secrets à poser (Settings → Secrets and variables → Actions) :
+#   ANDROID_KEYSTORE_BASE64   la clé d'envoi (.jks) encodée en base64
+#   ANDROID_KEYSTORE_PASSWORD mot de passe du keystore
+#   ANDROID_KEY_ALIAS         alias de la clé
+#   ANDROID_KEY_PASSWORD      mot de passe de la clé
+#   PLAY_SERVICE_ACCOUNT_JSON (facultatif) JSON du compte de service Play Console
+name: Android — publication
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      piste:
+        description: 'Piste Google Play'
+        type: choice
+        options: [internal, alpha, beta, production]
+        default: internal
+
+jobs:
+  aab:
+    runs-on: ubuntu-latest
+    env:
+      ROI_VERSION_CODE: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - run: npm ci
+      - run: npm test
+      - run: npm run natif:sync
+
+      - name: Clé de signature
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_B64" ]; then echo "::error::Secret ANDROID_KEYSTORE_BASE64 manquant (voir DEPLOIEMENT.md)"; exit 1; fi
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/roi-upload.jks"
+          echo "ROI_KEYSTORE_PATH=$RUNNER_TEMP/roi-upload.jks" >> "$GITHUB_ENV"
+
+      - name: Bundle signé
+        working-directory: android
+        env:
+          ROI_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ROI_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ROI_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: ./gradlew bundleRelease --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: roi-release-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+
+      - name: Compte de service Play présent ?
+        id: play
+        env:
+          JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: echo "ok=$([ -n "$JSON" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Envoi sur Google Play
+        if: steps.play.outputs.ok == 'true'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: fr.runoninvest.app
+          releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
+          track: ${{ inputs.piste || 'internal' }}
+          status: ${{ (inputs.piste || 'internal') == 'internal' && 'completed' || 'draft' }}

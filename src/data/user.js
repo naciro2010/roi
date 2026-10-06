@@ -9,6 +9,12 @@
    `dossard` est ta place sur la prochaine édition : le numéro qu'on voit en
    ouvrant l'app, et l'état de ton dossier. */
 
+function dansUnAn(now = new Date()) {
+  const d = new Date(now)
+  d.setFullYear(d.getFullYear() + 1)
+  return d.toISOString().slice(0, 10)
+}
+
 export const CURRENT_USER = {
   name: 'Thomas Lefèvre',
   title: 'Fondateur · SaaS B2B',
@@ -32,13 +38,16 @@ export const CURRENT_USER = {
     },
   ],
 
-  /* L'abonnement qui garde l'accès ouvert. `statut` : actif | expire. */
+  /* L'abonnement qui garde l'accès ouvert. `statut` : actif | expire.
+     L'échéance part du premier lancement (un an, offert après la première
+     course) : une date fixe ferait basculer toute nouvelle installation en
+     lecture seule une fois passée. */
   abonnement: {
     palier: 'membre',
     statut: 'actif',
     periodicite: 'annuel',
     depuis: '2025-12-02',
-    echeance: '2026-12-02',
+    echeance: dansUnAn(),
   },
   bio: "Je construis un SaaS B2B : un tableau de bord, et l’onboarding qui va avec. Je prépare une levée d’amorçage. Je cours le matin, le long de la Seine, à une allure où l’on peut encore parler.",
   needs: ['Lève · une levée d’amorçage', 'Recrute · un développeur React', 'Des conseils de dirigeants qui ont déjà structuré une équipe'],

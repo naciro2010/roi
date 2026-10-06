@@ -1,4 +1,5 @@
 import { Logo } from '../components/primitives'
+import { modeDemo } from '../lib/natif'
 import { EDITION, EDITION_PILOTE, daysToRace, siteUrl, INSCRITS } from '../data/race'
 
 /* ==========================================================================
@@ -58,9 +59,9 @@ export default function AccesReserve({ onRelier, onFinisher }) {
         </p>
 
         {/* Démo : l'app n'a pas de compte, ce bouton simule un finisher. */}
-        <button onClick={onFinisher} className="mt-6 self-start text-[13px] text-fg-faint underline underline-offset-4 tap">
+        {modeDemo && <button onClick={onFinisher} className="mt-6 self-start text-[13px] text-fg-faint underline underline-offset-4 tap">
           Démo · entrer comme finisher de {EDITION_PILOTE.nom}
-        </button>
+        </button>}
       </div>
     </div>
   )

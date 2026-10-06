@@ -1,0 +1,40 @@
+{
+  "appId": "fr.runoninvest.app",
+  "appName": "R.O.I",
+  "webDir": "dist",
+  "loggingBehavior": "none",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#EFEBE2",
+    "allowMixedContent": false,
+    "webContentsDebuggingEnabled": false
+  },
+  "ios": {
+    "backgroundColor": "#EFEBE2",
+    "contentInset": "never",
+    "scheme": "R.O.I",
+    "limitsNavigationsToAppBoundDomains": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "launchAutoHide": false,
+      "backgroundColor": "#EFEBE2",
+      "showSpinner": false,
+      "androidScaleType": "CENTER_CROP"
+    },
+    "StatusBar": {
+      "style": "LIGHT"
+    },
+    "Keyboard": {
+      "resize": "native"
+    },
+    "SystemBars": {
+      "insetsHandling": "css",
+      "initialViewportFitValueHint": "cover",
+      "style": "LIGHT"
+    }
+  }
+}

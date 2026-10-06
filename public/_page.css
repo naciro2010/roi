@@ -1,0 +1,17 @@
+:root{--craie:#EFEBE2;--surface:#F7F5F0;--encre:#131211;--texte2:#2A2723;--texte3:#57534A;--orange:#FF4400;--accent:#C63500;--filet:rgba(19,18,17,.1)}
+@font-face{font-family:Archivo;src:url(/fonts/archivo-latin-wdth-normal.woff2) format("woff2");font-weight:100 900;font-stretch:62% 125%;font-display:swap}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--craie);color:var(--encre);font:400 16px/1.65 Archivo,system-ui,sans-serif}
+main{max-width:680px;margin:0 auto;padding:40px 20px 64px}
+.logo{font-weight:600;font-stretch:112%;letter-spacing:.02em;font-size:18px;text-decoration:none;color:inherit}
+.logo b{display:inline-block;width:.42em;height:.42em;background:var(--orange);margin:0 .14em}
+h1{font-size:30px;font-weight:500;line-height:1.2;margin:28px 0 6px}
+h2{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin:34px 0 8px;color:var(--texte3)}
+p,li{color:var(--texte2)}
+.maj{color:var(--texte3);font-size:14px;margin:0}
+.carte{background:var(--surface);border:1px solid var(--filet);border-radius:18px;padding:18px 20px;margin:14px 0}
+a{color:var(--accent);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{text-align:left;padding:10px 8px;border-bottom:1px solid var(--filet);vertical-align:top}
+th{font-weight:600}

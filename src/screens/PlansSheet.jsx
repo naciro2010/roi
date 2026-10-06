@@ -2,12 +2,19 @@ import { useApp } from '../AppContext'
 import Sheet, { SheetBloc } from '../components/Sheet'
 import { PLANS, dateLongue } from '../data/plans'
 import { siteUrl } from '../data/race'
+import { estNatif } from '../lib/natif'
 
 /* ==========================================================================
    MON ABONNEMENT — ce qui garde l'accès ouvert.
    Trois paliers, Membre · Premium · Cercle. Aucun n'achète une meilleure
    course : ils changent combien de portes s'ouvrent entre deux éditions.
    Rien ne se paie dans l'app — le règlement se fait sur l'espace du site.
+
+   Dans les apps des stores (iOS, Android), un abonnement numérique ne peut
+   être vendu, ni même renvoyé vers un paiement externe, que par l'achat
+   intégré d'Apple / Google. Tant que cet achat n'est pas branché, l'app
+   native montre l'abonnement en cours et ce que chaque palier ouvre, sans
+   prix, sans bouton d'achat et sans lien vers le règlement.
    ========================================================================== */
 export default function PlansSheet({ onClose }) {
   const { plan, upgradePlan, abonnement, etatAbo, renouveler } = useApp()
@@ -30,12 +37,14 @@ export default function PlansSheet({ onClose }) {
             ? 'L’app reste ouverte en lecture : tu vois les nouvelles, ton dossard et le fil. Pour écrire et proposer des rencontres, il faut la reprendre.'
             : `Échéance le ${dateLongue(abonnement.echeance)}. Sans renouvellement, l’app passe en lecture seule.`}
         </p>
-        <button
-          onClick={renouveler}
-          className="mt-4 rounded-full bg-brand-500 px-5 py-3 text-[14px] font-semibold text-craie tap"
-        >
-          {expire ? 'Reprendre mon abonnement' : 'Renouveler pour un an'}
-        </button>
+        {!estNatif && (
+          <button
+            onClick={renouveler}
+            className="mt-4 rounded-full bg-brand-500 px-5 py-3 text-[14px] font-semibold text-craie tap"
+          >
+            {expire ? 'Reprendre mon abonnement' : 'Renouveler pour un an'}
+          </button>
+        )}
       </SheetBloc>
 
       <p className="mt-5 text-[14.5px] leading-[1.6] text-fg-soft">
@@ -63,11 +72,15 @@ export default function PlansSheet({ onClose }) {
               </div>
               <p className="mt-1 text-[13.5px] leading-snug text-fg-muted">{p.pour}</p>
 
-              <div className="mt-3 flex items-baseline gap-2">
-                <span className="text-[22px] font-medium tabular-nums">{p.prixAnnuel}</span>
-                <span className="text-[13px] text-fg-faint">ou {p.prix}</span>
-              </div>
-              <p className="mt-1 text-[13px] text-fg-faint">{p.etat}</p>
+              {!estNatif && (
+                <>
+                  <div className="mt-3 flex items-baseline gap-2">
+                    <span className="text-[22px] font-medium tabular-nums">{p.prixAnnuel}</span>
+                    <span className="text-[13px] text-fg-faint">ou {p.prix}</span>
+                  </div>
+                  <p className="mt-1 text-[13px] text-fg-faint">{p.etat}</p>
+                </>
+              )}
 
               <ul className="mt-3.5 flex flex-col gap-2 border-t border-line-soft pt-3.5">
                 {p.herite && <li className="text-[13px] font-semibold text-fg-faint">{p.herite}</li>}
@@ -78,7 +91,7 @@ export default function PlansSheet({ onClose }) {
                 ))}
               </ul>
 
-              {!courant && (
+              {!courant && !estNatif && (
                 <button
                   onClick={() => upgradePlan(p.id)}
                   className={`mt-4 w-full rounded-full px-5 py-3 text-[14px] font-semibold tap ${
@@ -93,18 +106,27 @@ export default function PlansSheet({ onClose }) {
         })}
       </div>
 
-      <a
-        href={espaceUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-4 block text-center text-[13.5px] font-semibold text-brand-500 tap"
-      >
-        Gérer le règlement depuis mon espace
-      </a>
-      <p className="mt-3 text-[13px] leading-snug text-fg-faint">
-        Rien ne se paie dans l’app : le règlement et la résiliation se font sur runoninvest.fr. Résilier
-        ne retire pas ton dossard — il ferme le réseau, pas la course.
-      </p>
+      {estNatif ? (
+        <p className="mt-4 text-[13px] leading-snug text-fg-faint">
+          Ton abonnement est rattaché à ton compte R.O.I. Il ne se règle pas dans l’app. Résilier ne retire
+          pas ton dossard — il ferme le réseau, pas la course.
+        </p>
+      ) : (
+        <>
+          <a
+            href={espaceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 block text-center text-[13.5px] font-semibold text-brand-500 tap"
+          >
+            Gérer le règlement depuis mon espace
+          </a>
+          <p className="mt-3 text-[13px] leading-snug text-fg-faint">
+            Rien ne se paie dans l’app : le règlement et la résiliation se font sur runoninvest.fr. Résilier
+            ne retire pas ton dossard — il ferme le réseau, pas la course.
+          </p>
+        </>
+      )}
     </Sheet>
   )
 }

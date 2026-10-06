@@ -1,0 +1,10 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["REMPLACER_PAR_TEAM_ID.fr.runoninvest.app"],
+        "components": [{ "?": { "dossier": "*" }, "comment": "Lien profond depuis l'espace du site : /?dossier=&email=" }]
+      }
+    ]
+  }
+}

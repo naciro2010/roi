@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Liens universels : « Ouvrir mon dossard dans l'app » depuis l'espace du
+	     site ouvre l'app si elle est installée. Le domaine doit servir
+	     /.well-known/apple-app-site-association (voir public/.well-known). -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:roi-mvp.up.railway.app</string>
+	</array>
+</dict>
+</plist>

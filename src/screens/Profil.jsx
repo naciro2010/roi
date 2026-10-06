@@ -23,10 +23,11 @@ function LigneReglage({ icon, label, hint, onClick }) {
 
 export default function Profil() {
   const {
-    showToast, openEditProfile, replayOnboarding, openIntegrations, integrations,
+    openEditProfile, replayOnboarding, openIntegrations, integrations,
     profile, resetDemo, plan, planMeta, openPlans, openInvite, referralJoined,
     meetings, openAgenda, eco, toggleEco, openRace, openPipeline, openRoiInfo, pipeline,
     etatAbo, simulerExpiration, simulerFinisher, openNews,
+    modeDemo, openConfidentialite,
   } = useApp()
   const u = CURRENT_USER
   const connectes = SERVICES.filter((s) => integrations[s.id]).length
@@ -137,13 +138,17 @@ export default function Profil() {
           />
           <LigneReglage icon="sparkles" label="Les nouvelles de R.O.I" onClick={() => openNews()} />
           <LigneReglage icon="gift" label="Inviter quelqu’un" hint={`${referralJoined}`} onClick={openInvite} />
-          <LigneReglage
-            icon="link"
-            label="Strava, montre, LinkedIn"
-            hint={connectes > 0 ? `${connectes} connecté${connectes > 1 ? 's' : ''}` : 'Aucun'}
-            onClick={openIntegrations}
-          />
-          <LigneReglage icon="shield" label="Confidentialité" onClick={() => showToast('Bientôt disponible')} />
+          {/* Les connexions Strava / montre / LinkedIn sont simulées : on ne
+              les montre que dans la démo, pas dans les apps des stores. */}
+          {modeDemo && (
+            <LigneReglage
+              icon="link"
+              label="Strava, montre, LinkedIn"
+              hint={connectes > 0 ? `${connectes} connecté${connectes > 1 ? 's' : ''}` : 'Aucun'}
+              onClick={openIntegrations}
+            />
+          )}
+          <LigneReglage icon="shield" label="Confidentialité et suppression du compte" onClick={openConfidentialite} />
           <LigneReglage icon="trendingUp" label="Comment on compte" onClick={openRoiInfo} />
           <LigneReglage icon="sparkles" label="Revoir l’introduction" onClick={replayOnboarding} />
 
@@ -156,11 +161,12 @@ export default function Profil() {
             </button>
           </div>
 
-          <LigneReglage icon="refresh" label="Réinitialiser la démo" onClick={resetDemo} />
+          {modeDemo && <LigneReglage icon="refresh" label="Réinitialiser la démo" onClick={resetDemo} />}
         </div>
       </section>
 
       {/* ---- Démo : voir les deux états d'accès tels qu'ils sont ---- */}
+      {modeDemo && (
       <section className="mt-[26px]">
         <SectionTitle help="L’app n’a pas de compte : ces deux interrupteurs montrent ce que voit quelqu’un dont l’abonnement a expiré, ou qui n’a encore couru aucun R.O.I.">
           Aperçu des états
@@ -194,12 +200,15 @@ export default function Profil() {
           </div>
         </div>
       </section>
+      )}
 
+      {/* Se déconnecter : l'app n'a pas de session à elle — on détache
+          l'inscription et on efface ce que l'appareil garde. */}
       <button
-        onClick={() => showToast('À bientôt')}
+        onClick={openConfidentialite}
         className="mt-6 flex w-full items-center justify-center gap-2 py-3 text-[14px] font-medium text-fg-faint tap"
       >
-        <Icon name="logout" className="h-[18px] w-[18px]" /> Se déconnecter
+        <Icon name="logout" className="h-[18px] w-[18px]" /> Se déconnecter de cet appareil
       </button>
     </div>
   )
