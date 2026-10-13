@@ -6,13 +6,14 @@ import { personFor } from '../data/network'
 import { ACTIVITIES, nombre } from '../data/activities'
 import { CURRENT_USER } from '../data/user'
 import { icebreaker } from '../lib/matching'
+import Signaler from '../components/Signaler'
 
 /* La fiche d'une personne : qui elle est, ce qu'elle cherche, ce qu'elle
    apporte, et deux boutons. Ce que le repo ajoute au-dessus de la maquette
    — pourquoi vous deux, la première phrase toute prête, vos sorties
    communes — reste là, dans le même langage visuel. */
 export default function MemberSheet({ name, onClose }) {
-  const { contacted, contactMember, messageMember, openActivity, matchDetail, startIcebreaker } = useApp()
+  const { contacted, contactMember, messageMember, openActivity, matchDetail, startIcebreaker, bloquer } = useApp()
   const p = personFor(name)
   const envoye = !!contacted[name]
   const match = matchDetail ? matchDetail(name) : null
@@ -135,6 +136,14 @@ export default function MemberSheet({ name, onClose }) {
           </span>
         </div>
       )}
+
+      {/* Sécurité : signaler ou bloquer, toujours à portée. */}
+      <div className="mt-8 flex flex-col gap-3 border-t border-line-soft pt-4">
+        <Signaler name={name} label="Signaler ce profil" />
+        <button onClick={() => bloquer(name)} className="self-start text-[13px] text-fg-faint underline tap">
+          Bloquer {name.split(' ')[0]}
+        </button>
+      </div>
     </Sheet>
   )
 }

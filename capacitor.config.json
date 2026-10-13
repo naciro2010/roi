@@ -1,0 +1,12 @@
+{
+  "appId": "fr.runoninvest.app",
+  "appName": "R.O.I",
+  "webDir": "dist",
+  "backgroundColor": "#EFEBE2",
+  "android": { "allowMixedContent": false },
+  "ios": { "contentInset": "never", "backgroundColor": "#EFEBE2" },
+  "plugins": {
+    "SplashScreen": { "launchShowDuration": 800, "backgroundColor": "#070707", "showSpinner": false },
+    "StatusBar": { "style": "DARK", "backgroundColor": "#EFEBE2" }
+  }
+}

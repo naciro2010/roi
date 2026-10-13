@@ -26,7 +26,7 @@ export default function Profil() {
     showToast, openEditProfile, replayOnboarding, openIntegrations, integrations,
     profile, resetDemo, plan, planMeta, openPlans, openInvite, referralJoined,
     meetings, openAgenda, eco, toggleEco, openRace, openPipeline, openRoiInfo, pipeline,
-    etatAbo, simulerExpiration, simulerFinisher, openNews,
+    etatAbo, simulerExpiration, simulerFinisher, openNews, openLegal, openSuppression, bloques, debloquer, estNatif,
   } = useApp()
   const u = CURRENT_USER
   const connectes = SERVICES.filter((s) => integrations[s.id]).length
@@ -143,7 +143,11 @@ export default function Profil() {
             hint={connectes > 0 ? `${connectes} connecté${connectes > 1 ? 's' : ''}` : 'Aucun'}
             onClick={openIntegrations}
           />
-          <LigneReglage icon="shield" label="Confidentialité" onClick={() => showToast('Bientôt disponible')} />
+          <LigneReglage icon="shield" label="Confidentialité" onClick={() => openLegal('confidentialite')} />
+          <LigneReglage icon="lock" label="Conditions d’utilisation" onClick={() => openLegal('cgu')} />
+          {bloques.map((n) => (
+            <LigneReglage key={n} icon="x" label={`Débloquer ${n}`} onClick={() => debloquer(n)} />
+          ))}
           <LigneReglage icon="trendingUp" label="Comment on compte" onClick={openRoiInfo} />
           <LigneReglage icon="sparkles" label="Revoir l’introduction" onClick={replayOnboarding} />
 
@@ -156,12 +160,13 @@ export default function Profil() {
             </button>
           </div>
 
-          <LigneReglage icon="refresh" label="Réinitialiser la démo" onClick={resetDemo} />
+          {!estNatif && <LigneReglage icon="refresh" label="Réinitialiser la démo" onClick={resetDemo} />}
+          <LigneReglage icon="x" label="Supprimer mon compte" onClick={openSuppression} />
         </div>
       </section>
 
       {/* ---- Démo : voir les deux états d'accès tels qu'ils sont ---- */}
-      <section className="mt-[26px]">
+      {!estNatif && <section className="mt-[26px]">
         <SectionTitle help="L’app n’a pas de compte : ces deux interrupteurs montrent ce que voit quelqu’un dont l’abonnement a expiré, ou qui n’a encore couru aucun R.O.I.">
           Aperçu des états
         </SectionTitle>
@@ -193,7 +198,7 @@ export default function Profil() {
             </button>
           </div>
         </div>
-      </section>
+      </section>}
 
       <button
         onClick={() => showToast('À bientôt')}

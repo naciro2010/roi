@@ -5,6 +5,7 @@ import { Avatar } from './Avatar'
 import { personFor } from '../data/network'
 import { CURRENT_USER } from '../data/user'
 import { nombre } from '../data/activities'
+import Signaler from './Signaler'
 
 /* Une carte de post : l'auteur, un paragraphe, les stats de la sortie quand
    il y en a une, et une barre d'actions réduite au kudo. Les trois anciens
@@ -71,6 +72,7 @@ export default function PostCard({ post, activity, onLike, onAddComment, onOpenA
           <Icon name="thumbsUp" className="h-[17px] w-[17px]" filled={post.liked} />
           {post.likes}
         </button>
+        {post.author !== CURRENT_USER.name && <Signaler name={post.author} label="Signaler" className="ml-auto pr-2" />}
         {post.comments.length > 0 && (
           <button onClick={() => setShowComments((s) => !s)} className="text-[13.5px] text-fg-faint">
             {post.comments.length} réponse{post.comments.length > 1 ? 's' : ''}

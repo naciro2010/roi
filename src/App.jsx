@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { AppContext } from './AppContext'
 import { usePersistentState, clearPersistedState } from './lib/usePersistentState'
 import {
@@ -15,6 +15,9 @@ import { EVENTS } from './data/events'
 import { MEETINGS } from './data/meetings'
 import { ACTIVITIES } from './data/activities'
 import { CONNECTIONS, REQUESTS } from './data/connections'
+import { estNatif, initNatif } from './lib/native'
+import { achatsDisponibles, acheter, restaurer, etatAbonnement as etatStore } from './lib/billing'
+import { supprimerCompte, envoyerSignalement } from './lib/compte'
 
 import Icon from './components/Icon'
 import { Avatar } from './components/Avatar'
@@ -47,12 +50,14 @@ const PipelineSheet = lazy(() => import('./screens/PipelineSheet'))
 const RunMatchSheet = lazy(() => import('./screens/RunMatchSheet'))
 const RaceSheet = lazy(() => import('./screens/RaceSheet'))
 const NewsSheet = lazy(() => import('./screens/NewsSheet'))
+const LegalSheet = lazy(() => import('./screens/LegalSheet'))
+const DeleteAccountSheet = lazy(() => import('./screens/DeleteAccountSheet'))
 const AccesReserve = lazy(() => import('./screens/AccesReserve'))
 import { INITIAL_PIPELINE, shiftStage, stageMeta } from './data/pipeline'
 import { suggestRun } from './lib/runmatch'
 import { SERVICES } from './data/integrations'
 import { planById, hasFeature, etatAbonnement, PALIER_BASE } from './data/plans'
-import { avancementEdition, EDITION } from './data/race'
+import { avancementEdition, EDITION, CONTACTS } from './data/race'
 import { INITIAL_INVITES, INITIAL_TEAMMATES } from './data/invites'
 import { dossierDepuisUrl, lierDossier } from './lib/dossier'
 
@@ -170,6 +175,12 @@ export default function App() {
     try { return !localStorage.getItem('roi2_onboarded') } catch { return true }
   })
   const [roiInfoOpen, setRoiInfoOpen] = useState(false)
+  const retourRef = useRef(() => false)
+  // Sécurité & conformité stores : mentions légales, suppression, blocage, signalement
+  const [legal, setLegal] = useState(null) // null | 'confidentialite' | 'cgu'
+  const [supprOpen, setSupprOpen] = useState(false)
+  const [bloques, setBloques] = usePersistentState('bloques', [])
+  const [signales, setSignales] = usePersistentState('signales', [])
   const [searchOpen, setSearchOpen] = useState(false)
   const [integrationsOpen, setIntegrationsOpen] = useState(false)
   const [integrations, setIntegrations] = usePersistentState('integrations', {})
@@ -230,6 +241,18 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  /* Enveloppe native : barre d'état, écran de lancement, bouton retour, et
+     l'abonnement relu depuis le store au démarrage (la source de vérité sur
+     mobile, c'est Apple / Google, pas le localStorage). */
+  useEffect(() => {
+    initNatif({ surRetour: () => retourRef.current() })
+    if (!achatsDisponibles()) return
+    etatStore().then((a) => {
+      if (a) setAbonnement((prev) => ({ ...prev, ...a, statut: 'actif' }))
+    }).catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const planMeta = planById(plan)
 
   /* Ta route vers l'édition : ce qui est fait, ce qui s'ouvre quand. Les
@@ -240,7 +263,7 @@ export default function App() {
   })
   const referralJoined = invites.filter((i) => i.status === 'joined').length
 
-  const unreadConv = CONVERSATIONS.filter((c) => c.unread && !convRead[c.id]).length
+  const unreadConv = CONVERSATIONS.filter((c) => c.unread && !convRead[c.id] && !bloques.includes(c.name)).length
   const unreadGroups = groups.filter((g) => g.unread > 0 && !groupRead[g.id]).length
   const unreadNotif = notifs.filter((n) => n.unread).length
   const navUnread = unreadConv + unreadGroups
@@ -487,6 +510,34 @@ export default function App() {
     showToast('Inscription détachée de l’app — le site la garde')
   }
 
+  /* Blocage et signalement (exigés par Apple 1.2 et Google : contenu généré
+     par les utilisateurs). Un membre bloqué disparaît de l'annuaire, des
+     messages, du fil et de la recherche ; le signalement part à l'équipe. */
+  const estBloque = (name) => bloques.includes(name)
+  function bloquer(name) {
+    setBloques((b) => (b.includes(name) ? b : [...b, name]))
+    setMember(null)
+    showToast(`${name} est bloqué — vous ne vous voyez plus`)
+  }
+  function debloquer(name) {
+    setBloques((b) => b.filter((n) => n !== name))
+    showToast(`${name} est débloqué`)
+  }
+  function signaler(name, motif, detail = '') {
+    const s = { name, motif, detail, date: new Date().toISOString() }
+    setSignales((l) => [...l, s])
+    envoyerSignalement({ ...s, dossier })
+    showToast('Merci — l’équipe examine le signalement sous 24 h')
+  }
+  async function effacerCompte() {
+    const r = await supprimerCompte(dossier)
+    if (r.ok) {
+      clearPersistedState()
+      window.location.reload()
+    }
+    return r
+  }
+
   function resetDemo() {
     clearPersistedState()
     window.location.reload()
@@ -516,7 +567,39 @@ export default function App() {
     return d.toISOString().slice(0, 10)
   }
 
+  /* Sur mobile natif, tout achat passe par le store (Apple / Google). */
+  async function achatStore(palier, periodicite = 'annuel') {
+    try {
+      const a = await acheter(palier, periodicite)
+      if (!a) return
+      setAbonnement((prev) => ({ ...prev, ...a, statut: 'actif' }))
+      setPlansOpen(false)
+      showToast('Abonnement activé — merci !')
+    } catch {
+      showToast('L’achat n’a pas abouti — réessaie dans un instant')
+    }
+  }
+  async function restaurerAchats() {
+    try {
+      const a = await restaurer()
+      if (a) {
+        setAbonnement((prev) => ({ ...prev, ...a, statut: 'actif' }))
+        showToast('Abonnement restauré')
+      } else {
+        showToast('Aucun abonnement à restaurer sur ce compte')
+      }
+    } catch {
+      showToast('Restauration impossible pour le moment')
+    }
+  }
+
   function upgradePlan(id) {
+    if (estNatif) {
+      if (id === 'cercle') { window.location.href = `mailto:${CONTACTS.contact}?subject=Cercle`; return }
+      if (id === PALIER_BASE && plan === PALIER_BASE) return
+      if (!achatsDisponibles()) { showToast('Les achats ne sont pas disponibles dans cette version'); return }
+      return achatStore(id)
+    }
     const meta = planById(id)
     setAbonnement((a) => ({ ...a, palier: id, statut: 'actif', echeance: a.statut === 'expire' ? dansUnAn() : a.echeance }))
     setPlansOpen(false)
@@ -525,6 +608,10 @@ export default function App() {
 
   /* Reprendre l'abonnement : l'échéance repart pour un an, tout se rouvre. */
   function renouveler() {
+    if (estNatif) {
+      if (!achatsDisponibles()) { showToast('Les achats ne sont pas disponibles dans cette version'); return }
+      return achatStore(plan)
+    }
     setAbonnement((a) => ({ ...a, statut: 'actif', echeance: dansUnAn() }))
     setPlansOpen(false)
     showToast('Abonnement repris — tout est rouvert')
@@ -613,12 +700,16 @@ export default function App() {
     openMember,
     openActivity: setActivityId,
     // Matching comportemental « Pour toi »
-    rankedMatches, insights, matchDetail, track, startIcebreaker: verrou(startIcebreaker, 'écrire'),
+    rankedMatches: rankedMatches.filter((m) => !bloques.includes(m.name)), insights, matchDetail, track, startIcebreaker: verrou(startIcebreaker, 'écrire'),
     sharedRunsFor: (name) => SHARED_RUNS[name] || 0,
     openEvent: setEventId,
     openComposer: () => setComposerOpen(true),
     openEditProfile: () => setEditProfileOpen(true),
     openRoiInfo: () => setRoiInfoOpen(true),
+    // Conformité stores
+    openLegal: (quoi) => setLegal(quoi), openSuppression: () => setSupprOpen(true), effacerCompte,
+    bloques, estBloque, bloquer, debloquer, signaler, signales,
+    estNatif, achatsDisponibles: achatsDisponibles(), restaurerAchats,
     openSearch: () => setSearchOpen(true),
     openIntegrations: () => setIntegrationsOpen(true),
     integrations, toggleIntegration,
@@ -651,7 +742,7 @@ export default function App() {
     connections, requests, acceptRequest: verrou(acceptRequest, 'dire oui'), declineRequest,
     eventKudos, toggleEventKudos, joined, toggleJoin,
     actKudos, toggleActKudos,
-    posts, togglePostLike, addComment: verrou(addComment, 'répondre'),
+    posts: posts.filter((p) => !bloques.includes(p.author)), togglePostLike, addComment: verrou(addComment, 'répondre'),
     msgView, setMsgView, openConv, openGroup, openChat, openGroupChat, closeChat,
     threads, draft, setDraft, sendMessage: verrou(sendMessage, 'écrire'), convRead,
     groups, groupThreads, groupRead, creatingGroup, setCreatingGroup,
@@ -672,7 +763,26 @@ export default function App() {
   const anyOverlay =
     member || activityId || eventId || composerOpen || notifOpen || editProfileOpen ||
     roiInfoOpen || integrationsOpen || searchOpen || plansOpen || inviteOpen || agendaOpen ||
-    pipelineOpen || runMatchOpen || raceOpen || onboarding
+    pipelineOpen || runMatchOpen || raceOpen || onboarding || legal || supprOpen
+
+  /* Bouton « retour » d'Android : ferme la couche du dessus, sinon rend la main. */
+  retourRef.current = () => {
+    const couches = [
+      [supprOpen, () => setSupprOpen(false)], [legal, () => setLegal(null)],
+      [member, () => setMember(null)], [activityId, () => setActivityId(null)],
+      [eventId, () => setEventId(null)], [composerOpen, () => setComposerOpen(false)],
+      [notifOpen, () => setNotifOpen(false)], [editProfileOpen, () => setEditProfileOpen(false)],
+      [roiInfoOpen, () => setRoiInfoOpen(false)], [integrationsOpen, () => setIntegrationsOpen(false)],
+      [searchOpen, () => setSearchOpen(false)], [plansOpen, () => setPlansOpen(false)],
+      [inviteOpen, () => setInviteOpen(false)], [agendaOpen, () => setAgendaOpen(false)],
+      [pipelineOpen, () => setPipelineOpen(false)], [runMatchOpen, () => setRunMatchOpen(false)],
+      [raceOpen, () => setRaceOpen(false)], [news.open, () => setNews({ open: false, id: null })],
+    ]
+    const ouverte = couches.find(([ouvert]) => ouvert)
+    if (!ouverte) return false
+    ouverte[1]()
+    return true
+  }
 
   function renderScreen() {
     switch (tab) {
@@ -820,6 +930,8 @@ export default function App() {
             {eventId && <EventSheet id={eventId} onClose={() => setEventId(null)} />}
             {editProfileOpen && <EditProfileSheet onClose={() => setEditProfileOpen(false)} />}
             {roiInfoOpen && <RoiInfoSheet onClose={() => setRoiInfoOpen(false)} />}
+            {legal && <LegalSheet quoi={legal} onClose={() => setLegal(null)} />}
+            {supprOpen && <DeleteAccountSheet onClose={() => setSupprOpen(false)} />}
             {integrationsOpen && <IntegrationsSheet onClose={() => setIntegrationsOpen(false)} />}
           </Suspense>
           <PostComposer open={composerOpen} onClose={() => setComposerOpen(false)} onPublish={verrou(publishPost, 'publier')} />

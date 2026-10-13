@@ -2,6 +2,7 @@ import { useApp } from '../AppContext'
 import Sheet, { SheetBloc } from '../components/Sheet'
 import { PLANS, dateLongue } from '../data/plans'
 import { siteUrl } from '../data/race'
+import { urlGestionAbonnement } from '../lib/billing'
 
 /* ==========================================================================
    MON ABONNEMENT — ce qui garde l'accès ouvert.
@@ -10,7 +11,7 @@ import { siteUrl } from '../data/race'
    Rien ne se paie dans l'app — le règlement se fait sur l'espace du site.
    ========================================================================== */
 export default function PlansSheet({ onClose }) {
-  const { plan, upgradePlan, abonnement, etatAbo, renouveler } = useApp()
+  const { plan, upgradePlan, abonnement, etatAbo, renouveler, estNatif, restaurerAchats, openLegal } = useApp()
   const espaceUrl = siteUrl('espace/#abonnement')
   const expire = etatAbo.statut === 'expire'
 
@@ -93,18 +94,48 @@ export default function PlansSheet({ onClose }) {
         })}
       </div>
 
-      <a
-        href={espaceUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-4 block text-center text-[13.5px] font-semibold text-brand-500 tap"
-      >
-        Gérer le règlement depuis mon espace
-      </a>
-      <p className="mt-3 text-[13px] leading-snug text-fg-faint">
-        Rien ne se paie dans l’app : le règlement et la résiliation se font sur runoninvest.fr. Résilier
-        ne retire pas ton dossard — il ferme le réseau, pas la course.
-      </p>
+      {estNatif ? (
+        <>
+          {/* Mentions exigées par Apple (3.1.2) et Google pour un abonnement. */}
+          <button onClick={restaurerAchats} className="mt-4 block w-full text-center text-[13.5px] font-semibold text-brand-500 tap">
+            Restaurer mes achats
+          </button>
+          <a
+            href={urlGestionAbonnement}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 block text-center text-[13.5px] font-semibold text-brand-500 tap"
+          >
+            Gérer ou résilier mon abonnement
+          </a>
+          <p className="mt-3 text-[13px] leading-snug text-fg-faint">
+            Le paiement est prélevé sur ton compte Apple ou Google à la confirmation de l’achat. L’abonnement
+            se renouvelle automatiquement, au même prix, sauf annulation au moins 24 h avant la fin de la
+            période en cours. Tu le gères ou le résilies dans les réglages de ton compte du store. Résilier
+            ne retire pas ton dossard — il ferme le réseau, pas la course.
+          </p>
+          <p className="mt-2 text-center text-[13px] text-fg-faint">
+            <button onClick={() => openLegal('cgu')} className="underline tap">Conditions d’utilisation</button>
+            {' · '}
+            <button onClick={() => openLegal('confidentialite')} className="underline tap">Confidentialité</button>
+          </p>
+        </>
+      ) : (
+        <>
+          <a
+            href={espaceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 block text-center text-[13.5px] font-semibold text-brand-500 tap"
+          >
+            Gérer le règlement depuis mon espace
+          </a>
+          <p className="mt-3 text-[13px] leading-snug text-fg-faint">
+            Sur le web, le règlement et la résiliation se font sur runoninvest.fr. Résilier ne retire pas
+            ton dossard — il ferme le réseau, pas la course.
+          </p>
+        </>
+      )}
     </Sheet>
   )
 }
