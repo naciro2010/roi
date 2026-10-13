@@ -12,6 +12,8 @@ export function useSheetDrag(onClose, { threshold = 110 } = {}) {
   const dragging = useRef(false)
 
   function onPointerDown(e) {
+    // Un bouton de l'en-tête (fermer) garde son clic : la capture du pointeur le lui volerait à la souris.
+    if (e.target.closest?.('button')) return
     startY.current = e.clientY
     dragging.current = true
     setActive(true)

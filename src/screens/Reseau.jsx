@@ -59,6 +59,7 @@ export default function Reseau() {
     openMember, sentSuggestions, sendSuggestion, contacted, contactMember,
     connections, requests, acceptRequest, declineRequest, messageMember,
     hasFeature, openPlans, reseauView, setReseauView, rankedMatches, track, lectureSeule,
+    bloques,
   } = useApp()
 
   const [filtre, setFiltre] = useState('Tous')
@@ -71,6 +72,7 @@ export default function Reseau() {
 
   const q = query.trim().toLowerCase()
   const annuaire = MEMBERS.filter((m) => {
+    if (bloques.includes(m.name)) return false
     const okFiltre = filtre === 'Tous' || m.category === filtre
     const okQuery =
       !q ||

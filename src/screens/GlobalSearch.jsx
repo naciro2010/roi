@@ -39,15 +39,15 @@ function Group({ label, children }) {
 }
 
 export default function GlobalSearch({ onClose }) {
-  const { openMember, openActivity, openEvent, goTo, setMsgView } = useApp()
+  const { openMember, openActivity, openEvent, goTo, setMsgView, bloques } = useApp()
   const [q, setQ] = useState('')
   const query = q.trim().toLowerCase()
   const has = (s) => s.toLowerCase().includes(query)
 
-  const people = query ? PEOPLE_NAMES.filter((n) => has(n) || has(personFor(n).title)).slice(0, 5) : []
+  const people = query ? PEOPLE_NAMES.filter((n) => !bloques.includes(n) && (has(n) || has(personFor(n).title))).slice(0, 5) : []
   const activities = query ? ACTIVITIES.filter((a) => has(a.title) || has(a.athlete) || has(a.type)).slice(0, 4) : []
   const events = query ? EVENTS.filter((e) => has(e.title) || has(e.place)).slice(0, 4) : []
-  const posts = query ? POSTS.filter((p) => has(p.text) || has(p.author)).slice(0, 4) : []
+  const posts = query ? POSTS.filter((p) => !bloques.includes(p.author) && (has(p.text) || has(p.author))).slice(0, 4) : []
   const groups = query ? GROUPS.filter((g) => has(g.name) || has(g.topic)).slice(0, 4) : []
   const total = people.length + activities.length + events.length + posts.length + groups.length
 

@@ -80,6 +80,7 @@ export default function Messages() {
     openConv, openGroup, openChat, openGroupChat, closeChat,
     threads, draft, setDraft, sendMessage, convRead,
     groups, groupThreads, groupRead, openMember, lectureSeule, openPlans,
+    bloques,
   } = useApp()
 
   /* --- Une conversation en tête à tête --- */
@@ -141,7 +142,7 @@ export default function Messages() {
 
   /* --- La liste : les conversations, puis les groupes, au même gabarit --- */
   const lignes = [
-    ...CONVERSATIONS.map((c) => {
+    ...CONVERSATIONS.filter((c) => !bloques.includes(c.name)).map((c) => {
       const thread = threads[c.id] || []
       const last = thread[thread.length - 1]
       return {

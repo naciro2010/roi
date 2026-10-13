@@ -1,0 +1,47 @@
+name: Android — bundle signé (Play Console)
+
+# Lancement manuel : Actions → « Android — bundle signé » → Run workflow.
+# Secrets à créer dans Settings → Secrets → Actions :
+#   ANDROID_KEYSTORE_BASE64   la clé d'upload (.jks) encodée : base64 -w0 upload.jks
+#   ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD
+#   VITE_REVENUECAT_ANDROID_KEY   clé publique SDK RevenueCat (Android)
+on:
+  workflow_dispatch:
+    inputs:
+      version_code:
+        description: Version code (entier, à incrémenter à chaque envoi à la Play Console)
+        required: true
+      version_name:
+        description: Nom de version
+        default: 1.0.0
+
+jobs:
+  aab:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - run: npm ci
+      - run: npm run build
+        env:
+          VITE_REVENUECAT_ANDROID_KEY: ${{ secrets.VITE_REVENUECAT_ANDROID_KEY }}
+      - run: npx cap sync android
+      - name: Clé d'upload
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/upload.jks"
+      - name: Bundle de production
+        working-directory: android
+        run: ./gradlew bundleRelease
+        env:
+          ROI_KEYSTORE_FILE: ${{ runner.temp }}/upload.jks
+          ROI_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ROI_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ROI_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ROI_VERSION_CODE: ${{ inputs.version_code }}
+          ROI_VERSION_NAME: ${{ inputs.version_name }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: roi-release-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
