@@ -8,7 +8,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // Incrémenter à chaque envoi sur la Play Console (CI : ROI_VERSION_CODE)
-        versionCode (System.getenv("ROI_VERSION_CODE") ?: "1").toInteger()
+        versionCode Integer.parseInt(System.getenv("ROI_VERSION_CODE") ?: "1")
         versionName System.getenv("ROI_VERSION_NAME") ?: "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
